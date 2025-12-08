@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 图谱百科</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D3F8EE',
+                        secondary: '#3BCCA5', 
+                        accent: '#2B6A5A',
+                        'text-primary': '#1F2937',
+                        'text-secondary': '#6B7280',
+                        'bg-light': '#F9FAFB',
+                        'card-bg': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+
+        .category-active {
+            background-color: #3BCCA5;
+            color: white;
+        }
+
+        .category-inactive {
+            background-color: #F3F4F6;
+            color: #6B7280;
+        }
+
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #3BCCA5;
+            box-shadow: 0 0 0 2px rgba(59, 204, 165, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex items-center px-4 py-3">
+            <button id="back-btn" class="mr-3 p-2 -ml-2">
+                <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+            </button>
+            <h1 id="page-title" class="text-lg font-semibold text-text-primary flex-1">图谱百科</h1>
+            <button id="search-toggle-btn" class="p-2">
+                <i class="fas fa-search text-xl text-text-secondary"></i>
+            </button>
+        </div>
+
+        <!-- 搜索框 -->
+        <div id="search-container" class="px-4 pb-3 hidden">
+            <div class="relative">
+                <input type="text" id="search-input" placeholder="搜索疾病名称..." 
+                       class="w-full px-4 py-2 pl-10 pr-10 border border-gray-300 rounded-lg search-input">
+                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
+                <button id="search-clear-btn" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-text-secondary hidden">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6 pb-20">
+        <!-- 疾病分类导航 -->
+        <section id="disease-categories" class="mb-6">
+            <div class="flex space-x-3 overflow-x-auto pb-2">
+                <button id="category-all" class="category-btn category-active px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap">
+                    全部
+                </button>
+                <button id="category-viral" class="category-btn category-inactive px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap">
+                    病毒性疾病
+                </button>
+                <button id="category-bacterial" class="category-btn category-inactive px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap">
+                    细菌性疾病
+                </button>
+                <button id="category-parasitic" class="category-btn category-inactive px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap">
+                    寄生虫病
+                </button>
+                <button id="category-metabolic" class="category-btn category-inactive px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap">
+                    代谢性疾病
+                </button>
+            </div>
+        </section>
+
+        <!-- 图谱列表 -->
+        <section id="knowledge-graph-list">
+            <div id="graph-grid" class="grid grid-cols-2 gap-4">
+                <!-- 病毒性疾病 -->
+                <div class="graph-item bg-card-bg rounded-xl p-4 shadow-card card-hover" 
+                     data-category="viral" data-disease-id="newcastle-disease">
+                    <img src="https://s.coze.cn/image/L-cH7jFRbBY/" 
+                         alt="新城疫病理图" data-category="动物" class="w-full h-32 object-cover rounded-lg mb-3">
+                    <h3 class="font-semibold text-text-primary text-sm mb-1">新城疫</h3>
+                    <p class="text-xs text-text-secondary">病毒性疾病</p>
+                </div>
+
+                <div class="graph-item bg-card-bg rounded-xl p-4 shadow-card card-hover" 
+                     data-category="viral" data-disease-id="avian-flu">
+                    <img src="https://s.coze.cn/image/7MhiAkwvlP0/" 
+                         alt="禽流感病理图" data-category="动物" class="w-full h-32 object-cover rounded-lg mb-3">
+                    <h3 class="font-semibold text-text-primary text-sm mb-1">禽流感</h3>
+                    <p class="text-xs text-text-secondary">病毒性疾病</p>
+                </div>
+
+                <div class="graph-item bg-card-bg rounded-xl p-4 shadow-card card-hover" 
+                     data-category="viral" data-disease-id="infectious-bronchitis">
+                    <img src="https://s.coze.cn/image/B0FlL8NVAQ4/" 
+                         alt="传染性支气管炎病理图" data-category="动物" class="w-full h-32 object-cover rounded-lg mb-3">
+                    <h3 class="font-semibold text-text-primary text-sm mb-1">传染性支气管炎</h3>
+                    <p class="text-xs text-text-secondary">病毒性疾病</p>
+                </div>
+
+                <div class="graph-item bg-card-bg rounded-xl p-4 shadow-card card-hover" 
+                     data-category="viral" data-disease-id="infectious-bursal-disease">
+                    <img src="https://s.coze.cn/image/i8xkDvcZmG8/" 
+                         alt="传染性法氏囊病病理图" data-category="动物" class="w-full h-32 object-cover rounded-lg mb-3">
+                    <h3 class="font-semibold text-text-primary text-sm mb-1">传染性法氏囊病</h3>
+                    <p class="text-xs text-text-secondary">病毒性疾病</p>
+                </div>
+
+                <!-- 细菌性疾病 -->
+                <div class="graph-item bg-card-bg rounded-xl p-4 shadow-card card-hover" 
+                     data-category="bacterial" data-disease-id="salmonellosis">
+                    <img src="https://s.coze.cn/image/TtrKMmChgfQ/" 
+                         alt="沙门氏菌病病理图" data-category="动物" class="w-full h-32 object-cover rounded-lg mb-3">
+                    <h3 class="font-semibold text-text-primary text-sm mb-1">沙门氏菌病</h3>
+                    <p class="text-xs text-text-secondary">细菌性疾病</p>
+                </div>
+
+                <div class="graph-item bg-card-bg rounded-xl p-4 shadow-card card-hover" 
+                     data-category="bacterial" data-disease-id="e-coli">
+                    <img src="https://s.coze.cn/image/MW6j0lAwFzs/" 
+                         alt="大肠杆菌病病理图" data-category="动物" class="w-full h-32 object-cover rounded-lg mb-3">
+                    <h3 class="font-semibold text-text-primary text-sm mb-1">大肠杆菌病</h3>
+                    <p class="text-xs text-text-secondary">细菌性疾病</p>
+                </div>
+
+                <div class="graph-item bg-card-bg rounded-xl p-4 shadow-card card-hover" 
+                     data-category="bacterial" data-disease-id="mycoplasmosis">
+                    <img src="https://s.coze.cn/image/GhJd8mjmE2o/" 
+                         alt="支原体病病理图" data-category="动物" class="w-full h-32 object-cover rounded-lg mb-3">
+                    <h3 class="font-semibold text-text-primary text-sm mb-1">支原体病</h3>
+                    <p class="text-xs text-text-secondary">细菌性疾病</p>
+                </div>
+
+                <!-- 寄生虫病 -->
+                <div class="graph-item bg-card-bg rounded-xl p-4 shadow-card card-hover" 
+                     data-category="parasitic" data-disease-id="coccidiosis">
+                    <img src="https://s.coze.cn/image/-sOxj0FSPcc/" 
+                         alt="球虫病病理图" data-category="动物" class="w-full h-32 object-cover rounded-lg mb-3">
+                    <h3 class="font-semibold text-text-primary text-sm mb-1">球虫病</h3>
+                    <p class="text-xs text-text-secondary">寄生虫病</p>
+                </div>
+
+                <div class="graph-item bg-card-bg rounded-xl p-4 shadow-card card-hover" 
+                     data-category="parasitic" data-disease-id="lice-infestation">
+                    <img src="https://s.coze.cn/image/eKL7RNSVNBU/" 
+                         alt="羽虱病病理图" data-category="动物" class="w-full h-32 object-cover rounded-lg mb-3">
+                    <h3 class="font-semibold text-text-primary text-sm mb-1">羽虱病</h3>
+                    <p class="text-xs text-text-secondary">寄生虫病</p>
+                </div>
+
+                <!-- 代谢性疾病 -->
+                <div class="graph-item bg-card-bg rounded-xl p-4 shadow-card card-hover" 
+                     data-category="metabolic" data-disease-id=" fatty-liver">
+                    <img src="https://s.coze.cn/image/HK3P5Z0puE4/" 
+                         alt="脂肪肝综合征病理图" data-category="动物" class="w-full h-32 object-cover rounded-lg mb-3">
+                    <h3 class="font-semibold text-text-primary text-sm mb-1">脂肪肝综合征</h3>
+                    <p class="text-xs text-text-secondary">代谢性疾病</p>
+                </div>
+
+                <div class="graph-item bg-card-bg rounded-xl p-4 shadow-card card-hover" 
+                     data-category="metabolic" data-disease-id="rickets">
+                    <img src="https://s.coze.cn/image/KnvpWOPrl9c/" 
+                         alt="佝偻病病理图" data-category="动物" class="w-full h-32 object-cover rounded-lg mb-3">
+                    <h3 class="font-semibold text-text-primary text-sm mb-1">佝偻病</h3>
+                    <p class="text-xs text-text-secondary">代谢性疾病</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 图谱详情模态框 -->
+    <div id="graph-detail-modal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0"></div>
+        <div class="relative flex items-end justify-center min-h-screen">
+            <div class="modal-content bg-white rounded-t-3xl w-full max-w-md mx-4">
+                <div class="flex justify-center -mt-8 mb-4">
+                    <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
+                        <i class="fas fa-times text-xl text-gray-500"></i>
+                    </div>
+                </div>
+                
+                <div class="px-6 pb-6">
+                    <h2 id="modal-disease-name" class="text-xl font-bold text-text-primary mb-3"></h2>
+                    <p id="modal-disease-category" class="text-sm text-text-secondary mb-4"></p>
+                    
+                    <div id="modal-disease-images" class="grid grid-cols-2 gap-3 mb-4">
+                        <!-- 动态加载图片 -->
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h3 class="font-semibold text-text-primary mb-2">症状描述</h3>
+                        <p id="modal-disease-description" class="text-sm text-text-secondary leading-relaxed"></p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h3 class="font-semibold text-text-primary mb-2">典型症状</h3>
+                        <div id="modal-disease-symptoms" class="flex flex-wrap gap-2">
+                            <!-- 动态加载症状标签 -->
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-semibold text-text-primary mb-2">相关疾病</h3>
+                        <div id="modal-related-diseases" class="space-y-2">
+                            <!-- 动态加载相关疾病 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
+        <a id="nav-home" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-xs mt-0.5">首页</span>
+        </a>
+        <a id="nav-learning" href="#" class="flex flex-col items-center p-2 text-secondary">
+            <i class="fas fa-book text-xl"></i>
+            <span class="text-xs mt-0.5">学习</span>
+        </a>
+        <a id="nav-profile" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+            <i class="fas fa-user text-xl"></i>
+            <span class="text-xs mt-0.5">我的</span>
+        </a>
+    </nav>
+
+    <script>
+        // 疾病数据
+        const diseaseData = {
+            'newcastle-disease': {
+                name: '新城疫',
+                category: '病毒性疾病',
+                description: '新城疫是由新城疫病毒引起的一种高度接触性传染病，主要感染鸡、火鸡等禽类。临床症状包括呼吸困难、腹泻、神经症状等，死亡率较高。',
+                symptoms: ['呼吸困难', '腹泻', '神经症状', '产蛋下降', '头部肿胀'],
+                images: [
+                    'https://s.coze.cn/image/PEqiF8klWlU/',
+                    'https://s.coze.cn/image/_IaCoN0IuqU/'
+                ],
+                relatedDiseases: ['禽流感', '传染性支气管炎']
+            },
+            'avian-flu': {
+                name: '禽流感',
+                category: '病毒性疾病',
+                description: '禽流感是由A型流感病毒引起的禽类传染病，可分为高致病性和低致病性两种。高致病性禽流感死亡率极高，对养殖业危害严重。',
+                symptoms: ['高热', '呼吸困难', '冠髯发紫', '脚鳞出血', '产蛋停止'],
+                images: [
+                    'https://s.coze.cn/image/HMJXGWO9-yU/',
+                    'https://s.coze.cn/image/D61qSXqTWEM/'
+                ],
+                relatedDiseases: ['新城疫', '传染性喉气管炎']
+            },
+            'infectious-bronchitis': {
+                name: '传染性支气管炎',
+                category: '病毒性疾病',
+                description: '传染性支气管炎是由冠状病毒引起的鸡的急性呼吸道传染病，主要影响呼吸道和泌尿生殖系统。',
+                symptoms: ['咳嗽', '打喷嚏', '气管啰音', '产蛋异常', '肾脏肿大'],
+                images: [
+                    'https://s.coze.cn/image/6552XO5P3u8/',
+                    'https://s.coze.cn/image/uhhqZnpO8LI/'
+                ],
+                relatedDiseases: ['新城疫', '传染性鼻炎']
+            },
+            'infectious-bursal-disease': {
+                name: '传染性法氏囊病',
+                category: '病毒性疾病',
+                description: '传染性法氏囊病是由双RNA病毒引起的幼鸡免疫抑制性疾病，主要破坏法氏囊，导致免疫功能下降。',
+                symptoms: ['精神沉郁', '羽毛蓬松', '腹泻', '法氏囊肿大', '免疫抑制'],
+                images: [
+                    'https://s.coze.cn/image/EcShwENesOg/',
+                    'https://s.coze.cn/image/7-9uh9EsMMg/'
+                ],
+                relatedDiseases: ['马立克氏病', '传染性贫血']
+            },
+            'salmonellosis': {
+                name: '沙门氏菌病',
+                category: '细菌性疾病',
+                description: '沙门氏菌病是由沙门氏菌引起的人畜共患病，可通过污染的饲料、水源传播，对公共卫生有重要影响。',
+                symptoms: ['腹泻', '发热', '精神萎靡', '食欲减退', '关节肿胀'],
+                images: [
+                    'https://s.coze.cn/image/cgZGfrWhr1I/',
+                    'https://s.coze.cn/image/2RepwqNE9Jg/'
+                ],
+                relatedDiseases: ['大肠杆菌病', '巴氏杆菌病']
+            },
+            'e-coli': {
+                name: '大肠杆菌病',
+                category: '细菌性疾病',
+                description: '大肠杆菌病是由致病性大肠杆菌引起的禽类传染病，可表现为败血症、肠炎、输卵管炎等多种形式。',
+                symptoms: ['心包炎', '肝周炎', '气囊炎', '腹泻', '卵黄性腹膜炎'],
+                images: [
+                    'https://s.coze.cn/image/B-00VqPT7uc/',
+                    'https://s.coze.cn/image/Gr5TPoo1vL0/'
+                ],
+                relatedDiseases: ['沙门氏菌病', '支原体病']
+            },
+            'mycoplasmosis': {
+                name: '支原体病',
+                category: '细菌性疾病',
+                description: '支原体病是由支原体引起的慢性呼吸道传染病，主要表现为呼吸道症状，病程较长。',
+                symptoms: ['咳嗽', '打喷嚏', '眼鼻分泌物', '气囊浑浊', '生长迟缓'],
+                images: [
+                    'https://s.coze.cn/image/JntCLjS9rQ0/',
+                    'https://s.coze.cn/image/usUlJXKc3-g/'
+                ],
+                relatedDiseases: ['传染性支气管炎', '大肠杆菌病']
+            },
+            'coccidiosis': {
+                name: '球虫病',
+                category: '寄生虫病',
+                description: '球虫病是由艾美耳球虫引起的肠道寄生虫病，主要危害幼鸡，以出血性肠炎为特征。',
+                symptoms: ['血便', '贫血', '消瘦', '肠道出血', '生长受阻'],
+                images: [
+                    'https://s.coze.cn/image/AmRHGsoUIik/',
+                    'https://s.coze.cn/image/zcXHq_2LGtE/'
+                ],
+                relatedDiseases: ['组织滴虫病', '蛔虫病']
+            },
+            'lice-infestation': {
+                name: '羽虱病',
+                category: '寄生虫病',
+                description: '羽虱病是由羽虱寄生引起的外寄生虫病，主要影响羽毛和皮肤，导致鸡只不适和生产性能下降。',
+                symptoms: ['羽毛脱落', '皮肤瘙痒', '贫血', '生长缓慢', '产蛋减少'],
+                images: [
+                    'https://s.coze.cn/image/s3NTkm51XCc/',
+                    'https://s.coze.cn/image/TH-srjjMaAQ/'
+                ],
+                relatedDiseases: ['螨虫病', '蜱虫病']
+            },
+            ' fatty-liver': {
+                name: '脂肪肝综合征',
+                category: '代谢性疾病',
+                description: '脂肪肝综合征是由于营养代谢紊乱引起的肝脏脂肪变性，常见于高产蛋鸡。',
+                symptoms: ['肥胖', '产蛋下降', '肝脏肿大', '腹腔脂肪过多', '突然死亡'],
+                images: [
+                    'https://s.coze.cn/image/h6Dzr_uzYsE/',
+                    'https://s.coze.cn/image/jxFb2OfoLFY/'
+                ],
+                relatedDiseases: ['痛风', '蛋白质缺乏症']
+            },
+            'rickets': {
+                name: '佝偻病',
+                category: '代谢性疾病',
+                description: '佝偻病是由于钙、磷代谢障碍引起的骨骼发育异常，主要发生在幼鸡。',
+                symptoms: ['骨骼变形', '腿软无力', '喙部弯曲', '胸骨畸形', '生长迟缓'],
+                images: [
+                    'https://s.coze.cn/image/qnJPUzc80YU/',
+                    'https://s.coze.cn/image/W377CXkiLa8/'
+                ],
+                relatedDiseases: ['骨短粗症', '维生素D缺乏症']
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // 返回按钮
+            document.querySelector('#back-btn').addEventListener('click', function() {
+                window.history.back();
+            });
+
+            // 搜索功能
+            const searchToggleBtn = document.querySelector('#search-toggle-btn');
+            const searchContainer = document.querySelector('#search-container');
+            const searchInput = document.querySelector('#search-input');
+            const searchClearBtn = document.querySelector('#search-clear-btn');
+
+            searchToggleBtn.addEventListener('click', function() {
+                searchContainer.classList.toggle('hidden');
+                if (!searchContainer.classList.contains('hidden')) {
+                    searchInput.focus();
+                }
+            });
+
+            searchInput.addEventListener('input', function() {
+                if (this.value.length > 0) {
+                    searchClearBtn.classList.remove('hidden');
+                } else {
+                    searchClearBtn.classList.add('hidden');
+                }
+                filterGraphs(this.value);
+            });
+
+            searchClearBtn.addEventListener('click', function() {
+                searchInput.value = '';
+                this.classList.add('hidden');
+                filterGraphs('');
+            });
+
+            // 分类筛选
+            const categoryBtns = document.querySelectorAll('.category-btn');
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 更新分类按钮状态
+                    categoryBtns.forEach(b => {
+                        b.classList.remove('category-active');
+                        b.classList.add('category-inactive');
+                    });
+                    this.classList.remove('category-inactive');
+                    this.classList.add('category-active');
+
+                    // 筛选图谱
+                    const category = this.id.replace('category-', '');
+                    filterByCategory(category);
+                });
+            });
+
+            // 图谱项点击
+            const graphItems = document.querySelectorAll('.graph-item');
+            graphItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const diseaseId = this.dataset.diseaseId;
+                    showDiseaseDetail(diseaseId);
+                });
+            });
+
+            // 图谱详情模态框关闭
+            const modal = document.querySelector('#graph-detail-modal');
+            const modalOverlay = modal.querySelector('.modal-overlay');
+            const modalCloseBtn = modal.querySelector('.fa-times').parentElement;
+
+            modalOverlay.addEventListener('click', function() {
+                modal.classList.add('hidden');
+            });
+
+            modalCloseBtn.addEventListener('click', function() {
+                modal.classList.add('hidden');
+            });
+
+            // 底部导航栏
+            document.querySelector('#nav-home').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'P-HOME_STUDENT_LEARNING.html';
+            });
+
+            document.querySelector('#nav-learning').addEventListener('click', function(e) {
+                e.preventDefault();
+                // 已在学习页面，无需操作
+            });
+
+            document.querySelector('#nav-profile').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'P-USER_PROFILE.html';
+            });
+
+            // 筛选函数
+            function filterGraphs(searchTerm) {
+                const graphItems = document.querySelectorAll('.graph-item');
+                const activeCategory = document.querySelector('.category-active').id.replace('category-', '');
+
+                graphItems.forEach(item => {
+                    const diseaseName = item.querySelector('h3').textContent.toLowerCase();
+                    const diseaseCategory = item.dataset.category;
+                    
+                    const matchesSearch = !searchTerm || diseaseName.includes(searchTerm.toLowerCase());
+                    const matchesCategory = activeCategory === 'all' || diseaseCategory === activeCategory;
+                    
+                    if (matchesSearch && matchesCategory) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+
+            function filterByCategory(category) {
+                const graphItems = document.querySelectorAll('.graph-item');
+                const searchTerm = searchInput.value;
+
+                graphItems.forEach(item => {
+                    const diseaseCategory = item.dataset.category;
+                    const diseaseName = item.querySelector('h3').textContent.toLowerCase();
+                    
+                    const matchesCategory = category === 'all' || diseaseCategory === category;
+                    const matchesSearch = !searchTerm || diseaseName.includes(searchTerm.toLowerCase());
+                    
+                    if (matchesCategory && matchesSearch) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+
+            // 显示疾病详情
+            function showDiseaseDetail(diseaseId) {
+                const disease = diseaseData[diseaseId];
+                if (!disease) return;
+
+                // 填充模态框内容
+                document.querySelector('#modal-disease-name').textContent = disease.name;
+                document.querySelector('#modal-disease-category').textContent = disease.category;
+                document.querySelector('#modal-disease-description').textContent = disease.description;
+
+                // 填充图片
+                const imagesContainer = document.querySelector('#modal-disease-images');
+                imagesContainer.innerHTML = '';
+                disease.images.forEach(imgSrc => {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = imgSrc;
+                    imgElement.alt = `${disease.name}病理图`;
+                    imgElement.className = 'w-full h-24 object-cover rounded-lg';
+                    imgElement.dataset.category = '动物';
+                    imagesContainer.appendChild(imgElement);
+                });
+
+                // 填充症状
+                const symptomsContainer = document.querySelector('#modal-disease-symptoms');
+                symptomsContainer.innerHTML = '';
+                disease.symptoms.forEach(symptom => {
+                    const spanElement = document.createElement('span');
+                    spanElement.className = 'px-3 py-1 bg-secondary/10 text-secondary text-xs rounded-full';
+                    spanElement.textContent = symptom;
+                    symptomsContainer.appendChild(spanElement);
+                });
+
+                // 填充相关疾病
+                const relatedContainer = document.querySelector('#modal-related-diseases');
+                relatedContainer.innerHTML = '';
+                disease.relatedDiseases.forEach(relatedDisease => {
+                    const divElement = document.createElement('div');
+                    divElement.className = 'flex items-center space-x-2 p-2 bg-gray-50 rounded-lg';
+                    divElement.innerHTML = `
+                        <i class="fas fa-link text-secondary text-sm"></i>
+                        <span class="text-sm text-text-primary">${relatedDisease}</span>
+                    `;
+                    relatedContainer.appendChild(divElement);
+                });
+
+                // 显示模态框
+                modal.classList.remove('hidden');
+            }
+
+            // 卡片点击效果
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach(card => {
+                card.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                card.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

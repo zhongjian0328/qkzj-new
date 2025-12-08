@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 生产管理</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D3F8EE',
+                        secondary: '#3BCCA5', 
+                        accent: '#2B6A5A',
+                        'text-primary': '#1F2937',
+                        'text-secondary': '#6B7280',
+                        'bg-light': '#F9FAFB',
+                        'card-bg': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+
+        .chart-container {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #3BCCA5 0%, #2B6A5A 100%);
+            border-radius: 4px;
+            height: 8px;
+        }
+
+        .data-card {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border-left: 4px solid #3BCCA5;
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex justify-between items-center px-4 py-3">
+            <div id="page-title" class="flex items-center space-x-3">
+                <button id="back-btn" class="p-2 -ml-2">
+                    <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+                </button>
+                <h1 class="text-lg font-semibold text-text-primary">生产管理</h1>
+            </div>
+            <div id="header-actions" class="flex items-center space-x-3">
+                <button id="notification-btn" class="relative p-2">
+                    <i class="far fa-bell text-xl text-text-secondary"></i>
+                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+                </button>
+                <button id="profile-btn">
+                    <i class="fas fa-user-circle text-xl text-text-secondary"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6 pb-20">
+        <!-- 核心数据卡片 -->
+        <section id="core-data" class="mb-8">
+            <h2 id="core-data-title" class="text-lg font-semibold text-text-primary mb-4">核心数据</h2>
+            
+            <div id="data-cards-grid" class="grid grid-cols-2 gap-4">
+                <!-- 今日死淘数 -->
+                <div id="death-count-card" class="data-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-exclamation-triangle text-red-600"></i>
+                        </div>
+                        <span class="text-xs text-red-600 bg-red-100 px-2 py-1 rounded-full">+2</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-text-primary mb-1">12</h3>
+                    <p class="text-sm text-text-secondary">今日死淘数</p>
+                </div>
+
+                <!-- 疫苗倒计时 -->
+                <div id="vaccine-countdown-card" class="data-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-syringe text-blue-600"></i>
+                        </div>
+                        <span class="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded-full">即将到期</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-text-primary mb-1">3</h3>
+                    <p class="text-sm text-text-secondary">疫苗倒计时(天)</p>
+                </div>
+
+                <!-- 存栏量 -->
+                <div id="inventory-card" class="data-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-layer-group text-green-600"></i>
+                        </div>
+                        <span class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">稳定</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-text-primary mb-1">15,680</h3>
+                    <p class="text-sm text-text-secondary">当前存栏量</p>
+                </div>
+
+                <!-- 死淘率 -->
+                <div id="mortality-rate-card" class="data-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-chart-line text-orange-600"></i>
+                        </div>
+                        <span class="text-xs text-orange-600 bg-orange-100 px-2 py-1 rounded-full">-0.2%</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-text-primary mb-1">2.3%</h3>
+                    <p class="text-sm text-text-secondary">本周死淘率</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 死淘率曲线图 -->
+        <section id="mortality-chart" class="mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="mortality-chart-title" class="text-lg font-semibold text-text-primary">死淘率趋势</h2>
+                <div id="chart-period-selector" class="flex bg-gray-100 rounded-lg p-1">
+                    <button id="period-week" class="px-3 py-1 text-xs bg-white text-secondary rounded-md shadow-sm">7天</button>
+                    <button id="period-month" class="px-3 py-1 text-xs text-text-secondary">30天</button>
+                    <button id="period-quarter" class="px-3 py-1 text-xs text-text-secondary">90天</button>
+                </div>
+            </div>
+            
+            <div id="mortality-chart-container" class="chart-container">
+                <div class="flex items-end justify-between h-32 space-x-2">
+                    <div class="flex flex-col items-center space-y-2">
+                        <div class="w-6 bg-white/80 rounded-t" style="height: 40%"></div>
+                        <span class="text-xs text-accent">周一</span>
+                    </div>
+                    <div class="flex flex-col items-center space-y-2">
+                        <div class="w-6 bg-white/80 rounded-t" style="height: 60%"></div>
+                        <span class="text-xs text-accent">周二</span>
+                    </div>
+                    <div class="flex flex-col items-center space-y-2">
+                        <div class="w-6 bg-white/80 rounded-t" style="height: 35%"></div>
+                        <span class="text-xs text-accent">周三</span>
+                    </div>
+                    <div class="flex flex-col items-center space-y-2">
+                        <div class="w-6 bg-white/80 rounded-t" style="height: 70%"></div>
+                        <span class="text-xs text-accent">周四</span>
+                    </div>
+                    <div class="flex flex-col items-center space-y-2">
+                        <div class="w-6 bg-white/80 rounded-t" style="height: 45%"></div>
+                        <span class="text-xs text-accent">周五</span>
+                    </div>
+                    <div class="flex flex-col items-center space-y-2">
+                        <div class="w-6 bg-white/80 rounded-t" style="height: 55%"></div>
+                        <span class="text-xs text-accent">周六</span>
+                    </div>
+                    <div class="flex flex-col items-center space-y-2">
+                        <div class="w-6 bg-white rounded-t" style="height: 30%"></div>
+                        <span class="text-xs text-accent">今天</span>
+                    </div>
+                </div>
+                <div class="mt-4 flex justify-between text-xs text-accent">
+                    <span>死淘率: 1.8% - 2.5%</span>
+                    <span class="text-white font-medium">平均: 2.3%</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 耗料分析图表 -->
+        <section id="feed-analysis" class="mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="feed-analysis-title" class="text-lg font-semibold text-text-primary">耗料分析</h2>
+                <button id="feed-detail-btn" class="text-sm text-secondary">查看详情</button>
+            </div>
+            
+            <div id="feed-chart-container" class="bg-card-bg rounded-xl p-4 shadow-card">
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-text-secondary">今日耗料</span>
+                        <span class="text-lg font-semibold text-text-primary">2,850 kg</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="progress-bar w-4/5 h-2 rounded-full"></div>
+                    </div>
+                    <div class="flex justify-between text-xs text-text-secondary">
+                        <span>目标: 3,000 kg</span>
+                        <span>完成率: 95%</span>
+                    </div>
+                </div>
+                
+                <div class="mt-6 pt-4 border-t border-gray-100">
+                    <h4 class="text-sm font-medium text-text-primary mb-3">本周耗料趋势</h4>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-text-secondary">周一</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-20 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-secondary h-2 rounded-full" style="width: 85%"></div>
+                                </div>
+                                <span class="text-sm text-text-primary">2,550 kg</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-text-secondary">周二</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-20 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-secondary h-2 rounded-full" style="width: 92%"></div>
+                                </div>
+                                <span class="text-sm text-text-primary">2,760 kg</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-text-secondary">周三</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-20 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-secondary h-2 rounded-full" style="width: 88%"></div>
+                                </div>
+                                <span class="text-sm text-text-primary">2,640 kg</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-text-secondary">周四</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-20 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-secondary h-2 rounded-full" style="width: 95%"></div>
+                                </div>
+                                <span class="text-sm text-text-primary">2,850 kg</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-text-secondary">今天</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-20 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-accent h-2 rounded-full" style="width: 95%"></div>
+                                </div>
+                                <span class="text-sm font-semibold text-text-primary">2,850 kg</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 快捷功能区 -->
+        <section id="quick-functions">
+            <h2 id="quick-functions-title" class="text-lg font-semibold text-text-primary mb-4">快捷功能</h2>
+            
+            <div id="functions-grid" class="grid grid-cols-2 gap-4">
+                <div id="batch-management-card" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-layer-group text-xl text-secondary"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-text-primary">批次管理</h4>
+                            <p class="text-xs text-text-secondary">管理养殖批次</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="employee-permission-card" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-users-cog text-xl text-secondary"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-text-primary">员工权限</h4>
+                            <p class="text-xs text-text-secondary">管理员工权限</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="data-export-card" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-download text-xl text-secondary"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-text-primary">数据导出</h4>
+                            <p class="text-xs text-text-secondary">导出生产数据</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="bulk-purchase-card" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-shopping-cart text-xl text-secondary"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-text-primary">大宗采购</h4>
+                            <p class="text-xs text-text-secondary">批量采购物资</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部导航栏 -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
+        <a id="nav-home" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-xs mt-0.5">首页</span>
+        </a>
+        <a id="nav-production" href="#" class="flex flex-col items-center p-2 text-secondary">
+            <i class="fas fa-chart-bar text-xl"></i>
+            <span class="text-xs mt-0.5">生产管理</span>
+        </a>
+        <a id="nav-profile" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+            <i class="fas fa-user text-xl"></i>
+            <span class="text-xs mt-0.5">我的</span>
+        </a>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 返回按钮点击事件
+            document.querySelector('#back-btn').addEventListener('click', function() {
+                window.location.href = 'P-HOME_FARMER_ENTERPRISE.html';
+            });
+
+            // 个人中心按钮点击事件
+            document.querySelector('#profile-btn').addEventListener('click', function() {
+                window.location.href = 'P-USER_PROFILE.html';
+            });
+
+            // 快捷功能点击事件
+            document.querySelector('#batch-management-card').addEventListener('click', function() {
+                window.location.href = 'P-BATCH_MANAGEMENT.html';
+            });
+
+            document.querySelector('#employee-permission-card').addEventListener('click', function() {
+                window.location.href = 'P-EMPLOYEE_PERMISSION.html';
+            });
+
+            document.querySelector('#data-export-card').addEventListener('click', function() {
+                window.location.href = 'P-DATA_EXPORT.html';
+            });
+
+            document.querySelector('#bulk-purchase-card').addEventListener('click', function() {
+                window.location.href = 'P-BULK_PURCHASE.html';
+            });
+
+            // 图表周期选择器
+            const periodButtons = document.querySelectorAll('#chart-period-selector button');
+            periodButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 重置所有按钮样式
+                    periodButtons.forEach(btn => {
+                        btn.classList.remove('bg-white', 'text-secondary', 'shadow-sm');
+                        btn.classList.add('text-text-secondary');
+                    });
+                    // 设置当前按钮样式
+                    this.classList.remove('text-text-secondary');
+                    this.classList.add('bg-white', 'text-secondary', 'shadow-sm');
+                });
+            });
+
+            // 底部导航栏点击事件
+            document.querySelector('#nav-home').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'P-HOME_FARMER_ENTERPRISE.html';
+            });
+
+            document.querySelector('#nav-production').addEventListener('click', function(e) {
+                e.preventDefault();
+                // 已在生产管理页面，无需操作
+            });
+
+            document.querySelector('#nav-profile').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'P-USER_PROFILE.html';
+            });
+
+            // 卡片点击效果
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach(card => {
+                card.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                card.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

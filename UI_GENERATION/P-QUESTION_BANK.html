@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 题库测验</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D3F8EE',
+                        secondary: '#3BCCA5', 
+                        accent: '#2B6A5A',
+                        'text-primary': '#1F2937',
+                        'text-secondary': '#6B7280',
+                        'bg-light': '#F9FAFB',
+                        'card-bg': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+
+        .option-selected {
+            background-color: #3BCCA5;
+            color: white;
+        }
+
+        .option-correct {
+            background-color: #10B981;
+            color: white;
+        }
+
+        .option-incorrect {
+            background-color: #EF4444;
+            color: white;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex justify-between items-center px-4 py-3">
+            <button id="back-btn" class="p-2 -ml-2">
+                <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+            </button>
+            <h1 id="page-title" class="text-lg font-semibold text-text-primary">题库测验</h1>
+            <div class="w-10"></div> <!-- 占位元素保持标题居中 -->
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6">
+        <!-- 测验模式选择页面 -->
+        <div id="mode-selection" class="space-y-6">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-clipboard-check text-3xl text-secondary"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-text-primary mb-2">选择测验模式</h2>
+                <p class="text-text-secondary">巩固知识，提升技能</p>
+            </div>
+
+            <div class="space-y-4">
+                <div id="chapter-quiz-card" class="bg-card-bg rounded-xl p-6 shadow-card card-hover cursor-pointer">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-book-open text-2xl text-secondary"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-text-primary mb-1">章节测验</h3>
+                            <p class="text-sm text-text-secondary">按章节进行专项练习</p>
+                            <div class="flex items-center mt-2 space-x-4">
+                                <span class="text-xs text-text-secondary">
+                                    <i class="fas fa-clock mr-1"></i>15分钟
+                                </span>
+                                <span class="text-xs text-text-secondary">
+                                    <i class="fas fa-list-ol mr-1"></i>10题
+                                </span>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </div>
+                </div>
+
+                <div id="comprehensive-quiz-card" class="bg-card-bg rounded-xl p-6 shadow-card card-hover cursor-pointer">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-trophy text-2xl text-secondary"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-text-primary mb-1">综合测验</h3>
+                            <p class="text-sm text-text-secondary">全面考察知识掌握程度</p>
+                            <div class="flex items-center mt-2 space-x-4">
+                                <span class="text-xs text-text-secondary">
+                                    <i class="fas fa-clock mr-1"></i>30分钟
+                                </span>
+                                <span class="text-xs text-text-secondary">
+                                    <i class="fas fa-list-ol mr-1"></i>20题
+                                </span>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 章节选择页面 -->
+        <div id="chapter-selection" class="hidden space-y-6">
+            <div class="text-center mb-6">
+                <h2 class="text-xl font-bold text-text-primary mb-2">选择章节</h2>
+                <p class="text-text-secondary">选择要测验的知识章节</p>
+            </div>
+
+            <div class="space-y-3">
+                <div id="chapter-1" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer chapter-option" data-chapter="1" data-questions="10">
+                    <h3 class="font-semibold text-text-primary mb-1">第一章：禽病基础知识</h3>
+                    <p class="text-sm text-text-secondary">禽类常见疾病分类与特征</p>
+                </div>
+                <div id="chapter-2" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer chapter-option" data-chapter="2" data-questions="10">
+                    <h3 class="font-semibold text-text-primary mb-1">第二章：新城疫</h3>
+                    <p class="text-sm text-text-secondary">新城疫的诊断与防控</p>
+                </div>
+                <div id="chapter-3" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer chapter-option" data-chapter="3" data-questions="10">
+                    <h3 class="font-semibold text-text-primary mb-1">第三章：禽流感</h3>
+                    <p class="text-sm text-text-secondary">禽流感的识别与处理</p>
+                </div>
+                <div id="chapter-4" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer chapter-option" data-chapter="4" data-questions="10">
+                    <h3 class="font-semibold text-text-primary mb-1">第四章：传染性支气管炎</h3>
+                    <p class="text-sm text-text-secondary">传染性支气管炎的防治</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 答题页面 -->
+        <div id="quiz-page" class="hidden space-y-6">
+            <!-- 进度条 -->
+            <div id="progress-section" class="bg-card-bg rounded-xl p-4 shadow-card">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-medium text-text-primary">答题进度</span>
+                    <span id="progress-text" class="text-sm text-text-secondary">1/10</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div id="progress-bar" class="bg-secondary h-2 rounded-full progress-bar" style="width: 10%"></div>
+                </div>
+            </div>
+
+            <!-- 题目卡片 -->
+            <div id="question-card" class="bg-card-bg rounded-xl p-6 shadow-card fade-in">
+                <h3 id="question-text" class="text-lg font-semibold text-text-primary mb-4">
+                    以下哪种症状不是新城疫的典型临床表现？
+                </h3>
+                
+                <div id="options-container" class="space-y-3">
+                    <div id="option-a" class="option-card p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50" data-option="A">
+                        <span class="font-medium text-text-primary">A. 呼吸困难</span>
+                    </div>
+                    <div id="option-b" class="option-card p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50" data-option="B">
+                        <span class="font-medium text-text-primary">B. 神经症状</span>
+                    </div>
+                    <div id="option-c" class="option-card p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50" data-option="C">
+                        <span class="font-medium text-text-primary">C. 皮肤出血</span>
+                    </div>
+                    <div id="option-d" class="option-card p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50" data-option="D">
+                        <span class="font-medium text-text-primary">D. 产蛋率下降</span>
+                    </div>
+                </div>
+
+                <button id="submit-answer-btn" class="w-full mt-6 py-3 bg-secondary text-white rounded-lg font-medium shadow-button disabled:bg-gray-300 disabled:cursor-not-allowed" disabled>
+                    提交答案
+                </button>
+            </div>
+
+            <!-- 答题结果反馈 -->
+            <div id="answer-feedback" class="hidden bg-card-bg rounded-xl p-6 shadow-card">
+                <div class="text-center mb-4">
+                    <div id="feedback-icon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-check text-2xl text-white"></i>
+                    </div>
+                    <h3 id="feedback-title" class="text-lg font-semibold text-text-primary mb-2">回答正确！</h3>
+                    <p id="feedback-description" class="text-text-secondary">
+                        新城疫的典型症状包括呼吸困难、神经症状和产蛋率下降，皮肤出血不是其典型表现。
+                    </p>
+                </div>
+                
+                <button id="next-question-btn" class="w-full py-3 bg-secondary text-white rounded-lg font-medium shadow-button">
+                    下一题
+                </button>
+            </div>
+        </div>
+
+        <!-- 测验结果页面 -->
+        <div id="result-page" class="hidden space-y-6">
+            <div class="text-center mb-8">
+                <div class="w-24 h-24 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-chart-line text-3xl text-secondary"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-text-primary mb-2">测验完成！</h2>
+                <p class="text-text-secondary">查看你的成绩和错题解析</p>
+            </div>
+
+            <!-- 成绩概览 -->
+            <div id="score-overview" class="bg-card-bg rounded-xl p-6 shadow-card text-center">
+                <div class="mb-4">
+                    <span id="score-text" class="text-4xl font-bold text-secondary">85</span>
+                    <span class="text-lg text-text-secondary ml-1">分</span>
+                </div>
+                <div class="grid grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <div id="total-questions" class="text-xl font-semibold text-text-primary">10</div>
+                        <div class="text-sm text-text-secondary">总题数</div>
+                    </div>
+                    <div>
+                        <div id="correct-answers" class="text-xl font-semibold text-green-600">8</div>
+                        <div class="text-sm text-text-secondary">答对</div>
+                    </div>
+                    <div>
+                        <div id="incorrect-answers" class="text-xl font-semibold text-red-600">2</div>
+                        <div class="text-sm text-text-secondary">答错</div>
+                    </div>
+                </div>
+                <div class="flex justify-center space-x-4">
+                    <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm">良好</span>
+                </div>
+            </div>
+
+            <!-- 错题回顾 -->
+            <div id="wrong-questions" class="bg-card-bg rounded-xl p-6 shadow-card">
+                <h3 class="text-lg font-semibold text-text-primary mb-4">错题回顾</h3>
+                
+                <div id="wrong-question-1" class="mb-6 p-4 border border-red-200 rounded-lg bg-red-50">
+                    <h4 class="font-medium text-text-primary mb-2">
+                        1. 以下哪种症状不是新城疫的典型临床表现？
+                    </h4>
+                    <div class="space-y-2 mb-3">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs mr-2">A</span>
+                            <span class="text-sm text-text-secondary">呼吸困难</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs mr-2">B</span>
+                            <span class="text-sm text-text-secondary">神经症状</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-xs mr-2 text-white">C</span>
+                            <span class="text-sm text-red-600 font-medium">皮肤出血 <span class="text-xs">(你的答案)</span></span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-xs mr-2 text-white">D</span>
+                            <span class="text-sm text-green-600 font-medium">产蛋率下降 <span class="text-xs">(正确答案)</span></span>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-white rounded-lg">
+                        <p class="text-sm text-text-secondary">
+                            <strong>解析：</strong>新城疫的典型症状包括呼吸困难、神经症状和产蛋率下降，皮肤出血不是其典型表现。
+                        </p>
+                    </div>
+                </div>
+
+                <div id="wrong-question-2" class="mb-6 p-4 border border-red-200 rounded-lg bg-red-50">
+                    <h4 class="font-medium text-text-primary mb-2">
+                        2. 禽流感病毒的主要传播途径不包括以下哪项？
+                    </h4>
+                    <div class="space-y-2 mb-3">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs mr-2">A</span>
+                            <span class="text-sm text-text-secondary">空气传播</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-xs mr-2 text-white">B</span>
+                            <span class="text-sm text-red-600 font-medium">垂直传播 <span class="text-xs">(你的答案)</span></span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs mr-2">C</span>
+                            <span class="text-sm text-text-secondary">接触传播</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-xs mr-2 text-white">D</span>
+                            <span class="text-sm text-green-600 font-medium">粪口传播 <span class="text-xs">(正确答案)</span></span>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-white rounded-lg">
+                        <p class="text-sm text-text-secondary">
+                            <strong>解析：</strong>禽流感主要通过空气、接触和粪口传播，垂直传播不是其主要传播途径。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div class="space-y-3">
+                <button id="retry-quiz-btn" class="w-full py-3 bg-secondary text-white rounded-lg font-medium shadow-button">
+                    重新测验
+                </button>
+                <button id="back-to-mode-btn" class="w-full py-3 bg-gray-200 text-text-primary rounded-lg font-medium">
+                    选择其他模式
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 页面元素
+            const modeSelection = document.querySelector('#mode-selection');
+            const chapterSelection = document.querySelector('#chapter-selection');
+            const quizPage = document.querySelector('#quiz-page');
+            const resultPage = document.querySelector('#result-page');
+            
+            // 测验数据
+            let currentMode = '';
+            let currentChapter = '';
+            let currentQuestionIndex = 0;
+            let totalQuestions = 0;
+            let userAnswers = [];
+            let correctAnswers = 0;
+            
+            // 模拟题库数据
+            const questionBank = {
+                chapter: {
+                    1: [
+                        {
+                            question: "以下哪种症状不是新城疫的典型临床表现？",
+                            options: ["呼吸困难", "神经症状", "皮肤出血", "产蛋率下降"],
+                            correct: "C",
+                            explanation: "新城疫的典型症状包括呼吸困难、神经症状和产蛋率下降，皮肤出血不是其典型表现。"
+                        },
+                        {
+                            question: "新城疫病毒属于以下哪个病毒科？",
+                            options: ["冠状病毒科", "副黏病毒科", "疱疹病毒科", "正黏病毒科"],
+                            correct: "B",
+                            explanation: "新城疫病毒属于副黏病毒科，具有较强的致病性。"
+                        },
+                        {
+                            question: "新城疫的最有效防控措施是？",
+                            options: ["定期消毒", "疫苗接种", "药物治疗", "隔离病禽"],
+                            correct: "B",
+                            explanation: "疫苗接种是预防新城疫最有效的措施，可以显著降低发病率。"
+                        },
+                        {
+                            question: "新城疫的典型病理变化不包括？",
+                            options: ["腺胃乳头出血", "肠道出血", "肝脏肿大", "呼吸道黏膜充血"],
+                            correct: "C",
+                            explanation: "新城疫的典型病理变化包括腺胃乳头出血、肠道出血和呼吸道黏膜充血，肝脏肿大不是其典型变化。"
+                        },
+                        {
+                            question: "新城疫的传播途径主要是？",
+                            options: ["空气传播", "水源传播", "接触传播", "媒介传播"],
+                            correct: "A",
+                            explanation: "新城疫主要通过空气传播，病毒可通过飞沫在禽类之间快速传播。"
+                        },
+                        {
+                            question: "以下哪种禽类对新城疫最易感？",
+                            options: ["鸡", "鸭", "鹅", "鸽子"],
+                            correct: "A",
+                            explanation: "鸡对新城疫病毒最为易感，尤其是幼龄鸡群发病率和死亡率都很高。"
+                        },
+                        {
+                            question: "新城疫的潜伏期通常为？",
+                            options: ["1-2天", "3-5天", "7-10天", "14天以上"],
+                            correct: "B",
+                            explanation: "新城疫的潜伏期一般为3-5天，根据病毒毒力和宿主易感性有所不同。"
+                        },
+                        {
+                            question: "新城疫的特征性症状是？",
+                            options: ["头颈部水肿", "脚鳞出血", "嗉囊积液", "神经症状"],
+                            correct: "D",
+                            explanation: "神经症状是新城疫的特征性表现，包括扭颈、转圈、翅膀麻痹等。"
+                        },
+                        {
+                            question: "新城疫的诊断方法不包括？",
+                            options: ["病毒分离", "血清学检测", "PCR检测", "病理剖检"],
+                            correct: "D",
+                            explanation: "病理剖检可以提供诊断线索，但不能作为确诊方法，确诊需要实验室检测。"
+                        },
+                        {
+                            question: "新城疫的免疫程序应根据什么制定？",
+                            options: ["当地疫情", "鸡群日龄", "疫苗种类", "以上都是"],
+                            correct: "D",
+                            explanation: "新城疫的免疫程序需要综合考虑当地疫情情况、鸡群日龄和疫苗种类等因素。"
+                        }
+                    ]
+                },
+                comprehensive: [
+                    {
+                        question: "禽流感病毒的主要传播途径不包括以下哪项？",
+                        options: ["空气传播", "垂直传播", "接触传播", "粪口传播"],
+                        correct: "B",
+                        explanation: "禽流感主要通过空气、接触和粪口传播，垂直传播不是其主要传播途径。"
+                    },
+                    {
+                        question: "传染性支气管炎的典型症状是？",
+                        options: ["呼吸道症状", "消化道症状", "神经症状", "皮肤症状"],
+                        correct: "A",
+                        explanation: "传染性支气管炎主要表现为呼吸道症状，如咳嗽、打喷嚏、呼吸困难等。"
+                    },
+                    {
+                        question: "以下哪种疾病属于病毒性传染病？",
+                        options: ["大肠杆菌病", "沙门氏菌病", "新城疫", "支原体病"],
+                        correct: "C",
+                        explanation: "新城疫是由病毒引起的传染病，其他选项均为细菌性或支原体性疾病。"
+                    },
+                    {
+                        question: "禽类免疫接种的最佳时间是？",
+                        options: ["发病期", "潜伏期", "健康期", "任何时间"],
+                        correct: "C",
+                        explanation: "免疫接种应在禽类健康状态下进行，发病期或潜伏期接种效果不佳。"
+                    },
+                    {
+                        question: "生物安全措施不包括以下哪项？",
+                        options: ["定期消毒", "隔离饲养", "药物预防", "人员管理"],
+                        correct: "C",
+                        explanation: "生物安全措施主要包括消毒、隔离、人员管理等，药物预防不属于生物安全范畴。"
+                    }
+                ]
+            };
+            
+            let currentQuestions = [];
+
+            // 返回按钮
+            document.querySelector('#back-btn').addEventListener('click', function() {
+                if (!quizPage.classList.contains('hidden')) {
+                    // 如果在答题页面，返回模式选择
+                    showModeSelection();
+                } else {
+                    // 否则返回学习首页
+                    window.location.href = 'P-HOME_STUDENT_LEARNING.html';
+                }
+            });
+
+            // 测验模式选择
+            document.querySelector('#chapter-quiz-card').addEventListener('click', function() {
+                currentMode = 'chapter';
+                showChapterSelection();
+            });
+
+            document.querySelector('#comprehensive-quiz-card').addEventListener('click', function() {
+                currentMode = 'comprehensive';
+                startQuiz('comprehensive', 5); // 综合测验5题
+            });
+
+            // 章节选择
+            document.querySelectorAll('.chapter-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    currentChapter = this.dataset.chapter;
+                    const questionsCount = parseInt(this.dataset.questions);
+                    startQuiz('chapter', questionsCount);
+                });
+            });
+
+            // 选项选择
+            document.querySelectorAll('.option-card').forEach(option => {
+                option.addEventListener('click', function() {
+                    const selectedOption = this.dataset.option;
+                    selectOption(selectedOption);
+                });
+            });
+
+            // 提交答案
+            document.querySelector('#submit-answer-btn').addEventListener('click', function() {
+                submitAnswer();
+            });
+
+            // 下一题
+            document.querySelector('#next-question-btn').addEventListener('click', function() {
+                nextQuestion();
+            });
+
+            // 重新测验
+            document.querySelector('#retry-quiz-btn').addEventListener('click', function() {
+                if (currentMode === 'chapter') {
+                    startQuiz('chapter', totalQuestions);
+                } else {
+                    startQuiz('comprehensive', totalQuestions);
+                }
+            });
+
+            // 返回模式选择
+            document.querySelector('#back-to-mode-btn').addEventListener('click', function() {
+                showModeSelection();
+            });
+
+            // 显示模式选择页面
+            function showModeSelection() {
+                modeSelection.classList.remove('hidden');
+                chapterSelection.classList.add('hidden');
+                quizPage.classList.add('hidden');
+                resultPage.classList.add('hidden');
+                
+                // 重置状态
+                currentMode = '';
+                currentChapter = '';
+                currentQuestionIndex = 0;
+                totalQuestions = 0;
+                userAnswers = [];
+                correctAnswers = 0;
+            }
+
+            // 显示章节选择页面
+            function showChapterSelection() {
+                modeSelection.classList.add('hidden');
+                chapterSelection.classList.remove('hidden');
+                quizPage.classList.add('hidden');
+                resultPage.classList.add('hidden');
+            }
+
+            // 开始测验
+            function startQuiz(mode, questionsCount) {
+                currentMode = mode;
+                totalQuestions = questionsCount;
+                currentQuestionIndex = 0;
+                userAnswers = [];
+                correctAnswers = 0;
+                
+                // 获取题目
+                if (mode === 'chapter') {
+                    currentQuestions = questionBank.chapter[currentChapter].slice(0, questionsCount);
+                } else {
+                    currentQuestions = questionBank.comprehensive.slice(0, questionsCount);
+                }
+                
+                // 显示答题页面
+                modeSelection.classList.add('hidden');
+                chapterSelection.classList.add('hidden');
+                quizPage.classList.remove('hidden');
+                resultPage.classList.add('hidden');
+                
+                // 显示第一题
+                showQuestion();
+            }
+
+            // 显示题目
+            function showQuestion() {
+                if (currentQuestionIndex >= totalQuestions) {
+                    showResult();
+                    return;
+                }
+                
+                const question = currentQuestions[currentQuestionIndex];
+                
+                // 更新进度
+                const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+                document.querySelector('#progress-text').textContent = `${currentQuestionIndex + 1}/${totalQuestions}`;
+                document.querySelector('#progress-bar').style.width = `${progress}%`;
+                
+                // 更新题目内容
+                document.querySelector('#question-text').textContent = question.question;
+                
+                // 更新选项
+                const options = ['A', 'B', 'C', 'D'];
+                options.forEach((option, index) => {
+                    const optionElement = document.querySelector(`#option-${option.toLowerCase()}`);
+                    optionElement.querySelector('span').textContent = `${option}. ${question.options[index]}`;
+                    optionElement.className = 'option-card p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50';
+                    optionElement.dataset.option = option;
+                });
+                
+                // 隐藏反馈，显示题目
+                document.querySelector('#answer-feedback').classList.add('hidden');
+                document.querySelector('#question-card').classList.remove('hidden');
+                
+                // 重置提交按钮
+                const submitBtn = document.querySelector('#submit-answer-btn');
+                submitBtn.disabled = true;
+                submitBtn.textContent = '提交答案';
+            }
+
+            // 选择选项
+            function selectOption(option) {
+                // 清除之前的选择
+                document.querySelectorAll('.option-card').forEach(opt => {
+                    opt.classList.remove('option-selected');
+                });
+                
+                // 选中当前选项
+                const selectedElement = document.querySelector(`#option-${option.toLowerCase()}`);
+                selectedElement.classList.add('option-selected');
+                
+                // 启用提交按钮
+                document.querySelector('#submit-answer-btn').disabled = false;
+            }
+
+            // 提交答案
+            function submitAnswer() {
+                const selectedOption = document.querySelector('.option-selected');
+                if (!selectedOption) return;
+                
+                const userAnswer = selectedOption.dataset.option;
+                const question = currentQuestions[currentQuestionIndex];
+                const isCorrect = userAnswer === question.correct;
+                
+                userAnswers.push({
+                    question: question.question,
+                    userAnswer: userAnswer,
+                    correctAnswer: question.correct,
+                    isCorrect: isCorrect
+                });
+                
+                if (isCorrect) {
+                    correctAnswers++;
+                }
+                
+                // 显示答案反馈
+                showAnswerFeedback(isCorrect, question);
+            }
+
+            // 显示答案反馈
+            function showAnswerFeedback(isCorrect, question) {
+                const feedbackIcon = document.querySelector('#feedback-icon');
+                const feedbackTitle = document.querySelector('#feedback-title');
+                const feedbackDescription = document.querySelector('#feedback-description');
+                
+                if (isCorrect) {
+                    feedbackIcon.className = 'w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3';
+                    feedbackIcon.querySelector('i').className = 'fas fa-check text-2xl text-white';
+                    feedbackTitle.textContent = '回答正确！';
+                    feedbackTitle.className = 'text-lg font-semibold text-green-600 mb-2';
+                } else {
+                    feedbackIcon.className = 'w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-3';
+                    feedbackIcon.querySelector('i').className = 'fas fa-times text-2xl text-white';
+                    feedbackTitle.textContent = '回答错误';
+                    feedbackTitle.className = 'text-lg font-semibold text-red-600 mb-2';
+                }
+                
+                feedbackDescription.textContent = question.explanation;
+                
+                // 显示正确答案
+                document.querySelectorAll('.option-card').forEach(option => {
+                    if (option.dataset.option === question.correct) {
+                        option.classList.add('option-correct');
+                    } else if (option.classList.contains('option-selected') && !isCorrect) {
+                        option.classList.remove('option-selected');
+                        option.classList.add('option-incorrect');
+                    }
+                });
+                
+                // 隐藏题目，显示反馈
+                document.querySelector('#question-card').classList.add('hidden');
+                document.querySelector('#answer-feedback').classList.remove('hidden');
+            }
+
+            // 下一题
+            function nextQuestion() {
+                currentQuestionIndex++;
+                showQuestion();
+            }
+
+            // 显示测验结果
+            function showResult() {
+                const score = Math.round((correctAnswers / totalQuestions) * 100);
+                
+                // 更新成绩
+                document.querySelector('#score-text').textContent = score;
+                document.querySelector('#total-questions').textContent = totalQuestions;
+                document.querySelector('#correct-answers').textContent = correctAnswers;
+                document.querySelector('#incorrect-answers').textContent = totalQuestions - correctAnswers;
+                
+                // 显示结果页面
+                modeSelection.classList.add('hidden');
+                chapterSelection.classList.add('hidden');
+                quizPage.classList.add('hidden');
+                resultPage.classList.remove('hidden');
+            }
+
+            // 卡片点击效果
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach(card => {
+                card.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                card.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

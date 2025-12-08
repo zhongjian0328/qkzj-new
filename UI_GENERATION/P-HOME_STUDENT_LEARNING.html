@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 学生学习首页</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D3F8EE',
+                        secondary: '#3BCCA5', 
+                        accent: '#2B6A5A',
+                        'text-primary': '#1F2937',
+                        'text-secondary': '#6B7280',
+                        'bg-light': '#F9FAFB',
+                        'card-bg': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #3BCCA5 0%, #2B6A5A 100%);
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex justify-between items-center px-4 py-3">
+            <div id="user-info" class="flex items-center space-x-3">
+                <img id="user-avatar" src="https://s.coze.cn/image/p9JuDcal_sk/" 
+                     alt="学生头像" data-category="人物" class="w-10 h-10 rounded-full border-2 border-secondary">
+                <div>
+                    <h1 id="user-greeting" class="text-lg font-semibold text-text-primary">早上好，李同学</h1>
+                    <p id="user-role" class="text-sm text-text-secondary">学习阶段</p>
+                </div>
+            </div>
+            <div id="header-actions" class="flex items-center space-x-3">
+                <button id="notification-btn" class="relative p-2">
+                    <i class="far fa-bell text-xl text-text-secondary"></i>
+                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+                </button>
+                <button id="profile-btn">
+                    <i class="fas fa-user-circle text-xl text-text-secondary"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6 pb-20">
+        <!-- 学习进度概览 -->
+        <section id="learning-overview" class="mb-8">
+            <div class="gradient-bg rounded-2xl p-6 shadow-card">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 id="overview-title" class="text-xl font-bold text-accent mb-1">本周学习进度</h2>
+                        <p id="overview-subtitle" class="text-accent/80 text-sm">继续加油，距离完成目标还差一点</p>
+                    </div>
+                    <div id="overview-icon" class="w-16 h-16 bg-white/30 rounded-full flex items-center justify-center">
+                        <i class="fas fa-graduation-cap text-2xl text-accent"></i>
+                    </div>
+                </div>
+                
+                <!-- 进度条 -->
+                <div id="progress-section" class="mb-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm text-accent/80">完成度</span>
+                        <span class="text-sm font-semibold text-accent">75%</span>
+                    </div>
+                    <div class="w-full bg-white/30 rounded-full h-3">
+                        <div class="progress-bar h-3 rounded-full" style="width: 75%"></div>
+                    </div>
+                </div>
+                
+                <!-- 学习统计 -->
+                <div id="stats-grid" class="grid grid-cols-3 gap-4">
+                    <div class="text-center">
+                        <div class="text-lg font-bold text-accent">12</div>
+                        <div class="text-xs text-accent/80">已学疾病</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-lg font-bold text-accent">85</div>
+                        <div class="text-xs text-accent/80">测验得分</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-lg font-bold text-accent">3</div>
+                        <div class="text-xs text-accent/80">连续天数</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心功能区 -->
+        <section id="core-functions" class="mb-8">
+            <h2 id="core-functions-title" class="text-lg font-semibold text-text-primary mb-4">学习工具</h2>
+            
+            <div id="functions-grid" class="grid grid-cols-2 gap-4">
+                <div id="knowledge-graph-card" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-book-open text-xl text-secondary"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-text-primary">图谱百科</h4>
+                            <p class="text-xs text-text-secondary">浏览病理图谱</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="question-bank-card" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-question-circle text-xl text-secondary"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-text-primary">题库测验</h4>
+                            <p class="text-xs text-text-secondary">知识闯关测验</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 今日学习任务 -->
+        <section id="daily-tasks" class="mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="daily-tasks-title" class="text-lg font-semibold text-text-primary">今日学习任务</h2>
+                <button id="view-all-tasks" class="text-sm text-secondary">查看全部</button>
+            </div>
+            
+            <div id="tasks-list" class="space-y-3">
+                <div id="task-item-1" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-6 h-6 bg-secondary rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-white text-xs"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-text-primary">学习新城疫病理特征</h4>
+                                <p class="text-sm text-text-secondary">预计用时：15分钟</p>
+                            </div>
+                        </div>
+                        <div class="px-2 py-1 bg-green-100 rounded-full">
+                            <span class="text-xs text-green-700">已完成</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="task-item-2" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-6 h-6 border-2 border-gray-300 rounded-full"></div>
+                            <div>
+                                <h4 class="font-medium text-text-primary">完成禽病诊断测验</h4>
+                                <p class="text-sm text-text-secondary">预计用时：20分钟</p>
+                            </div>
+                        </div>
+                        <div class="px-2 py-1 bg-orange-100 rounded-full">
+                            <span class="text-xs text-orange-700">进行中</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="task-item-3" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-6 h-6 border-2 border-gray-300 rounded-full"></div>
+                            <div>
+                                <h4 class="font-medium text-text-primary">复习禽流感防治知识</h4>
+                                <p class="text-sm text-text-secondary">预计用时：10分钟</p>
+                            </div>
+                        </div>
+                        <div class="px-2 py-1 bg-gray-100 rounded-full">
+                            <span class="text-xs text-gray-700">待开始</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 每日一病科普 -->
+        <section id="daily-disease" class="mb-8">
+            <h2 id="daily-disease-title" class="text-lg font-semibold text-text-primary mb-4">每日一病</h2>
+            
+            <div id="disease-card" class="bg-card-bg rounded-xl p-4 shadow-card">
+                <div class="flex items-start space-x-3">
+                    <img id="disease-image" src="https://s.coze.cn/image/YIr6Qnu-dsU/" 
+                         alt="新城疫病理图" data-category="动物" class="w-16 h-16 rounded-lg object-cover flex-shrink-0">
+                    <div class="flex-1">
+                        <h4 id="disease-name" class="font-medium text-text-primary mb-2">新城疫</h4>
+                        <p id="disease-description" class="text-sm text-text-secondary leading-relaxed mb-3">
+                            新城疫是由新城疫病毒引起的一种急性、高度接触性传染病，主要特征是呼吸困难、下痢、神经症状等。
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center text-xs text-text-secondary">
+                                <i class="fas fa-eye mr-1"></i>
+                                <span>1,234人已学习</span>
+                            </div>
+                            <button id="learn-more-btn" class="text-sm text-secondary font-medium">
+                                了解更多 <i class="fas fa-chevron-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 学习记录 -->
+        <section id="learning-records">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="learning-records-title" class="text-lg font-semibold text-text-primary">学习记录</h2>
+                <button id="view-all-records" class="text-sm text-secondary">查看全部</button>
+            </div>
+            
+            <div id="records-list" class="space-y-3">
+                <div id="record-item-1" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-book text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-text-primary">图谱学习</h4>
+                                <p class="text-sm text-text-secondary">新城疫病理特征</p>
+                                <p class="text-xs text-text-secondary">2024-01-15 10:30</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-medium text-text-primary">15分钟</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="record-item-2" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-trophy text-green-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-text-primary">知识测验</h4>
+                                <p class="text-sm text-text-secondary">禽病诊断基础</p>
+                                <p class="text-xs text-text-secondary">2024-01-14 15:45</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-medium text-text-primary">85分</div>
+                            <div class="text-xs text-green-600">优秀</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部导航栏 -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
+        <a id="nav-home" href="#" class="flex flex-col items-center p-2 text-secondary">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-xs mt-0.5">首页</span>
+        </a>
+        <a id="nav-learning" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+            <i class="fas fa-graduation-cap text-xl"></i>
+            <span class="text-xs mt-0.5">学习</span>
+        </a>
+        <a id="nav-profile" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+            <i class="fas fa-user text-xl"></i>
+            <span class="text-xs mt-0.5">我的</span>
+        </a>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 图谱百科入口点击事件
+            document.querySelector('#knowledge-graph-card').addEventListener('click', function() {
+                window.location.href = 'P-KNOWLEDGE_GRAPH.html';
+            });
+
+            // 题库测验入口点击事件
+            document.querySelector('#question-bank-card').addEventListener('click', function() {
+                window.location.href = 'P-QUESTION_BANK.html';
+            });
+
+            // 个人中心按钮点击事件
+            document.querySelector('#profile-btn').addEventListener('click', function() {
+                window.location.href = 'P-USER_PROFILE.html';
+            });
+
+            // 通知按钮点击事件
+            document.querySelector('#notification-btn').addEventListener('click', function() {
+                console.log('显示通知列表');
+                // 这里可以显示通知弹窗或跳转到通知页面
+            });
+
+            // 每日一病"了解更多"按钮点击事件
+            document.querySelector('#learn-more-btn').addEventListener('click', function() {
+                window.location.href = 'P-KNOWLEDGE_GRAPH.html?disease=新城疫';
+            });
+
+            // 底部导航栏点击事件
+            document.querySelector('#nav-home').addEventListener('click', function(e) {
+                e.preventDefault();
+                // 已在首页，无需操作
+            });
+
+            document.querySelector('#nav-learning').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'P-KNOWLEDGE_GRAPH.html';
+            });
+
+            document.querySelector('#nav-profile').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'P-USER_PROFILE.html';
+            });
+
+            // 任务项点击事件
+            document.querySelector('#task-item-2').addEventListener('click', function() {
+                window.location.href = 'P-QUESTION_BANK.html';
+            });
+
+            document.querySelector('#task-item-3').addEventListener('click', function() {
+                window.location.href = 'P-KNOWLEDGE_GRAPH.html?disease=禽流感';
+            });
+
+            // 查看全部任务按钮
+            document.querySelector('#view-all-tasks').addEventListener('click', function() {
+                console.log('查看全部学习任务');
+                // 这里可以跳转到任务列表页面
+            });
+
+            // 查看全部记录按钮
+            document.querySelector('#view-all-records').addEventListener('click', function() {
+                console.log('查看全部学习记录');
+                // 这里可以跳转到学习记录页面
+            });
+
+            // 卡片点击效果
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach(card => {
+                card.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                card.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

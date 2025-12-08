@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 服务商首页</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D3F8EE',
+                        secondary: '#3BCCA5', 
+                        accent: '#2B6A5A',
+                        'text-primary': '#1F2937',
+                        'text-secondary': '#6B7280',
+                        'bg-light': '#F9FAFB',
+                        'card-bg': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+
+        .notification-badge {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex justify-between items-center px-4 py-3">
+            <div id="user-info" class="flex items-center space-x-3">
+                <img id="user-avatar" src="https://s.coze.cn/image/MlcJzETwy6o/" 
+                     alt="用户头像" data-category="人物" class="w-10 h-10 rounded-full border-2 border-secondary">
+                <div>
+                    <h1 id="user-greeting" class="text-lg font-semibold text-text-primary">早上好，李经理</h1>
+                    <p id="user-role" class="text-sm text-text-secondary">兽药服务商</p>
+                </div>
+            </div>
+            <div id="header-actions" class="flex items-center space-x-3">
+                <button id="notification-btn" class="relative p-2">
+                    <i class="far fa-bell text-xl text-text-secondary"></i>
+                    <span id="notification-badge" class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full notification-badge"></span>
+                </button>
+                <button id="profile-btn">
+                    <i class="fas fa-user-circle text-xl text-text-secondary"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6 pb-20">
+        <!-- 数据概览区 -->
+        <section id="data-overview" class="mb-8">
+            <h2 id="overview-title" class="text-lg font-semibold text-text-primary mb-4">今日概览</h2>
+            
+            <div id="stats-grid" class="grid grid-cols-2 gap-4">
+                <div id="consultation-stat" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-text-secondary mb-1">今日咨询</p>
+                            <p class="text-2xl font-bold text-secondary">23</p>
+                            <p class="text-xs text-green-600 mt-1">
+                                <i class="fas fa-arrow-up mr-1"></i>+12% 较昨日
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-comments text-xl text-secondary"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="orders-stat" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-text-secondary mb-1">待处理订单</p>
+                            <p class="text-2xl font-bold text-orange-500">8</p>
+                            <p class="text-xs text-orange-600 mt-1">
+                                <i class="fas fa-clock mr-1"></i>需及时处理
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-shopping-bag text-xl text-orange-500"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="customers-stat" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-text-secondary mb-1">活跃客户</p>
+                            <p class="text-2xl font-bold text-blue-500">156</p>
+                            <p class="text-xs text-blue-600 mt-1">
+                                <i class="fas fa-users mr-1"></i>本月新增12人
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user-friends text-xl text-blue-500"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="revenue-stat" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-text-secondary mb-1">本月收入</p>
+                            <p class="text-2xl font-bold text-purple-500">¥28.5K</p>
+                            <p class="text-xs text-purple-600 mt-1">
+                                <i class="fas fa-chart-line mr-1"></i>+8% 较上月
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-coins text-xl text-purple-500"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心功能区 -->
+        <section id="core-functions" class="mb-8">
+            <h2 id="core-functions-title" class="text-lg font-semibold text-text-primary mb-4">核心功能</h2>
+            
+            <div id="functions-grid" class="grid grid-cols-2 gap-4">
+                <div id="customer-management-card" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-users text-xl text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-text-primary">客户管理</h4>
+                            <p class="text-xs text-text-secondary">管理客户档案</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="ad-precision-card" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-bullhorn text-xl text-orange-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-text-primary">广告投放</h4>
+                            <p class="text-xs text-text-secondary">精准营销推广</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="online-consult-card" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-video text-xl text-green-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-text-primary">在线诊疗</h4>
+                            <p class="text-xs text-text-secondary">接单处理咨询</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="data-analysis-card" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-chart-bar text-xl text-purple-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-text-primary">数据分析</h4>
+                            <p class="text-xs text-text-secondary">业务数据统计</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 待处理任务 -->
+        <section id="pending-tasks" class="mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="pending-tasks-title" class="text-lg font-semibold text-text-primary">待处理任务</h2>
+                <button id="view-all-tasks" class="text-sm text-secondary">查看全部</button>
+            </div>
+            
+            <div id="tasks-list" class="space-y-3">
+                <div id="task-item-1" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-exclamation-triangle text-red-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-text-primary">紧急咨询待回复</h4>
+                                <p class="text-sm text-text-secondary">养殖户王老板 - 新城疫诊断咨询</p>
+                                <p class="text-xs text-text-secondary">2小时前</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-1 bg-red-100 rounded-full">
+                            <span class="text-xs text-red-700">紧急</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div id="task-item-2" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-shopping-cart text-orange-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-text-primary">新订单待处理</h4>
+                                <p class="text-sm text-text-secondary">养殖合作社 - 兽药采购订单</p>
+                                <p class="text-xs text-text-secondary">4小时前</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-1 bg-orange-100 rounded-full">
+                            <span class="text-xs text-orange-700">待处理</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div id="task-item-3" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user-plus text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-text-primary">新客户待审核</h4>
+                                <p class="text-sm text-text-secondary">张养殖户申请成为会员</p>
+                                <p class="text-xs text-text-secondary">6小时前</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-1 bg-blue-100 rounded-full">
+                            <span class="text-xs text-blue-700">待审核</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 客户活跃度 -->
+        <section id="customer-activity">
+            <h2 id="activity-title" class="text-lg font-semibold text-text-primary mb-4">客户活跃度</h2>
+            
+            <div id="activity-card" class="bg-card-bg rounded-xl p-4 shadow-card">
+                <div class="space-y-4">
+                    <div id="activity-summary" class="flex justify-between items-center">
+                        <span class="text-sm text-text-secondary">本周活跃客户</span>
+                        <span class="text-lg font-semibold text-text-primary">89人</span>
+                    </div>
+                    
+                    <div id="activity-chart" class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-text-secondary">周一</span>
+                            <div class="flex-1 mx-3 bg-gray-200 rounded-full h-2">
+                                <div class="bg-secondary h-2 rounded-full" style="width: 75%"></div>
+                            </div>
+                            <span class="text-sm text-text-primary">15</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-text-secondary">周二</span>
+                            <div class="flex-1 mx-3 bg-gray-200 rounded-full h-2">
+                                <div class="bg-secondary h-2 rounded-full" style="width: 90%"></div>
+                            </div>
+                            <span class="text-sm text-text-primary">18</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-text-secondary">周三</span>
+                            <div class="flex-1 mx-3 bg-gray-200 rounded-full h-2">
+                                <div class="bg-secondary h-2 rounded-full" style="width: 65%"></div>
+                            </div>
+                            <span class="text-sm text-text-primary">13</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-text-secondary">周四</span>
+                            <div class="flex-1 mx-3 bg-gray-200 rounded-full h-2">
+                                <div class="bg-secondary h-2 rounded-full" style="width: 80%"></div>
+                            </div>
+                            <span class="text-sm text-text-primary">16</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-text-secondary">周五</span>
+                            <div class="flex-1 mx-3 bg-gray-200 rounded-full h-2">
+                                <div class="bg-secondary h-2 rounded-full" style="width: 95%"></div>
+                            </div>
+                            <span class="text-sm text-text-primary">19</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部导航栏 -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
+        <a id="nav-home" href="#" class="flex flex-col items-center p-2 text-secondary">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-xs mt-0.5">首页</span>
+        </a>
+        <a id="nav-customers" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+            <i class="fas fa-users text-xl"></i>
+            <span class="text-xs mt-0.5">客户管理</span>
+        </a>
+        <a id="nav-profile" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+            <i class="fas fa-user text-xl"></i>
+            <span class="text-xs mt-0.5">我的</span>
+        </a>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 底部导航栏点击效果
+            const navItems = document.querySelectorAll('#bottom-nav a');
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navItems.forEach(nav => {
+                        nav.classList.remove('text-secondary');
+                        nav.classList.add('text-text-secondary');
+                    });
+                    this.classList.remove('text-text-secondary');
+                    this.classList.add('text-secondary');
+                });
+            });
+
+            // 卡片点击效果
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach(card => {
+                card.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                card.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+
+            // 功能入口点击事件
+            document.querySelector('#customer-management-card').addEventListener('click', function() {
+                window.location.href = 'P-CUSTOMER_MANAGEMENT.html';
+            });
+
+            document.querySelector('#ad-precision-card').addEventListener('click', function() {
+                window.location.href = 'P-AD_PRECISION.html';
+            });
+
+            document.querySelector('#online-consult-card').addEventListener('click', function() {
+                window.location.href = 'P-ONLINE_CONSULT.html';
+            });
+
+            // 顶部按钮点击事件
+            document.querySelector('#profile-btn').addEventListener('click', function() {
+                window.location.href = 'P-USER_PROFILE.html';
+            });
+
+            document.querySelector('#notification-btn').addEventListener('click', function() {
+                // 显示通知列表或跳转到通知页面
+                console.log('显示通知');
+            });
+
+            // 底部导航点击事件
+            document.querySelector('#nav-home').addEventListener('click', function(e) {
+                e.preventDefault();
+                // 已在首页，无需操作
+            });
+
+            document.querySelector('#nav-customers').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'P-CUSTOMER_MANAGEMENT.html';
+            });
+
+            document.querySelector('#nav-profile').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'P-USER_PROFILE.html';
+            });
+
+            // 任务项点击事件
+            document.querySelector('#task-item-1').addEventListener('click', function() {
+                window.location.href = 'P-ONLINE_CONSULT.html';
+            });
+
+            document.querySelector('#task-item-2').addEventListener('click', function() {
+                window.location.href = 'P-CUSTOMER_MANAGEMENT.html';
+            });
+
+            document.querySelector('#task-item-3').addEventListener('click', function() {
+                window.location.href = 'P-CUSTOMER_MANAGEMENT.html';
+            });
+
+            // 查看全部按钮点击事件
+            document.querySelector('#view-all-tasks').addEventListener('click', function() {
+                window.location.href = 'P-ONLINE_CONSULT.html';
+            });
+        });
+    </script>
+</body>
+</html>

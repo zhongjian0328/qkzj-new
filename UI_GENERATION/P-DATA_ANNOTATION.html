@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 数据标注</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D3F8EE',
+                        secondary: '#3BCCA5', 
+                        accent: '#2B6A5A',
+                        'text-primary': '#1F2937',
+                        'text-secondary': '#6B7280',
+                        'bg-light': '#F9FAFB',
+                        'card-bg': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .annotation-tool-active {
+            background-color: #3BCCA5;
+            color: white;
+        }
+        
+        .annotation-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .annotation-shape {
+            position: absolute;
+            pointer-events: auto;
+            cursor: move;
+        }
+        
+        .canvas-container {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .loading-spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3BCCA5;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex justify-between items-center px-4 py-3">
+            <div class="flex items-center space-x-3">
+                <button id="back-btn" class="p-2 -ml-2">
+                    <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+                </button>
+                <h1 id="page-title" class="text-lg font-semibold text-text-primary">数据标注</h1>
+            </div>
+            <div id="header-actions" class="flex items-center space-x-3">
+                <button id="research-collab-btn" class="p-2">
+                    <i class="fas fa-users text-xl text-text-secondary"></i>
+                </button>
+                <button id="profile-btn">
+                    <i class="fas fa-user-circle text-xl text-text-secondary"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6">
+        <!-- 病例列表视图 -->
+        <div id="case-list-view" class="space-y-4">
+            <!-- 筛选和搜索 -->
+            <div id="filter-section" class="bg-card-bg rounded-xl p-4 shadow-card">
+                <div class="flex space-x-3 mb-3">
+                    <input id="search-input" type="text" placeholder="搜索病例..." 
+                           class="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm">
+                    <button id="filter-btn" class="px-3 py-2 bg-secondary/10 text-secondary rounded-lg">
+                        <i class="fas fa-filter"></i>
+                    </button>
+                </div>
+                <div class="flex space-x-2">
+                    <button id="filter-all" class="px-3 py-1 bg-secondary text-white rounded-full text-xs">全部</button>
+                    <button id="filter-unannotated" class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">未标注</button>
+                    <button id="filter-annotated" class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">已标注</button>
+                </div>
+            </div>
+
+            <!-- 病例列表 -->
+            <div id="case-list" class="space-y-3">
+                <div class="case-item bg-card-bg rounded-xl p-4 shadow-card card-hover" data-case-id="case1">
+                    <div class="flex items-center space-x-3">
+                        <img src="https://s.coze.cn/image/Vs9ADzmfxB4/" 
+                             alt="病禽图片" data-category="动物" class="w-16 h-16 rounded-lg object-cover">
+                        <div class="flex-1">
+                            <h4 class="font-medium text-text-primary">新城疫疑似病例</h4>
+                            <p class="text-sm text-text-secondary">AI诊断：新城疫 (95%)</p>
+                            <div class="flex items-center space-x-2 mt-1">
+                                <span class="px-2 py-1 bg-orange-100 text-orange-700 rounded-full text-xs">待标注</span>
+                                <span class="text-xs text-text-secondary">2024-01-15</span>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </div>
+                </div>
+
+                <div class="case-item bg-card-bg rounded-xl p-4 shadow-card card-hover" data-case-id="case2">
+                    <div class="flex items-center space-x-3">
+                        <img src="https://s.coze.cn/image/JJNM-XZlh0M/" 
+                             alt="病禽图片" data-category="动物" class="w-16 h-16 rounded-lg object-cover">
+                        <div class="flex-1">
+                            <h4 class="font-medium text-text-primary">禽流感确诊病例</h4>
+                            <p class="text-sm text-text-secondary">AI诊断：禽流感 (88%)</p>
+                            <div class="flex items-center space-x-2 mt-1">
+                                <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">已标注</span>
+                                <span class="text-xs text-text-secondary">2024-01-14</span>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </div>
+                </div>
+
+                <div class="case-item bg-card-bg rounded-xl p-4 shadow-card card-hover" data-case-id="case3">
+                    <div class="flex items-center space-x-3">
+                        <img src="https://s.coze.cn/image/yZnwsiZD5AY/" 
+                             alt="病禽图片" data-category="动物" class="w-16 h-16 rounded-lg object-cover">
+                        <div class="flex-1">
+                            <h4 class="font-medium text-text-primary">传染性支气管炎</h4>
+                            <p class="text-sm text-text-secondary">AI诊断：传染性支气管炎 (92%)</p>
+                            <div class="flex items-center space-x-2 mt-1">
+                                <span class="px-2 py-1 bg-orange-100 text-orange-700 rounded-full text-xs">待标注</span>
+                                <span class="text-xs text-text-secondary">2024-01-13</span>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </div>
+                </div>
+
+                <div class="case-item bg-card-bg rounded-xl p-4 shadow-card card-hover" data-case-id="case4">
+                    <div class="flex items-center space-x-3">
+                        <img src="https://s.coze.cn/image/npiFh13LxGM/" 
+                             alt="病禽图片" data-category="动物" class="w-16 h-16 rounded-lg object-cover">
+                        <div class="flex-1">
+                            <h4 class="font-medium text-text-primary">混合感染病例</h4>
+                            <p class="text-sm text-text-secondary">AI诊断：新城疫+禽流感 (85%)</p>
+                            <div class="flex items-center space-x-2 mt-1">
+                                <span class="px-2 py-1 bg-orange-100 text-orange-700 rounded-full text-xs">待标注</span>
+                                <span class="text-xs text-text-secondary">2024-01-12</span>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 病例标注视图 -->
+        <div id="annotation-view" class="hidden space-y-4">
+            <!-- 病例信息 -->
+            <div id="case-info" class="bg-card-bg rounded-xl p-4 shadow-card">
+                <div class="flex items-center space-x-3 mb-3">
+                    <button id="back-to-list" class="p-2 -ml-2">
+                        <i class="fas fa-arrow-left text-text-secondary"></i>
+                    </button>
+                    <h2 class="text-lg font-semibold text-text-primary">病例标注</h2>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <img id="case-image-large" src="https://s.coze.cn/image/rJv_mKVzkok/" 
+                         alt="病禽图片" data-category="动物" class="w-20 h-20 rounded-lg object-cover">
+                    <div class="flex-1">
+                        <h3 id="case-disease-name" class="font-medium text-text-primary">新城疫疑似病例</h3>
+                        <p id="case-ai-result" class="text-sm text-text-secondary">AI诊断：新城疫 (95%)</p>
+                        <p id="case-date" class="text-xs text-text-secondary">2024-01-15</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 标注工具 -->
+            <div id="annotation-tools" class="bg-card-bg rounded-xl p-4 shadow-card">
+                <h3 class="font-medium text-text-primary mb-3">标注工具</h3>
+                <div class="flex space-x-2">
+                    <button id="tool-brush" class="annotation-tool px-3 py-2 bg-secondary text-white rounded-lg text-sm">
+                        <i class="fas fa-paint-brush mr-1"></i>画笔
+                    </button>
+                    <button id="tool-rectangle" class="annotation-tool px-3 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm">
+                        <i class="fas fa-square mr-1"></i>矩形
+                    </button>
+                    <button id="tool-circle" class="annotation-tool px-3 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm">
+                        <i class="fas fa-circle mr-1"></i>圆形
+                    </button>
+                    <button id="tool-text" class="annotation-tool px-3 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm">
+                        <i class="fas fa-font mr-1"></i>文字
+                    </button>
+                    <button id="tool-erase" class="annotation-tool px-3 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm">
+                        <i class="fas fa-eraser mr-1"></i>清除
+                    </button>
+                </div>
+            </div>
+
+            <!-- 标注画布 -->
+            <div id="annotation-canvas-container" class="bg-card-bg rounded-xl p-4 shadow-card">
+                <div class="canvas-container relative w-full h-80 bg-gray-100 rounded-lg">
+                    <img id="annotation-image" src="https://s.coze.cn/image/-GB9cQK0q2o/" 
+                         alt="标注图片" data-category="动物" class="w-full h-full object-cover">
+                    <canvas id="annotation-canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
+                </div>
+                <div class="flex justify-between items-center mt-3">
+                    <div class="flex space-x-2">
+                        <button id="zoom-out" class="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-sm">
+                            <i class="fas fa-search-minus"></i>
+                        </button>
+                        <button id="zoom-reset" class="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-sm">
+                            <i class="fas fa-home"></i>
+                        </button>
+                        <button id="zoom-in" class="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-sm">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                    </div>
+                    <button id="clear-annotations" class="px-3 py-1 bg-red-100 text-red-600 rounded-lg text-sm">
+                        <i class="fas fa-trash mr-1"></i>清除所有标注
+                    </button>
+                </div>
+            </div>
+
+            <!-- 标注属性 -->
+            <div id="annotation-properties" class="bg-card-bg rounded-xl p-4 shadow-card">
+                <h3 class="font-medium text-text-primary mb-3">标注属性</h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium text-text-secondary mb-1">标注类型</label>
+                        <select id="annotation-type" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm">
+                            <option value="lesion">病变区域</option>
+                            <option value="symptom">症状表现</option>
+                            <option value="normal">正常组织</option>
+                            <option value="other">其他</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-secondary mb-1">颜色</label>
+                        <div class="flex space-x-2">
+                            <button class="color-btn w-8 h-8 bg-red-500 rounded-full border-2 border-white shadow-sm" data-color="#ef4444"></button>
+                            <button class="color-btn w-8 h-8 bg-blue-500 rounded-full border-2 border-white shadow-sm" data-color="#3b82f6"></button>
+                            <button class="color-btn w-8 h-8 bg-green-500 rounded-full border-2 border-white shadow-sm" data-color="#10b981"></button>
+                            <button class="color-btn w-8 h-8 bg-yellow-500 rounded-full border-2 border-white shadow-sm" data-color="#f59e0b"></button>
+                            <button class="color-btn w-8 h-8 bg-purple-500 rounded-full border-2 border-white shadow-sm" data-color="#8b5cf6"></button>
+                            <button class="color-btn w-8 h-8 bg-pink-500 rounded-full border-2 border-white shadow-sm" data-color="#ec4899"></button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-secondary mb-1">描述文字</label>
+                        <input id="annotation-text" type="text" placeholder="输入标注描述..." 
+                               class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div id="annotation-actions" class="flex space-x-3">
+                <button id="download-original" class="flex-1 py-3 bg-blue-500 text-white rounded-xl font-medium shadow-button">
+                    <i class="fas fa-download mr-2"></i>下载高清原图
+                </button>
+                <button id="save-annotation" class="flex-1 py-3 bg-secondary text-white rounded-xl font-medium shadow-button">
+                    <i class="fas fa-save mr-2"></i>保存标注
+                </button>
+            </div>
+
+            <!-- 标注历史 -->
+            <div id="annotation-history" class="bg-card-bg rounded-xl p-4 shadow-card">
+                <h3 class="font-medium text-text-primary mb-3">标注历史</h3>
+                <div id="history-list" class="space-y-2">
+                    <div class="history-item p-3 bg-gray-50 rounded-lg">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-text-primary">病变区域标注</span>
+                            <span class="text-xs text-text-secondary">刚刚</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 加载提示 -->
+    <div id="loading-overlay" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl p-6 flex items-center space-x-3">
+            <div class="loading-spinner"></div>
+            <span class="text-text-primary">正在处理...</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 页面元素
+            const caseListView = document.querySelector('#case-list-view');
+            const annotationView = document.querySelector('#annotation-view');
+            const caseItems = document.querySelectorAll('.case-item');
+            const backToListBtn = document.querySelector('#back-to-list');
+            const backBtn = document.querySelector('#back-btn');
+            const researchCollabBtn = document.querySelector('#research-collab-btn');
+            const profileBtn = document.querySelector('#profile-btn');
+            const downloadBtn = document.querySelector('#download-original');
+            const saveBtn = document.querySelector('#save-annotation');
+            const annotationTools = document.querySelectorAll('.annotation-tool');
+            const colorBtns = document.querySelectorAll('.color-btn');
+            const clearBtn = document.querySelector('#clear-annotations');
+            const loadingOverlay = document.querySelector('#loading-overlay');
+
+            // 标注工具状态
+            let currentTool = 'brush';
+            let currentColor = '#ef4444';
+            let isDrawing = false;
+            let annotations = [];
+
+            // 返回按钮
+            backBtn.addEventListener('click', function() {
+                console.log('返回上一页');
+                // 在实际应用中，这里会返回到上一页
+            });
+
+            // 科研协作按钮
+            researchCollabBtn.addEventListener('click', function() {
+                window.location.href = 'P-RESEARCH_COLLAB.html';
+            });
+
+            // 个人中心按钮
+            profileBtn.addEventListener('click', function() {
+                window.location.href = 'P-USER_PROFILE.html';
+            });
+
+            // 病例列表点击事件
+            caseItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const caseId = this.dataset.caseId;
+                    showAnnotationView(caseId);
+                });
+            });
+
+            // 返回列表
+            backToListBtn.addEventListener('click', function() {
+                showCaseListView();
+            });
+
+            // 显示病例列表视图
+            function showCaseListView() {
+                caseListView.classList.remove('hidden');
+                annotationView.classList.add('hidden');
+                document.querySelector('#page-title').textContent = '数据标注';
+            }
+
+            // 显示标注视图
+            function showAnnotationView(caseId) {
+                caseListView.classList.add('hidden');
+                annotationView.classList.remove('hidden');
+                document.querySelector('#page-title').textContent = '病例标注';
+                
+                // 加载病例数据
+                loadCaseData(caseId);
+                // 初始化画布
+                initCanvas();
+            }
+
+            // 加载病例数据
+            function loadCaseData(caseId) {
+                const caseData = {
+                    'case1': {
+                        name: '新城疫疑似病例',
+                        aiResult: 'AI诊断：新城疫 (95%)',
+                        date: '2024-01-15',
+                        image: 'https://s.coze.cn/image/o-Wx0v-Fk5A/'
+                    },
+                    'case2': {
+                        name: '禽流感确诊病例',
+                        aiResult: 'AI诊断：禽流感 (88%)',
+                        date: '2024-01-14',
+                        image: 'https://s.coze.cn/image/Fs4fmM7CHfo/'
+                    },
+                    'case3': {
+                        name: '传染性支气管炎',
+                        aiResult: 'AI诊断：传染性支气管炎 (92%)',
+                        date: '2024-01-13',
+                        image: 'https://s.coze.cn/image/zRHvd0dXzdo/'
+                    },
+                    'case4': {
+                        name: '混合感染病例',
+                        aiResult: 'AI诊断：新城疫+禽流感 (85%)',
+                        date: '2024-01-12',
+                        image: 'https://s.coze.cn/image/bkZKUZXldSg/'
+                    }
+                };
+
+                const data = caseData[caseId];
+                if (data) {
+                    document.querySelector('#case-disease-name').textContent = data.name;
+                    document.querySelector('#case-ai-result').textContent = data.aiResult;
+                    document.querySelector('#case-date').textContent = data.date;
+                    document.querySelector('#case-image-large').src = data.image;
+                    document.querySelector('#case-image-large').alt = data.name;
+                    document.querySelector('#annotation-image').src = data.image;
+                    document.querySelector('#annotation-image').alt = data.name;
+                }
+            }
+
+            // 初始化画布
+            function initCanvas() {
+                const canvas = document.querySelector('#annotation-canvas');
+                const ctx = canvas.getContext('2d');
+                const image = document.querySelector('#annotation-image');
+
+                // 设置画布尺寸
+                function resizeCanvas() {
+                    const container = canvas.parentElement;
+                    canvas.width = container.offsetWidth;
+                    canvas.height = container.offsetHeight;
+                    drawAnnotations();
+                }
+
+                window.addEventListener('resize', resizeCanvas);
+                resizeCanvas();
+
+                // 画布事件
+                canvas.addEventListener('mousedown', startDrawing);
+                canvas.addEventListener('mousemove', draw);
+                canvas.addEventListener('mouseup', stopDrawing);
+                canvas.addEventListener('mouseout', stopDrawing);
+
+                canvas.addEventListener('touchstart', handleTouch);
+                canvas.addEventListener('touchmove', handleTouch);
+                canvas.addEventListener('touchend', handleTouch);
+
+                function startDrawing(e) {
+                    isDrawing = true;
+                    ctx.beginPath();
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    ctx.moveTo(x, y);
+                }
+
+                function draw(e) {
+                    if (!isDrawing) return;
+                    
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    ctx.lineTo(x, y);
+                    ctx.strokeStyle = currentColor;
+                    ctx.lineWidth = 3;
+                    ctx.lineCap = 'round';
+                    ctx.stroke();
+                }
+
+                function stopDrawing() {
+                    if (!isDrawing) return;
+                    isDrawing = false;
+                    ctx.closePath();
+                    // 保存标注
+                    saveCurrentAnnotation();
+                }
+
+                function handleTouch(e) {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 
+                                                     e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
+                        clientX: touch.clientX,
+                        clientY: touch.clientY
+                    });
+                    canvas.dispatchEvent(mouseEvent);
+                }
+
+                function drawAnnotations() {
+                    // 重绘所有标注
+                    annotations.forEach(annotation => {
+                        ctx.strokeStyle = annotation.color;
+                        ctx.lineWidth = 3;
+                        ctx.lineCap = 'round';
+                        ctx.beginPath();
+                        ctx.moveTo(annotation.points[0].x, annotation.points[0].y);
+                        annotation.points.slice(1).forEach(point => {
+                            ctx.lineTo(point.x, point.y);
+                        });
+                        ctx.stroke();
+                    });
+                }
+
+                function saveCurrentAnnotation() {
+                    // 这里应该保存当前的标注路径
+                    console.log('保存标注');
+                }
+            }
+
+            // 标注工具切换
+            annotationTools.forEach(tool => {
+                tool.addEventListener('click', function() {
+                    annotationTools.forEach(t => {
+                        t.classList.remove('bg-secondary', 'text-white');
+                        t.classList.add('bg-gray-100', 'text-gray-600');
+                    });
+                    this.classList.remove('bg-gray-100', 'text-gray-600');
+                    this.classList.add('bg-secondary', 'text-white');
+                    
+                    currentTool = this.id.replace('tool-', '');
+                    console.log('切换工具:', currentTool);
+                });
+            });
+
+            // 颜色选择
+            colorBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    colorBtns.forEach(b => b.classList.remove('border-secondary'));
+                    this.classList.add('border-secondary');
+                    currentColor = this.dataset.color;
+                    console.log('选择颜色:', currentColor);
+                });
+            });
+
+            // 清除标注
+            clearBtn.addEventListener('click', function() {
+                if (confirm('确定要清除所有标注吗？')) {
+                    const canvas = document.querySelector('#annotation-canvas');
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    annotations = [];
+                    console.log('清除所有标注');
+                }
+            });
+
+            // 下载高清原图
+            downloadBtn.addEventListener('click', function() {
+                showLoading();
+                setTimeout(() => {
+                    hideLoading();
+                    alert('高清原图已下载');
+                    console.log('下载高清原图');
+                }, 1000);
+            });
+
+            // 保存标注
+            saveBtn.addEventListener('click', function() {
+                showLoading();
+                setTimeout(() => {
+                    hideLoading();
+                    alert('标注已保存');
+                    console.log('保存标注');
+                    
+                    // 更新病例状态为已标注
+                    const currentCaseId = document.querySelector('.case-item.active')?.dataset.caseId;
+                    if (currentCaseId) {
+                        const caseItem = document.querySelector(`[data-case-id="${currentCaseId}"]`);
+                        const statusSpan = caseItem.querySelector('span[class*="bg-orange-100"]');
+                        if (statusSpan) {
+                            statusSpan.className = 'px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs';
+                            statusSpan.textContent = '已标注';
+                        }
+                    }
+                }, 1500);
+            });
+
+            // 筛选功能
+            document.querySelector('#filter-all').addEventListener('click', function() {
+                setActiveFilter(this);
+                showAllCases();
+            });
+
+            document.querySelector('#filter-unannotated').addEventListener('click', function() {
+                setActiveFilter(this);
+                filterCases('待标注');
+            });
+
+            document.querySelector('#filter-annotated').addEventListener('click', function() {
+                setActiveFilter(this);
+                filterCases('已标注');
+            });
+
+            function setActiveFilter(button) {
+                document.querySelectorAll('[id^="filter-"]').forEach(btn => {
+                    btn.classList.remove('bg-secondary', 'text-white');
+                    btn.classList.add('bg-gray-100', 'text-gray-600');
+                });
+                button.classList.remove('bg-gray-100', 'text-gray-600');
+                button.classList.add('bg-secondary', 'text-white');
+            }
+
+            function showAllCases() {
+                caseItems.forEach(item => item.style.display = 'block');
+            }
+
+            function filterCases(status) {
+                caseItems.forEach(item => {
+                    const statusSpan = item.querySelector('span[class*="rounded-full"]');
+                    if (statusSpan && statusSpan.textContent === status) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+
+            // 搜索功能
+            document.querySelector('#search-input').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                caseItems.forEach(item => {
+                    const diseaseName = item.querySelector('h4').textContent.toLowerCase();
+                    const aiResult = item.querySelector('p').textContent.toLowerCase();
+                    if (diseaseName.includes(searchTerm) || aiResult.includes(searchTerm)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+
+            // 显示加载状态
+            function showLoading() {
+                loadingOverlay.classList.remove('hidden');
+            }
+
+            // 隐藏加载状态
+            function hideLoading() {
+                loadingOverlay.classList.add('hidden');
+            }
+
+            // 缩放功能
+            document.querySelector('#zoom-in').addEventListener('click', function() {
+                console.log('放大图片');
+            });
+
+            document.querySelector('#zoom-out').addEventListener('click', function() {
+                console.log('缩小图片');
+            });
+
+            document.querySelector('#zoom-reset').addEventListener('click', function() {
+                console.log('重置缩放');
+            });
+        });
+    </script>
+</body>
+</html>

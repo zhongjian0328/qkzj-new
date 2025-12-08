@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 大宗采购</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D3F8EE',
+                        secondary: '#3BCCA5', 
+                        accent: '#2B6A5A',
+                        'text-primary': '#1F2937',
+                        'text-secondary': '#6B7280',
+                        'bg-light': '#F9FAFB',
+                        'card-bg': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+
+        .category-active {
+            background-color: #3BCCA5;
+            color: white;
+        }
+
+        .category-inactive {
+            background-color: #F3F4F6;
+            color: #6B7280;
+        }
+
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex justify-between items-center px-4 py-3">
+            <div class="flex items-center space-x-3">
+                <button id="back-btn" class="p-2 -ml-2">
+                    <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+                </button>
+                <h1 id="page-title" class="text-lg font-semibold text-text-primary">大宗采购</h1>
+            </div>
+            <div id="header-actions" class="flex items-center space-x-3">
+                <button id="search-btn" class="p-2">
+                    <i class="fas fa-search text-xl text-text-secondary"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6">
+        <!-- 分类导航 -->
+        <section id="category-nav" class="mb-6">
+            <div id="category-scroll" class="flex space-x-3 overflow-x-auto pb-2">
+                <button id="category-all" class="category-active px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap">
+                    全部商品
+                </button>
+                <button id="category-vaccine" class="category-inactive px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap">
+                    疫苗
+                </button>
+                <button id="category-drug" class="category-inactive px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap">
+                    兽药
+                </button>
+                <button id="category-feed" class="category-inactive px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap">
+                    饲料
+                </button>
+                <button id="category-equipment" class="category-inactive px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap">
+                    设备
+                </button>
+            </div>
+        </section>
+
+        <!-- 商品列表 -->
+        <section id="product-list" class="space-y-4">
+            <!-- 商品卡片1 -->
+            <div id="product-card-1" class="bg-card-bg rounded-xl p-4 shadow-card card-hover" data-product-id="bulk-001">
+                <div class="flex space-x-4">
+                    <img id="product-image-1" src="https://s.coze.cn/image/garf-4fDWas/" 
+                         alt="禽流感疫苗" data-category="药品" class="w-20 h-20 rounded-lg object-cover">
+                    <div class="flex-1">
+                        <h3 id="product-name-1" class="font-semibold text-text-primary mb-1">禽流感H5+H7二价灭活疫苗</h3>
+                        <p id="product-spec-1" class="text-sm text-text-secondary mb-2">规格：500ml/瓶</p>
+                        <div class="flex justify-between items-center mb-2">
+                            <span id="product-price-1" class="text-lg font-bold text-red-600">¥120/瓶</span>
+                            <span id="product-min-order-1" class="text-xs text-text-secondary bg-gray-100 px-2 py-1 rounded">起订：100瓶</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="inquiry-btn-1" class="flex-1 bg-secondary text-white py-2 px-3 rounded-lg text-sm font-medium">
+                                询价
+                            </button>
+                            <button id="order-btn-1" class="flex-1 bg-accent text-white py-2 px-3 rounded-lg text-sm font-medium">
+                                下单
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 商品卡片2 -->
+            <div id="product-card-2" class="bg-card-bg rounded-xl p-4 shadow-card card-hover" data-product-id="bulk-002">
+                <div class="flex space-x-4">
+                    <img id="product-image-2" src="https://s.coze.cn/image/9luDwHhySHU/" 
+                         alt="新城疫疫苗" data-category="药品" class="w-20 h-20 rounded-lg object-cover">
+                    <div class="flex-1">
+                        <h3 id="product-name-2" class="font-semibold text-text-primary mb-1">新城疫活疫苗(La Sota株)</h3>
+                        <p id="product-spec-2" class="text-sm text-text-secondary mb-2">规格：1000羽份/瓶</p>
+                        <div class="flex justify-between items-center mb-2">
+                            <span id="product-price-2" class="text-lg font-bold text-red-600">¥85/瓶</span>
+                            <span id="product-min-order-2" class="text-xs text-text-secondary bg-gray-100 px-2 py-1 rounded">起订：50瓶</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="inquiry-btn-2" class="flex-1 bg-secondary text-white py-2 px-3 rounded-lg text-sm font-medium">
+                                询价
+                            </button>
+                            <button id="order-btn-2" class="flex-1 bg-accent text-white py-2 px-3 rounded-lg text-sm font-medium">
+                                下单
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 商品卡片3 -->
+            <div id="product-card-3" class="bg-card-bg rounded-xl p-4 shadow-card card-hover" data-product-id="bulk-003">
+                <div class="flex space-x-4">
+                    <img id="product-image-3" src="https://s.coze.cn/image/-gj6DGnBZFg/" 
+                         alt="蛋鸡全价饲料" data-category="食品" class="w-20 h-20 rounded-lg object-cover">
+                    <div class="flex-1">
+                        <h3 id="product-name-3" class="font-semibold text-text-primary mb-1">蛋鸡产蛋期全价饲料</h3>
+                        <p id="product-spec-3" class="text-sm text-text-secondary mb-2">规格：25kg/袋</p>
+                        <div class="flex justify-between items-center mb-2">
+                            <span id="product-price-3" class="text-lg font-bold text-red-600">¥145/袋</span>
+                            <span id="product-min-order-3" class="text-xs text-text-secondary bg-gray-100 px-2 py-1 rounded">起订：200袋</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="inquiry-btn-3" class="flex-1 bg-secondary text-white py-2 px-3 rounded-lg text-sm font-medium">
+                                询价
+                            </button>
+                            <button id="order-btn-3" class="flex-1 bg-accent text-white py-2 px-3 rounded-lg text-sm font-medium">
+                                下单
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 商品卡片4 -->
+            <div id="product-card-4" class="bg-card-bg rounded-xl p-4 shadow-card card-hover" data-product-id="bulk-004">
+                <div class="flex space-x-4">
+                    <img id="product-image-4" src="https://s.coze.cn/image/gyAQmuh6qtM/" 
+                         alt="肉鸡饲料" data-category="食品" class="w-20 h-20 rounded-lg object-cover">
+                    <div class="flex-1">
+                        <h3 id="product-name-4" class="font-semibold text-text-primary mb-1">白羽肉鸡育肥期饲料</h3>
+                        <p id="product-spec-4" class="text-sm text-text-secondary mb-2">规格：25kg/袋</p>
+                        <div class="flex justify-between items-center mb-2">
+                            <span id="product-price-4" class="text-lg font-bold text-red-600">¥138/袋</span>
+                            <span id="product-min-order-4" class="text-xs text-text-secondary bg-gray-100 px-2 py-1 rounded">起订：300袋</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="inquiry-btn-4" class="flex-1 bg-secondary text-white py-2 px-3 rounded-lg text-sm font-medium">
+                                询价
+                            </button>
+                            <button id="order-btn-4" class="flex-1 bg-accent text-white py-2 px-3 rounded-lg text-sm font-medium">
+                                下单
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 商品卡片5 -->
+            <div id="product-card-5" class="bg-card-bg rounded-xl p-4 shadow-card card-hover" data-product-id="bulk-005">
+                <div class="flex space-x-4">
+                    <img id="product-image-5" src="https://s.coze.cn/image/9kRFvOuMyGA/" 
+                         alt="抗生素" data-category="药品" class="w-20 h-20 rounded-lg object-cover">
+                    <div class="flex-1">
+                        <h3 id="product-name-5" class="font-semibold text-text-primary mb-1">阿莫西林可溶性粉</h3>
+                        <p id="product-spec-5" class="text-sm text-text-secondary mb-2">规格：100g/袋</p>
+                        <div class="flex justify-between items-center mb-2">
+                            <span id="product-price-5" class="text-lg font-bold text-red-600">¥35/袋</span>
+                            <span id="product-min-order-5" class="text-xs text-text-secondary bg-gray-100 px-2 py-1 rounded">起订：1000袋</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="inquiry-btn-5" class="flex-1 bg-secondary text-white py-2 px-3 rounded-lg text-sm font-medium">
+                                询价
+                            </button>
+                            <button id="order-btn-5" class="flex-1 bg-accent text-white py-2 px-3 rounded-lg text-sm font-medium">
+                                下单
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 商品卡片6 -->
+            <div id="product-card-6" class="bg-card-bg rounded-xl p-4 shadow-card card-hover" data-product-id="bulk-006">
+                <div class="flex space-x-4">
+                    <img id="product-image-6" src="https://s.coze.cn/image/ggiKSuJ_pOk/" 
+                         alt="消毒设备" data-category="设备" class="w-20 h-20 rounded-lg object-cover">
+                    <div class="flex-1">
+                        <h3 id="product-name-6" class="font-semibold text-text-primary mb-1">智能雾化消毒机</h3>
+                        <p id="product-spec-6" class="text-sm text-text-secondary mb-2">规格：工业级，覆盖面积500㎡</p>
+                        <div class="flex justify-between items-center mb-2">
+                            <span id="product-price-6" class="text-lg font-bold text-red-600">¥8,500/台</span>
+                            <span id="product-min-order-6" class="text-xs text-text-secondary bg-gray-100 px-2 py-1 rounded">起订：5台</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="inquiry-btn-6" class="flex-1 bg-secondary text-white py-2 px-3 rounded-lg text-sm font-medium">
+                                询价
+                            </button>
+                            <button id="order-btn-6" class="flex-1 bg-accent text-white py-2 px-3 rounded-lg text-sm font-medium">
+                                下单
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 询价模态框 -->
+    <div id="inquiry-modal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0"></div>
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+            <div id="inquiry-modal-content" class="bg-white rounded-2xl shadow-xl w-full max-w-md fade-in">
+                <div class="p-6">
+                    <h3 id="inquiry-modal-title" class="text-lg font-semibold text-text-primary mb-4">批量询价</h3>
+                    <div id="inquiry-product-info" class="mb-4 p-3 bg-gray-50 rounded-lg">
+                        <h4 id="inquiry-product-name" class="font-medium text-text-primary mb-1">商品名称</h4>
+                        <p id="inquiry-product-spec" class="text-sm text-text-secondary">规格信息</p>
+                        <p id="inquiry-product-price" class="text-sm text-text-secondary">参考价格</p>
+                    </div>
+                    <div class="mb-4">
+                        <label for="inquiry-quantity" class="block text-sm font-medium text-text-primary mb-2">采购数量</label>
+                        <input type="number" id="inquiry-quantity" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="请输入采购数量">
+                    </div>
+                    <div class="mb-6">
+                        <label for="inquiry-contact" class="block text-sm font-medium text-text-primary mb-2">联系方式</label>
+                        <input type="text" id="inquiry-contact" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="请输入联系人及电话">
+                    </div>
+                    <div class="flex space-x-3">
+                        <button id="inquiry-cancel-btn" class="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-text-secondary">
+                            取消
+                        </button>
+                        <button id="inquiry-submit-btn" class="flex-1 py-2 px-4 bg-secondary text-white rounded-lg font-medium">
+                            提交询价
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 下单模态框 -->
+    <div id="order-modal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0"></div>
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+            <div id="order-modal-content" class="bg-white rounded-2xl shadow-xl w-full max-w-md fade-in">
+                <div class="p-6">
+                    <h3 id="order-modal-title" class="text-lg font-semibold text-text-primary mb-4">批量下单</h3>
+                    <div id="order-product-info" class="mb-4 p-3 bg-gray-50 rounded-lg">
+                        <h4 id="order-product-name" class="font-medium text-text-primary mb-1">商品名称</h4>
+                        <p id="order-product-spec" class="text-sm text-text-secondary">规格信息</p>
+                        <p id="order-product-price" class="text-sm text-text-secondary">单价：¥0.00</p>
+                    </div>
+                    <div class="mb-4">
+                        <label for="order-quantity" class="block text-sm font-medium text-text-primary mb-2">采购数量</label>
+                        <input type="number" id="order-quantity" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="请输入采购数量">
+                    </div>
+                    <div class="mb-4">
+                        <label for="order-contact" class="block text-sm font-medium text-text-primary mb-2">联系方式</label>
+                        <input type="text" id="order-contact" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="请输入联系人及电话">
+                    </div>
+                    <div class="mb-6">
+                        <label for="order-delivery" class="block text-sm font-medium text-text-primary mb-2">配送地址</label>
+                        <textarea id="order-delivery" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="请输入详细配送地址"></textarea>
+                    </div>
+                    <div class="mb-4 p-3 bg-green-50 rounded-lg">
+                        <p class="text-sm text-green-700">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            提交订单后，我们将在24小时内与您联系确认详情
+                        </p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button id="order-cancel-btn" class="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-text-secondary">
+                            取消
+                        </button>
+                        <button id="order-submit-btn" class="flex-1 py-2 px-4 bg-accent text-white rounded-lg font-medium">
+                            提交订单
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 搜索模态框 -->
+    <div id="search-modal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0"></div>
+        <div class="relative flex items-start justify-center pt-20 p-4">
+            <div id="search-modal-content" class="bg-white rounded-2xl shadow-xl w-full max-w-md fade-in">
+                <div class="p-6">
+                    <div class="relative mb-4">
+                        <input type="text" id="search-input" class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="搜索商品名称、规格...">
+                        <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button id="search-cancel-btn" class="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-text-secondary">
+                            取消
+                        </button>
+                        <button id="search-submit-btn" class="flex-1 py-2 px-4 bg-secondary text-white rounded-lg font-medium">
+                            搜索
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let currentProductId = null;
+
+            // 返回按钮
+            document.querySelector('#back-btn').addEventListener('click', function() {
+                window.location.href = 'P-HOME_FARMER_ENTERPRISE.html';
+            });
+
+            // 分类切换
+            const categoryButtons = document.querySelectorAll('#category-scroll button');
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    categoryButtons.forEach(btn => {
+                        btn.classList.remove('category-active');
+                        btn.classList.add('category-inactive');
+                    });
+                    this.classList.remove('category-inactive');
+                    this.classList.add('category-active');
+                    
+                    // 这里可以添加筛选逻辑
+                    filterProducts(this.id);
+                });
+            });
+
+            // 商品卡片点击
+            const productCards = document.querySelectorAll('[id^="product-card-"]');
+            productCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // 如果点击的是按钮，不触发卡片点击
+                    if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
+                        return;
+                    }
+                    
+                    const productId = this.dataset.productId;
+                    // 这里可以跳转到商品详情页，但PRD中没有定义详情页，所以暂时不跳转
+                    console.log('查看商品详情:', productId);
+                });
+            });
+
+            // 询价按钮
+            const inquiryButtons = document.querySelectorAll('[id^="inquiry-btn-"]');
+            inquiryButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const productId = this.id.replace('inquiry-btn-', '');
+                    currentProductId = productId;
+                    showInquiryModal(productId);
+                });
+            });
+
+            // 下单按钮
+            const orderButtons = document.querySelectorAll('[id^="order-btn-"]');
+            orderButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const productId = this.id.replace('order-btn-', '');
+                    currentProductId = productId;
+                    showOrderModal(productId);
+                });
+            });
+
+            // 搜索按钮
+            document.querySelector('#search-btn').addEventListener('click', function() {
+                document.querySelector('#search-modal').classList.remove('hidden');
+                document.querySelector('#search-input').focus();
+            });
+
+            // 搜索模态框事件
+            document.querySelector('#search-cancel-btn').addEventListener('click', function() {
+                document.querySelector('#search-modal').classList.add('hidden');
+                document.querySelector('#search-input').value = '';
+            });
+
+            document.querySelector('#search-submit-btn').addEventListener('click', function() {
+                const keyword = document.querySelector('#search-input').value.trim();
+                if (keyword) {
+                    searchProducts(keyword);
+                }
+                document.querySelector('#search-modal').classList.add('hidden');
+                document.querySelector('#search-input').value = '';
+            });
+
+            // 询价模态框事件
+            document.querySelector('#inquiry-cancel-btn').addEventListener('click', function() {
+                document.querySelector('#inquiry-modal').classList.add('hidden');
+                resetInquiryForm();
+            });
+
+            document.querySelector('#inquiry-submit-btn').addEventListener('click', function() {
+                const quantity = document.querySelector('#inquiry-quantity').value.trim();
+                const contact = document.querySelector('#inquiry-contact').value.trim();
+                
+                if (!quantity || !contact) {
+                    alert('请填写完整的询价信息');
+                    return;
+                }
+                
+                // 模拟提交询价
+                alert('询价已提交，我们将在24小时内与您联系');
+                document.querySelector('#inquiry-modal').classList.add('hidden');
+                resetInquiryForm();
+            });
+
+            // 下单模态框事件
+            document.querySelector('#order-cancel-btn').addEventListener('click', function() {
+                document.querySelector('#order-modal').classList.add('hidden');
+                resetOrderForm();
+            });
+
+            document.querySelector('#order-submit-btn').addEventListener('click', function() {
+                const quantity = document.querySelector('#order-quantity').value.trim();
+                const contact = document.querySelector('#order-contact').value.trim();
+                const delivery = document.querySelector('#order-delivery').value.trim();
+                
+                if (!quantity || !contact || !delivery) {
+                    alert('请填写完整的订单信息');
+                    return;
+                }
+                
+                // 模拟提交订单
+                alert('订单已提交，我们将在24小时内与您联系确认详情');
+                document.querySelector('#order-modal').classList.add('hidden');
+                resetOrderForm();
+            });
+
+            // 点击模态框背景关闭
+            document.querySelector('#inquiry-modal .modal-overlay').addEventListener('click', function() {
+                document.querySelector('#inquiry-modal').classList.add('hidden');
+                resetInquiryForm();
+            });
+
+            document.querySelector('#order-modal .modal-overlay').addEventListener('click', function() {
+                document.querySelector('#order-modal').classList.add('hidden');
+                resetOrderForm();
+            });
+
+            document.querySelector('#search-modal .modal-overlay').addEventListener('click', function() {
+                document.querySelector('#search-modal').classList.add('hidden');
+                document.querySelector('#search-input').value = '';
+            });
+
+            // 显示询价模态框
+            function showInquiryModal(productId) {
+                const productData = getProductData(productId);
+                if (!productData) return;
+                
+                document.querySelector('#inquiry-product-name').textContent = productData.name;
+                document.querySelector('#inquiry-product-spec').textContent = productData.spec;
+                document.querySelector('#inquiry-product-price').textContent = `参考价格：${productData.price}`;
+                
+                document.querySelector('#inquiry-modal').classList.remove('hidden');
+                document.querySelector('#inquiry-quantity').focus();
+            }
+
+            // 显示下单模态框
+            function showOrderModal(productId) {
+                const productData = getProductData(productId);
+                if (!productData) return;
+                
+                document.querySelector('#order-product-name').textContent = productData.name;
+                document.querySelector('#order-product-spec').textContent = productData.spec;
+                document.querySelector('#order-product-price').textContent = `单价：${productData.price}`;
+                
+                document.querySelector('#order-modal').classList.remove('hidden');
+                document.querySelector('#order-quantity').focus();
+            }
+
+            // 重置询价表单
+            function resetInquiryForm() {
+                document.querySelector('#inquiry-quantity').value = '';
+                document.querySelector('#inquiry-contact').value = '';
+            }
+
+            // 重置订单表单
+            function resetOrderForm() {
+                document.querySelector('#order-quantity').value = '';
+                document.querySelector('#order-contact').value = '';
+                document.querySelector('#order-delivery').value = '';
+            }
+
+            // 获取商品数据
+            function getProductData(productId) {
+                const products = {
+                    '1': {
+                        name: '禽流感H5+H7二价灭活疫苗',
+                        spec: '规格：500ml/瓶',
+                        price: '¥120/瓶'
+                    },
+                    '2': {
+                        name: '新城疫活疫苗(La Sota株)',
+                        spec: '规格：1000羽份/瓶',
+                        price: '¥85/瓶'
+                    },
+                    '3': {
+                        name: '蛋鸡产蛋期全价饲料',
+                        spec: '规格：25kg/袋',
+                        price: '¥145/袋'
+                    },
+                    '4': {
+                        name: '白羽肉鸡育肥期饲料',
+                        spec: '规格：25kg/袋',
+                        price: '¥138/袋'
+                    },
+                    '5': {
+                        name: '阿莫西林可溶性粉',
+                        spec: '规格：100g/袋',
+                        price: '¥35/袋'
+                    },
+                    '6': {
+                        name: '智能雾化消毒机',
+                        spec: '规格：工业级，覆盖面积500㎡',
+                        price: '¥8,500/台'
+                    }
+                };
+                
+                return products[productId];
+            }
+
+            // 筛选商品
+            function filterProducts(categoryId) {
+                // 这里可以根据分类筛选商品
+                console.log('筛选分类:', categoryId);
+            }
+
+            // 搜索商品
+            function searchProducts(keyword) {
+                // 这里可以实现搜索功能
+                console.log('搜索商品:', keyword);
+            }
+
+            // 卡片点击效果
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach(card => {
+                card.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                card.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

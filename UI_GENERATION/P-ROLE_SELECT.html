@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 角色选择</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D3F8EE',
+                        secondary: '#3BCCA5', 
+                        accent: '#2B6A5A',
+                        'text-primary': '#1F2937',
+                        'text-secondary': '#6B7280',
+                        'bg-light': '#F9FAFB',
+                        'card-bg': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)',
+                        'selected': '0 0 0 2px rgba(59, 204, 165, 0.3)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .role-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .role-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .role-card.selected {
+            border-color: #3BCCA5;
+            background-color: rgba(59, 204, 165, 0.05);
+            box-shadow: 0 0 0 2px rgba(59, 204, 165, 0.3);
+        }
+        
+        .sub-role-card {
+            transition: all 0.2s ease;
+            border: 1px solid #E5E7EB;
+        }
+        
+        .sub-role-card:hover {
+            border-color: #3BCCA5;
+            background-color: rgba(59, 204, 165, 0.02);
+        }
+        
+        .sub-role-card.selected {
+            border-color: #3BCCA5;
+            background-color: rgba(59, 204, 165, 0.1);
+            color: #2B6A5A;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex items-center px-4 py-3">
+            <button id="back-btn" class="mr-3 p-2 -ml-2">
+                <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+            </button>
+            <h1 id="page-title" class="text-lg font-semibold text-text-primary">选择您的身份</h1>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6 pb-32">
+        <!-- 主角色选择区域 -->
+        <section id="main-roles-section" class="mb-8">
+            <h2 id="main-roles-title" class="text-lg font-semibold text-text-primary mb-4">请选择主角色</h2>
+            
+            <div id="main-roles-grid" class="space-y-4">
+                <!-- 养殖户 -->
+                <div id="role-farmer" class="role-card bg-card-bg rounded-xl p-6 shadow-card cursor-pointer" data-role="farmer">
+                    <div class="flex items-center space-x-4">
+                        <div id="farmer-icon" class="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-seedling text-2xl text-secondary"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 id="farmer-title" class="text-lg font-semibold text-text-primary mb-1">养殖户</h3>
+                            <p id="farmer-desc" class="text-sm text-text-secondary">从事禽类养殖生产</p>
+                        </div>
+                        <div id="farmer-arrow" class="w-6 h-6 flex items-center justify-center">
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 机构 -->
+                <div id="role-institution" class="role-card bg-card-bg rounded-xl p-6 shadow-card cursor-pointer" data-role="institution">
+                    <div class="flex items-center space-x-4">
+                        <div id="institution-icon" class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-building text-2xl text-blue-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 id="institution-title" class="text-lg font-semibold text-text-primary mb-1">机构</h3>
+                            <p id="institution-desc" class="text-sm text-text-secondary">疫控、科研、服务机构</p>
+                        </div>
+                        <div id="institution-arrow" class="w-6 h-6 flex items-center justify-center">
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 学生 -->
+                <div id="role-student" class="role-card bg-card-bg rounded-xl p-6 shadow-card cursor-pointer" data-role="student">
+                    <div class="flex items-center space-x-4">
+                        <div id="student-icon" class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-graduation-cap text-2xl text-purple-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 id="student-title" class="text-lg font-semibold text-text-primary mb-1">学生</h3>
+                            <p id="student-desc" class="text-sm text-text-secondary">学习禽类养殖相关专业</p>
+                        </div>
+                        <div id="student-arrow" class="w-6 h-6 flex items-center justify-center">
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 子角色选择区域 -->
+        <section id="sub-roles-section" class="mb-8 hidden">
+            <h2 id="sub-roles-title" class="text-lg font-semibold text-text-primary mb-4">请选择具体身份</h2>
+            
+            <div id="sub-roles-container" class="space-y-3">
+                <!-- 养殖户子角色 -->
+                <div id="sub-roles-farmer" class="hidden space-y-3">
+                    <div class="sub-role-card bg-card-bg rounded-lg p-4 cursor-pointer" data-sub-role="small">
+                        <h4 class="font-medium text-text-primary mb-1">小散户</h4>
+                        <p class="text-sm text-text-secondary">小规模养殖，个人或家庭经营</p>
+                    </div>
+                    <div class="sub-role-card bg-card-bg rounded-lg p-4 cursor-pointer" data-sub-role="cooperative">
+                        <h4 class="font-medium text-text-primary mb-1">合作社</h4>
+                        <p class="text-sm text-text-secondary">养殖户联合组织，统一管理</p>
+                    </div>
+                    <div class="sub-role-card bg-card-bg rounded-lg p-4 cursor-pointer" data-sub-role="enterprise">
+                        <h4 class="font-medium text-text-primary mb-1">养殖企业</h4>
+                        <p class="text-sm text-text-secondary">规模化养殖企业，专业管理团队</p>
+                    </div>
+                </div>
+
+                <!-- 机构子角色 -->
+                <div id="sub-roles-institution" class="hidden space-y-3">
+                    <div class="sub-role-card bg-card-bg rounded-lg p-4 cursor-pointer" data-sub-role="cdc">
+                        <h4 class="font-medium text-text-primary mb-1">疫控机构</h4>
+                        <p class="text-sm text-text-secondary">负责疫情监测、预警和防控</p>
+                    </div>
+                    <div class="sub-role-card bg-card-bg rounded-lg p-4 cursor-pointer" data-sub-role="research">
+                        <h4 class="font-medium text-text-primary mb-1">科研院所</h4>
+                        <p class="text-sm text-text-secondary">从事禽类疾病研究和技术开发</p>
+                    </div>
+                    <div class="sub-role-card bg-card-bg rounded-lg p-4 cursor-pointer" data-sub-role="service">
+                        <h4 class="font-medium text-text-primary mb-1">服务商</h4>
+                        <p class="text-sm text-text-secondary">提供兽药、饲料、技术服务等</p>
+                    </div>
+                </div>
+
+                <!-- 学生子角色 -->
+                <div id="sub-roles-student" class="hidden space-y-3">
+                    <div class="sub-role-card bg-card-bg rounded-lg p-4 cursor-pointer" data-sub-role="learning">
+                        <h4 class="font-medium text-text-primary mb-1">学习阶段</h4>
+                        <p class="text-sm text-text-secondary">理论学习，知识巩固</p>
+                    </div>
+                    <div class="sub-role-card bg-card-bg rounded-lg p-4 cursor-pointer" data-sub-role="cognitive">
+                        <h4 class="font-medium text-text-primary mb-1">认知实习</h4>
+                        <p class="text-sm text-text-secondary">参观学习，初步实践</p>
+                    </div>
+                    <div class="sub-role-card bg-card-bg rounded-lg p-4 cursor-pointer" data-sub-role="advanced">
+                        <h4 class="font-medium text-text-primary mb-1">顶岗实习</h4>
+                        <p class="text-sm text-text-secondary">深入实践，技能提升</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 角色说明 -->
+        <section id="role-description" class="mb-8">
+            <div id="description-card" class="bg-card-bg rounded-xl p-4 shadow-card">
+                <div class="flex items-start space-x-3">
+                    <div id="description-icon" class="w-8 h-8 bg-secondary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-info-circle text-secondary text-sm"></i>
+                    </div>
+                    <div>
+                        <h4 id="description-title" class="font-medium text-text-primary mb-2">温馨提示</h4>
+                        <p id="description-content" class="text-sm text-text-secondary leading-relaxed">
+                            请根据您的实际身份选择，不同角色将获得不同的功能服务。选择后可在个人中心修改。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部按钮 -->
+    <div id="bottom-action" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 safe-bottom">
+        <button id="next-btn" class="w-full gradient-bg text-accent font-semibold py-4 rounded-xl shadow-button disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            下一步
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let selectedMainRole = null;
+            let selectedSubRole = null;
+
+            // 主角色选择
+            const mainRoleCards = document.querySelectorAll('.role-card');
+            const subRolesSection = document.querySelector('#sub-roles-section');
+            const nextBtn = document.querySelector('#next-btn');
+
+            mainRoleCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const role = this.dataset.role;
+                    
+                    // 清除之前的选择
+                    mainRoleCards.forEach(c => c.classList.remove('selected'));
+                    
+                    // 选中当前角色
+                    this.classList.add('selected');
+                    selectedMainRole = role;
+                    selectedSubRole = null;
+                    
+                    // 显示对应的子角色
+                    showSubRoles(role);
+                    
+                    // 更新按钮状态
+                    updateNextButton();
+                });
+            });
+
+            // 显示子角色
+            function showSubRoles(role) {
+                // 隐藏所有子角色容器
+                document.querySelectorAll('[id^="sub-roles-"]').forEach(container => {
+                    container.classList.add('hidden');
+                });
+                
+                // 显示对应的子角色
+                const targetContainer = document.querySelector(`#sub-roles-${role}`);
+                if (targetContainer) {
+                    subRolesSection.classList.remove('hidden');
+                    targetContainer.classList.remove('hidden');
+                    targetContainer.classList.add('fade-in');
+                    
+                    // 清除子角色选择
+                    document.querySelectorAll('.sub-role-card').forEach(card => {
+                        card.classList.remove('selected');
+                    });
+                }
+            }
+
+            // 子角色选择
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.sub-role-card')) {
+                    const card = e.target.closest('.sub-role-card');
+                    
+                    // 清除同组的选择
+                    const parentContainer = card.parentElement;
+                    parentContainer.querySelectorAll('.sub-role-card').forEach(c => {
+                        c.classList.remove('selected');
+                    });
+                    
+                    // 选中当前子角色
+                    card.classList.add('selected');
+                    selectedSubRole = card.dataset.subRole;
+                    
+                    // 更新按钮状态
+                    updateNextButton();
+                }
+            });
+
+            // 更新下一步按钮状态
+            function updateNextButton() {
+                if (selectedMainRole && selectedSubRole) {
+                    nextBtn.disabled = false;
+                    nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    nextBtn.disabled = true;
+                    nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            }
+
+            // 下一步按钮点击
+            nextBtn.addEventListener('click', function() {
+                if (!selectedMainRole || !selectedSubRole) {
+                    alert('请选择完整的角色信息');
+                    return;
+                }
+
+                // 根据角色判断是否需要认证
+                const requiresAuth = checkIfRequiresAuth(selectedMainRole, selectedSubRole);
+                
+                if (requiresAuth) {
+                    // 需要认证，跳转到认证页
+                    window.location.href = `P-AUTH_CERTIFICATION.html?mainRole=${selectedMainRole}&subRole=${selectedSubRole}`;
+                } else {
+                    // 不需要认证，直接跳转到对应首页
+                    const homePage = getHomePageForRole(selectedMainRole, selectedSubRole);
+                    window.location.href = homePage;
+                }
+            });
+
+            // 检查是否需要认证
+            function checkIfRequiresAuth(mainRole, subRole) {
+                const authRequiredRoles = [
+                    { main: 'farmer', sub: 'enterprise' },
+                    { main: 'institution', sub: 'cdc' },
+                    { main: 'institution', sub: 'research' },
+                    { main: 'institution', sub: 'service' },
+                    { main: 'student', sub: 'advanced' }
+                ];
+                
+                return authRequiredRoles.some(role => 
+                    role.main === mainRole && role.sub === subRole
+                );
+            }
+
+            // 获取对应角色的首页
+            function getHomePageForRole(mainRole, subRole) {
+                const roleMapping = {
+                    farmer: {
+                        small: 'P-HOME_FARMER_SMALL.html',
+                        cooperative: 'P-HOME_FARMER_ENTERPRISE.html',
+                        enterprise: 'P-HOME_FARMER_ENTERPRISE.html'
+                    },
+                    institution: {
+                        cdc: 'P-HOME_INSTITUTION_CDC.html',
+                        research: 'P-HOME_INSTITUTION_SERVICE.html',
+                        service: 'P-HOME_INSTITUTION_SERVICE.html'
+                    },
+                    student: {
+                        learning: 'P-HOME_STUDENT_LEARNING.html',
+                        cognitive: 'P-HOME_STUDENT_LEARNING.html',
+                        advanced: 'P-HOME_STUDENT_INTERNSHIP.html'
+                    }
+                };
+                
+                return roleMapping[mainRole][subRole] || 'P-HOME_FARMER_SMALL.html';
+            }
+
+            // 返回按钮
+            document.querySelector('#back-btn').addEventListener('click', function() {
+                window.location.href = 'P-LOGIN_REGISTER.html';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 个人中心</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D3F8EE',
+                        secondary: '#3BCCA5', 
+                        accent: '#2B6A5A',
+                        'text-primary': '#1F2937',
+                        'text-secondary': '#6B7280',
+                        'bg-light': '#F9FAFB',
+                        'card-bg': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            animation: modalSlideUp 0.3s ease-out;
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex justify-between items-center px-4 py-3">
+            <div class="flex items-center space-x-3">
+                <button id="back-btn" class="p-2 -ml-2">
+                    <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+                </button>
+                <h1 id="page-title" class="text-lg font-semibold text-text-primary">个人中心</h1>
+            </div>
+            <button id="settings-btn" class="p-2">
+                <i class="fas fa-cog text-xl text-text-secondary"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6 pb-20">
+        <!-- 用户信息卡片 -->
+        <section id="user-info-section" class="mb-8">
+            <div id="user-info-card" class="bg-card-bg rounded-2xl p-6 shadow-card">
+                <div class="flex items-center space-x-4">
+                    <div id="user-avatar-container" class="relative">
+                        <img id="user-avatar" src="https://s.coze.cn/image/hImTTlDUsG4/" 
+                             alt="用户头像" data-category="人物" class="w-16 h-16 rounded-full border-3 border-secondary">
+                        <button id="avatar-edit-btn" class="absolute -bottom-1 -right-1 w-6 h-6 bg-secondary rounded-full flex items-center justify-center">
+                            <i class="fas fa-camera text-white text-xs"></i>
+                        </button>
+                    </div>
+                    <div class="flex-1">
+                        <h2 id="user-nickname" class="text-xl font-bold text-text-primary mb-1">王养殖户</h2>
+                        <div class="flex items-center space-x-2 mb-2">
+                            <span id="user-role" class="px-3 py-1 bg-secondary/10 text-secondary text-sm rounded-full">小散户</span>
+                            <span id="user-level" class="px-3 py-1 bg-blue-100 text-blue-600 text-sm rounded-full">初级用户</span>
+                        </div>
+                        <p id="user-phone" class="text-sm text-text-secondary">138****5678</p>
+                    </div>
+                    <button id="edit-profile-btn" class="p-2">
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 统计数据 -->
+        <section id="stats-section" class="mb-8">
+            <div id="stats-grid" class="grid grid-cols-3 gap-4">
+                <div id="diagnosis-count-card" class="bg-card-bg rounded-xl p-4 shadow-card text-center">
+                    <div class="text-2xl font-bold text-secondary mb-1">28</div>
+                    <div class="text-sm text-text-secondary">诊断次数</div>
+                </div>
+                <div id="success-rate-card" class="bg-card-bg rounded-xl p-4 shadow-card text-center">
+                    <div class="text-2xl font-bold text-green-600 mb-1">95%</div>
+                    <div class="text-sm text-text-secondary">成功率</div>
+                </div>
+                <div id="continuous-days-card" class="bg-card-bg rounded-xl p-4 shadow-card text-center">
+                    <div class="text-2xl font-bold text-orange-600 mb-1">12</div>
+                    <div class="text-sm text-text-secondary">连续使用天数</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 功能菜单 -->
+        <section id="menu-section" class="space-y-4">
+            <!-- 我的服务 -->
+            <div id="my-services-card" class="bg-card-bg rounded-xl shadow-card">
+                <div class="px-4 py-3 border-b border-gray-100">
+                    <h3 class="text-base font-semibold text-text-primary">我的服务</h3>
+                </div>
+                <div class="divide-y divide-gray-100">
+                    <button id="my-diagnosis-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center">
+                                <i class="fas fa-stethoscope text-secondary"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium text-text-primary">我的诊断</div>
+                                <div class="text-sm text-text-secondary">查看诊断历史记录</div>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </button>
+                    
+                    <button id="my-orders-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-shopping-bag text-blue-600"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium text-text-primary">我的订单</div>
+                                <div class="text-sm text-text-secondary">查看历史订单</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2 py-1 bg-red-100 text-red-600 text-xs rounded-full">3</span>
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </div>
+                    </button>
+                    
+                    <button id="my-favorites-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-heart text-yellow-600"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium text-text-primary">我的收藏</div>
+                                <div class="text-sm text-text-secondary">收藏的文章和知识</div>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 账户管理 -->
+            <div id="account-management-card" class="bg-card-bg rounded-xl shadow-card">
+                <div class="px-4 py-3 border-b border-gray-100">
+                    <h3 class="text-base font-semibold text-text-primary">账户管理</h3>
+                </div>
+                <div class="divide-y divide-gray-100">
+                    <button id="account-security-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-shield-alt text-purple-600"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium text-text-primary">账户安全</div>
+                                <div class="text-sm text-text-secondary">密码、手机号等</div>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </button>
+                    
+                    <button id="privacy-settings-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user-secret text-gray-600"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium text-text-primary">隐私设置</div>
+                                <div class="text-sm text-text-secondary">数据隐私和权限</div>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 其他 -->
+            <div id="other-card" class="bg-card-bg rounded-xl shadow-card">
+                <div class="px-4 py-3 border-b border-gray-100">
+                    <h3 class="text-base font-semibold text-text-primary">其他</h3>
+                </div>
+                <div class="divide-y divide-gray-100">
+                    <button id="about-us-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-info-circle text-indigo-600"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium text-text-primary">关于我们</div>
+                                <div class="text-sm text-text-secondary">版本信息和联系方式</div>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </button>
+                    
+                    <button id="feedback-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-comment-dots text-teal-600"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium text-text-primary">意见反馈</div>
+                                <div class="text-sm text-text-secondary">帮助我们改进</div>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 退出登录 -->
+            <button id="logout-btn" class="w-full bg-white rounded-xl p-4 shadow-card card-hover">
+                <div class="flex items-center justify-center space-x-2">
+                    <i class="fas fa-sign-out-alt text-red-500"></i>
+                    <span class="font-medium text-red-500">退出登录</span>
+                </div>
+            </button>
+        </section>
+    </main>
+
+    <!-- 底部导航栏 -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
+        <a id="nav-home" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-xs mt-0.5">首页</span>
+        </a>
+        <a id="nav-diagnosis" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+            <i class="fas fa-stethoscope text-xl"></i>
+            <span class="text-xs mt-0.5">AI诊断</span>
+        </a>
+        <a id="nav-profile" href="#" class="flex flex-col items-center p-2 text-secondary">
+            <i class="fas fa-user text-xl"></i>
+            <span class="text-xs mt-0.5">我的</span>
+        </a>
+    </nav>
+
+    <!-- 退出登录确认弹窗 -->
+    <div id="logout-modal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0"></div>
+        <div class="relative flex items-end justify-center min-h-screen p-4">
+            <div class="modal-content bg-white rounded-t-2xl w-full max-w-md">
+                <div class="p-6">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-sign-out-alt text-red-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-text-primary mb-2">确认退出登录</h3>
+                        <p class="text-text-secondary mb-6">退出后需要重新登录才能使用完整功能</p>
+                        <div class="flex space-x-3">
+                            <button id="cancel-logout-btn" class="flex-1 py-3 px-4 bg-gray-100 text-gray-700 rounded-xl font-medium">
+                                取消
+                            </button>
+                            <button id="confirm-logout-btn" class="flex-1 py-3 px-4 bg-red-500 text-white rounded-xl font-medium">
+                                确认退出
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 解析URL参数的辅助函数
+            function getUrlParams() {
+                const params = {};
+                const queryString = window.location.search.substring(1);
+                const urlParams = new URLSearchParams(queryString);
+                
+                for(const [key, value] of urlParams.entries()) {
+                    params[key] = value;
+                }
+                return params;
+            }
+
+            // 获取URL参数
+            const params = getUrlParams();
+            
+            // 根据用户ID加载用户信息（模拟）
+            if(params.userId) {
+                loadUserInfo(params.userId);
+            }
+
+            // 模拟加载用户信息
+            function loadUserInfo(userId) {
+                // 在实际应用中，这里会调用API获取用户数据
+                const mockUsers = {
+                    "user1": { 
+                        nickname: "王养殖户", 
+                        role: "小散户", 
+                        phone: "138****5678", 
+                        avatar: "https://s.coze.cn/image/N3OSbHjDmh4/",
+                        level: "初级用户",
+                        stats: { diagnosisCount: 28, successRate: 95, continuousDays: 12 }
+                    },
+                    "user2": { 
+                        nickname: "李企业", 
+                        role: "养殖企业", 
+                        phone: "139****9876", 
+                        avatar: "https://s.coze.cn/image/xwFtkvRCsHA/",
+                        level: "高级用户",
+                        stats: { diagnosisCount: 156, successRate: 98, continuousDays: 45 }
+                    }
+                };
+                
+                const user = mockUsers[userId] || mockUsers["user1"];
+                
+                // 更新页面UI
+                document.querySelector('#user-nickname').textContent = user.nickname;
+                document.querySelector('#user-role').textContent = user.role;
+                document.querySelector('#user-phone').textContent = user.phone;
+                document.querySelector('#user-avatar').src = user.avatar;
+                document.querySelector('#user-level').textContent = user.level;
+                
+                // 更新统计数据
+                document.querySelector('#diagnosis-count-card .text-2xl').textContent = user.stats.diagnosisCount;
+                document.querySelector('#success-rate-card .text-2xl').textContent = user.stats.successRate + '%';
+                document.querySelector('#continuous-days-card .text-2xl').textContent = user.stats.continuousDays;
+            }
+
+            // 返回按钮点击事件
+            document.querySelector('#back-btn').addEventListener('click', function() {
+                // 根据来源页面返回，这里简单返回首页
+                window.history.back();
+            });
+
+            // 设置按钮点击事件
+            document.querySelector('#settings-btn').addEventListener('click', function() {
+                window.location.href = 'P-SETTINGS.html';
+            });
+
+            // 头像编辑按钮点击事件
+            document.querySelector('#avatar-edit-btn').addEventListener('click', function() {
+                console.log('需要调用第三方接口实现相机拍照或相册选择功能');
+                // 注释：此功能需要调用设备相机API或相册API，在原型阶段仅做UI展示
+            });
+
+            // 个人资料编辑按钮点击事件
+            document.querySelector('#edit-profile-btn').addEventListener('click', function() {
+                console.log('跳转到个人资料编辑页面');
+                // 注释：个人资料编辑页面不在本次PRD范围内
+            });
+
+            // 我的诊断按钮点击事件
+            document.querySelector('#my-diagnosis-btn').addEventListener('click', function() {
+                console.log('查看诊断历史记录');
+                // 注释：诊断历史记录页面不在本次PRD范围内
+            });
+
+            // 我的订单按钮点击事件
+            document.querySelector('#my-orders-btn').addEventListener('click', function() {
+                console.log('查看历史订单');
+                // 注释：订单页面不在本次PRD范围内
+            });
+
+            // 我的收藏按钮点击事件
+            document.querySelector('#my-favorites-btn').addEventListener('click', function() {
+                console.log('查看收藏内容');
+                // 注释：收藏页面不在本次PRD范围内
+            });
+
+            // 账户安全按钮点击事件
+            document.querySelector('#account-security-btn').addEventListener('click', function() {
+                console.log('跳转到账户安全设置页面');
+                // 注释：账户安全设置页面不在本次PRD范围内
+            });
+
+            // 隐私设置按钮点击事件
+            document.querySelector('#privacy-settings-btn').addEventListener('click', function() {
+                console.log('跳转到隐私设置页面');
+                // 注释：隐私设置页面不在本次PRD范围内
+            });
+
+            // 关于我们按钮点击事件
+            document.querySelector('#about-us-btn').addEventListener('click', function() {
+                console.log('跳转到关于我们页面');
+                // 注释：关于我们页面不在本次PRD范围内
+            });
+
+            // 意见反馈按钮点击事件
+            document.querySelector('#feedback-btn').addEventListener('click', function() {
+                console.log('跳转到意见反馈页面');
+                // 注释：意见反馈页面不在本次PRD范围内
+            });
+
+            // 退出登录按钮点击事件
+            document.querySelector('#logout-btn').addEventListener('click', function() {
+                document.querySelector('#logout-modal').classList.remove('hidden');
+            });
+
+            // 取消退出登录按钮点击事件
+            document.querySelector('#cancel-logout-btn').addEventListener('click', function() {
+                document.querySelector('#logout-modal').classList.add('hidden');
+            });
+
+            // 确认退出登录按钮点击事件
+            document.querySelector('#confirm-logout-btn').addEventListener('click', function() {
+                // 清除本地存储的用户信息
+                localStorage.removeItem('userToken');
+                localStorage.removeItem('userInfo');
+                
+                // 跳转到登录页面
+                window.location.href = 'P-LOGIN_REGISTER.html';
+            });
+
+            // 点击弹窗背景关闭弹窗
+            document.querySelector('.modal-overlay').addEventListener('click', function() {
+                document.querySelector('#logout-modal').classList.add('hidden');
+            });
+
+            // 底部导航栏点击事件
+            document.querySelector('#nav-home').addEventListener('click', function(e) {
+                e.preventDefault();
+                // 根据用户角色跳转到对应的首页
+                const userRole = document.querySelector('#user-role').textContent;
+                if (userRole === '小散户') {
+                    window.location.href = 'P-HOME_FARMER_SMALL.html';
+                } else if (userRole === '养殖企业') {
+                    window.location.href = 'P-HOME_FARMER_ENTERPRISE.html';
+                } else if (userRole === '疫控机构') {
+                    window.location.href = 'P-HOME_INSTITUTION_CDC.html';
+                } else if (userRole === '服务商') {
+                    window.location.href = 'P-HOME_INSTITUTION_SERVICE.html';
+                } else if (userRole === '学习阶段学生') {
+                    window.location.href = 'P-HOME_STUDENT_LEARNING.html';
+                } else if (userRole === '顶岗实习') {
+                    window.location.href = 'P-HOME_STUDENT_INTERNSHIP.html';
+                } else {
+                    window.location.href = 'P-HOME_FARMER_SMALL.html';
+                }
+            });
+
+            document.querySelector('#nav-diagnosis').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'P-AI_DIAGNOSIS.html';
+            });
+
+            document.querySelector('#nav-profile').addEventListener('click', function(e) {
+                e.preventDefault();
+                // 已在个人中心页面，无需操作
+            });
+
+            // 卡片点击效果
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach(card => {
+                card.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                card.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

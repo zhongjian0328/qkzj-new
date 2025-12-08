@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 批次管理</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D3F8EE',
+                        secondary: '#3BCCA5', 
+                        accent: '#2B6A5A',
+                        'text-primary': '#1F2937',
+                        'text-secondary': '#6B7280',
+                        'bg-light': '#F9FAFB',
+                        'card-bg': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .batch-status-active {
+            background-color: #D3F8EE;
+            color: #2B6A5A;
+        }
+
+        .batch-status-finished {
+            background-color: #F3F4F6;
+            color: #6B7280;
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex justify-between items-center px-4 py-3">
+            <div class="flex items-center space-x-3">
+                <button id="back-btn" class="p-2 -ml-2">
+                    <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+                </button>
+                <h1 id="page-title" class="text-lg font-semibold text-text-primary">批次管理</h1>
+            </div>
+            <button id="search-btn" class="p-2">
+                <i class="fas fa-search text-xl text-text-secondary"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6">
+        <!-- 新建批次按钮 -->
+        <div id="create-batch-section" class="mb-6">
+            <button id="create-batch-btn" class="w-full gradient-bg text-accent font-semibold py-4 px-6 rounded-xl shadow-button flex items-center justify-center space-x-2">
+                <i class="fas fa-plus text-lg"></i>
+                <span>新建批次</span>
+            </button>
+        </div>
+
+        <!-- 搜索和筛选区域 -->
+        <div id="search-filter-section" class="bg-card-bg rounded-xl p-4 shadow-card mb-6 hidden">
+            <div class="flex space-x-3 mb-4">
+                <div class="flex-1 relative">
+                    <input type="text" id="search-input" placeholder="搜索批次名称..." 
+                           class="w-full px-4 py-2 pl-10 border border-gray-200 rounded-lg focus:outline-none focus:border-secondary">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
+                </div>
+                <button id="clear-search-btn" class="px-4 py-2 text-text-secondary">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="flex space-x-3">
+                <select id="species-filter" class="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-secondary">
+                    <option value="">全部品种</option>
+                    <option value="白羽肉鸡">白羽肉鸡</option>
+                    <option value="黄羽肉鸡">黄羽肉鸡</option>
+                    <option value="蛋鸡">蛋鸡</option>
+                    <option value="鸭">鸭</option>
+                    <option value="鹅">鹅</option>
+                </select>
+                
+                <select id="status-filter" class="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-secondary">
+                    <option value="">全部状态</option>
+                    <option value="active">进行中</option>
+                    <option value="finished">已完成</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 批次列表 -->
+        <div id="batch-list-section">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="batch-list-title" class="text-lg font-semibold text-text-primary">批次列表</h2>
+                <span id="batch-count" class="text-sm text-text-secondary">共 5 个批次</span>
+            </div>
+
+            <div id="batch-list" class="space-y-4">
+                <!-- 批次项 1 -->
+                <div id="batch-item-1" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" data-batch-id="batch-001">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-drumstick-bite text-xl text-secondary"></i>
+                            </div>
+                            <div>
+                                <h3 id="batch-name-1" class="font-semibold text-text-primary">白羽肉鸡-20240101</h3>
+                                <p id="batch-species-1" class="text-sm text-text-secondary">白羽肉鸡</p>
+                            </div>
+                        </div>
+                        <span id="batch-status-1" class="px-3 py-1 rounded-full text-sm font-medium batch-status-active">
+                            进行中
+                        </span>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                            <p class="text-2xl font-bold text-text-primary">15,000</p>
+                            <p class="text-xs text-text-secondary">初始数量</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-text-primary">14,850</p>
+                            <p class="text-xs text-text-secondary">当前存栏</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-text-primary">1.0%</p>
+                            <p class="text-xs text-text-secondary">死淘率</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
+                        <div class="flex items-center space-x-4 text-sm text-text-secondary">
+                            <span><i class="fas fa-calendar-alt mr-1"></i>入栏：2024-01-01</span>
+                            <span><i class="fas fa-clock mr-1"></i>25日龄</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </div>
+                </div>
+
+                <!-- 批次项 2 -->
+                <div id="batch-item-2" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" data-batch-id="batch-002">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-egg text-xl text-secondary"></i>
+                            </div>
+                            <div>
+                                <h3 id="batch-name-2" class="font-semibold text-text-primary">蛋鸡-20240115</h3>
+                                <p id="batch-species-2" class="text-sm text-text-secondary">蛋鸡</p>
+                            </div>
+                        </div>
+                        <span id="batch-status-2" class="px-3 py-1 rounded-full text-sm font-medium batch-status-active">
+                            进行中
+                        </span>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                            <p class="text-2xl font-bold text-text-primary">8,000</p>
+                            <p class="text-xs text-text-secondary">初始数量</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-text-primary">7,920</p>
+                            <p class="text-xs text-text-secondary">当前存栏</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-text-primary">1.0%</p>
+                            <p class="text-xs text-text-secondary">死淘率</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
+                        <div class="flex items-center space-x-4 text-sm text-text-secondary">
+                            <span><i class="fas fa-calendar-alt mr-1"></i>入栏：2024-01-15</span>
+                            <span><i class="fas fa-clock mr-1"></i>11日龄</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </div>
+                </div>
+
+                <!-- 批次项 3 -->
+                <div id="batch-item-3" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" data-batch-id="batch-003">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-drumstick-bite text-xl text-secondary"></i>
+                            </div>
+                            <div>
+                                <h3 id="batch-name-3" class="font-semibold text-text-primary">黄羽肉鸡-20231220</h3>
+                                <p id="batch-species-3" class="text-sm text-text-secondary">黄羽肉鸡</p>
+                            </div>
+                        </div>
+                        <span id="batch-status-3" class="px-3 py-1 rounded-full text-sm font-medium batch-status-finished">
+                            已完成
+                        </span>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                            <p class="text-2xl font-bold text-text-primary">12,000</p>
+                            <p class="text-xs text-text-secondary">初始数量</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-text-primary">11,760</p>
+                            <p class="text-xs text-text-secondary">出栏数量</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-text-primary">2.0%</p>
+                            <p class="text-xs text-text-secondary">死淘率</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
+                        <div class="flex items-center space-x-4 text-sm text-text-secondary">
+                            <span><i class="fas fa-calendar-alt mr-1"></i>入栏：2023-12-20</span>
+                            <span><i class="fas fa-calendar-check mr-1"></i>出栏：2024-01-10</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </div>
+                </div>
+
+                <!-- 批次项 4 -->
+                <div id="batch-item-4" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" data-batch-id="batch-004">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-water text-xl text-secondary"></i>
+                            </div>
+                            <div>
+                                <h3 id="batch-name-4" class="font-semibold text-text-primary">肉鸭-20240105</h3>
+                                <p id="batch-species-4" class="text-sm text-text-secondary">鸭</p>
+                            </div>
+                        </div>
+                        <span id="batch-status-4" class="px-3 py-1 rounded-full text-sm font-medium batch-status-active">
+                            进行中
+                        </span>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                            <p class="text-2xl font-bold text-text-primary">6,000</p>
+                            <p class="text-xs text-text-secondary">初始数量</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-text-primary">5,940</p>
+                            <p class="text-xs text-text-secondary">当前存栏</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-text-primary">1.0%</p>
+                            <p class="text-xs text-text-secondary">死淘率</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
+                        <div class="flex items-center space-x-4 text-sm text-text-secondary">
+                            <span><i class="fas fa-calendar-alt mr-1"></i>入栏：2024-01-05</span>
+                            <span><i class="fas fa-clock mr-1"></i>21日龄</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </div>
+                </div>
+
+                <!-- 批次项 5 -->
+                <div id="batch-item-5" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" data-batch-id="batch-005">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-drumstick-bite text-xl text-secondary"></i>
+                            </div>
+                            <div>
+                                <h3 id="batch-name-5" class="font-semibold text-text-primary">白羽肉鸡-20231215</h3>
+                                <p id="batch-species-5" class="text-sm text-text-secondary">白羽肉鸡</p>
+                            </div>
+                        </div>
+                        <span id="batch-status-5" class="px-3 py-1 rounded-full text-sm font-medium batch-status-finished">
+                            已完成
+                        </span>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                            <p class="text-2xl font-bold text-text-primary">10,000</p>
+                            <p class="text-xs text-text-secondary">初始数量</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-text-primary">9,800</p>
+                            <p class="text-xs text-text-secondary">出栏数量</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-text-primary">2.0%</p>
+                            <p class="text-xs text-text-secondary">死淘率</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
+                        <div class="flex items-center space-x-4 text-sm text-text-secondary">
+                            <span><i class="fas fa-calendar-alt mr-1"></i>入栏：2023-12-15</span>
+                            <span><i class="fas fa-calendar-check mr-1"></i>出栏：2024-01-05</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 新建/编辑批次模态框 -->
+    <div id="batch-modal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0"></div>
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+            <div id="modal-content" class="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 id="modal-title" class="text-lg font-semibold text-text-primary">新建批次</h3>
+                        <button id="close-modal-btn" class="p-2 -mr-2">
+                            <i class="fas fa-times text-text-secondary"></i>
+                        </button>
+                    </div>
+                    
+                    <form id="batch-form" class="space-y-4">
+                        <div>
+                            <label for="batch-name" class="block text-sm font-medium text-text-primary mb-2">批次名称 *</label>
+                            <input type="text" id="batch-name" name="batch-name" 
+                                   class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-secondary" 
+                                   placeholder="请输入批次名称" required>
+                        </div>
+                        
+                        <div>
+                            <label for="batch-species" class="block text-sm font-medium text-text-primary mb-2">禽类品种 *</label>
+                            <select id="batch-species" name="batch-species" 
+                                    class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-secondary" required>
+                                <option value="">请选择品种</option>
+                                <option value="白羽肉鸡">白羽肉鸡</option>
+                                <option value="黄羽肉鸡">黄羽肉鸡</option>
+                                <option value="蛋鸡">蛋鸡</option>
+                                <option value="鸭">鸭</option>
+                                <option value="鹅">鹅</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label for="initial-quantity" class="block text-sm font-medium text-text-primary mb-2">初始数量 *</label>
+                            <input type="number" id="initial-quantity" name="initial-quantity" 
+                                   class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-secondary" 
+                                   placeholder="请输入初始数量" min="1" required>
+                        </div>
+                        
+                        <div>
+                            <label for="entry-date" class="block text-sm font-medium text-text-primary mb-2">入栏日期 *</label>
+                            <input type="date" id="entry-date" name="entry-date" 
+                                   class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-secondary" required>
+                        </div>
+                        
+                        <div class="flex space-x-3 pt-4">
+                            <button type="button" id="cancel-btn" 
+                                    class="flex-1 py-3 px-4 border border-gray-200 rounded-lg text-text-secondary font-medium">
+                                取消
+                            </button>
+                            <button type="submit" id="save-btn" 
+                                    class="flex-1 py-3 px-4 gradient-bg text-accent font-medium rounded-lg shadow-button">
+                                保存
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 批次详情模态框 -->
+    <div id="batch-detail-modal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0"></div>
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+            <div id="detail-modal-content" class="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 id="detail-modal-title" class="text-lg font-semibold text-text-primary">批次详情</h3>
+                        <button id="close-detail-modal-btn" class="p-2 -mr-2">
+                            <i class="fas fa-times text-text-secondary"></i>
+                        </button>
+                    </div>
+                    
+                    <div id="batch-detail-content" class="space-y-4">
+                        <!-- 批次基本信息 -->
+                        <div class="bg-bg-light rounded-lg p-4">
+                            <h4 class="font-medium text-text-primary mb-3">基本信息</h4>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">批次名称：</span>
+                                    <span id="detail-batch-name" class="text-text-primary">白羽肉鸡-20240101</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">禽类品种：</span>
+                                    <span id="detail-batch-species" class="text-text-primary">白羽肉鸡</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">入栏日期：</span>
+                                    <span id="detail-entry-date" class="text-text-primary">2024-01-01</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">当前状态：</span>
+                                    <span id="detail-batch-status" class="px-2 py-1 rounded-full text-xs font-medium batch-status-active">
+                                        进行中
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 生产数据 -->
+                        <div class="bg-bg-light rounded-lg p-4">
+                            <h4 class="font-medium text-text-primary mb-3">生产数据</h4>
+                            <div class="grid grid-cols-2 gap-4 text-center">
+                                <div>
+                                    <p id="detail-initial-quantity" class="text-2xl font-bold text-text-primary">15,000</p>
+                                    <p class="text-xs text-text-secondary">初始数量</p>
+                                </div>
+                                <div>
+                                    <p id="detail-current-quantity" class="text-2xl font-bold text-text-primary">14,850</p>
+                                    <p class="text-xs text-text-secondary">当前存栏</p>
+                                </div>
+                                <div>
+                                    <p id="detail-death-rate" class="text-2xl font-bold text-text-primary">1.0%</p>
+                                    <p class="text-xs text-text-secondary">死淘率</p>
+                                </div>
+                                <div>
+                                    <p id="detail-days-old" class="text-2xl font-bold text-text-primary">25</p>
+                                    <p class="text-xs text-text-secondary">日龄</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 操作按钮 -->
+                        <div class="space-y-3 pt-4">
+                            <button id="record-data-btn" 
+                                    class="w-full py-3 px-4 bg-secondary text-white font-medium rounded-lg shadow-button flex items-center justify-center space-x-2">
+                                <i class="fas fa-edit"></i>
+                                <span>录入数据</span>
+                            </button>
+                            
+                            <div class="flex space-x-3">
+                                <button id="edit-batch-btn" 
+                                        class="flex-1 py-3 px-4 border border-gray-200 rounded-lg text-text-secondary font-medium">
+                                    编辑
+                                </button>
+                                <button id="delete-batch-btn" 
+                                        class="flex-1 py-3 px-4 border border-red-200 rounded-lg text-red-600 font-medium">
+                                    删除
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let currentEditingBatchId = null;
+            
+            // 返回按钮
+            document.querySelector('#back-btn').addEventListener('click', function() {
+                // 根据来源页面返回，这里默认返回企业首页
+                window.location.href = 'P-HOME_FARMER_ENTERPRISE.html';
+            });
+            
+            // 搜索按钮
+            document.querySelector('#search-btn').addEventListener('click', function() {
+                const searchSection = document.querySelector('#search-filter-section');
+                searchSection.classList.toggle('hidden');
+            });
+            
+            // 清除搜索
+            document.querySelector('#clear-search-btn').addEventListener('click', function() {
+                document.querySelector('#search-input').value = '';
+                filterBatches();
+            });
+            
+            // 搜索和筛选功能
+            function filterBatches() {
+                const searchTerm = document.querySelector('#search-input').value.toLowerCase();
+                const speciesFilter = document.querySelector('#species-filter').value;
+                const statusFilter = document.querySelector('#status-filter').value;
+                
+                const batchItems = document.querySelectorAll('#batch-list .bg-card-bg');
+                let visibleCount = 0;
+                
+                batchItems.forEach(item => {
+                    const batchName = item.querySelector('h3').textContent.toLowerCase();
+                    const species = item.querySelector('p').textContent;
+                    const status = item.querySelector('.batch-status-active, .batch-status-finished').textContent.trim();
+                    
+                    let matchesSearch = batchName.includes(searchTerm);
+                    let matchesSpecies = !speciesFilter || species === speciesFilter;
+                    let matchesStatus = !statusFilter || 
+                        (statusFilter === 'active' && status === '进行中') ||
+                        (statusFilter === 'finished' && status === '已完成');
+                    
+                    if (matchesSearch && matchesSpecies && matchesStatus) {
+                        item.style.display = 'block';
+                        visibleCount++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                document.querySelector('#batch-count').textContent = `共 ${visibleCount} 个批次`;
+            }
+            
+            // 绑定搜索和筛选事件
+            document.querySelector('#search-input').addEventListener('input', filterBatches);
+            document.querySelector('#species-filter').addEventListener('change', filterBatches);
+            document.querySelector('#status-filter').addEventListener('change', filterBatches);
+            
+            // 新建批次按钮
+            document.querySelector('#create-batch-btn').addEventListener('click', function() {
+                currentEditingBatchId = null;
+                document.querySelector('#modal-title').textContent = '新建批次';
+                document.querySelector('#batch-form').reset();
+                document.querySelector('#batch-modal').classList.remove('hidden');
+            });
+            
+            // 关闭模态框
+            document.querySelector('#close-modal-btn').addEventListener('click', function() {
+                document.querySelector('#batch-modal').classList.add('hidden');
+            });
+            
+            document.querySelector('#cancel-btn').addEventListener('click', function() {
+                document.querySelector('#batch-modal').classList.add('hidden');
+            });
+            
+            // 点击模态框背景关闭
+            document.querySelector('.modal-overlay').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    document.querySelector('#batch-modal').classList.add('hidden');
+                    document.querySelector('#batch-detail-modal').classList.add('hidden');
+                }
+            });
+            
+            // 批次表单提交
+            document.querySelector('#batch-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const batchData = {
+                    name: formData.get('batch-name'),
+                    species: formData.get('batch-species'),
+                    initialQuantity: formData.get('initial-quantity'),
+                    entryDate: formData.get('entry-date')
+                };
+                
+                if (currentEditingBatchId) {
+                    // 编辑批次逻辑
+                    updateBatchInList(currentEditingBatchId, batchData);
+                } else {
+                    // 新建批次逻辑
+                    addBatchToList(batchData);
+                }
+                
+                document.querySelector('#batch-modal').classList.add('hidden');
+                alert('批次保存成功！');
+            });
+            
+            // 批次项点击事件
+            const batchItems = document.querySelectorAll('[data-batch-id]');
+            batchItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const batchId = this.dataset.batchId;
+                    showBatchDetail(batchId);
+                });
+            });
+            
+            // 显示批次详情
+            function showBatchDetail(batchId) {
+                // 根据批次ID获取数据并显示
+                const batchData = getBatchDataById(batchId);
+                if (batchData) {
+                    document.querySelector('#detail-batch-name').textContent = batchData.name;
+                    document.querySelector('#detail-batch-species').textContent = batchData.species;
+                    document.querySelector('#detail-entry-date').textContent = batchData.entryDate;
+                    document.querySelector('#detail-initial-quantity').textContent = batchData.initialQuantity.toLocaleString();
+                    document.querySelector('#detail-current-quantity').textContent = batchData.currentQuantity.toLocaleString();
+                    document.querySelector('#detail-death-rate').textContent = batchData.deathRate + '%';
+                    document.querySelector('#detail-days-old').textContent = batchData.daysOld;
+                    
+                    const statusElement = document.querySelector('#detail-batch-status');
+                    statusElement.textContent = batchData.status;
+                    statusElement.className = batchData.status === '进行中' ? 
+                        'px-2 py-1 rounded-full text-xs font-medium batch-status-active' :
+                        'px-2 py-1 rounded-full text-xs font-medium batch-status-finished';
+                    
+                    document.querySelector('#batch-detail-modal').classList.remove('hidden');
+                }
+            }
+            
+            // 关闭详情模态框
+            document.querySelector('#close-detail-modal-btn').addEventListener('click', function() {
+                document.querySelector('#batch-detail-modal').classList.add('hidden');
+            });
+            
+            // 录入数据按钮
+            document.querySelector('#record-data-btn').addEventListener('click', function() {
+                // 获取当前批次ID
+                const currentBatchId = document.querySelector('#batch-detail-modal').dataset.currentBatchId;
+                window.location.href = `P-DEATH_FEED_RECORD.html?batchId=${currentBatchId}`;
+            });
+            
+            // 编辑批次按钮
+            document.querySelector('#edit-batch-btn').addEventListener('click', function() {
+                const currentBatchId = document.querySelector('#batch-detail-modal').dataset.currentBatchId;
+                currentEditingBatchId = currentBatchId;
+                
+                const batchData = getBatchDataById(currentBatchId);
+                if (batchData) {
+                    document.querySelector('#modal-title').textContent = '编辑批次';
+                    document.querySelector('#batch-name').value = batchData.name;
+                    document.querySelector('#batch-species').value = batchData.species;
+                    document.querySelector('#initial-quantity').value = batchData.initialQuantity;
+                    document.querySelector('#entry-date').value = batchData.entryDate;
+                    
+                    document.querySelector('#batch-detail-modal').classList.add('hidden');
+                    document.querySelector('#batch-modal').classList.remove('hidden');
+                }
+            });
+            
+            // 删除批次按钮
+            document.querySelector('#delete-batch-btn').addEventListener('click', function() {
+                if (confirm('确定要删除这个批次吗？删除后无法恢复。')) {
+                    const currentBatchId = document.querySelector('#batch-detail-modal').dataset.currentBatchId;
+                    deleteBatchFromList(currentBatchId);
+                    document.querySelector('#batch-detail-modal').classList.add('hidden');
+                    alert('批次已删除！');
+                }
+            });
+            
+            // 辅助函数：获取批次数据
+            function getBatchDataById(batchId) {
+                const batchDataMap = {
+                    'batch-001': {
+                        name: '白羽肉鸡-20240101',
+                        species: '白羽肉鸡',
+                        initialQuantity: 15000,
+                        currentQuantity: 14850,
+                        deathRate: 1.0,
+                        daysOld: 25,
+                        entryDate: '2024-01-01',
+                        status: '进行中'
+                    },
+                    'batch-002': {
+                        name: '蛋鸡-20240115',
+                        species: '蛋鸡',
+                        initialQuantity: 8000,
+                        currentQuantity: 7920,
+                        deathRate: 1.0,
+                        daysOld: 11,
+                        entryDate: '2024-01-15',
+                        status: '进行中'
+                    },
+                    'batch-003': {
+                        name: '黄羽肉鸡-20231220',
+                        species: '黄羽肉鸡',
+                        initialQuantity: 12000,
+                        currentQuantity: 11760,
+                        deathRate: 2.0,
+                        daysOld: 42,
+                        entryDate: '2023-12-20',
+                        status: '已完成'
+                    },
+                    'batch-004': {
+                        name: '肉鸭-20240105',
+                        species: '鸭',
+                        initialQuantity: 6000,
+                        currentQuantity: 5940,
+                        deathRate: 1.0,
+                        daysOld: 21,
+                        entryDate: '2024-01-05',
+                        status: '进行中'
+                    },
+                    'batch-005': {
+                        name: '白羽肉鸡-20231215',
+                        species: '白羽肉鸡',
+                        initialQuantity: 10000,
+                        currentQuantity: 9800,
+                        deathRate: 2.0,
+                        daysOld: 42,
+                        entryDate: '2023-12-15',
+                        status: '已完成'
+                    }
+                };
+                
+                return batchDataMap[batchId];
+            }
+            
+            // 辅助函数：更新列表中的批次
+            function updateBatchInList(batchId, batchData) {
+                const batchElement = document.querySelector(`[data-batch-id="${batchId}"]`);
+                if (batchElement) {
+                    batchElement.querySelector('h3').textContent = batchData.name;
+                    batchElement.querySelector('p').textContent = batchData.species;
+                }
+            }
+            
+            // 辅助函数：添加批次到列表
+            function addBatchToList(batchData) {
+                // 这里简化处理，实际应用中应该调用API
+                console.log('添加新批次:', batchData);
+            }
+            
+            // 辅助函数：从列表中删除批次
+            function deleteBatchFromList(batchId) {
+                const batchElement = document.querySelector(`[data-batch-id="${batchId}"]`);
+                if (batchElement) {
+                    batchElement.remove();
+                    filterBatches(); // 重新计算显示数量
+                }
+            }
+            
+            // 卡片点击效果
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach(card => {
+                card.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                card.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

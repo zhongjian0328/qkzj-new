@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 政策下发</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D3F8EE',
+                        secondary: '#3BCCA5', 
+                        accent: '#2B6A5A',
+                        'text-primary': '#1F2937',
+                        'text-secondary': '#6B7280',
+                        'bg-light': '#F9FAFB',
+                        'card-bg': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .form-input-focus:focus {
+            outline: none;
+            border-color: #3BCCA5;
+            box-shadow: 0 0 0 2px rgba(59, 204, 165, 0.2);
+        }
+
+        .policy-status-published {
+            background-color: #D1FAE5;
+            color: #065F46;
+        }
+
+        .policy-status-draft {
+            background-color: #FEF3C7;
+            color: #92400E;
+        }
+
+        .policy-status-expired {
+            background-color: #FEE2E2;
+            color: #991B1B;
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex justify-between items-center px-4 py-3">
+            <div class="flex items-center space-x-3">
+                <button id="back-btn" class="p-2 -ml-2">
+                    <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+                </button>
+                <h1 id="page-title" class="text-lg font-semibold text-text-primary">政策下发</h1>
+            </div>
+            <div id="header-actions" class="flex items-center space-x-3">
+                <button id="notification-btn" class="relative p-2">
+                    <i class="far fa-bell text-xl text-text-secondary"></i>
+                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+                </button>
+                <button id="profile-btn">
+                    <i class="fas fa-user-circle text-xl text-text-secondary"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6">
+        <!-- 发布新政策按钮 -->
+        <section id="publish-section" class="mb-6">
+            <button id="publish-new-policy-btn" class="w-full gradient-bg rounded-xl p-4 shadow-card flex items-center justify-center space-x-3 card-hover">
+                <div class="w-10 h-10 bg-white/30 rounded-full flex items-center justify-center">
+                    <i class="fas fa-plus text-accent"></i>
+                </div>
+                <div class="text-left">
+                    <h3 class="font-semibold text-accent">发布新政策</h3>
+                    <p class="text-sm text-accent/80">发布防疫政策和通知</p>
+                </div>
+            </button>
+        </section>
+
+        <!-- 政策列表 -->
+        <section id="policy-list-section">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="policy-list-title" class="text-lg font-semibold text-text-primary">政策列表</h2>
+                <div id="filter-section" class="flex items-center space-x-2">
+                    <select id="status-filter" class="px-3 py-1 bg-white border border-gray-200 rounded-lg text-sm form-input-focus">
+                        <option value="all">全部状态</option>
+                        <option value="published">已发布</option>
+                        <option value="draft">草稿</option>
+                        <option value="expired">已过期</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div id="policy-list" class="space-y-4">
+                <!-- 政策项1 -->
+                <div id="policy-item-1" class="bg-card-bg rounded-xl p-4 shadow-card card-hover" data-policy-id="policy-001">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex-1">
+                            <h3 id="policy-title-1" class="font-semibold text-text-primary mb-1">春季禽流感防控通知</h3>
+                            <p id="policy-summary-1" class="text-sm text-text-secondary line-clamp-2">
+                                近期气温回升，禽流感进入高发期。请各养殖场加强生物安全措施，定期消毒，及时接种疫苗...
+                            </p>
+                        </div>
+                        <div id="policy-status-1" class="ml-3 px-2 py-1 rounded-full text-xs font-medium policy-status-published">
+                            已发布
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-xs text-text-secondary">
+                        <div class="flex items-center space-x-4">
+                            <span id="policy-publish-time-1" class="flex items-center">
+                                <i class="far fa-calendar-alt mr-1"></i>
+                                2024-01-15 10:30
+                            </span>
+                            <span id="policy-views-1" class="flex items-center">
+                                <i class="far fa-eye mr-1"></i>
+                                1,234 次查看
+                            </span>
+                        </div>
+                        <button id="policy-detail-btn-1" class="text-secondary">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 政策项2 -->
+                <div id="policy-item-2" class="bg-card-bg rounded-xl p-4 shadow-card card-hover" data-policy-id="policy-002">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex-1">
+                            <h3 id="policy-title-2" class="font-semibold text-text-primary mb-1">兽药使用规范更新</h3>
+                            <p id="policy-summary-2" class="text-sm text-text-secondary line-clamp-2">
+                                根据最新农业部规定，现将兽药使用规范进行更新。请各养殖场严格按照新标准执行...
+                            </p>
+                        </div>
+                        <div id="policy-status-2" class="ml-3 px-2 py-1 rounded-full text-xs font-medium policy-status-published">
+                            已发布
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-xs text-text-secondary">
+                        <div class="flex items-center space-x-4">
+                            <span id="policy-publish-time-2" class="flex items-center">
+                                <i class="far fa-calendar-alt mr-1"></i>
+                                2024-01-12 14:15
+                            </span>
+                            <span id="policy-views-2" class="flex items-center">
+                                <i class="far fa-eye mr-1"></i>
+                                856 次查看
+                            </span>
+                        </div>
+                        <button id="policy-detail-btn-2" class="text-secondary">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 政策项3 -->
+                <div id="policy-item-3" class="bg-card-bg rounded-xl p-4 shadow-card card-hover" data-policy-id="policy-003">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex-1">
+                            <h3 id="policy-title-3" class="font-semibold text-text-primary mb-1">养殖场地消毒指南</h3>
+                            <p id="policy-summary-3" class="text-sm text-text-secondary line-clamp-2">
+                                为有效预防疫病传播，特制定本消毒指南。请各养殖场定期对场地进行全面消毒...
+                            </p>
+                        </div>
+                        <div id="policy-status-3" class="ml-3 px-2 py-1 rounded-full text-xs font-medium policy-status-draft">
+                            草稿
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-xs text-text-secondary">
+                        <div class="flex items-center space-x-4">
+                            <span id="policy-publish-time-3" class="flex items-center">
+                                <i class="far fa-calendar-alt mr-1"></i>
+                                2024-01-10 16:45
+                            </span>
+                            <span id="policy-views-3" class="flex items-center">
+                                <i class="far fa-eye mr-1"></i>
+                                0 次查看
+                            </span>
+                        </div>
+                        <button id="policy-detail-btn-3" class="text-secondary">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 政策项4 -->
+                <div id="policy-item-4" class="bg-card-bg rounded-xl p-4 shadow-card card-hover" data-policy-id="policy-004">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex-1">
+                            <h3 id="policy-title-4" class="font-semibold text-text-primary mb-1">冬季保暖措施通知</h3>
+                            <p id="policy-summary-4" class="text-sm text-text-secondary line-clamp-2">
+                                冬季来临，请注意做好鸡舍保暖工作，合理控制通风，预防呼吸道疾病发生...
+                            </p>
+                        </div>
+                        <div id="policy-status-4" class="ml-3 px-2 py-1 rounded-full text-xs font-medium policy-status-expired">
+                            已过期
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-xs text-text-secondary">
+                        <div class="flex items-center space-x-4">
+                            <span id="policy-publish-time-4" class="flex items-center">
+                                <i class="far fa-calendar-alt mr-1"></i>
+                                2023-12-20 09:20
+                            </span>
+                            <span id="policy-views-4" class="flex items-center">
+                                <i class="far fa-eye mr-1"></i>
+                                2,156 次查看
+                            </span>
+                        </div>
+                        <button id="policy-detail-btn-4" class="text-secondary">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 发布政策弹窗 -->
+    <div id="publish-modal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0"></div>
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+            <div class="modal-content bg-white rounded-2xl shadow-xl w-full max-w-md">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 id="modal-title" class="text-lg font-semibold text-text-primary">发布新政策</h3>
+                        <button id="close-modal-btn" class="p-1">
+                            <i class="fas fa-times text-text-secondary"></i>
+                        </button>
+                    </div>
+                    
+                    <form id="policy-form" class="space-y-4">
+                        <div>
+                            <label for="policy-title-input" class="block text-sm font-medium text-text-primary mb-2">政策标题 *</label>
+                            <input type="text" id="policy-title-input" name="title" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus" 
+                                   placeholder="请输入政策标题" required>
+                        </div>
+                        
+                        <div>
+                            <label for="policy-content-input" class="block text-sm font-medium text-text-primary mb-2">政策内容 *</label>
+                            <textarea id="policy-content-input" name="content" rows="6"
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus resize-none" 
+                                      placeholder="请输入政策详细内容" required></textarea>
+                        </div>
+                        
+                        <div>
+                            <label for="policy-scope-select" class="block text-sm font-medium text-text-primary mb-2">下发范围</label>
+                            <select id="policy-scope-select" name="scope" 
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus">
+                                <option value="all">全部用户</option>
+                                <option value="farmers">养殖户</option>
+                                <option value="enterprises">养殖企业</option>
+                                <option value="local">本地区用户</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex space-x-3 pt-4">
+                            <button type="button" id="cancel-publish-btn" 
+                                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-text-secondary font-medium">
+                                取消
+                            </button>
+                            <button type="submit" id="confirm-publish-btn" 
+                                    class="flex-1 px-4 py-2 gradient-bg rounded-lg text-accent font-medium shadow-button">
+                                发布
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 政策详情弹窗 -->
+    <div id="detail-modal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0"></div>
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+            <div class="modal-content bg-white rounded-2xl shadow-xl w-full max-w-md">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 id="detail-modal-title" class="text-lg font-semibold text-text-primary">政策详情</h3>
+                        <button id="close-detail-modal-btn" class="p-1">
+                            <i class="fas fa-times text-text-secondary"></i>
+                        </button>
+                    </div>
+                    
+                    <div id="policy-detail-content" class="space-y-4">
+                        <div>
+                            <h4 id="detail-policy-title" class="font-semibold text-text-primary mb-2"></h4>
+                            <div class="flex items-center space-x-4 text-xs text-text-secondary mb-4">
+                                <span id="detail-publish-time" class="flex items-center">
+                                    <i class="far fa-calendar-alt mr-1"></i>
+                                </span>
+                                <span id="detail-views" class="flex items-center">
+                                    <i class="far fa-eye mr-1"></i>
+                                </span>
+                                <span id="detail-scope" class="flex items-center">
+                                    <i class="fas fa-users mr-1"></i>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h5 class="font-medium text-text-primary mb-2">政策内容</h5>
+                            <div id="detail-policy-content" class="text-sm text-text-secondary leading-relaxed whitespace-pre-line"></div>
+                        </div>
+                        
+                        <div class="flex space-x-3 pt-4">
+                            <button id="edit-policy-btn" 
+                                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-text-secondary font-medium">
+                                编辑
+                            </button>
+                            <button id="delete-policy-btn" 
+                                    class="flex-1 px-4 py-2 bg-red-100 rounded-lg text-red-600 font-medium">
+                                删除
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 模拟政策数据
+            const policies = {
+                'policy-001': {
+                    title: '春季禽流感防控通知',
+                    content: '近期气温回升，禽流感进入高发期。请各养殖场加强生物安全措施，定期消毒，及时接种疫苗。发现异常情况立即报告当地疫控部门。',
+                    publishTime: '2024-01-15 10:30',
+                    views: '1,234',
+                    scope: '全部用户',
+                    status: 'published'
+                },
+                'policy-002': {
+                    title: '兽药使用规范更新',
+                    content: '根据最新农业部规定，现将兽药使用规范进行更新。请各养殖场严格按照新标准执行，确保用药安全。',
+                    publishTime: '2024-01-12 14:15',
+                    views: '856',
+                    scope: '养殖户',
+                    status: 'published'
+                },
+                'policy-003': {
+                    title: '养殖场地消毒指南',
+                    content: '为有效预防疫病传播，特制定本消毒指南。请各养殖场定期对场地进行全面消毒，具体操作步骤如下：\n1. 清理场地杂物\n2. 使用指定消毒剂\n3. 确保消毒时间充足',
+                    publishTime: '2024-01-10 16:45',
+                    views: '0',
+                    scope: '本地区用户',
+                    status: 'draft'
+                },
+                'policy-004': {
+                    title: '冬季保暖措施通知',
+                    content: '冬季来临，请注意做好鸡舍保暖工作，合理控制通风，预防呼吸道疾病发生。建议使用保温设备，保持适宜温度。',
+                    publishTime: '2023-12-20 09:20',
+                    views: '2,156',
+                    scope: '养殖企业',
+                    status: 'expired'
+                }
+            };
+
+            let currentPolicyId = null;
+
+            // 返回按钮
+            document.querySelector('#back-btn').addEventListener('click', function() {
+                window.location.href = 'P-HOME_INSTITUTION_CDC.html';
+            });
+
+            // 个人中心按钮
+            document.querySelector('#profile-btn').addEventListener('click', function() {
+                window.location.href = 'P-USER_PROFILE.html';
+            });
+
+            // 发布新政策按钮
+            document.querySelector('#publish-new-policy-btn').addEventListener('click', function() {
+                document.querySelector('#publish-modal').classList.remove('hidden');
+                document.querySelector('#policy-form').reset();
+                document.querySelector('#modal-title').textContent = '发布新政策';
+            });
+
+            // 关闭发布弹窗
+            document.querySelector('#close-modal-btn').addEventListener('click', function() {
+                document.querySelector('#publish-modal').classList.add('hidden');
+            });
+
+            document.querySelector('#cancel-publish-btn').addEventListener('click', function() {
+                document.querySelector('#publish-modal').classList.add('hidden');
+            });
+
+            // 点击弹窗背景关闭
+            document.querySelector('#publish-modal .modal-overlay').addEventListener('click', function() {
+                document.querySelector('#publish-modal').classList.add('hidden');
+            });
+
+            // 政策发布表单提交
+            document.querySelector('#policy-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const title = document.querySelector('#policy-title-input').value;
+                const content = document.querySelector('#policy-content-input').value;
+                const scope = document.querySelector('#policy-scope-select').value;
+                
+                if (!title || !content) {
+                    alert('请填写必填项');
+                    return;
+                }
+                
+                // 模拟发布成功
+                alert('政策发布成功');
+                document.querySelector('#publish-modal').classList.add('hidden');
+                
+                // 这里应该调用API发布政策，然后刷新列表
+                // 暂时只做UI反馈
+            });
+
+            // 政策列表项点击
+            const policyItems = document.querySelectorAll('[id^="policy-item-"]');
+            policyItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const policyId = this.dataset.policyId;
+                    showPolicyDetail(policyId);
+                });
+            });
+
+            // 政策详情按钮点击
+            const detailButtons = document.querySelectorAll('[id^="policy-detail-btn-"]');
+            detailButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const policyId = this.closest('[data-policy-id]').dataset.policyId;
+                    showPolicyDetail(policyId);
+                });
+            });
+
+            // 显示政策详情
+            function showPolicyDetail(policyId) {
+                currentPolicyId = policyId;
+                const policy = policies[policyId];
+                
+                if (!policy) return;
+                
+                document.querySelector('#detail-policy-title').textContent = policy.title;
+                document.querySelector('#detail-publish-time').innerHTML = `<i class="far fa-calendar-alt mr-1"></i>${policy.publishTime}`;
+                document.querySelector('#detail-views').innerHTML = `<i class="far fa-eye mr-1"></i>${policy.views} 次查看`;
+                document.querySelector('#detail-scope').innerHTML = `<i class="fas fa-users mr-1"></i>${policy.scope}`;
+                document.querySelector('#detail-policy-content').textContent = policy.content;
+                
+                document.querySelector('#detail-modal').classList.remove('hidden');
+            }
+
+            // 关闭详情弹窗
+            document.querySelector('#close-detail-modal-btn').addEventListener('click', function() {
+                document.querySelector('#detail-modal').classList.add('hidden');
+            });
+
+            document.querySelector('#detail-modal .modal-overlay').addEventListener('click', function() {
+                document.querySelector('#detail-modal').classList.add('hidden');
+            });
+
+            // 编辑政策
+            document.querySelector('#edit-policy-btn').addEventListener('click', function() {
+                if (!currentPolicyId) return;
+                
+                const policy = policies[currentPolicyId];
+                document.querySelector('#policy-title-input').value = policy.title;
+                document.querySelector('#policy-content-input').value = policy.content;
+                document.querySelector('#policy-scope-select').value = policy.scope;
+                
+                document.querySelector('#detail-modal').classList.add('hidden');
+                document.querySelector('#publish-modal').classList.remove('hidden');
+                document.querySelector('#modal-title').textContent = '编辑政策';
+            });
+
+            // 删除政策
+            document.querySelector('#delete-policy-btn').addEventListener('click', function() {
+                if (!currentPolicyId) return;
+                
+                if (confirm('确定要删除这个政策吗？')) {
+                    // 模拟删除成功
+                    alert('政策已删除');
+                    document.querySelector('#detail-modal').classList.add('hidden');
+                    
+                    // 这里应该调用API删除政策，然后刷新列表
+                    // 暂时只做UI反馈
+                }
+            });
+
+            // 状态筛选
+            document.querySelector('#status-filter').addEventListener('change', function() {
+                const selectedStatus = this.value;
+                const policyItems = document.querySelectorAll('[id^="policy-item-"]');
+                
+                policyItems.forEach(item => {
+                    const policyId = item.dataset.policyId;
+                    const policy = policies[policyId];
+                    
+                    if (selectedStatus === 'all' || policy.status === selectedStatus) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+
+            // 卡片点击效果
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach(card => {
+                card.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                card.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

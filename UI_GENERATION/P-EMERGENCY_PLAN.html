@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 应急防控方案</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D3F8EE',
+                        secondary: '#3BCCA5', 
+                        accent: '#2B6A5A',
+                        'text-primary': '#1F2937',
+                        'text-secondary': '#6B7280',
+                        'bg-light': '#F9FAFB',
+                        'card-bg': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .tab-active {
+            background-color: #3BCCA5;
+            color: white;
+        }
+        
+        .tab-inactive {
+            background-color: #F3F4F6;
+            color: #6B7280;
+        }
+        
+        .tab-content {
+            display: block;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex items-center px-4 py-3">
+            <button id="back-btn" class="mr-3 p-2 -ml-2">
+                <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+            </button>
+            <h1 id="page-title" class="text-lg font-semibold text-text-primary">应急防控方案</h1>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6">
+        <!-- 初诊结论摘要 -->
+        <section id="diagnosis-summary" class="mb-6">
+            <div class="bg-card-bg rounded-xl p-4 shadow-card">
+                <div class="flex items-start space-x-3">
+                    <div id="danger-icon" class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 id="core-threat-title" class="text-lg font-semibold text-text-primary mb-2">核心威胁提示</h3>
+                        <p id="core-threat-content" class="text-sm text-text-secondary leading-relaxed">
+                            检测结果显示高风险混合感染：新城疫（置信度95%）+ 禽流感H9亚型（置信度88%）。建议立即采取紧急防控措施，防止疫情扩散。
+                        </p>
+                        <div id="confidence-info" class="flex items-center mt-3 text-xs text-text-secondary">
+                            <i class="fas fa-chart-line mr-1"></i>
+                            <span>综合风险等级：高风险</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 时段选择标签 -->
+        <section id="time-tabs" class="mb-6">
+            <div class="flex space-x-2 bg-gray-100 rounded-lg p-1">
+                <button id="tab-emergency" class="flex-1 py-2 px-4 text-sm font-medium rounded-md tab-active" role="tab" aria-controls="emergency-content">
+                    0-24小时（紧急）
+                </button>
+                <button id="tab-short-term" class="flex-1 py-2 px-4 text-sm font-medium rounded-md tab-inactive" role="tab" aria-controls="short-term-content">
+                    1-7天（短期）
+                </button>
+                <button id="tab-biosafety" class="flex-1 py-2 px-4 text-sm font-medium rounded-md tab-inactive" role="tab" aria-controls="biosafety-content">
+                    生物安全
+                </button>
+            </div>
+        </section>
+
+        <!-- 0-24小时紧急措施 -->
+        <section id="emergency-content" class="tab-content mb-6">
+            <h3 class="text-lg font-semibold text-text-primary mb-4">紧急控制措施（0-24小时）</h3>
+            
+            <div class="space-y-4">
+                <!-- 分类隔离 -->
+                <div id="isolation-card" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-shield-alt text-orange-600"></i>
+                        </div>
+                        <h4 class="font-semibold text-text-primary">分类隔离</h4>
+                    </div>
+                    <ul class="space-y-2 text-sm text-text-secondary ml-13">
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-circle text-xs text-orange-600 mt-1.5"></i>
+                            <span>立即隔离病禽，单独饲养，限制活动范围</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-circle text-xs text-orange-600 mt-1.5"></i>
+                            <span>健康禽群移至安全区域，加强观察</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-circle text-xs text-orange-600 mt-1.5"></i>
+                            <span>禁止不同群体间的人员和工具交叉使用</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 紧急免疫 -->
+                <div id="vaccination-card" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-syringe text-blue-600"></i>
+                        </div>
+                        <h4 class="font-semibold text-text-primary">紧急免疫</h4>
+                    </div>
+                    <div class="ml-13 space-y-3">
+                        <div class="bg-blue-50 rounded-lg p-3">
+                            <h5 class="font-medium text-blue-800 mb-2">新城疫疫苗</h5>
+                            <p class="text-sm text-blue-700">剂量：0.5ml/只，肌肉注射</p>
+                            <p class="text-sm text-blue-700">品牌：新城疫La Sota株活疫苗</p>
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-3">
+                            <h5 class="font-medium text-purple-800 mb-2">禽流感H9疫苗</h5>
+                            <p class="text-sm text-purple-700">剂量：0.3ml/只，皮下注射</p>
+                            <p class="text-sm text-purple-700">品牌：禽流感H9亚型灭活疫苗</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 综合用药 -->
+                <div id="medication-card" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-pills text-green-600"></i>
+                        </div>
+                        <h4 class="font-semibold text-text-primary">综合用药</h4>
+                    </div>
+                    <div class="ml-13 space-y-3">
+                        <div class="bg-green-50 rounded-lg p-3">
+                            <h5 class="font-medium text-green-800 mb-2">抗病毒药物</h5>
+                            <p class="text-sm text-green-700">利巴韦林：100mg/kg饲料，连续使用5天</p>
+                        </div>
+                        <div class="bg-yellow-50 rounded-lg p-3">
+                            <h5 class="font-medium text-yellow-800 mb-2">抗生素</h5>
+                            <p class="text-sm text-yellow-700">阿莫西林：200mg/kg饮水，连续使用3-5天</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 环境调控 -->
+                <div id="environment-card" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-thermometer-half text-teal-600"></i>
+                        </div>
+                        <h4 class="font-semibold text-text-primary">环境调控</h4>
+                    </div>
+                    <ul class="space-y-2 text-sm text-text-secondary ml-13">
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-circle text-xs text-teal-600 mt-1.5"></i>
+                            <span>温度控制：保持22-25°C，避免温差过大</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-circle text-xs text-teal-600 mt-1.5"></i>
+                            <span>湿度控制：维持60-70%相对湿度</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-circle text-xs text-teal-600 mt-1.5"></i>
+                            <span>加强通风，确保空气流通</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 1-7天短期措施 -->
+        <section id="short-term-content" class="tab-content hidden mb-6">
+            <h3 class="text-lg font-semibold text-text-primary mb-4">短期治疗措施（1-7天）</h3>
+            
+            <div class="space-y-4">
+                <!-- 对症治疗 -->
+                <div id="symptomatic-treatment-card" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-heartbeat text-indigo-600"></i>
+                        </div>
+                        <h4 class="font-semibold text-text-primary">对症治疗</h4>
+                    </div>
+                    <ul class="space-y-2 text-sm text-text-secondary ml-13">
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-circle text-xs text-indigo-600 mt-1.5"></i>
+                            <span>发热：使用解热镇痛药，如阿司匹林</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-circle text-xs text-indigo-600 mt-1.5"></i>
+                            <span>呼吸道症状：使用祛痰止咳药物</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-circle text-xs text-indigo-600 mt-1.5"></i>
+                            <span>腹泻：补充电解质，防止脱水</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 营养支持 -->
+                <div id="nutrition-card" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-apple-alt text-yellow-600"></i>
+                        </div>
+                        <h4 class="font-semibold text-text-primary">营养支持</h4>
+                    </div>
+                    <ul class="space-y-2 text-sm text-text-secondary ml-13">
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-circle text-xs text-yellow-600 mt-1.5"></i>
+                            <span>增加维生素C、维生素E补充</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-circle text-xs text-yellow-600 mt-1.5"></i>
+                            <span>提供高能量、易消化饲料</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-circle text-xs text-yellow-600 mt-1.5"></i>
+                            <span>保证充足清洁饮水</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 监测评估 -->
+                <div id="monitoring-card" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-chart-bar text-purple-600"></i>
+                        </div>
+                        <h4 class="font-semibold text-text-primary">监测评估</h4>
+                    </div>
+                    <ul class="space-y-2 text-sm text-text-secondary ml-13">
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-circle text-xs text-purple-600 mt-1.5"></i>
+                            <span>每日记录发病数量、死亡数量</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-circle text-xs text-purple-600 mt-1.5"></i>
+                            <span>观察症状变化，评估治疗效果</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-circle text-xs text-purple-600 mt-1.5"></i>
+                            <span>必要时进行二次诊断确认</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 生物安全措施 -->
+        <section id="biosafety-content" class="tab-content hidden mb-6">
+            <h3 class="text-lg font-semibold text-text-primary mb-4">生物安全措施</h3>
+            
+            <div class="space-y-4">
+                <!-- 无害化处理 -->
+                <div id="disposal-card" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-trash-alt text-red-600"></i>
+                        </div>
+                        <h4 class="font-semibold text-text-primary">无害化处理</h4>
+                    </div>
+                    <ul class="space-y-2 text-sm text-text-secondary ml-13">
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-circle text-xs text-red-600 mt-1.5"></i>
+                            <span>病死禽只焚烧或深埋处理</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-circle text-xs text-red-600 mt-1.5"></i>
+                            <span>粪便堆积发酵处理</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-circle text-xs text-red-600 mt-1.5"></i>
+                            <span>污染物严格消毒后再处理</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 消毒防控 -->
+                <div id="disinfection-card" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-spray-can text-green-600"></i>
+                        </div>
+                        <h4 class="font-semibold text-text-primary">消毒防控</h4>
+                    </div>
+                    <div class="ml-13 space-y-3">
+                        <div class="bg-green-50 rounded-lg p-3">
+                            <h5 class="font-medium text-green-800 mb-2">推荐消毒剂</h5>
+                            <p class="text-sm text-green-700">过氧乙酸：1:200稀释，每日消毒2次</p>
+                            <p class="text-sm text-green-700">氢氧化钠：2%溶液，每周1次</p>
+                        </div>
+                        <ul class="space-y-1 text-sm text-text-secondary">
+                            <li class="flex items-start space-x-2">
+                                <i class="fas fa-circle text-xs text-green-600 mt-1.5"></i>
+                                <span>鸡舍内外彻底消毒</span>
+                            </li>
+                            <li class="flex items-start space-x-2">
+                                <i class="fas fa-circle text-xs text-green-600 mt-1.5"></i>
+                                <span>工具、设备定期消毒</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 人员物资管理 -->
+                <div id="personnel-card" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-users-cog text-blue-600"></i>
+                        </div>
+                        <h4 class="font-semibold text-text-primary">人员/物资管理</h4>
+                    </div>
+                    <ul class="space-y-2 text-sm text-text-secondary ml-13">
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-circle text-xs text-blue-600 mt-1.5"></i>
+                            <span>工作人员进出必须消毒、换衣</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-circle text-xs text-blue-600 mt-1.5"></i>
+                            <span>禁止外来人员进入养殖区域</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fas fa-circle text-xs text-blue-600 mt-1.5"></i>
+                            <span>饲料、物资严格检查后进入</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 操作按钮 -->
+        <section id="action-buttons" class="space-y-3">
+            <button id="go-to-mall-btn" class="w-full bg-secondary text-white py-3 px-4 rounded-xl font-semibold shadow-button">
+                <i class="fas fa-shopping-cart mr-2"></i>
+                前往商城购买所需药品
+            </button>
+            <button id="back-to-diagnosis-btn" class="w-full bg-card-bg text-text-primary py-3 px-4 rounded-xl font-semibold border border-gray-200">
+                <i class="fas fa-arrow-left mr-2"></i>
+                返回诊断结果
+            </button>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 解析URL参数的辅助函数
+            function getUrlParams() {
+                const params = {};
+                const queryString = window.location.search.substring(1);
+                const urlParams = new URLSearchParams(queryString);
+                
+                for(const [key, value] of urlParams.entries()) {
+                    params[key] = value;
+                }
+                return params;
+            }
+
+            // 获取URL参数
+            const params = getUrlParams();
+            
+            // 如果有诊断结果ID参数，可以根据ID加载对应的方案数据
+            if(params.diagnosisId) {
+                console.log('加载诊断结果ID为', params.diagnosisId, '的防控方案');
+                // 在实际应用中，这里会调用API获取具体的防控方案数据
+            }
+
+            // 标签切换功能
+            const tabs = document.querySelectorAll('[role="tab"]');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // 隐藏所有内容
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.add('hidden');
+                    });
+                    
+                    // 重置所有标签样式
+                    tabs.forEach(t => {
+                        t.classList.remove('tab-active');
+                        t.classList.add('tab-inactive');
+                    });
+                    
+                    // 显示当前标签内容
+                    const contentId = this.getAttribute('aria-controls');
+                    document.querySelector(`#${contentId}`).classList.remove('hidden');
+                    
+                    // 设置当前标签样式
+                    this.classList.remove('tab-inactive');
+                    this.classList.add('tab-active');
+                });
+            });
+
+            // 返回按钮点击事件
+            document.querySelector('#back-btn').addEventListener('click', function() {
+                window.history.back();
+            });
+
+            // 返回诊断结果按钮点击事件
+            document.querySelector('#back-to-diagnosis-btn').addEventListener('click', function() {
+                window.location.href = 'P-AI_DIAGNOSIS.html';
+            });
+
+            // 前往商城购买按钮点击事件
+            document.querySelector('#go-to-mall-btn').addEventListener('click', function() {
+                // 传递相关药品ID或关键词到商城页面
+                const medicationIds = ['vaccine-nd', 'vaccine-ai-h9', 'antiviral-med', 'antibiotic-med'];
+                const keywords = '新城疫疫苗,禽流感H9疫苗,抗病毒药物,抗生素';
+                window.location.href = `P-VETERINARY_MALL.html?medicationIds=${medicationIds.join(',')}&keywords=${encodeURIComponent(keywords)}`;
+            });
+
+            // 卡片点击效果
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach(card => {
+                card.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                card.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

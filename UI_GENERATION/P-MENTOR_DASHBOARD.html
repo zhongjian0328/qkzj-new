@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 导师管理</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D3F8EE',
+                        secondary: '#3BCCA5', 
+                        accent: '#2B6A5A',
+                        'text-primary': '#1F2937',
+                        'text-secondary': '#6B7280',
+                        'bg-light': '#F9FAFB',
+                        'card-bg': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .student-active {
+            background-color: #D3F8EE;
+            border-color: #3BCCA5;
+        }
+        
+        .log-item {
+            transition: all 0.2s ease;
+        }
+        
+        .log-item:hover {
+            background-color: #F9FAFB;
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex justify-between items-center px-4 py-3">
+            <div class="flex items-center space-x-3">
+                <button id="back-btn" class="p-2 -ml-2">
+                    <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+                </button>
+                <div>
+                    <h1 id="page-title" class="text-lg font-semibold text-text-primary">导师管理</h1>
+                    <p id="mentor-info" class="text-sm text-text-secondary">农业大学 - 李教授</p>
+                </div>
+            </div>
+            <div id="header-actions" class="flex items-center space-x-3">
+                <button id="notification-btn" class="relative p-2">
+                    <i class="far fa-bell text-xl text-text-secondary"></i>
+                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6">
+        <!-- 统计概览 -->
+        <section id="stats-overview" class="mb-6">
+            <div class="grid grid-cols-3 gap-4">
+                <div id="total-students-card" class="bg-card-bg rounded-xl p-4 shadow-card text-center">
+                    <div class="text-2xl font-bold text-secondary mb-1">12</div>
+                    <div class="text-sm text-text-secondary">总学生数</div>
+                </div>
+                <div id="pending-reviews-card" class="bg-card-bg rounded-xl p-4 shadow-card text-center">
+                    <div class="text-2xl font-bold text-orange-500 mb-1">3</div>
+                    <div class="text-sm text-text-secondary">待批阅</div>
+                </div>
+                <div id="completed-logs-card" class="bg-card-bg rounded-xl p-4 shadow-card text-center">
+                    <div class="text-2xl font-bold text-green-500 mb-1">45</div>
+                    <div class="text-sm text-text-secondary">已完成</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 学生列表 -->
+        <section id="students-section" class="mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="students-title" class="text-lg font-semibold text-text-primary">我的学生</h2>
+                <button id="add-student-btn" class="text-sm text-secondary">
+                    <i class="fas fa-plus mr-1"></i>添加学生
+                </button>
+            </div>
+            
+            <div id="students-list" class="space-y-3">
+                <div id="student-1" class="student-item bg-card-bg rounded-xl p-4 shadow-card border border-gray-200 cursor-pointer" data-student-id="student_001">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <img id="student-1-avatar" src="https://s.coze.cn/image/tXspHwyhyMw/" 
+                                 alt="学生头像" data-category="人物" class="w-12 h-12 rounded-full border-2 border-secondary">
+                            <div>
+                                <h4 id="student-1-name" class="font-medium text-text-primary">张小明</h4>
+                                <p id="student-1-group" class="text-sm text-text-secondary">实习组A · 动物医学专业</p>
+                                <div class="flex items-center space-x-2 mt-1">
+                                    <span id="student-1-status" class="px-2 py-1 bg-orange-100 rounded-full">
+                                        <span class="text-xs text-orange-700">2篇待批阅</span>
+                                    </span>
+                                    <span id="student-1-progress" class="text-xs text-text-secondary">已完成8篇</span>
+                                </div>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </div>
+                </div>
+
+                <div id="student-2" class="student-item bg-card-bg rounded-xl p-4 shadow-card border border-gray-200 cursor-pointer" data-student-id="student_002">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <img id="student-2-avatar" src="https://s.coze.cn/image/WIiOkkCEP3M/" 
+                                 alt="学生头像" data-category="人物" class="w-12 h-12 rounded-full border-2 border-secondary">
+                            <div>
+                                <h4 id="student-2-name" class="font-medium text-text-primary">李小红</h4>
+                                <p id="student-2-group" class="text-sm text-text-secondary">实习组B · 畜牧兽医专业</p>
+                                <div class="flex items-center space-x-2 mt-1">
+                                    <span id="student-2-status" class="px-2 py-1 bg-green-100 rounded-full">
+                                        <span class="text-xs text-green-700">已批阅</span>
+                                    </span>
+                                    <span id="student-2-progress" class="text-xs text-text-secondary">已完成12篇</span>
+                                </div>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </div>
+                </div>
+
+                <div id="student-3" class="student-item bg-card-bg rounded-xl p-4 shadow-card border border-gray-200 cursor-pointer" data-student-id="student_003">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <img id="student-3-avatar" src="https://s.coze.cn/image/Sg0sRpmvwJo/" 
+                                 alt="学生头像" data-category="人物" class="w-12 h-12 rounded-full border-2 border-secondary">
+                            <div>
+                                <h4 id="student-3-name" class="font-medium text-text-primary">王大力</h4>
+                                <p id="student-3-group" class="text-sm text-text-secondary">实习组A · 动物医学专业</p>
+                                <div class="flex items-center space-x-2 mt-1">
+                                    <span id="student-3-status" class="px-2 py-1 bg-orange-100 rounded-full">
+                                        <span class="text-xs text-orange-700">1篇待批阅</span>
+                                    </span>
+                                    <span id="student-3-progress" class="text-xs text-text-secondary">已完成6篇</span>
+                                </div>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </div>
+                </div>
+
+                <div id="student-4" class="student-item bg-card-bg rounded-xl p-4 shadow-card border border-gray-200 cursor-pointer" data-student-id="student_004">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <img id="student-4-avatar" src="https://s.coze.cn/image/kl36SjA3E28/" 
+                                 alt="学生头像" data-category="人物" class="w-12 h-12 rounded-full border-2 border-secondary">
+                            <div>
+                                <h4 id="student-4-name" class="font-medium text-text-primary">陈美丽</h4>
+                                <p id="student-4-group" class="text-sm text-text-secondary">实习组B · 畜牧兽医专业</p>
+                                <div class="flex items-center space-x-2 mt-1">
+                                    <span id="student-4-status" class="px-2 py-1 bg-green-100 rounded-full">
+                                        <span class="text-xs text-green-700">已批阅</span>
+                                    </span>
+                                    <span id="student-4-progress" class="text-xs text-text-secondary">已完成10篇</span>
+                                </div>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 学生实习日志列表（初始隐藏） -->
+        <section id="intern-logs-section" class="mb-6 hidden">
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center space-x-2">
+                    <button id="back-to-students" class="p-1 -ml-1">
+                        <i class="fas fa-arrow-left text-text-secondary"></i>
+                    </button>
+                    <h2 id="intern-logs-title" class="text-lg font-semibold text-text-primary">张小明的实习日志</h2>
+                </div>
+            </div>
+            
+            <div id="intern-logs-list" class="space-y-3">
+                <div id="log-item-1" class="log-item bg-card-bg rounded-xl p-4 shadow-card cursor-pointer" data-log-id="log_001">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-clock text-orange-600"></i>
+                            </div>
+                            <div>
+                                <h4 id="log-1-title" class="font-medium text-text-primary">新城疫病例观察记录</h4>
+                                <p id="log-1-date" class="text-sm text-text-secondary">2024-01-15</p>
+                                <p id="log-1-status" class="text-xs text-orange-600">待批阅</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs text-text-secondary">3张图片</span>
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="log-item-2" class="log-item bg-card-bg rounded-xl p-4 shadow-card cursor-pointer" data-log-id="log_002">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-clock text-orange-600"></i>
+                            </div>
+                            <div>
+                                <h4 id="log-2-title" class="font-medium text-text-primary">禽流感诊断实习</h4>
+                                <p id="log-2-date" class="text-sm text-text-secondary">2024-01-14</p>
+                                <p id="log-2-status" class="text-xs text-orange-600">待批阅</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs text-text-secondary">5张图片</span>
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="log-item-3" class="log-item bg-card-bg rounded-xl p-4 shadow-card cursor-pointer" data-log-id="log_003">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-check text-green-600"></i>
+                            </div>
+                            <div>
+                                <h4 id="log-3-title" class="font-medium text-text-primary">鸡舍日常管理实习</h4>
+                                <p id="log-3-date" class="text-sm text-text-secondary">2024-01-13</p>
+                                <p id="log-3-status" class="text-xs text-green-600">已批阅</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs text-text-secondary">2张图片</span>
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 快速操作 -->
+        <section id="quick-actions">
+            <h2 id="quick-actions-title" class="text-lg font-semibold text-text-primary mb-4">快速操作</h2>
+            
+            <div id="actions-grid" class="grid grid-cols-2 gap-4">
+                <div id="action-batch-review" class="bg-card-bg rounded-xl p-4 shadow-card card-hover text-center">
+                    <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i class="fas fa-tasks text-secondary"></i>
+                    </div>
+                    <h4 class="text-sm font-medium text-text-primary">批量批阅</h4>
+                    <p class="text-xs text-text-secondary mt-1">集中处理待批阅日志</p>
+                </div>
+
+                <div id="action-statistics" class="bg-card-bg rounded-xl p-4 shadow-card card-hover text-center">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i class="fas fa-chart-bar text-blue-600"></i>
+                    </div>
+                    <h4 class="text-sm font-medium text-text-primary">实习统计</h4>
+                    <p class="text-xs text-text-secondary mt-1">查看学生实习进度</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let currentStudentId = null;
+            
+            // 返回按钮点击事件
+            document.querySelector('#back-btn').addEventListener('click', function() {
+                window.location.href = 'P-USER_PROFILE.html';
+            });
+
+            // 学生列表点击事件
+            const studentItems = document.querySelectorAll('.student-item');
+            studentItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    currentStudentId = this.dataset.studentId;
+                    const studentName = this.querySelector('h4').textContent;
+                    
+                    // 高亮当前选中的学生
+                    studentItems.forEach(student => {
+                        student.classList.remove('student-active');
+                    });
+                    this.classList.add('student-active');
+                    
+                    // 显示学生日志列表
+                    document.querySelector('#students-section').classList.add('hidden');
+                    document.querySelector('#quick-actions').classList.add('hidden');
+                    document.querySelector('#intern-logs-section').classList.remove('hidden');
+                    
+                    // 更新标题
+                    document.querySelector('#intern-logs-title').textContent = `${studentName}的实习日志`;
+                });
+            });
+
+            // 返回学生列表
+            document.querySelector('#back-to-students').addEventListener('click', function() {
+                document.querySelector('#intern-logs-section').classList.add('hidden');
+                document.querySelector('#students-section').classList.remove('hidden');
+                document.querySelector('#quick-actions').classList.remove('hidden');
+                
+                // 清除学生选中状态
+                studentItems.forEach(student => {
+                    student.classList.remove('student-active');
+                });
+                currentStudentId = null;
+            });
+
+            // 实习日志点击事件
+            const logItems = document.querySelectorAll('.log-item');
+            logItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const logId = this.dataset.logId;
+                    window.location.href = `P-INTERN_LOG_DETAIL.html?logId=${logId}&role=mentor`;
+                });
+            });
+
+            // 添加学生按钮
+            document.querySelector('#add-student-btn').addEventListener('click', function() {
+                alert('添加学生功能开发中...');
+            });
+
+            // 批量批阅按钮
+            document.querySelector('#action-batch-review').addEventListener('click', function() {
+                alert('批量批阅功能开发中...');
+            });
+
+            // 实习统计按钮
+            document.querySelector('#action-statistics').addEventListener('click', function() {
+                alert('实习统计功能开发中...');
+            });
+
+            // 通知按钮
+            document.querySelector('#notification-btn').addEventListener('click', function() {
+                alert('您有3条新的实习日志待批阅');
+            });
+
+            // 卡片点击效果
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach(card => {
+                card.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                card.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

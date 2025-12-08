@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 科研协作</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D3F8EE',
+                        secondary: '#3BCCA5', 
+                        accent: '#2B6A5A',
+                        'text-primary': '#1F2937',
+                        'text-secondary': '#6B7280',
+                        'bg-light': '#F9FAFB',
+                        'card-bg': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-content {
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .member-item {
+            transition: background-color 0.2s ease;
+        }
+        
+        .member-item:hover {
+            background-color: #F3F4F6;
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex justify-between items-center px-4 py-3">
+            <div class="flex items-center space-x-3">
+                <button id="back-btn" class="p-2 -ml-2">
+                    <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+                </button>
+                <h1 id="page-title" class="text-lg font-semibold text-text-primary">科研协作</h1>
+            </div>
+            <button id="create-group-btn" class="px-4 py-2 bg-secondary text-white rounded-lg shadow-button">
+                <i class="fas fa-plus mr-2"></i>创建群组
+            </button>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6">
+        <!-- 群组列表 -->
+        <section id="groups-section">
+            <h2 id="groups-title" class="text-lg font-semibold text-text-primary mb-4">我的群组</h2>
+            
+            <div id="groups-list" class="space-y-4">
+                <!-- 群组项目 1 -->
+                <div id="group-item-1" class="bg-card-bg rounded-xl p-4 shadow-card card-hover" data-group-id="group1">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                                <i class="fas fa-users text-xl text-secondary"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-text-primary">禽流感研究协作组</h3>
+                                <p class="text-sm text-text-secondary">12名成员</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs text-text-secondary">2小时前</p>
+                            <div class="w-2 h-2 bg-green-500 rounded-full mt-1"></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm text-text-secondary">最新活动：李教授上传了新的病例数据</p>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </div>
+                </div>
+
+                <!-- 群组项目 2 -->
+                <div id="group-item-2" class="bg-card-bg rounded-xl p-4 shadow-card card-hover" data-group-id="group2">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-flask text-xl text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-text-primary">新城疫病理分析</h3>
+                                <p class="text-sm text-text-secondary">8名成员</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs text-text-secondary">1天前</p>
+                            <div class="w-2 h-2 bg-gray-400 rounded-full mt-1"></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm text-text-secondary">最新活动：张研究员发布了讨论话题</p>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </div>
+                </div>
+
+                <!-- 群组项目 3 -->
+                <div id="group-item-3" class="bg-card-bg rounded-xl p-4 shadow-card card-hover" data-group-id="group3">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-microscope text-xl text-purple-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-text-primary">多病原混合感染研究</h3>
+                                <p class="text-sm text-text-secondary">15名成员</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs text-text-secondary">3天前</p>
+                            <div class="w-2 h-2 bg-gray-400 rounded-full mt-1"></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm text-text-secondary">最新活动：王博士分享了研究论文</p>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 推荐群组 -->
+        <section id="recommended-section" class="mt-8">
+            <h2 id="recommended-title" class="text-lg font-semibold text-text-primary mb-4">推荐群组</h2>
+            
+            <div id="recommended-list" class="space-y-4">
+                <div id="recommended-group-1" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-virus text-xl text-orange-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-text-primary">禽病诊断AI算法优化</h3>
+                                <p class="text-sm text-text-secondary">25名成员 · 中科院动物所</p>
+                            </div>
+                        </div>
+                        <button class="px-3 py-1 bg-secondary text-white text-sm rounded-lg">加入</button>
+                    </div>
+                    <p class="text-sm text-text-secondary">专注于改进AI诊断算法的准确性和效率</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 创建群组模态框 -->
+    <div id="create-group-modal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0"></div>
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+            <div class="modal-content bg-white rounded-2xl shadow-xl w-full max-w-md">
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">创建科研群组</h3>
+                    
+                    <form id="create-group-form" class="space-y-4">
+                        <div>
+                            <label for="group-name" class="block text-sm font-medium text-text-primary mb-2">群组名称</label>
+                            <input type="text" id="group-name" name="group-name" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" 
+                                   placeholder="请输入群组名称" required>
+                        </div>
+                        
+                        <div>
+                            <label for="group-description" class="block text-sm font-medium text-text-primary mb-2">群组描述</label>
+                            <textarea id="group-description" name="group-description" rows="3"
+                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" 
+                                      placeholder="请输入群组描述"></textarea>
+                        </div>
+                        
+                        <div class="flex space-x-3 pt-4">
+                            <button type="button" id="cancel-create" class="flex-1 py-3 border border-gray-300 text-text-secondary rounded-lg">
+                                取消
+                            </button>
+                            <button type="submit" class="flex-1 py-3 bg-secondary text-white rounded-lg">
+                                创建
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 群组详情模态框 -->
+    <div id="group-detail-modal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0"></div>
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+            <div class="modal-content bg-white rounded-2xl shadow-xl w-full max-w-lg">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 id="detail-group-name" class="text-lg font-semibold text-text-primary">群组名称</h3>
+                        <button id="close-detail" class="p-2 -mr-2">
+                            <i class="fas fa-times text-text-secondary"></i>
+                        </button>
+                    </div>
+                    
+                    <div id="group-detail-content" class="space-y-6">
+                        <!-- 成员列表 -->
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <h4 class="font-medium text-text-primary">成员 (12)</h4>
+                                <button id="invite-member-btn" class="text-sm text-secondary">
+                                    <i class="fas fa-user-plus mr-1"></i>邀请成员
+                                </button>
+                            </div>
+                            <div id="members-list" class="space-y-2 max-h-40 overflow-y-auto">
+                                <div class="member-item flex items-center justify-between p-2 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="https://s.coze.cn/image/_BbFxCiYmpo/" 
+                                             alt="李教授头像" data-category="人物" class="w-8 h-8 rounded-full">
+                                        <div>
+                                            <p class="text-sm font-medium text-text-primary">李教授</p>
+                                            <p class="text-xs text-text-secondary">组长</p>
+                                        </div>
+                                    </div>
+                                    <button class="text-xs text-text-secondary">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="member-item flex items-center justify-between p-2 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="https://s.coze.cn/image/PqzAGdIEGkY/" 
+                                             alt="张研究员头像" data-category="人物" class="w-8 h-8 rounded-full">
+                                        <div>
+                                            <p class="text-sm font-medium text-text-primary">张研究员</p>
+                                            <p class="text-xs text-text-secondary">成员</p>
+                                        </div>
+                                    </div>
+                                    <button class="text-xs text-text-secondary">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="member-item flex items-center justify-between p-2 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="https://s.coze.cn/image/4_6fK3X2WEM/" 
+                                             alt="王博士头像" data-category="人物" class="w-8 h-8 rounded-full">
+                                        <div>
+                                            <p class="text-sm font-medium text-text-primary">王博士</p>
+                                            <p class="text-xs text-text-secondary">成员</p>
+                                        </div>
+                                    </div>
+                                    <button class="text-xs text-text-secondary">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 共享文件 -->
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <h4 class="font-medium text-text-primary">共享文件 (8)</h4>
+                                <button id="upload-file-btn" class="text-sm text-secondary">
+                                    <i class="fas fa-upload mr-1"></i>上传文件
+                                </button>
+                            </div>
+                            <div id="files-list" class="space-y-2 max-h-40 overflow-y-auto">
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-file-pdf text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-text-primary">禽流感病理分析报告.pdf</p>
+                                            <p class="text-xs text-text-secondary">2.5 MB · 2小时前</p>
+                                        </div>
+                                    </div>
+                                    <button class="text-text-secondary">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-file-excel text-green-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-text-primary">病例数据集.xlsx</p>
+                                            <p class="text-xs text-text-secondary">1.8 MB · 1天前</p>
+                                        </div>
+                                    </div>
+                                    <button class="text-text-secondary">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 讨论区 -->
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <h4 class="font-medium text-text-primary">讨论区</h4>
+                                <button id="add-discussion-btn" class="text-sm text-secondary">
+                                    <i class="fas fa-comment mr-1"></i>发起讨论
+                                </button>
+                            </div>
+                            <div id="discussions-list" class="space-y-3 max-h-40 overflow-y-auto">
+                                <div class="p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center space-x-2 mb-2">
+                                        <img src="https://s.coze.cn/image/f63z-3jPCrs/" 
+                                             alt="李教授头像" data-category="人物" class="w-6 h-6 rounded-full">
+                                        <span class="text-sm font-medium text-text-primary">李教授</span>
+                                        <span class="text-xs text-text-secondary">2小时前</span>
+                                    </div>
+                                    <p class="text-sm text-text-primary">新的AI模型准确率达到了95%，大家觉得还有哪些可以改进的地方？</p>
+                                    <div class="flex items-center mt-2 space-x-4">
+                                        <button class="text-xs text-text-secondary">
+                                            <i class="fas fa-thumbs-up mr-1"></i>5
+                                        </button>
+                                        <button class="text-xs text-text-secondary">
+                                            <i class="fas fa-comment mr-1"></i>3回复
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 返回按钮
+            document.querySelector('#back-btn').addEventListener('click', function() {
+                window.location.href = 'P-DATA_ANNOTATION.html';
+            });
+
+            // 创建群组按钮
+            document.querySelector('#create-group-btn').addEventListener('click', function() {
+                document.querySelector('#create-group-modal').classList.remove('hidden');
+            });
+
+            // 取消创建群组
+            document.querySelector('#cancel-create').addEventListener('click', function() {
+                document.querySelector('#create-group-modal').classList.add('hidden');
+                document.querySelector('#create-group-form').reset();
+            });
+
+            // 创建群组表单提交
+            document.querySelector('#create-group-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const groupName = document.querySelector('#group-name').value;
+                const groupDescription = document.querySelector('#group-description').value;
+                
+                if (groupName.trim()) {
+                    // 模拟创建群组成功
+                    alert('群组创建成功！');
+                    document.querySelector('#create-group-modal').classList.add('hidden');
+                    document.querySelector('#create-group-form').reset();
+                    
+                    // 这里可以添加刷新群组列表的逻辑
+                } else {
+                    alert('请输入群组名称');
+                }
+            });
+
+            // 群组项目点击
+            const groupItems = document.querySelectorAll('[data-group-id]');
+            groupItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const groupId = this.getAttribute('data-group-id');
+                    const groupName = this.querySelector('h3').textContent;
+                    
+                    // 更新群组详情模态框内容
+                    document.querySelector('#detail-group-name').textContent = groupName;
+                    document.querySelector('#group-detail-modal').classList.remove('hidden');
+                });
+            });
+
+            // 关闭群组详情模态框
+            document.querySelector('#close-detail').addEventListener('click', function() {
+                document.querySelector('#group-detail-modal').classList.add('hidden');
+            });
+
+            // 邀请成员按钮
+            document.querySelector('#invite-member-btn').addEventListener('click', function() {
+                alert('邀请成员功能');
+                // 这里可以实现邀请成员的逻辑
+            });
+
+            // 上传文件按钮
+            document.querySelector('#upload-file-btn').addEventListener('click', function() {
+                console.log('需要调用第三方接口实现文件上传功能');
+                // 注释：此功能需要调用文件上传API，在原型阶段仅做UI展示
+            });
+
+            // 发起讨论按钮
+            document.querySelector('#add-discussion-btn').addEventListener('click', function() {
+                const discussion = prompt('请输入讨论内容：');
+                if (discussion) {
+                    alert('讨论已发布！');
+                    // 这里可以添加发布讨论的逻辑
+                }
+            });
+
+            // 推荐群组加入按钮
+            const joinButtons = document.querySelectorAll('#recommended-list button');
+            joinButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (this.textContent === '加入') {
+                        this.textContent = '已加入';
+                        this.classList.remove('bg-secondary');
+                        this.classList.add('bg-gray-400');
+                        alert('成功加入群组！');
+                    }
+                });
+            });
+
+            // 模态框背景点击关闭
+            document.querySelector('#create-group-modal .modal-overlay').addEventListener('click', function() {
+                document.querySelector('#create-group-modal').classList.add('hidden');
+                document.querySelector('#create-group-form').reset();
+            });
+
+            document.querySelector('#group-detail-modal .modal-overlay').addEventListener('click', function() {
+                document.querySelector('#group-detail-modal').classList.add('hidden');
+            });
+
+            // 卡片点击效果
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach(card => {
+                card.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                card.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

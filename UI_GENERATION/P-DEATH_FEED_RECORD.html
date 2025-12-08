@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 死淘/耗料记录</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D3F8EE',
+                        secondary: '#3BCCA5', 
+                        accent: '#2B6A5A',
+                        'text-primary': '#1F2937',
+                        'text-secondary': '#6B7280',
+                        'bg-light': '#F9FAFB',
+                        'card-bg': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .form-input-focus:focus {
+            outline: none;
+            border-color: #3BCCA5;
+            box-shadow: 0 0 0 2px rgba(59, 204, 165, 0.2);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .success-message {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .error-message {
+            background: linear-gradient(135deg, #FEE2E2 0%, #EF4444 100%);
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex items-center px-4 py-3">
+            <button id="back-btn" class="mr-3 p-2 -ml-2">
+                <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+            </button>
+            <div class="flex-1">
+                <h1 id="page-title" class="text-lg font-semibold text-text-primary">死淘/耗料记录</h1>
+                <p id="batch-info" class="text-sm text-text-secondary">白羽肉鸡-批次A001</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6">
+        <!-- 日期选择区 -->
+        <section id="date-section" class="mb-6">
+            <div class="bg-card-bg rounded-xl p-4 shadow-card">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-calendar-alt text-xl text-secondary"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-text-primary">记录日期</h3>
+                            <p id="selected-date" class="text-sm text-text-secondary">2024年1月15日 星期一</p>
+                        </div>
+                    </div>
+                    <button id="date-picker-btn" class="p-2">
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 数据录入区 -->
+        <section id="data-input-section" class="mb-6">
+            <h2 class="text-lg font-semibold text-text-primary mb-4">今日数据</h2>
+            
+            <div class="space-y-4">
+                <!-- 死淘数量 -->
+                <div class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <label for="death-count" class="block text-sm font-medium text-text-primary">
+                            <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
+                            死淘数量
+                        </label>
+                        <span class="text-xs text-text-secondary">只</span>
+                    </div>
+                    <input type="number" id="death-count" name="death-count" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input-focus text-lg text-center"
+                           placeholder="0" min="0" step="1">
+                    <p class="text-xs text-text-secondary mt-2">请输入今日死淘的禽只数量</p>
+                </div>
+
+                <!-- 耗料量 -->
+                <div class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <label for="feed-consumption" class="block text-sm font-medium text-text-primary">
+                            <i class="fas fa-wheat-awn text-yellow-600 mr-2"></i>
+                            耗料量
+                        </label>
+                        <span class="text-xs text-text-secondary">公斤</span>
+                    </div>
+                    <input type="number" id="feed-consumption" name="feed-consumption" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input-focus text-lg text-center"
+                           placeholder="0.00" min="0" step="0.01">
+                    <p class="text-xs text-text-secondary mt-2">请输入今日饲料消耗量</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 保存按钮 -->
+        <section id="save-section" class="mb-8">
+            <button id="save-btn" class="w-full bg-secondary text-white py-4 rounded-xl font-semibold text-lg shadow-button">
+                <i class="fas fa-save mr-2"></i>
+                保存记录
+            </button>
+        </section>
+
+        <!-- 历史记录 -->
+        <section id="history-section">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-text-primary">近期记录</h2>
+                <button id="view-all-history" class="text-sm text-secondary">查看全部</button>
+            </div>
+            
+            <div id="history-list" class="space-y-3">
+                <div class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-medium text-text-primary">2024年1月14日</h4>
+                            <div class="flex items-center space-x-4 mt-1">
+                                <span class="text-sm text-text-secondary">
+                                    <i class="fas fa-exclamation-triangle text-red-500 mr-1"></i>
+                                    死淘: 5只
+                                </span>
+                                <span class="text-sm text-text-secondary">
+                                    <i class="fas fa-wheat-awn text-yellow-600 mr-1"></i>
+                                    耗料: 125.5kg
+                                </span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs text-text-secondary">15:30</p>
+                            <p class="text-xs text-secondary">已保存</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-medium text-text-primary">2024年1月13日</h4>
+                            <div class="flex items-center space-x-4 mt-1">
+                                <span class="text-sm text-text-secondary">
+                                    <i class="fas fa-exclamation-triangle text-red-500 mr-1"></i>
+                                    死淘: 3只
+                                </span>
+                                <span class="text-sm text-text-secondary">
+                                    <i class="fas fa-wheat-awn text-yellow-600 mr-1"></i>
+                                    耗料: 132.0kg
+                                </span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs text-text-secondary">16:45</p>
+                            <p class="text-xs text-secondary">已保存</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-medium text-text-primary">2024年1月12日</h4>
+                            <div class="flex items-center space-x-4 mt-1">
+                                <span class="text-sm text-text-secondary">
+                                    <i class="fas fa-exclamation-triangle text-red-500 mr-1"></i>
+                                    死淘: 1只
+                                </span>
+                                <span class="text-sm text-text-secondary">
+                                    <i class="fas fa-wheat-awn text-yellow-600 mr-1"></i>
+                                    耗料: 128.8kg
+                                </span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs text-text-secondary">14:20</p>
+                            <p class="text-xs text-secondary">已保存</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 成功提示弹窗 -->
+    <div id="success-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl p-6 mx-4 max-w-sm w-full">
+            <div class="text-center">
+                <div class="w-16 h-16 success-message rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-check text-2xl text-accent"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-text-primary mb-2">保存成功</h3>
+                <p class="text-sm text-text-secondary mb-6">数据已成功保存到系统</p>
+                <button id="success-ok-btn" class="w-full bg-secondary text-white py-3 rounded-lg font-medium">
+                    确定
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 错误提示弹窗 -->
+    <div id="error-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl p-6 mx-4 max-w-sm w-full">
+            <div class="text-center">
+                <div class="w-16 h-16 error-message rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-times text-2xl text-white"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-text-primary mb-2">保存失败</h3>
+                <p id="error-message-text" class="text-sm text-text-secondary mb-6">请输入有效的数字</p>
+                <button id="error-ok-btn" class="w-full bg-secondary text-white py-3 rounded-lg font-medium">
+                    确定
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 解析URL参数的辅助函数
+            function getUrlParams() {
+                const params = {};
+                const queryString = window.location.search.substring(1);
+                const urlParams = new URLSearchParams(queryString);
+                
+                for(const [key, value] of urlParams.entries()) {
+                    params[key] = value;
+                }
+                return params;
+            }
+
+            // 获取URL参数
+            const params = getUrlParams();
+            
+            // 如果有批次ID，更新批次信息
+            if(params.batchId) {
+                loadBatchInfo(params.batchId);
+            }
+
+            // 模拟加载批次信息
+            function loadBatchInfo(batchId) {
+                const mockBatches = {
+                    "batch1": { name: "白羽肉鸡-批次A001", species: "白羽肉鸡", quantity: 5000 },
+                    "batch2": { name: "黄羽肉鸡-批次B002", species: "黄羽肉鸡", quantity: 3000 },
+                    "batch3": { name: "蛋鸡-批次C003", species: "蛋鸡", quantity: 2000 }
+                };
+                
+                const batch = mockBatches[batchId] || mockBatches["batch1"];
+                document.querySelector('#batch-info').textContent = batch.name;
+            }
+
+            // 返回按钮点击事件
+            document.querySelector('#back-btn').addEventListener('click', function() {
+                window.location.href = 'P-BATCH_MANAGEMENT.html';
+            });
+
+            // 日期选择器点击事件
+            document.querySelector('#date-picker-btn').addEventListener('click', function() {
+                console.log('需要调用第三方接口实现日期选择器');
+                // 注释：此功能需要调用日期选择器组件，在原型阶段仅做UI展示
+            });
+
+            // 保存按钮点击事件
+            document.querySelector('#save-btn').addEventListener('click', function() {
+                const deathCount = document.querySelector('#death-count').value;
+                const feedConsumption = document.querySelector('#feed-consumption').value;
+                
+                // 验证数据
+                if (!validateData(deathCount, feedConsumption)) {
+                    return;
+                }
+                
+                // 模拟保存数据
+                saveData(deathCount, feedConsumption);
+            });
+
+            // 数据验证函数
+            function validateData(deathCount, feedConsumption) {
+                const deathNum = parseFloat(deathCount) || 0;
+                const feedNum = parseFloat(feedConsumption) || 0;
+                
+                if (deathNum < 0) {
+                    showErrorModal('死淘数量不能为负数');
+                    return false;
+                }
+                
+                if (feedNum < 0) {
+                    showErrorModal('耗料量不能为负数');
+                    return false;
+                }
+                
+                if (deathCount && !Number.isInteger(parseFloat(deathCount))) {
+                    showErrorModal('死淘数量必须为整数');
+                    return false;
+                }
+                
+                return true;
+            }
+
+            // 保存数据函数
+            function saveData(deathCount, feedConsumption) {
+                // 模拟保存过程
+                const saveBtn = document.querySelector('#save-btn');
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>保存中...';
+                
+                setTimeout(() => {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="fas fa-save mr-2"></i>保存记录';
+                    
+                    // 添加到历史记录
+                    addToHistory(deathCount, feedConsumption);
+                    
+                    // 显示成功弹窗
+                    showSuccessModal();
+                }, 1000);
+            }
+
+            // 添加到历史记录
+            function addToHistory(deathCount, feedConsumption) {
+                const historyList = document.querySelector('#history-list');
+                const today = new Date();
+                const dateStr = today.getFullYear() + '年' + (today.getMonth() + 1) + '月' + today.getDate() + '日';
+                const timeStr = today.getHours().toString().padStart(2, '0') + ':' + today.getMinutes().toString().padStart(2, '0');
+                
+                const historyItem = document.createElement('div');
+                historyItem.className = 'bg-card-bg rounded-xl p-4 shadow-card card-hover';
+                historyItem.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="font-medium text-text-primary">${dateStr}</h4>
+                            <div class="flex items-center space-x-4 mt-1">
+                                <span class="text-sm text-text-secondary">
+                                    <i class="fas fa-exclamation-triangle text-red-500 mr-1"></i>
+                                    死淘: ${deathCount || 0}只
+                                </span>
+                                <span class="text-sm text-text-secondary">
+                                    <i class="fas fa-wheat-awn text-yellow-600 mr-1"></i>
+                                    耗料: ${feedConsumption || 0}kg
+                                </span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs text-text-secondary">${timeStr}</p>
+                            <p class="text-xs text-secondary">刚刚保存</p>
+                        </div>
+                    </div>
+                `;
+                
+                // 插入到历史记录顶部
+                historyList.insertBefore(historyItem, historyList.firstChild);
+                
+                // 限制历史记录显示数量
+                const historyItems = historyList.querySelectorAll('div');
+                if (historyItems.length > 5) {
+                    historyItems[historyItems.length - 1].remove();
+                }
+            }
+
+            // 显示成功弹窗
+            function showSuccessModal() {
+                document.querySelector('#success-modal').classList.remove('hidden');
+            }
+
+            // 显示错误弹窗
+            function showErrorModal(message) {
+                document.querySelector('#error-message-text').textContent = message;
+                document.querySelector('#error-modal').classList.remove('hidden');
+            }
+
+            // 成功弹窗确定按钮
+            document.querySelector('#success-ok-btn').addEventListener('click', function() {
+                document.querySelector('#success-modal').classList.add('hidden');
+                // 清空输入框
+                document.querySelector('#death-count').value = '';
+                document.querySelector('#feed-consumption').value = '';
+            });
+
+            // 错误弹窗确定按钮
+            document.querySelector('#error-ok-btn').addEventListener('click', function() {
+                document.querySelector('#error-modal').classList.add('hidden');
+            });
+
+            // 查看全部历史记录
+            document.querySelector('#view-all-history').addEventListener('click', function() {
+                console.log('跳转到历史记录页面');
+                // 注释：此功能可能跳转到专门的历史记录页面，当前仅做提示
+            });
+
+            // 历史记录项点击事件
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('#history-list .card-hover')) {
+                    console.log('查看历史记录详情');
+                    // 注释：可以展开显示更多详情或跳转到详情页
+                }
+            });
+
+            // 输入框焦点效果
+            const inputs = document.querySelectorAll('input[type="number"]');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('ring-2', 'ring-secondary/20');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('ring-2', 'ring-secondary/20');
+                });
+            });
+
+            // 初始化当前日期
+            function initCurrentDate() {
+                const today = new Date();
+                const options = { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric', 
+                    weekday: 'long' 
+                };
+                const dateStr = today.toLocaleDateString('zh-CN', options);
+                document.querySelector('#selected-date').textContent = dateStr;
+            }
+
+            // 初始化页面
+            initCurrentDate();
+        });
+    </script>
+</body>
+</html>

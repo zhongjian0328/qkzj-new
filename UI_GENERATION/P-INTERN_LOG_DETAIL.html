@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 实习日志详情</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D3F8EE',
+                        secondary: '#3BCCA5', 
+                        accent: '#2B6A5A',
+                        'text-primary': '#1F2937',
+                        'text-secondary': '#6B7280',
+                        'bg-light': '#F9FAFB',
+                        'card-bg': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+
+        .image-preview {
+            position: relative;
+            display: inline-block;
+        }
+
+        .image-preview .remove-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 20px;
+            height: 20px;
+            background: #ff4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .form-input-focus:focus {
+            outline: none;
+            border-color: #3BCCA5;
+            box-shadow: 0 0 0 2px rgba(59, 204, 165, 0.2);
+        }
+
+        .mentor-comment {
+            background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+            border-left: 4px solid #0EA5E9;
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex items-center px-4 py-3">
+            <button id="back-btn" class="mr-3 p-2 -ml-2">
+                <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+            </button>
+            <h1 id="page-title" class="text-lg font-semibold text-text-primary">实习日志详情</h1>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6">
+        <!-- 日志基本信息 -->
+        <section id="log-basic-info" class="mb-6">
+            <div class="bg-card-bg rounded-xl p-4 shadow-card">
+                <div class="flex items-center justify-between mb-4">
+                    <label for="log-date" class="block text-sm font-medium text-text-primary">实习日期</label>
+                    <div id="log-status" class="px-2 py-1 bg-blue-100 rounded-full">
+                        <span class="text-xs text-blue-700">草稿</span>
+                    </div>
+                </div>
+                <input type="date" id="log-date" name="log-date" 
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input-focus" 
+                       value="2024-01-15">
+            </div>
+        </section>
+
+        <!-- 实习内容 -->
+        <section id="internship-content" class="mb-6">
+            <div class="bg-card-bg rounded-xl p-4 shadow-card">
+                <label for="internship-content-text" class="block text-sm font-medium text-text-primary mb-3">实习内容</label>
+                <textarea id="internship-content-text" name="internship-content-text" rows="6"
+                          class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input-focus resize-none"
+                          placeholder="请详细描述今天的实习内容、观察到的病例情况、学习到的知识等...">今天在养殖场实习，主要观察了鸡群的健康状况。上午协助兽医对发病鸡只进行检查，发现部分鸡只出现呼吸道症状，羽毛蓬松，精神不振。下午参与了疫苗接种工作，学习了不同疫苗的使用方法和注意事项。</textarea>
+            </div>
+        </section>
+
+        <!-- 图片上传 -->
+        <section id="image-upload" class="mb-6">
+            <div class="bg-card-bg rounded-xl p-4 shadow-card">
+                <h3 class="text-sm font-medium text-text-primary mb-3">病例图片</h3>
+                
+                <!-- 已上传图片预览 -->
+                <div id="uploaded-images" class="grid grid-cols-3 gap-3 mb-4">
+                    <div class="image-preview">
+                        <img src="https://s.coze.cn/image/uRvx3Em0xps/" 
+                             alt="病例图片1" data-category="动物" 
+                             class="w-full h-24 object-cover rounded-lg border border-gray-200">
+                        <div class="remove-btn">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>
+                    <div class="image-preview">
+                        <img src="https://s.coze.cn/image/nvTZ_YCuoiE/" 
+                             alt="病例图片2" data-category="动物" 
+                             class="w-full h-24 object-cover rounded-lg border border-gray-200">
+                        <div class="remove-btn">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 上传按钮 -->
+                <div id="upload-area" class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                    <button id="upload-btn" class="w-full">
+                        <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-camera text-xl text-secondary"></i>
+                        </div>
+                        <p class="text-sm text-text-secondary">点击上传图片</p>
+                        <p class="text-xs text-text-secondary mt-1">支持拍照或从相册选择</p>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 学生诊断判断 -->
+        <section id="student-diagnosis" class="mb-6">
+            <div class="bg-card-bg rounded-xl p-4 shadow-card">
+                <label for="student-diagnosis-text" class="block text-sm font-medium text-text-primary mb-3">我的诊断判断</label>
+                <textarea id="student-diagnosis-text" name="student-diagnosis-text" rows="4"
+                          class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input-focus resize-none"
+                          placeholder="根据观察到的症状，你的初步诊断是什么？">根据症状观察，初步判断可能是新城疫感染，表现为呼吸道症状明显，精神沉郁。建议进行进一步的实验室检测确认。</textarea>
+            </div>
+        </section>
+
+        <!-- AI参考诊断 -->
+        <section id="ai-reference" class="mb-6">
+            <div class="bg-card-bg rounded-xl p-4 shadow-card">
+                <h3 class="text-sm font-medium text-text-primary mb-3">AI参考诊断</h3>
+                <div class="bg-gray-50 rounded-lg p-3">
+                    <div class="flex items-start space-x-2">
+                        <i class="fas fa-robot text-secondary mt-1"></i>
+                        <div>
+                            <p class="text-sm text-text-primary">新城疫</p>
+                            <p class="text-xs text-text-secondary mt-1">置信度：92% | 核心症状：呼吸道症状、精神沉郁</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 导师批注 -->
+        <section id="mentor-comment-section" class="mb-8">
+            <div class="bg-card-bg rounded-xl p-4 shadow-card">
+                <h3 class="text-sm font-medium text-text-primary mb-3">导师批注</h3>
+                
+                <!-- 已有的导师批注 -->
+                <div id="existing-comments" class="space-y-3">
+                    <div class="mentor-comment rounded-lg p-3">
+                        <div class="flex items-start space-x-2">
+                            <img src="https://s.coze.cn/image/7SN5iBRXaak/" 
+                                 alt="导师头像" data-category="人物" 
+                                 class="w-8 h-8 rounded-full">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2 mb-1">
+                                    <span class="text-sm font-medium text-text-primary">张教授</span>
+                                    <span class="text-xs text-text-secondary">2024-01-15 16:30</span>
+                                </div>
+                                <p class="text-sm text-text-primary">诊断判断准确，观察仔细。建议在描述中增加更多细节，比如发病鸡只的具体数量、症状出现的时间等，这样能更好地进行分析。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 批注状态 -->
+                <div id="comment-status" class="mt-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-green-600"></i>
+                        <span class="text-sm text-green-800">已收到导师批注</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 操作按钮 -->
+        <section id="action-buttons" class="space-y-3">
+            <button id="submit-log-btn" class="w-full bg-secondary text-white py-4 rounded-xl font-medium shadow-button">
+                <i class="fas fa-paper-plane mr-2"></i>
+                提交日志
+            </button>
+            
+            <div class="grid grid-cols-2 gap-3">
+                <button id="save-draft-btn" class="bg-gray-200 text-text-primary py-3 rounded-xl font-medium">
+                    <i class="fas fa-save mr-2"></i>
+                    保存草稿
+                </button>
+                <button id="generate-report-btn" class="bg-accent text-white py-3 rounded-xl font-medium">
+                    <i class="fas fa-file-alt mr-2"></i>
+                    生成报告
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 解析URL参数的辅助函数
+            function getUrlParams() {
+                const params = {};
+                const queryString = window.location.search.substring(1);
+                const urlParams = new URLSearchParams(queryString);
+                
+                for(const [key, value] of urlParams.entries()) {
+                    params[key] = value;
+                }
+                return params;
+            }
+
+            // 获取URL参数
+            const params = getUrlParams();
+            
+            // 如果有日志ID，加载对应的日志数据
+            if(params.logId) {
+                loadLogData(params.logId);
+            }
+
+            // 返回按钮点击事件
+            document.querySelector('#back-btn').addEventListener('click', function() {
+                // 根据来源页面决定返回位置
+                if(params.from === 'mentor') {
+                    window.location.href = 'P-MENTOR_DASHBOARD.html';
+                } else {
+                    window.location.href = 'P-INTERN_LOG_LIST.html';
+                }
+            });
+
+            // 图片上传功能
+            document.querySelector('#upload-btn').addEventListener('click', function() {
+                console.log('需要调用第三方接口实现相机拍照或相册选择功能');
+                // 注释：此功能需要调用设备相机API或相册API，在原型阶段仅做UI展示
+            });
+
+            // 删除图片功能
+            document.querySelectorAll('.remove-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const imagePreview = this.parentElement;
+                    imagePreview.remove();
+                });
+            });
+
+            // 提交日志按钮
+            document.querySelector('#submit-log-btn').addEventListener('click', function() {
+                const logDate = document.querySelector('#log-date').value;
+                const content = document.querySelector('#internship-content-text').value;
+                
+                if(!logDate || !content.trim()) {
+                    alert('请填写完整的实习内容');
+                    return;
+                }
+
+                // 模拟提交过程
+                this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>提交中...';
+                this.disabled = true;
+
+                setTimeout(() => {
+                    alert('日志已提交，等待导师批阅');
+                    // 更新状态显示
+                    document.querySelector('#log-status span').textContent = '待批阅';
+                    document.querySelector('#log-status').className = 'px-2 py-1 bg-yellow-100 rounded-full';
+                    document.querySelector('#log-status span').className = 'text-xs text-yellow-700';
+                    
+                    // 重置按钮状态
+                    this.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>提交日志';
+                    this.disabled = false;
+                    
+                    // 返回日志列表页
+                    window.location.href = 'P-INTERN_LOG_LIST.html';
+                }, 1500);
+            });
+
+            // 保存草稿按钮
+            document.querySelector('#save-draft-btn').addEventListener('click', function() {
+                const logDate = document.querySelector('#log-date').value;
+                const content = document.querySelector('#internship-content-text').value;
+                
+                if(!logDate) {
+                    alert('请选择实习日期');
+                    return;
+                }
+
+                // 模拟保存过程
+                this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>保存中...';
+                this.disabled = true;
+
+                setTimeout(() => {
+                    alert('草稿已保存');
+                    this.innerHTML = '<i class="fas fa-save mr-2"></i>保存草稿';
+                    this.disabled = false;
+                }, 1000);
+            });
+
+            // 生成报告按钮
+            document.querySelector('#generate-report-btn').addEventListener('click', function() {
+                // 模拟生成报告过程
+                this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>生成中...';
+                this.disabled = true;
+
+                setTimeout(() => {
+                    alert('实习报告已生成，可在个人中心查看');
+                    this.innerHTML = '<i class="fas fa-file-alt mr-2"></i>生成报告';
+                    this.disabled = false;
+                }, 2000);
+            });
+
+            // 加载日志数据的函数
+            function loadLogData(logId) {
+                // 在实际应用中，这里会调用API获取数据
+                // 但在这个示例中，我们模拟数据加载
+                const mockLogs = {
+                    "log1": {
+                        date: "2024-01-15",
+                        content: "今天在养殖场实习，主要观察了鸡群的健康状况。上午协助兽医对发病鸡只进行检查，发现部分鸡只出现呼吸道症状，羽毛蓬松，精神不振。下午参与了疫苗接种工作，学习了不同疫苗的使用方法和注意事项。",
+                        diagnosis: "根据症状观察，初步判断可能是新城疫感染，表现为呼吸道症状明显，精神沉郁。建议进行进一步的实验室检测确认。",
+                        status: "已批阅",
+                        images: [
+                            "https://s.coze.cn/image/EJGu-48Dmjo/",
+                            "https://s.coze.cn/image/9SCpQEKLklQ/"
+                        ]
+                    },
+                    "log2": {
+                        date: "2024-01-14",
+                        content: "今天学习了禽病的诊断方法，包括临床检查和实验室检测的基本流程。",
+                        diagnosis: "通过学习，了解了常见禽病的诊断要点。",
+                        status: "草稿",
+                        images: []
+                    }
+                };
+                
+                const logData = mockLogs[logId];
+                if(logData) {
+                    document.querySelector('#log-date').value = logData.date;
+                    document.querySelector('#internship-content-text').value = logData.content;
+                    document.querySelector('#student-diagnosis-text').value = logData.diagnosis;
+                    
+                    // 更新状态显示
+                    const statusElement = document.querySelector('#log-status span');
+                    if(logData.status === '已批阅') {
+                        statusElement.textContent = '已批阅';
+                        document.querySelector('#log-status').className = 'px-2 py-1 bg-green-100 rounded-full';
+                        statusElement.className = 'text-xs text-green-700';
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

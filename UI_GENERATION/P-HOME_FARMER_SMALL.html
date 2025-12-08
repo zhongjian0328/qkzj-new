@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 养殖户首页</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D3F8EE',
+                        secondary: '#3BCCA5', 
+                        accent: '#2B6A5A',
+                        'text-primary': '#1F2937',
+                        'text-secondary': '#6B7280',
+                        'bg-light': '#F9FAFB',
+                        'card-bg': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex justify-between items-center px-4 py-3">
+            <div id="user-info" class="flex items-center space-x-3">
+                <img id="user-avatar" src="https://s.coze.cn/image/2t_w86W8aFs/" 
+                     alt="用户头像" data-category="人物" class="w-10 h-10 rounded-full border-2 border-secondary">
+                <div>
+                    <h1 id="user-greeting" class="text-lg font-semibold text-text-primary">早上好，王养殖户</h1>
+                    <p id="user-role" class="text-sm text-text-secondary">小散户</p>
+                </div>
+            </div>
+            <div id="header-actions" class="flex items-center space-x-3">
+                <button id="notification-btn" class="relative p-2">
+                    <i class="far fa-bell text-xl text-text-secondary"></i>
+                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+                </button>
+                <button id="profile-btn">
+                    <i class="fas fa-user-circle text-xl text-text-secondary"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6 pb-20">
+        <!-- 核心功能区 -->
+        <section id="core-functions" class="mb-8">
+            <h2 id="core-functions-title" class="text-lg font-semibold text-text-primary mb-4">核心功能</h2>
+            
+            <!-- AI诊断主按钮 -->
+            <div id="ai-diagnosis-main" class="gradient-bg rounded-2xl p-6 mb-4 shadow-card">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 id="ai-diagnosis-title" class="text-xl font-bold text-accent mb-2">AI智能诊断</h3>
+                        <p id="ai-diagnosis-desc" class="text-accent/80 text-sm">拍照上传，快速诊断禽病</p>
+                    </div>
+                    <div id="ai-diagnosis-icon" class="w-16 h-16 bg-white/30 rounded-full flex items-center justify-center">
+                        <i class="fas fa-stethoscope text-2xl text-accent"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 其他功能入口 -->
+            <div id="other-functions" class="grid grid-cols-2 gap-4">
+                <div id="treatment-plan-card" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-prescription-bottle text-xl text-secondary"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-text-primary">治疗方案</h4>
+                            <p class="text-xs text-text-secondary">查看推荐方案</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="veterinary-mall-card" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-shopping-cart text-xl text-secondary"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-text-primary">兽药商城</h4>
+                            <p class="text-xs text-text-secondary">在线购买药品</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="nearby-stores-card" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-map-marker-alt text-xl text-secondary"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-text-primary">周边兽药店</h4>
+                            <p class="text-xs text-text-secondary">查找附近药店</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="knowledge-base-card" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-book text-xl text-secondary"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-text-primary">知识百科</h4>
+                            <p class="text-xs text-text-secondary">学习养殖知识</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 近期诊断历史 -->
+        <section id="recent-diagnosis" class="mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="recent-diagnosis-title" class="text-lg font-semibold text-text-primary">近期诊断</h2>
+                <button id="view-all-diagnosis" class="text-sm text-secondary">查看全部</button>
+            </div>
+            
+            <div id="diagnosis-list" class="space-y-3">
+                <div id="diagnosis-item-1" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <img id="diagnosis-image-1" src="https://s.coze.cn/image/Uk7X8h-kjsQ/" 
+                                 alt="诊断图片" data-category="动物" class="w-12 h-12 rounded-lg object-cover">
+                            <div>
+                                <h4 id="diagnosis-disease-1" class="font-medium text-text-primary">新城疫</h4>
+                                <p id="diagnosis-confidence-1" class="text-sm text-text-secondary">置信度：95%</p>
+                                <p id="diagnosis-time-1" class="text-xs text-text-secondary">2024-01-15 14:30</p>
+                            </div>
+                        </div>
+                        <div id="diagnosis-status-1" class="px-2 py-1 bg-green-100 rounded-full">
+                            <span class="text-xs text-green-700">已处理</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="diagnosis-item-2" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <img id="diagnosis-image-2" src="https://s.coze.cn/image/1OXQHxxmewI/" 
+                                 alt="诊断图片" data-category="动物" class="w-12 h-12 rounded-lg object-cover">
+                            <div>
+                                <h4 id="diagnosis-disease-2" class="font-medium text-text-primary">禽流感</h4>
+                                <p id="diagnosis-confidence-2" class="text-sm text-text-secondary">置信度：88%</p>
+                                <p id="diagnosis-time-2" class="text-xs text-text-secondary">2024-01-14 09:15</p>
+                            </div>
+                        </div>
+                        <div id="diagnosis-status-2" class="px-2 py-1 bg-blue-100 rounded-full">
+                            <span class="text-xs text-blue-700">治疗中</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 养殖小贴士 -->
+        <section id="farming-tips" class="mb-8">
+            <h2 id="farming-tips-title" class="text-lg font-semibold text-text-primary mb-4">养殖小贴士</h2>
+            
+            <div id="tips-card" class="bg-card-bg rounded-xl p-4 shadow-card">
+                <div class="flex items-start space-x-3">
+                    <div id="tips-icon" class="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                        <i class="fas fa-lightbulb text-secondary"></i>
+                    </div>
+                    <div>
+                        <h4 id="tips-title" class="font-medium text-text-primary mb-2">冬季禽流感预防</h4>
+                        <p id="tips-content" class="text-sm text-text-secondary leading-relaxed">
+                            冬季是禽流感高发期，建议加强鸡舍通风，定期消毒，及时接种疫苗。发现异常症状应立即隔离病禽并进行诊断。
+                        </p>
+                        <div id="tips-source" class="flex items-center mt-3 text-xs text-text-secondary">
+                            <i class="fas fa-calendar-alt mr-1"></i>
+                            <span>2024-01-15</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 快捷服务 -->
+        <section id="quick-services">
+            <h2 id="quick-services-title" class="text-lg font-semibold text-text-primary mb-4">快捷服务</h2>
+            
+            <div id="services-grid" class="grid grid-cols-3 gap-4">
+                <div id="service-weather" class="bg-card-bg rounded-xl p-4 shadow-card text-center card-hover">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i class="fas fa-cloud-sun text-blue-600"></i>
+                    </div>
+                    <h4 class="text-sm font-medium text-text-primary">天气预警</h4>
+                </div>
+
+                <div id="service-epidemic" class="bg-card-bg rounded-xl p-4 shadow-card text-center card-hover">
+                    <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i class="fas fa-exclamation-triangle text-orange-600"></i>
+                    </div>
+                    <h4 class="text-sm font-medium text-text-primary">疫情监测</h4>
+                </div>
+
+                <div id="service-consult" class="bg-card-bg rounded-xl p-4 shadow-card text-center card-hover">
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <i class="fas fa-comments text-purple-600"></i>
+                    </div>
+                    <h4 class="text-sm font-medium text-text-primary">在线咨询</h4>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部导航栏 -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
+        <a id="nav-home" href="#" class="flex flex-col items-center p-2 text-secondary">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-xs mt-0.5">首页</span>
+        </a>
+        <a id="nav-diagnosis" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+            <i class="fas fa-stethoscope text-xl"></i>
+            <span class="text-xs mt-0.5">AI诊断</span>
+        </a>
+        <a id="nav-profile" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+            <i class="fas fa-user text-xl"></i>
+            <span class="text-xs mt-0.5">我的</span>
+        </a>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // AI诊断主按钮点击事件
+            document.querySelector('#ai-diagnosis-main').addEventListener('click', function() {
+                window.location.href = 'P-AI_DIAGNOSIS.html';
+            });
+
+            // 治疗方案卡片点击事件
+            document.querySelector('#treatment-plan-card').addEventListener('click', function() {
+                window.location.href = 'P-EMERGENCY_PLAN.html';
+            });
+
+            // 兽药商城卡片点击事件
+            document.querySelector('#veterinary-mall-card').addEventListener('click', function() {
+                window.location.href = 'P-VETERINARY_MALL.html';
+            });
+
+            // 周边兽药店卡片点击事件
+            document.querySelector('#nearby-stores-card').addEventListener('click', function() {
+                console.log('需要调用第三方地图接口实现周边兽药店导航功能');
+                // 注释：此功能需要调用地图API，在原型阶段仅做UI展示
+            });
+
+            // 知识百科卡片点击事件
+            document.querySelector('#knowledge-base-card').addEventListener('click', function() {
+                window.location.href = 'P-KNOWLEDGE_GRAPH.html';
+            });
+
+            // 个人中心按钮点击事件
+            document.querySelector('#profile-btn').addEventListener('click', function() {
+                window.location.href = 'P-USER_PROFILE.html';
+            });
+
+            // 通知按钮点击事件
+            document.querySelector('#notification-btn').addEventListener('click', function() {
+                console.log('显示通知列表');
+                // 注释：此功能需要实现通知列表弹窗或页面
+            });
+
+            // 查看全部诊断记录按钮点击事件
+            document.querySelector('#view-all-diagnosis').addEventListener('click', function() {
+                console.log('跳转到诊断历史页面');
+                // 注释：此功能需要实现诊断历史页面
+            });
+
+            // 诊断记录项点击事件
+            document.querySelector('#diagnosis-item-1').addEventListener('click', function() {
+                window.location.href = 'P-EMERGENCY_PLAN.html?diagnosisId=1';
+            });
+
+            document.querySelector('#diagnosis-item-2').addEventListener('click', function() {
+                window.location.href = 'P-EMERGENCY_PLAN.html?diagnosisId=2';
+            });
+
+            // 快捷服务点击事件
+            document.querySelector('#service-weather').addEventListener('click', function() {
+                console.log('显示天气预警信息');
+                // 注释：此功能需要调用天气API
+            });
+
+            document.querySelector('#service-epidemic').addEventListener('click', function() {
+                window.location.href = 'P-EPIDEMIC_HEATMAP.html';
+            });
+
+            document.querySelector('#service-consult').addEventListener('click', function() {
+                window.location.href = 'P-ONLINE_CONSULT.html';
+            });
+
+            // 底部导航栏点击事件
+            document.querySelector('#nav-home').addEventListener('click', function(e) {
+                e.preventDefault();
+                // 已在首页，无需操作
+            });
+
+            document.querySelector('#nav-diagnosis').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'P-AI_DIAGNOSIS.html';
+            });
+
+            document.querySelector('#nav-profile').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'P-USER_PROFILE.html';
+            });
+
+            // 卡片点击效果
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach(card => {
+                card.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                card.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

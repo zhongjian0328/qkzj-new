@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 兽药商城</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D3F8EE',
+                        secondary: '#3BCCA5', 
+                        accent: '#2B6A5A',
+                        'text-primary': '#1F2937',
+                        'text-secondary': '#6B7280',
+                        'bg-light': '#F9FAFB',
+                        'card-bg': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+
+        .category-active {
+            background-color: #3BCCA5;
+            color: white;
+        }
+
+        .category-inactive {
+            background-color: #F3F4F6;
+            color: #6B7280;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #3BCCA5;
+            box-shadow: 0 0 0 2px rgba(59, 204, 165, 0.2);
+        }
+
+        .product-card {
+            transition: transform 0.2s ease;
+        }
+
+        .product-card:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex items-center px-4 py-3">
+            <button id="back-btn" class="mr-3 p-2 -ml-2">
+                <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+            </button>
+            <div class="flex-1">
+                <h1 id="page-title" class="text-lg font-semibold text-text-primary">兽药商城</h1>
+            </div>
+            <button id="cart-btn" class="relative p-2 -mr-2">
+                <i class="fas fa-shopping-cart text-xl text-text-secondary"></i>
+                <span id="cart-count" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 搜索栏 -->
+    <section id="search-section" class="px-4 py-4 bg-white border-b border-gray-100">
+        <div class="relative">
+            <input 
+                type="text" 
+                id="search-input" 
+                placeholder="搜索兽药、饲料、疫苗..." 
+                class="w-full pl-10 pr-4 py-3 bg-gray-100 rounded-xl text-text-primary placeholder-text-secondary search-input"
+            >
+            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
+        </div>
+    </section>
+
+    <!-- 商品分类 -->
+    <section id="category-section" class="px-4 py-4 bg-white">
+        <div class="flex space-x-3 overflow-x-auto">
+            <button id="category-all" class="category-active px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap">
+                全部
+            </button>
+            <button id="category-medicine" class="category-inactive px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap">
+                兽药
+            </button>
+            <button id="category-feed" class="category-inactive px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap">
+                饲料
+            </button>
+            <button id="category-vaccine" class="category-inactive px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap">
+                疫苗
+            </button>
+            <button id="category-equipment" class="category-inactive px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap">
+                养殖设备
+            </button>
+        </div>
+    </section>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6 pb-20">
+        <!-- 商品列表 -->
+        <section id="product-list-section">
+            <div id="product-grid" class="grid grid-cols-2 gap-4">
+                <!-- 商品卡片1 -->
+                <div id="product-card-1" class="product-card bg-card-bg rounded-xl shadow-card overflow-hidden" data-product-id="prod1" data-category="medicine">
+                    <div class="relative">
+                        <img id="product-image-1" src="https://s.coze.cn/image/V3KNmxUOMN0/" 
+                             alt="阿莫西林可溶性粉" data-category="药品" class="w-full h-32 object-cover">
+                        <div id="product-tag-1" class="absolute top-2 left-2 px-2 py-1 bg-red-500 text-white text-xs rounded-full">
+                            热销
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <h3 id="product-name-1" class="font-medium text-text-primary text-sm mb-1 line-clamp-2">阿莫西林可溶性粉 100g/袋</h3>
+                        <div class="flex items-center justify-between mb-2">
+                            <span id="product-price-1" class="text-lg font-bold text-red-500">¥28.5</span>
+                            <span id="product-original-price-1" class="text-xs text-text-secondary line-through">¥35.0</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-text-secondary mb-3">
+                            <span id="product-sales-1">已售1.2万</span>
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                <span id="product-rating-1">4.8</span>
+                            </div>
+                        </div>
+                        <button id="add-cart-1" class="w-full py-2 bg-secondary text-white text-sm rounded-lg font-medium">
+                            加入购物车
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 商品卡片2 -->
+                <div id="product-card-2" class="product-card bg-card-bg rounded-xl shadow-card overflow-hidden" data-product-id="prod2" data-category="vaccine">
+                    <div class="relative">
+                        <img id="product-image-2" src="https://s.coze.cn/image/yIEA8yGjWfo/" 
+                             alt="新城疫疫苗" data-category="药品" class="w-full h-32 object-cover">
+                        <div id="product-tag-2" class="absolute top-2 left-2 px-2 py-1 bg-blue-500 text-white text-xs rounded-full">
+                            新品
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <h3 id="product-name-2" class="font-medium text-text-primary text-sm mb-1 line-clamp-2">新城疫灭活疫苗 500羽份/瓶</h3>
+                        <div class="flex items-center justify-between mb-2">
+                            <span id="product-price-2" class="text-lg font-bold text-red-500">¥120.0</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-text-secondary mb-3">
+                            <span id="product-sales-2">已售856</span>
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                <span id="product-rating-2">4.9</span>
+                            </div>
+                        </div>
+                        <button id="add-cart-2" class="w-full py-2 bg-secondary text-white text-sm rounded-lg font-medium">
+                            加入购物车
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 商品卡片3 -->
+                <div id="product-card-3" class="product-card bg-card-bg rounded-xl shadow-card overflow-hidden" data-product-id="prod3" data-category="feed">
+                    <div class="relative">
+                        <img id="product-image-3" src="https://s.coze.cn/image/ddc2lb-SguE/" 
+                             alt="蛋鸡专用饲料" data-category="食品" class="w-full h-32 object-cover">
+                    </div>
+                    <div class="p-3">
+                        <h3 id="product-name-3" class="font-medium text-text-primary text-sm mb-1 line-clamp-2">蛋鸡专用配合饲料 20kg/袋</h3>
+                        <div class="flex items-center justify-between mb-2">
+                            <span id="product-price-3" class="text-lg font-bold text-red-500">¥85.0</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-text-secondary mb-3">
+                            <span id="product-sales-3">已售3.5万</span>
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                <span id="product-rating-3">4.7</span>
+                            </div>
+                        </div>
+                        <button id="add-cart-3" class="w-full py-2 bg-secondary text-white text-sm rounded-lg font-medium">
+                            加入购物车
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 商品卡片4 -->
+                <div id="product-card-4" class="product-card bg-card-bg rounded-xl shadow-card overflow-hidden" data-product-id="prod4" data-category="medicine">
+                    <div class="relative">
+                        <img id="product-image-4" src="https://s.coze.cn/image/dfL9NgBQ9Pc/" 
+                             alt="恩诺沙星注射液" data-category="药品" class="w-full h-32 object-cover">
+                        <div id="product-tag-4" class="absolute top-2 left-2 px-2 py-1 bg-green-500 text-white text-xs rounded-full">
+                            推荐
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <h3 id="product-name-4" class="font-medium text-text-primary text-sm mb-1 line-clamp-2">恩诺沙星注射液 10ml/支</h3>
+                        <div class="flex items-center justify-between mb-2">
+                            <span id="product-price-4" class="text-lg font-bold text-red-500">¥15.8</span>
+                            <span id="product-original-price-4" class="text-xs text-text-secondary line-through">¥18.0</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-text-secondary mb-3">
+                            <span id="product-sales-4">已售2.1万</span>
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                <span id="product-rating-4">4.6</span>
+                            </div>
+                        </div>
+                        <button id="add-cart-4" class="w-full py-2 bg-secondary text-white text-sm rounded-lg font-medium">
+                            加入购物车
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 商品卡片5 -->
+                <div id="product-card-5" class="product-card bg-card-bg rounded-xl shadow-card overflow-hidden" data-product-id="prod5" data-category="equipment">
+                    <div class="relative">
+                        <img id="product-image-5" src="https://s.coze.cn/image/dCYTSwAWIRs/" 
+                             alt="鸡用饮水器" data-category="设备" class="w-full h-32 object-cover">
+                    </div>
+                    <div class="p-3">
+                        <h3 id="product-name-5" class="font-medium text-text-primary text-sm mb-1 line-clamp-2">自动饮水器 100个/箱</h3>
+                        <div class="flex items-center justify-between mb-2">
+                            <span id="product-price-5" class="text-lg font-bold text-red-500">¥120.0</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-text-secondary mb-3">
+                            <span id="product-sales-5">已售456</span>
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                <span id="product-rating-5">4.5</span>
+                            </div>
+                        </div>
+                        <button id="add-cart-5" class="w-full py-2 bg-secondary text-white text-sm rounded-lg font-medium">
+                            加入购物车
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 商品卡片6 -->
+                <div id="product-card-6" class="product-card bg-card-bg rounded-xl shadow-card overflow-hidden" data-product-id="prod6" data-category="vaccine">
+                    <div class="relative">
+                        <img id="product-image-6" src="https://s.coze.cn/image/vd_Qgkp3oXY/" 
+                             alt="禽流感疫苗" data-category="药品" class="w-full h-32 object-cover">
+                        <div id="product-tag-6" class="absolute top-2 left-2 px-2 py-1 bg-purple-500 text-white text-xs rounded-full">
+                            特价
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <h3 id="product-name-6" class="font-medium text-text-primary text-sm mb-1 line-clamp-2">禽流感H5+H7二价疫苗 250羽份/瓶</h3>
+                        <div class="flex items-center justify-between mb-2">
+                            <span id="product-price-6" class="text-lg font-bold text-red-500">¥180.0</span>
+                            <span id="product-original-price-6" class="text-xs text-text-secondary line-through">¥220.0</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-text-secondary mb-3">
+                            <span id="product-sales-6">已售634</span>
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                <span id="product-rating-6">4.8</span>
+                            </div>
+                        </div>
+                        <button id="add-cart-6" class="w-full py-2 bg-secondary text-white text-sm rounded-lg font-medium">
+                            加入购物车
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部导航栏 -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
+        <a id="nav-home" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-xs mt-0.5">首页</span>
+        </a>
+        <a id="nav-diagnosis" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+            <i class="fas fa-stethoscope text-xl"></i>
+            <span class="text-xs mt-0.5">AI诊断</span>
+        </a>
+        <a id="nav-mall" href="#" class="flex flex-col items-center p-2 text-secondary">
+            <i class="fas fa-shopping-cart text-xl"></i>
+            <span class="text-xs mt-0.5">商城</span>
+        </a>
+        <a id="nav-profile" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+            <i class="fas fa-user text-xl"></i>
+            <span class="text-xs mt-0.5">我的</span>
+        </a>
+    </nav>
+
+    <!-- 商品详情模态框 -->
+    <div id="product-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-center items-center py-4">
+                <div class="w-12 h-1 bg-gray-300 rounded-full"></div>
+            </div>
+            
+            <div id="modal-content" class="px-6 pb-6">
+                <!-- 商品详情内容将通过JavaScript动态填充 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 解析URL参数的辅助函数
+            function getUrlParams() {
+                const params = {};
+                const queryString = window.location.search.substring(1);
+                const urlParams = new URLSearchParams(queryString);
+                
+                for(const [key, value] of urlParams.entries()) {
+                    params[key] = value;
+                }
+                return params;
+            }
+
+            // 获取URL参数并进行搜索
+            const params = getUrlParams();
+            if(params.keyword) {
+                document.querySelector('#search-input').value = params.keyword;
+                performSearch(params.keyword);
+            }
+            if(params.category) {
+                selectCategory(params.category);
+            }
+
+            // 返回按钮
+            document.querySelector('#back-btn').addEventListener('click', function() {
+                window.history.back();
+            });
+
+            // 购物车按钮
+            document.querySelector('#cart-btn').addEventListener('click', function() {
+                console.log('跳转到购物车页面');
+                // 实际应用中这里会跳转到购物车页面
+            });
+
+            // 搜索功能
+            document.querySelector('#search-input').addEventListener('input', function() {
+                const keyword = this.value.trim();
+                if(keyword.length > 0) {
+                    performSearch(keyword);
+                } else {
+                    showAllProducts();
+                }
+            });
+
+            // 分类选择
+            const categoryButtons = document.querySelectorAll('[id^="category-"]');
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 重置所有分类按钮样式
+                    categoryButtons.forEach(btn => {
+                        btn.classList.remove('category-active');
+                        btn.classList.add('category-inactive');
+                    });
+                    
+                    // 激活当前按钮
+                    this.classList.remove('category-inactive');
+                    this.classList.add('category-active');
+                    
+                    // 筛选商品
+                    const category = this.id.replace('category-', '');
+                    filterProductsByCategory(category);
+                });
+            });
+
+            // 商品卡片点击事件
+            const productCards = document.querySelectorAll('.product-card');
+            productCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // 如果点击的是加入购物车按钮，不触发商品详情
+                    if(e.target.id.startsWith('add-cart-')) {
+                        return;
+                    }
+                    
+                    const productId = this.dataset.productId;
+                    showProductDetail(productId);
+                });
+            });
+
+            // 加入购物车按钮事件
+            const addCartButtons = document.querySelectorAll('[id^="add-cart-"]');
+            addCartButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation(); // 阻止事件冒泡
+                    
+                    const productId = this.id.replace('add-cart-', '');
+                    addToCart(productId);
+                });
+            });
+
+            // 底部导航栏
+            document.querySelector('#nav-home').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'P-HOME_FARMER_SMALL.html';
+            });
+
+            document.querySelector('#nav-diagnosis').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'P-AI_DIAGNOSIS.html';
+            });
+
+            document.querySelector('#nav-mall').addEventListener('click', function(e) {
+                e.preventDefault();
+                // 已在商城页面，无需操作
+            });
+
+            document.querySelector('#nav-profile').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'P-USER_PROFILE.html';
+            });
+
+            // 商品详情模态框关闭
+            document.querySelector('#product-modal').addEventListener('click', function(e) {
+                if(e.target === this) {
+                    this.classList.add('hidden');
+                }
+            });
+
+            // 搜索功能实现
+            function performSearch(keyword) {
+                const productCards = document.querySelectorAll('.product-card');
+                productCards.forEach(card => {
+                    const productName = card.querySelector('[id^="product-name-"]').textContent.toLowerCase();
+                    if(productName.includes(keyword.toLowerCase())) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            // 显示所有商品
+            function showAllProducts() {
+                const productCards = document.querySelectorAll('.product-card');
+                productCards.forEach(card => {
+                    card.style.display = 'block';
+                });
+            }
+
+            // 按分类筛选商品
+            function filterProductsByCategory(category) {
+                const productCards = document.querySelectorAll('.product-card');
+                productCards.forEach(card => {
+                    if(category === 'all') {
+                        card.style.display = 'block';
+                    } else {
+                        const cardCategory = card.dataset.category;
+                        if(cardCategory === category) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    }
+                });
+            }
+
+            // 选择指定分类
+            function selectCategory(category) {
+                const categoryButton = document.querySelector(`#category-${category}`);
+                if(categoryButton) {
+                    categoryButton.click();
+                }
+            }
+
+            // 显示商品详情
+            function showProductDetail(productId) {
+                const productData = getProductData(productId);
+                if(!productData) return;
+
+                const modalContent = document.querySelector('#modal-content');
+                modalContent.innerHTML = `
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-xl font-bold text-text-primary">${productData.name}</h2>
+                        <button id="close-modal" class="p-2">
+                            <i class="fas fa-times text-xl text-text-secondary"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <img src="${productData.image}" alt="${productData.name}" class="w-full h-48 object-cover rounded-lg">
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <span class="text-2xl font-bold text-red-500">¥${productData.price}</span>
+                            ${productData.originalPrice ? `<span class="text-lg text-text-secondary line-through">¥${productData.originalPrice}</span>` : ''}
+                        </div>
+                        <div class="flex items-center space-x-4 text-sm text-text-secondary">
+                            <span>销量：${productData.sales}</span>
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                <span>${productData.rating}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h3 class="font-semibold text-text-primary mb-2">商品详情</h3>
+                        <p class="text-sm text-text-secondary leading-relaxed">
+                            ${productData.description}
+                        </p>
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <button id="modal-add-cart" class="flex-1 py-3 bg-secondary text-white text-sm rounded-lg font-medium">
+                            加入购物车
+                        </button>
+                        <button id="modal-buy-now" class="flex-1 py-3 bg-red-500 text-white text-sm rounded-lg font-medium">
+                            立即购买
+                        </button>
+                    </div>
+                `;
+
+                // 绑定模态框内按钮事件
+                document.querySelector('#close-modal').addEventListener('click', function() {
+                    document.querySelector('#product-modal').classList.add('hidden');
+                });
+
+                document.querySelector('#modal-add-cart').addEventListener('click', function() {
+                    addToCart(productId);
+                    document.querySelector('#product-modal').classList.add('hidden');
+                });
+
+                document.querySelector('#modal-buy-now').addEventListener('click', function() {
+                    buyNow(productId);
+                    document.querySelector('#product-modal').classList.add('hidden');
+                });
+
+                document.querySelector('#product-modal').classList.remove('hidden');
+            }
+
+            // 加入购物车
+            function addToCart(productId) {
+                const productData = getProductData(productId);
+                if(!productData) return;
+
+                // 更新购物车数量
+                const cartCountElement = document.querySelector('#cart-count');
+                let currentCount = parseInt(cartCountElement.textContent);
+                cartCountElement.textContent = currentCount + 1;
+
+                // 显示成功提示
+                showToast('已加入购物车');
+
+                console.log('加入购物车:', productData.name);
+            }
+
+            // 立即购买
+            function buyNow(productId) {
+                const productData = getProductData(productId);
+                if(!productData) return;
+
+                showToast('跳转到订单确认页面');
+                console.log('立即购买:', productData.name);
+                // 实际应用中这里会跳转到订单确认页面
+            }
+
+            // 获取商品数据
+            function getProductData(productId) {
+                const productMap = {
+                    'prod1': {
+                        id: 'prod1',
+                        name: '阿莫西林可溶性粉 100g/袋',
+                        price: '28.5',
+                        originalPrice: '35.0',
+                        sales: '1.2万',
+                        rating: '4.8',
+                        image: 'https://s.coze.cn/image/vNDedmk1SBs/',
+                        description: '广谱抗生素，用于治疗家禽呼吸道、消化道感染。每袋100g，兑水饮用，疗效显著。'
+                    },
+                    'prod2': {
+                        id: 'prod2',
+                        name: '新城疫灭活疫苗 500羽份/瓶',
+                        price: '120.0',
+                        originalPrice: '',
+                        sales: '856',
+                        rating: '4.9',
+                        image: 'https://s.coze.cn/image/aL4gfzf4Z5M/',
+                        description: '预防新城疫病毒感染，安全性高，免疫效果好。每瓶可免疫500羽份。'
+                    },
+                    'prod3': {
+                        id: 'prod3',
+                        name: '蛋鸡专用配合饲料 20kg/袋',
+                        price: '85.0',
+                        originalPrice: '',
+                        sales: '3.5万',
+                        rating: '4.7',
+                        image: 'https://s.coze.cn/image/iUCfzfh_msY/',
+                        description: '专为蛋鸡设计的全价饲料，营养均衡，提高产蛋率和蛋品质。'
+                    },
+                    'prod4': {
+                        id: 'prod4',
+                        name: '恩诺沙星注射液 10ml/支',
+                        price: '15.8',
+                        originalPrice: '18.0',
+                        sales: '2.1万',
+                        rating: '4.6',
+                        image: 'https://s.coze.cn/image/iFPBE-gRPKM/',
+                        description: '广谱抗菌药，用于治疗家禽细菌感染。注射使用，见效快。'
+                    },
+                    'prod5': {
+                        id: 'prod5',
+                        name: '自动饮水器 100个/箱',
+                        price: '120.0',
+                        originalPrice: '',
+                        sales: '456',
+                        rating: '4.5',
+                        image: 'https://s.coze.cn/image/AGuieEOWnyA/',
+                        description: '优质塑料材质，自动饮水设计，节约用水，适合规模化养殖。'
+                    },
+                    'prod6': {
+                        id: 'prod6',
+                        name: '禽流感H5+H7二价疫苗 250羽份/瓶',
+                        price: '180.0',
+                        originalPrice: '220.0',
+                        sales: '634',
+                        rating: '4.8',
+                        image: 'https://s.coze.cn/image/iyQ3kLg1rhM/',
+                        description: '预防H5和H7亚型禽流感病毒，一针双防，保护力强。'
+                    }
+                };
+
+                return productMap[productId];
+            }
+
+            // 显示提示信息
+            function showToast(message) {
+                // 创建提示元素
+                const toast = document.createElement('div');
+                toast.className = 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black bg-opacity-70 text-white px-4 py-2 rounded-lg z-50';
+                toast.textContent = message;
+                
+                document.body.appendChild(toast);
+                
+                // 2秒后移除提示
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>

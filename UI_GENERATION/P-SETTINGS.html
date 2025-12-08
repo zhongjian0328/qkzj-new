@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 设置</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D3F8EE',
+                        secondary: '#3BCCA5', 
+                        accent: '#2B6A5A',
+                        'text-primary': '#1F2937',
+                        'text-secondary': '#6B7280',
+                        'bg-light': '#F9FAFB',
+                        'card-bg': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+
+        .setting-item:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background-color: #e5e7eb;
+            border-radius: 12px;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .toggle-switch.active {
+            background-color: #3BCCA5;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(20px);
+        }
+
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            animation: modalSlideUp 0.3s ease-out;
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex items-center px-4 py-3">
+            <button id="back-btn" class="mr-3 p-2 -ml-2">
+                <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+            </button>
+            <h1 id="page-title" class="text-lg font-semibold text-text-primary">设置</h1>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6">
+        <!-- 通用设置 -->
+        <section id="general-settings" class="mb-6">
+            <h2 id="general-settings-title" class="text-base font-medium text-text-secondary mb-3 px-1">通用设置</h2>
+            
+            <div id="notification-setting" class="bg-card-bg rounded-xl p-4 mb-3 shadow-card setting-item">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-bell text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-text-primary">通知设置</h3>
+                            <p class="text-sm text-text-secondary">接收诊断结果和系统消息</p>
+                        </div>
+                    </div>
+                    <div id="notification-toggle" class="toggle-switch active"></div>
+                </div>
+            </div>
+
+            <div id="privacy-setting" class="bg-card-bg rounded-xl p-4 mb-3 shadow-card setting-item">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-shield-alt text-green-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-text-primary">隐私设置</h3>
+                            <p class="text-sm text-text-secondary">管理个人信息和数据权限</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right text-text-secondary"></i>
+                </div>
+            </div>
+
+            <div id="clear-cache-setting" class="bg-card-bg rounded-xl p-4 mb-3 shadow-card setting-item">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-broom text-orange-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-text-primary">清除缓存</h3>
+                            <p class="text-sm text-text-secondary">清理临时文件，释放存储空间</p>
+                        </div>
+                    </div>
+                    <span id="cache-size" class="text-sm text-text-secondary">128.5 MB</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 关于应用 -->
+        <section id="about-settings" class="mb-6">
+            <h2 id="about-settings-title" class="text-base font-medium text-text-secondary mb-3 px-1">关于应用</h2>
+            
+            <div id="about-us-setting" class="bg-card-bg rounded-xl p-4 mb-3 shadow-card setting-item">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-info-circle text-purple-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-text-primary">关于我们</h3>
+                            <p class="text-sm text-text-secondary">了解禽康智检的更多信息</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right text-text-secondary"></i>
+                </div>
+            </div>
+
+            <div id="version-setting" class="bg-card-bg rounded-xl p-4 shadow-card">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-code-branch text-gray-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-text-primary">版本信息</h3>
+                            <p class="text-sm text-text-secondary">当前版本</p>
+                        </div>
+                    </div>
+                    <span id="app-version" class="text-sm font-medium text-text-primary">v3.0.0</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 清除缓存确认弹窗 -->
+    <div id="clear-cache-modal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0"></div>
+        <div class="relative flex items-end justify-center min-h-screen p-4">
+            <div class="modal-content bg-white rounded-t-2xl w-full max-w-md p-6">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-broom text-2xl text-orange-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-text-primary mb-2">清除缓存</h3>
+                    <p class="text-text-secondary mb-6">确定要清除所有缓存数据吗？这将释放 128.5 MB 存储空间。</p>
+                    
+                    <div class="flex space-x-3">
+                        <button id="cancel-clear-cache" class="flex-1 py-3 px-4 bg-gray-100 text-text-primary rounded-xl font-medium">
+                            取消
+                        </button>
+                        <button id="confirm-clear-cache" class="flex-1 py-3 px-4 bg-orange-500 text-white rounded-xl font-medium">
+                            确定清除
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 成功提示 -->
+    <div id="success-toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 hidden">
+        <div class="flex items-center space-x-2">
+            <i class="fas fa-check-circle"></i>
+            <span id="toast-message">缓存已清除</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 返回按钮
+            document.querySelector('#back-btn').addEventListener('click', function() {
+                window.location.href = 'P-USER_PROFILE.html';
+            });
+
+            // 通知设置开关
+            document.querySelector('#notification-toggle').addEventListener('click', function() {
+                this.classList.toggle('active');
+                const isActive = this.classList.contains('active');
+                console.log('通知设置已' + (isActive ? '开启' : '关闭'));
+            });
+
+            // 隐私设置
+            document.querySelector('#privacy-setting').addEventListener('click', function() {
+                console.log('跳转到隐私设置页面');
+                // 这里可以跳转到隐私设置子页面，但PRD中未定义具体页面
+                showToast('隐私设置功能开发中');
+            });
+
+            // 清除缓存
+            document.querySelector('#clear-cache-setting').addEventListener('click', function() {
+                document.querySelector('#clear-cache-modal').classList.remove('hidden');
+            });
+
+            // 关于我们
+            document.querySelector('#about-us-setting').addEventListener('click', function() {
+                console.log('跳转到关于我们页面');
+                // 这里可以跳转到关于我们页面，但PRD中未定义具体页面
+                showToast('关于我们页面开发中');
+            });
+
+            // 版本信息点击
+            document.querySelector('#version-setting').addEventListener('click', function() {
+                console.log('查看版本详情');
+                showToast('当前已是最新版本');
+            });
+
+            // 清除缓存弹窗事件
+            document.querySelector('#cancel-clear-cache').addEventListener('click', function() {
+                document.querySelector('#clear-cache-modal').classList.add('hidden');
+            });
+
+            document.querySelector('#confirm-clear-cache').addEventListener('click', function() {
+                document.querySelector('#clear-cache-modal').classList.add('hidden');
+                // 模拟清除缓存
+                setTimeout(() => {
+                    document.querySelector('#cache-size').textContent = '0 MB';
+                    showToast('缓存已清除');
+                }, 500);
+            });
+
+            // 点击弹窗背景关闭
+            document.querySelector('.modal-overlay').addEventListener('click', function() {
+                document.querySelector('#clear-cache-modal').classList.add('hidden');
+            });
+
+            // 显示提示消息
+            function showToast(message) {
+                const toast = document.querySelector('#success-toast');
+                const messageEl = document.querySelector('#toast-message');
+                messageEl.textContent = message;
+                toast.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 3000);
+            }
+
+            // 卡片点击效果
+            const settingItems = document.querySelectorAll('.setting-item');
+            settingItems.forEach(item => {
+                item.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                item.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

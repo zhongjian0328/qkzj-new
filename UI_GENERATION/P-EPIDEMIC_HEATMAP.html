@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 疫情热力图</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D3F8EE',
+                        secondary: '#3BCCA5', 
+                        accent: '#2B6A5A',
+                        'text-primary': '#1F2937',
+                        'text-secondary': '#6B7280',
+                        'bg-light': '#F9FAFB',
+                        'card-bg': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+
+        .heatmap-container {
+            background: linear-gradient(45deg, #f0f9ff 0%, #e0f2fe 50%, #f0f9ff 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .heatmap-point {
+            position: absolute;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .heatmap-low {
+            background: rgba(59, 204, 165, 0.6);
+            box-shadow: 0 0 20px rgba(59, 204, 165, 0.4);
+        }
+
+        .heatmap-medium {
+            background: rgba(255, 159, 64, 0.6);
+            box-shadow: 0 0 20px rgba(255, 159, 64, 0.4);
+        }
+
+        .heatmap-high {
+            background: rgba(239, 68, 68, 0.6);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .heatmap-alert {
+            background: rgba(239, 68, 68, 0.8);
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.6);
+            border: 2px solid #dc2626;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .map-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 30% 20%, rgba(59, 204, 165, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(255, 159, 64, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 30%, rgba(239, 68, 68, 0.1) 0%, transparent 50%);
+        }
+
+        .alert-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            max-width: 300px;
+            width: 90%;
+        }
+
+        .filter-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 50;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex justify-between items-center px-4 py-3">
+            <div class="flex items-center space-x-3">
+                <button id="back-btn" class="p-2 -ml-2">
+                    <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+                </button>
+                <h1 id="page-title" class="text-lg font-semibold text-text-primary">疫情热力图</h1>
+            </div>
+            <div id="header-actions" class="flex items-center space-x-3">
+                <button id="notification-btn" class="relative p-2">
+                    <i class="far fa-bell text-xl text-text-secondary"></i>
+                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+                </button>
+                <button id="profile-btn">
+                    <i class="fas fa-user-circle text-xl text-text-secondary"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 筛选器区域 -->
+    <section id="filters" class="bg-white px-4 py-3 shadow-sm">
+        <div class="flex space-x-3">
+            <!-- 时间范围筛选 -->
+            <div id="time-filter" class="relative flex-1">
+                <button id="time-filter-btn" class="w-full px-4 py-2 bg-bg-light rounded-lg text-left text-sm text-text-primary flex items-center justify-between">
+                    <span id="time-filter-text">最近7天</span>
+                    <i class="fas fa-chevron-down text-xs text-text-secondary"></i>
+                </button>
+                <div id="time-dropdown" class="filter-dropdown hidden">
+                    <div class="p-2">
+                        <div class="time-option px-3 py-2 text-sm hover:bg-bg-light rounded cursor-pointer" data-value="1">今天</div>
+                        <div class="time-option px-3 py-2 text-sm hover:bg-bg-light rounded cursor-pointer" data-value="3">最近3天</div>
+                        <div class="time-option px-3 py-2 text-sm hover:bg-bg-light rounded cursor-pointer" data-value="7">最近7天</div>
+                        <div class="time-option px-3 py-2 text-sm hover:bg-bg-light rounded cursor-pointer" data-value="30">最近30天</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 疾病类型筛选 -->
+            <div id="disease-filter" class="relative flex-1">
+                <button id="disease-filter-btn" class="w-full px-4 py-2 bg-bg-light rounded-lg text-left text-sm text-text-primary flex items-center justify-between">
+                    <span id="disease-filter-text">全部疾病</span>
+                    <i class="fas fa-chevron-down text-xs text-text-secondary"></i>
+                </button>
+                <div id="disease-dropdown" class="filter-dropdown hidden">
+                    <div class="p-2">
+                        <div class="disease-option px-3 py-2 text-sm hover:bg-bg-light rounded cursor-pointer" data-value="all">全部疾病</div>
+                        <div class="disease-option px-3 py-2 text-sm hover:bg-bg-light rounded cursor-pointer" data-value="avian-flu">禽流感</div>
+                        <div class="disease-option px-3 py-2 text-sm hover:bg-bg-light rounded cursor-pointer" data-value="newcastle">新城疫</div>
+                        <div class="disease-option px-3 py-2 text-sm hover:bg-bg-light rounded cursor-pointer" data-value="infectious-bronchitis">传染性支气管炎</div>
+                        <div class="disease-option px-3 py-2 text-sm hover:bg-bg-light rounded cursor-pointer" data-value="infectious-bursal">传染性法氏囊病</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="flex-1 relative">
+        <!-- 疫情热力图 -->
+        <div id="heatmap-section" class="relative">
+            <div id="heatmap-container" class="heatmap-container h-96 relative">
+                <!-- 地图背景 -->
+                <div class="absolute inset-0 bg-gradient-to-br from-blue-50 to-green-50">
+                    <!-- 模拟地图道路 -->
+                    <svg class="absolute inset-0 w-full h-full opacity-30">
+                        <path d="M50,100 Q200,50 350,120" stroke="#9CA3AF" stroke-width="2" fill="none"/>
+                        <path d="M80,200 Q250,150 320,220" stroke="#9CA3AF" stroke-width="2" fill="none"/>
+                        <path d="M30,300 Q180,250 350,300" stroke="#9CA3AF" stroke-width="2" fill="none"/>
+                    </svg>
+                </div>
+
+                <!-- 地图覆盖层 -->
+                <div class="map-overlay"></div>
+
+                <!-- 热力图数据点 -->
+                <div id="heatmap-point-1" class="heatmap-point heatmap-low w-4 h-4" style="top: 25%; left: 30%;" data-risk="low" data-disease="avian-flu" data-count="5"></div>
+                <div id="heatmap-point-2" class="heatmap-point heatmap-medium w-6 h-6" style="top: 60%; left: 70%;" data-risk="medium" data-disease="newcastle" data-count="12"></div>
+                <div id="heatmap-point-3" class="heatmap-point heatmap-high w-8 h-8" style="top: 40%; left: 80%;" data-risk="high" data-disease="infectious-bronchitis" data-count="23"></div>
+                <div id="heatmap-point-4" class="heatmap-point heatmap-alert w-10 h-10" style="top: 75%; left: 25%;" data-risk="alert" data-disease="avian-flu" data-count="35"></div>
+                <div id="heatmap-point-5" class="heatmap-point heatmap-low w-4 h-4" style="top: 35%; left: 60%;" data-risk="low" data-disease="infectious-bursal" data-count="8"></div>
+                <div id="heatmap-point-6" class="heatmap-point heatmap-medium w-6 h-6" style="top: 55%; left: 40%;" data-risk="medium" data-disease="newcastle" data-count="15"></div>
+
+                <!-- 图例 -->
+                <div id="heatmap-legend" class="absolute bottom-4 left-4 bg-white/90 rounded-lg p-3 shadow-md">
+                    <div class="text-xs font-medium text-text-primary mb-2">风险等级</div>
+                    <div class="space-y-1 text-xs">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                            <span class="text-text-secondary">高风险 (≥20例)</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-orange-500 rounded-full"></div>
+                            <span class="text-text-secondary">中风险 (10-19例)</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                            <span class="text-text-secondary">低风险 (<10例)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 统计数据卡片 -->
+        <section id="stats-section" class="px-4 py-4 bg-white">
+            <div class="grid grid-cols-3 gap-4">
+                <div id="total-cases-card" class="text-center">
+                    <div class="text-2xl font-bold text-red-500">86</div>
+                    <div class="text-xs text-text-secondary">今日病例</div>
+                </div>
+                <div id="high-risk-card" class="text-center">
+                    <div class="text-2xl font-bold text-orange-500">12</div>
+                    <div class="text-xs text-text-secondary">高风险区</div>
+                </div>
+                <div id="alert-count-card" class="text-center">
+                    <div class="text-2xl font-bold text-red-600">3</div>
+                    <div class="text-xs text-text-secondary">异常报警</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 异常报警列表 -->
+        <section id="alerts-section" class="px-4 py-4">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="alerts-title" class="text-lg font-semibold text-text-primary">异常报警</h2>
+                <button id="view-all-alerts" class="text-sm text-secondary">查看全部</button>
+            </div>
+            
+            <div id="alerts-list" class="space-y-3">
+                <div id="alert-item-1" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-exclamation-triangle text-red-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-medium text-text-primary">禽流感聚集性爆发</h4>
+                                <p class="text-sm text-text-secondary mt-1">XX区发现35例疑似病例，建议立即采取防控措施</p>
+                                <div class="flex items-center mt-2 text-xs text-text-secondary">
+                                    <i class="fas fa-map-marker-alt mr-1"></i>
+                                    <span>XX区XX街道</span>
+                                    <span class="mx-2">•</span>
+                                    <i class="fas fa-clock mr-1"></i>
+                                    <span>2小时前</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="px-2 py-1 bg-red-100 rounded-full">
+                            <span class="text-xs text-red-700">高风险</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="alert-item-2" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-exclamation-circle text-orange-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-medium text-text-primary">新城疫病例增加</h4>
+                                <p class="text-sm text-text-secondary mt-1">XX县病例数较昨日增长40%，需密切关注</p>
+                                <div class="flex items-center mt-2 text-xs text-text-secondary">
+                                    <i class="fas fa-map-marker-alt mr-1"></i>
+                                    <span>XX县XX镇</span>
+                                    <span class="mx-2">•</span>
+                                    <i class="fas fa-clock mr-1"></i>
+                                    <span>5小时前</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="px-2 py-1 bg-orange-100 rounded-full">
+                            <span class="text-xs text-orange-700">中风险</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="alert-item-3" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-info-circle text-yellow-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-medium text-text-primary">传染性支气管炎监测</h4>
+                                <p class="text-sm text-text-secondary mt-1">XX市出现散发病例，建议加强生物安全措施</p>
+                                <div class="flex items-center mt-2 text-xs text-text-secondary">
+                                    <i class="fas fa-map-marker-alt mr-1"></i>
+                                    <span>XX市XX区</span>
+                                    <span class="mx-2">•</span>
+                                    <i class="fas fa-clock mr-1"></i>
+                                    <span>1天前</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="px-2 py-1 bg-yellow-100 rounded-full">
+                            <span class="text-xs text-yellow-700">低风险</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部导航栏 -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
+        <a id="nav-home" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-xs mt-0.5">首页</span>
+        </a>
+        <a id="nav-monitor" href="#" class="flex flex-col items-center p-2 text-secondary">
+            <i class="fas fa-chart-line text-xl"></i>
+            <span class="text-xs mt-0.5">疫情监测</span>
+        </a>
+        <a id="nav-profile" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+            <i class="fas fa-user text-xl"></i>
+            <span class="text-xs mt-0.5">我的</span>
+        </a>
+    </nav>
+
+    <!-- 疫情详情弹窗 -->
+    <div id="alert-popup" class="alert-popup hidden">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+            </div>
+            <h3 id="popup-title" class="text-lg font-semibold text-text-primary mb-2">疫情详情</h3>
+            <p id="popup-content" class="text-sm text-text-secondary mb-4">详细的疫情信息将显示在这里...</p>
+            <div class="flex space-x-3">
+                <button id="popup-close" class="flex-1 px-4 py-2 bg-bg-light text-text-secondary rounded-lg text-sm">关闭</button>
+                <button id="popup-handle" class="flex-1 px-4 py-2 bg-secondary text-white rounded-lg text-sm">处理</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 解析URL参数的辅助函数
+            function getUrlParams() {
+                const params = {};
+                const queryString = window.location.search.substring(1);
+                const urlParams = new URLSearchParams(queryString);
+                
+                for(const [key, value] of urlParams.entries()) {
+                    params[key] = value;
+                }
+                return params;
+            }
+
+            // 获取URL参数
+            const params = getUrlParams();
+            
+            // 根据参数更新页面内容
+            if(params.timeRange) {
+                updateTimeFilter(params.timeRange);
+            }
+            if(params.diseaseType) {
+                updateDiseaseFilter(params.diseaseType);
+            }
+
+            // 返回按钮
+            document.querySelector('#back-btn').addEventListener('click', function() {
+                window.location.href = 'P-HOME_INSTITUTION_CDC.html';
+            });
+
+            // 个人中心按钮
+            document.querySelector('#profile-btn').addEventListener('click', function() {
+                window.location.href = 'P-USER_PROFILE.html';
+            });
+
+            // 通知按钮
+            document.querySelector('#notification-btn').addEventListener('click', function() {
+                console.log('打开通知页面');
+                // 这里可以添加通知页面的跳转逻辑
+            });
+
+            // 底部导航栏
+            document.querySelector('#nav-home').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'P-HOME_INSTITUTION_CDC.html';
+            });
+
+            document.querySelector('#nav-monitor').addEventListener('click', function(e) {
+                e.preventDefault();
+                // 已在疫情监测页面，无需操作
+            });
+
+            document.querySelector('#nav-profile').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'P-USER_PROFILE.html';
+            });
+
+            // 时间筛选器
+            document.querySelector('#time-filter-btn').addEventListener('click', function() {
+                const dropdown = document.querySelector('#time-dropdown');
+                dropdown.classList.toggle('hidden');
+                document.querySelector('#disease-dropdown').classList.add('hidden');
+            });
+
+            // 疾病筛选器
+            document.querySelector('#disease-filter-btn').addEventListener('click', function() {
+                const dropdown = document.querySelector('#disease-dropdown');
+                dropdown.classList.toggle('hidden');
+                document.querySelector('#time-dropdown').classList.add('hidden');
+            });
+
+            // 时间选项点击
+            document.querySelectorAll('.time-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const value = this.dataset.value;
+                    const text = this.textContent;
+                    document.querySelector('#time-filter-text').textContent = text;
+                    document.querySelector('#time-dropdown').classList.add('hidden');
+                    updateHeatmapData(value, null);
+                });
+            });
+
+            // 疾病选项点击
+            document.querySelectorAll('.disease-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const value = this.dataset.value;
+                    const text = this.textContent;
+                    document.querySelector('#disease-filter-text').textContent = text;
+                    document.querySelector('#disease-dropdown').classList.add('hidden');
+                    updateHeatmapData(null, value);
+                });
+            });
+
+            // 热力图点点击事件
+            document.querySelectorAll('.heatmap-point').forEach(point => {
+                point.addEventListener('click', function() {
+                    const risk = this.dataset.risk;
+                    const disease = this.dataset.disease;
+                    const count = this.dataset.count;
+                    showAlertPopup(risk, disease, count);
+                });
+            });
+
+            // 弹窗关闭按钮
+            document.querySelector('#popup-close').addEventListener('click', function() {
+                document.querySelector('#alert-popup').classList.add('hidden');
+            });
+
+            // 弹窗处理按钮
+            document.querySelector('#popup-handle').addEventListener('click', function() {
+                document.querySelector('#alert-popup').classList.add('hidden');
+                console.log('处理疫情报警');
+                // 这里可以添加处理逻辑或跳转到处理页面
+            });
+
+            // 点击弹窗外部关闭
+            document.addEventListener('click', function(e) {
+                if (e.target === document.querySelector('#alert-popup')) {
+                    document.querySelector('#alert-popup').classList.add('hidden');
+                }
+            });
+
+            // 查看全部报警
+            document.querySelector('#view-all-alerts').addEventListener('click', function() {
+                console.log('查看全部报警');
+                // 这里可以添加跳转到报警列表页面的逻辑
+            });
+
+            // 更新时间筛选器显示
+            function updateTimeFilter(timeRange) {
+                const timeOptions = {
+                    '1': '今天',
+                    '3': '最近3天',
+                    '7': '最近7天',
+                    '30': '最近30天'
+                };
+                if (timeOptions[timeRange]) {
+                    document.querySelector('#time-filter-text').textContent = timeOptions[timeRange];
+                }
+            }
+
+            // 更新疾病筛选器显示
+            function updateDiseaseFilter(diseaseType) {
+                const diseaseOptions = {
+                    'all': '全部疾病',
+                    'avian-flu': '禽流感',
+                    'newcastle': '新城疫',
+                    'infectious-bronchitis': '传染性支气管炎',
+                    'infectious-bursal': '传染性法氏囊病'
+                };
+                if (diseaseOptions[diseaseType]) {
+                    document.querySelector('#disease-filter-text').textContent = diseaseOptions[diseaseType];
+                }
+            }
+
+            // 更新热力图数据
+            function updateHeatmapData(timeRange, diseaseType) {
+                console.log('更新热力图数据:', { timeRange, diseaseType });
+                // 在实际应用中，这里会调用API获取最新的热力图数据
+                // 并更新页面上的热力图点和统计数据
+                
+                // 模拟数据更新
+                updateStatsData(timeRange, diseaseType);
+            }
+
+            // 更新统计数据
+            function updateStatsData(timeRange, diseaseType) {
+                // 模拟根据筛选条件更新统计数据
+                const totalCases = Math.floor(Math.random() * 100) + 50;
+                const highRisk = Math.floor(Math.random() * 20) + 5;
+                const alerts = Math.floor(Math.random() * 10) + 1;
+                
+                document.querySelector('#total-cases-card .text-2xl').textContent = totalCases;
+                document.querySelector('#high-risk-card .text-2xl').textContent = highRisk;
+                document.querySelector('#alert-count-card .text-2xl').textContent = alerts;
+            }
+
+            // 显示报警弹窗
+            function showAlertPopup(risk, disease, count) {
+                const diseaseNames = {
+                    'avian-flu': '禽流感',
+                    'newcastle': '新城疫',
+                    'infectious-bronchitis': '传染性支气管炎',
+                    'infectious-bursal': '传染性法氏囊病'
+                };
+                
+                const riskLevels = {
+                    'low': '低风险',
+                    'medium': '中风险',
+                    'high': '高风险',
+                    'alert': '异常报警'
+                };
+                
+                const riskColors = {
+                    'low': 'green-600',
+                    'medium': 'orange-600',
+                    'high': 'red-600',
+                    'alert': 'red-700'
+                };
+                
+                const riskBgColors = {
+                    'low': 'green-100',
+                    'medium': 'orange-100',
+                    'high': 'red-100',
+                    'alert': 'red-100'
+                };
+                
+                const riskIcons = {
+                    'low': 'fas fa-info-circle',
+                    'medium': 'fas fa-exclamation-circle',
+                    'high': 'fas fa-exclamation-triangle',
+                    'alert': 'fas fa-exclamation-triangle'
+                };
+
+                const popup = document.querySelector('#alert-popup');
+                const title = document.querySelector('#popup-title');
+                const content = document.querySelector('#popup-content');
+                const icon = popup.querySelector('i');
+                
+                title.textContent = `${riskLevels[risk]} - ${diseaseNames[disease]}`;
+                content.textContent = `发现 ${count} 例病例，建议立即采取相应防控措施。`;
+                
+                // 更新图标和颜色
+                icon.className = `${riskIcons[risk]} text-${riskColors[risk]} text-2xl`;
+                icon.parentElement.className = `w-16 h-16 bg-${riskBgColors[risk]} rounded-full flex items-center justify-center mx-auto mb-4`;
+                
+                popup.classList.remove('hidden');
+            }
+
+            // 点击其他地方关闭下拉菜单
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('#time-filter')) {
+                    document.querySelector('#time-dropdown').classList.add('hidden');
+                }
+                if (!e.target.closest('#disease-filter')) {
+                    document.querySelector('#disease-dropdown').classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

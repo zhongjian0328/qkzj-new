@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 身份认证</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#D3F8EE',
+                        secondary: '#3BCCA5', 
+                        accent: '#2B6A5A',
+                        'text-primary': '#1F2937',
+                        'text-secondary': '#6B7280',
+                        'bg-light': '#F9FAFB',
+                        'card-bg': '#FFFFFF'
+                    },
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+        }
+        
+        .upload-area {
+            border: 2px dashed #D1D5DB;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-area:hover {
+            border-color: #3BCCA5;
+            background-color: #F0FDF4;
+        }
+        
+        .upload-area.active {
+            border-color: #3BCCA5;
+            background-color: #F0FDF4;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3BCCA5;
+            box-shadow: 0 0 0 2px rgba(59, 204, 165, 0.2);
+        }
+        
+        .role-card {
+            border: 2px solid #E5E7EB;
+            transition: all 0.3s ease;
+        }
+        
+        .role-card.active {
+            border-color: #3BCCA5;
+            background-color: #F0FDF4;
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex items-center px-4 py-3">
+            <button id="back-btn" class="mr-3 p-2 -ml-2">
+                <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+            </button>
+            <h1 id="page-title" class="text-lg font-semibold text-text-primary">身份认证</h1>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6">
+        <!-- 认证类型说明 -->
+        <section id="auth-type-info" class="mb-6">
+            <div class="bg-card-bg rounded-xl p-4 shadow-card">
+                <div class="flex items-center space-x-3 mb-3">
+                    <div class="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-secondary"></i>
+                    </div>
+                    <div>
+                        <h2 id="auth-type-title" class="font-semibold text-text-primary">养殖企业认证</h2>
+                        <p id="auth-type-desc" class="text-sm text-text-secondary">上传营业执照，解锁企业管理功能</p>
+                    </div>
+                </div>
+                <div id="auth-benefits" class="bg-bg-light rounded-lg p-3">
+                    <p class="text-sm text-text-secondary mb-2">认证后可享受：</p>
+                    <ul class="text-sm text-text-secondary space-y-1">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-secondary mr-2 text-xs"></i>
+                            批次管理与生产数据分析
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-secondary mr-2 text-xs"></i>
+                            员工权限管理
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-secondary mr-2 text-xs"></i>
+                            大宗采购优惠
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-secondary mr-2 text-xs"></i>
+                            数据导出与报表功能
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 认证表单 -->
+        <section id="auth-form-section" class="mb-6">
+            <form id="auth-form" class="space-y-4">
+                <!-- 企业信息 -->
+                <div id="enterprise-info" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <h3 class="font-semibold text-text-primary mb-4">企业信息</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label for="enterprise-name" class="block text-sm font-medium text-text-primary mb-2">企业名称 *</label>
+                            <input type="text" id="enterprise-name" name="enterprise-name" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input" 
+                                   placeholder="请输入企业全称" required>
+                        </div>
+                        
+                        <div>
+                            <label for="enterprise-type" class="block text-sm font-medium text-text-primary mb-2">企业类型 *</label>
+                            <select id="enterprise-type" name="enterprise-type" 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input" required>
+                                <option value="">请选择企业类型</option>
+                                <option value="cooperative">养殖合作社</option>
+                                <option value="enterprise">养殖企业</option>
+                                <option value="farm">养殖场</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label for="contact-person" class="block text-sm font-medium text-text-primary mb-2">联系人 *</label>
+                            <input type="text" id="contact-person" name="contact-person" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input" 
+                                   placeholder="请输入联系人姓名" required>
+                        </div>
+                        
+                        <div>
+                            <label for="contact-phone" class="block text-sm font-medium text-text-primary mb-2">联系电话 *</label>
+                            <input type="tel" id="contact-phone" name="contact-phone" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input" 
+                                   placeholder="请输入联系电话" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 营业执照上传 -->
+                <div id="license-upload" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <h3 class="font-semibold text-text-primary mb-4">营业执照上传</h3>
+                    
+                    <div id="upload-area" class="upload-area rounded-lg p-6 text-center cursor-pointer">
+                        <div id="upload-placeholder">
+                            <i class="fas fa-cloud-upload-alt text-3xl text-text-secondary mb-3"></i>
+                            <p class="text-sm text-text-primary mb-1">点击上传营业执照照片</p>
+                            <p class="text-xs text-text-secondary">支持 JPG、PNG 格式，文件不超过 5MB</p>
+                        </div>
+                        
+                        <div id="upload-preview" class="hidden">
+                            <img id="license-preview" src="" alt="营业执照预览" class="w-full h-48 object-cover rounded-lg mb-3">
+                            <div class="flex justify-center space-x-3">
+                                <button type="button" id="reupload-btn" class="px-4 py-2 bg-gray-100 text-text-secondary rounded-lg text-sm">
+                                    <i class="fas fa-redo mr-1"></i>重新上传
+                                </button>
+                                <button type="button" id="remove-btn" class="px-4 py-2 bg-red-100 text-red-600 rounded-lg text-sm">
+                                    <i class="fas fa-trash mr-1"></i>删除
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <input type="file" id="license-file" name="license-file" accept="image/*" class="hidden">
+                </div>
+
+                <!-- 学生认证表单（隐藏） -->
+                <div id="student-info" class="bg-card-bg rounded-xl p-4 shadow-card hidden">
+                    <h3 class="font-semibold text-text-primary mb-4">学生信息</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label for="school-name" class="block text-sm font-medium text-text-primary mb-2">学校名称 *</label>
+                            <input type="text" id="school-name" name="school-name" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input" 
+                                   placeholder="请输入学校全称" required>
+                        </div>
+                        
+                        <div>
+                            <label for="student-id" class="block text-sm font-medium text-text-primary mb-2">学号 *</label>
+                            <input type="text" id="student-id" name="student-id" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input" 
+                                   placeholder="请输入学号" required>
+                        </div>
+                        
+                        <div>
+                            <label for="mentor-code" class="block text-sm font-medium text-text-primary mb-2">导师邀请码</label>
+                            <input type="text" id="mentor-code" name="mentor-code" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input" 
+                                   placeholder="请输入导师邀请码（可选）">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 机构认证表单（隐藏） -->
+                <div id="institution-info" class="bg-card-bg rounded-xl p-4 shadow-card hidden">
+                    <h3 class="font-semibold text-text-primary mb-4">机构信息</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label for="institution-name" class="block text-sm font-medium text-text-primary mb-2">机构名称 *</label>
+                            <input type="text" id="institution-name" name="institution-name" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input" 
+                                   placeholder="请输入机构全称" required>
+                        </div>
+                        
+                        <div>
+                            <label for="institution-type" class="block text-sm font-medium text-text-primary mb-2">机构类型 *</label>
+                            <select id="institution-type" name="institution-type" 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input" required>
+                                <option value="">请选择机构类型</option>
+                                <option value="cdc">疫控机构</option>
+                                <option value="research">科研院所</option>
+                                <option value="service">服务商</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label for="qualification-file" class="block text-sm font-medium text-text-primary mb-2">资质证书上传 *</label>
+                            <div id="qualification-upload" class="upload-area rounded-lg p-6 text-center cursor-pointer">
+                                <i class="fas fa-file-alt text-3xl text-text-secondary mb-3"></i>
+                                <p class="text-sm text-text-primary mb-1">点击上传资质证书</p>
+                                <p class="text-xs text-text-secondary">兽医资格证、经营许可证等</p>
+                            </div>
+                            <input type="file" id="qualification-file-input" name="qualification-file" accept="image/*" class="hidden">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- 提交按钮 -->
+        <section id="submit-section" class="mb-6">
+            <button id="submit-btn" type="submit" form="auth-form" 
+                    class="w-full gradient-bg text-accent font-semibold py-4 rounded-xl shadow-button">
+                <i class="fas fa-paper-plane mr-2"></i>
+                提交审核
+            </button>
+            
+            <p class="text-center text-xs text-text-secondary mt-3">
+                提交后我们将在1-3个工作日内完成审核，请耐心等待
+            </p>
+        </section>
+
+        <!-- 认证状态提示 -->
+        <section id="auth-status" class="hidden">
+            <div class="bg-card-bg rounded-xl p-4 shadow-card">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-clock text-yellow-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-text-primary mb-2">审核中</h3>
+                    <p class="text-sm text-text-secondary mb-4">
+                        您的认证材料已提交，我们将在1-3个工作日内完成审核
+                    </p>
+                    <button id="check-status-btn" class="px-6 py-2 bg-secondary text-white rounded-lg text-sm">
+                        查看审核进度
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 解析URL参数的辅助函数
+            function getUrlParams() {
+                const params = {};
+                const queryString = window.location.search.substring(1);
+                const urlParams = new URLSearchParams(queryString);
+                
+                for(const [key, value] of urlParams.entries()) {
+                    params[key] = value;
+                }
+                return params;
+            }
+
+            // 获取URL参数
+            const params = getUrlParams();
+            const userRole = params.role || 'farmer_enterprise'; // 默认企业角色
+            
+            // 根据角色显示不同的认证表单
+            function showAuthFormByRole(role) {
+                // 隐藏所有表单
+                document.querySelector('#enterprise-info').classList.add('hidden');
+                document.querySelector('#student-info').classList.add('hidden');
+                document.querySelector('#institution-info').classList.add('hidden');
+                
+                // 重置表单
+                document.querySelector('#auth-form').reset();
+                
+                // 根据角色显示对应表单
+                switch(role) {
+                    case 'farmer_enterprise':
+                    case 'farmer_cooperative':
+                        document.querySelector('#enterprise-info').classList.remove('hidden');
+                        document.querySelector('#auth-type-title').textContent = '养殖企业认证';
+                        document.querySelector('#auth-type-desc').textContent = '上传营业执照，解锁企业管理功能';
+                        break;
+                    case 'student_intern':
+                        document.querySelector('#student-info').classList.remove('hidden');
+                        document.querySelector('#auth-type-title').textContent = '学生认证';
+                        document.querySelector('#auth-type-desc').textContent = '绑定学校信息，开启实习之旅';
+                        break;
+                    case 'institution_cdc':
+                    case 'institution_research':
+                    case 'institution_service':
+                        document.querySelector('#institution-info').classList.remove('hidden');
+                        document.querySelector('#auth-type-title').textContent = '机构认证';
+                        document.querySelector('#auth-type-desc').textContent = '上传资质证书，获得机构权限';
+                        break;
+                    default:
+                        // 默认显示企业认证
+                        document.querySelector('#enterprise-info').classList.remove('hidden');
+                }
+            }
+
+            // 初始化显示对应角色的认证表单
+            showAuthFormByRole(userRole);
+
+            // 返回按钮事件
+            document.querySelector('#back-btn').addEventListener('click', function() {
+                window.history.back();
+            });
+
+            // 营业执照上传功能
+            const uploadArea = document.querySelector('#upload-area');
+            const licenseFile = document.querySelector('#license-file');
+            const uploadPlaceholder = document.querySelector('#upload-placeholder');
+            const uploadPreview = document.querySelector('#upload-preview');
+            const licensePreview = document.querySelector('#license-preview');
+
+            uploadArea.addEventListener('click', function() {
+                if (!uploadPreview.classList.contains('hidden')) return;
+                licenseFile.click();
+            });
+
+            licenseFile.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        licensePreview.src = e.target.result;
+                        uploadPlaceholder.classList.add('hidden');
+                        uploadPreview.classList.remove('hidden');
+                        uploadArea.classList.add('active');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // 重新上传按钮
+            document.querySelector('#reupload-btn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                licenseFile.click();
+            });
+
+            // 删除按钮
+            document.querySelector('#remove-btn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                licenseFile.value = '';
+                uploadPlaceholder.classList.remove('hidden');
+                uploadPreview.classList.add('hidden');
+                uploadArea.classList.remove('active');
+            });
+
+            // 资质证书上传功能
+            const qualificationUpload = document.querySelector('#qualification-upload');
+            const qualificationFileInput = document.querySelector('#qualification-file-input');
+
+            qualificationUpload.addEventListener('click', function() {
+                qualificationFileInput.click();
+            });
+
+            qualificationFileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // 这里可以添加预览功能，类似营业执照上传
+                    console.log('资质证书文件已选择:', file.name);
+                    // 实际应用中可以显示上传成功的提示
+                }
+            });
+
+            // 表单提交事件
+            document.querySelector('#auth-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // 表单验证
+                if (!validateForm()) {
+                    return;
+                }
+
+                // 显示加载状态
+                const submitBtn = document.querySelector('#submit-btn');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>提交中...';
+                submitBtn.disabled = true;
+
+                // 模拟提交过程
+                setTimeout(function() {
+                    // 隐藏表单，显示审核状态
+                    document.querySelector('#auth-form-section').classList.add('hidden');
+                    document.querySelector('#submit-section').classList.add('hidden');
+                    document.querySelector('#auth-status').classList.remove('hidden');
+                    
+                    // 重置按钮状态
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+
+                    // 3秒后跳转到对应首页
+                    setTimeout(function() {
+                        redirectToHome(userRole);
+                    }, 3000);
+                }, 2000);
+            });
+
+            // 表单验证函数
+            function validateForm() {
+                const currentRole = userRole;
+                
+                if (currentRole.includes('farmer')) {
+                    // 企业认证验证
+                    const enterpriseName = document.querySelector('#enterprise-name').value.trim();
+                    const enterpriseType = document.querySelector('#enterprise-type').value;
+                    const contactPerson = document.querySelector('#contact-person').value.trim();
+                    const contactPhone = document.querySelector('#contact-phone').value.trim();
+                    const licenseFile = document.querySelector('#license-file').files.length;
+
+                    if (!enterpriseName) {
+                        alert('请输入企业名称');
+                        return false;
+                    }
+                    if (!enterpriseType) {
+                        alert('请选择企业类型');
+                        return false;
+                    }
+                    if (!contactPerson) {
+                        alert('请输入联系人姓名');
+                        return false;
+                    }
+                    if (!contactPhone) {
+                        alert('请输入联系电话');
+                        return false;
+                    }
+                    if (!licenseFile) {
+                        alert('请上传营业执照');
+                        return false;
+                    }
+                } else if (currentRole.includes('student')) {
+                    // 学生认证验证
+                    const schoolName = document.querySelector('#school-name').value.trim();
+                    const studentId = document.querySelector('#student-id').value.trim();
+
+                    if (!schoolName) {
+                        alert('请输入学校名称');
+                        return false;
+                    }
+                    if (!studentId) {
+                        alert('请输入学号');
+                        return false;
+                    }
+                } else if (currentRole.includes('institution')) {
+                    // 机构认证验证
+                    const institutionName = document.querySelector('#institution-name').value.trim();
+                    const institutionType = document.querySelector('#institution-type').value;
+                    const qualificationFile = document.querySelector('#qualification-file-input').files.length;
+
+                    if (!institutionName) {
+                        alert('请输入机构名称');
+                        return false;
+                    }
+                    if (!institutionType) {
+                        alert('请选择机构类型');
+                        return false;
+                    }
+                    if (!qualificationFile) {
+                        alert('请上传资质证书');
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            // 根据角色跳转到对应首页
+            function redirectToHome(role) {
+                switch(role) {
+                    case 'farmer_enterprise':
+                    case 'farmer_cooperative':
+                        window.location.href = 'P-HOME_FARMER_ENTERPRISE.html';
+                        break;
+                    case 'student_intern':
+                        window.location.href = 'P-HOME_STUDENT_INTERNSHIP.html';
+                        break;
+                    case 'institution_cdc':
+                        window.location.href = 'P-HOME_INSTITUTION_CDC.html';
+                        break;
+                    case 'institution_research':
+                        window.location.href = 'P-DATA_ANNOTATION.html';
+                        break;
+                    case 'institution_service':
+                        window.location.href = 'P-HOME_INSTITUTION_SERVICE.html';
+                        break;
+                    default:
+                        window.location.href = 'P-HOME_FARMER_SMALL.html';
+                }
+            }
+
+            // 查看审核进度按钮
+            document.querySelector('#check-status-btn').addEventListener('click', function() {
+                alert('审核进度：资料已接收，正在审核中...');
+            });
+        });
+    </script>
+</body>
+</html>
