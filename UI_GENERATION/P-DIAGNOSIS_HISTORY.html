@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 诊断历史记录</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(45, 187, 161, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
+        }
+
+        .risk-high {
+            background-color: #EF4444;
+            color: white;
+        }
+
+        .risk-medium {
+            background-color: #F59E0B;
+            color: white;
+        }
+
+        .risk-low {
+            background-color: #10B981;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex items-center px-4 py-3">
+            <button id="back-btn" class="mr-3 p-2 -ml-2" onclick="history.back()">
+                <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+            </button>
+            <h1 id="page-title" class="text-lg font-semibold text-text-primary">诊断历史记录</h1>
+            <div class="ml-auto flex items-center space-x-3">
+                <button id="search-btn" class="p-2">
+                    <i class="fas fa-search text-xl text-text-secondary"></i>
+                </button>
+                <button id="export-btn" class="p-2">
+                    <i class="fas fa-download text-xl text-text-secondary"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 筛选栏 -->
+    <section id="filter-bar" class="bg-white px-4 py-3 shadow-sm">
+        <div class="flex space-x-2 overflow-x-auto">
+            <button id="filter-all" class="flex-shrink-0 px-3 py-1.5 rounded-full bg-secondary text-white text-sm font-medium">
+                全部
+            </button>
+            <button id="filter-today" class="flex-shrink-0 px-3 py-1.5 rounded-full bg-gray-100 text-text-secondary text-sm font-medium">
+                今天
+            </button>
+            <button id="filter-this-week" class="flex-shrink-0 px-3 py-1.5 rounded-full bg-gray-100 text-text-secondary text-sm font-medium">
+                本周
+            </button>
+            <button id="filter-this-month" class="flex-shrink-0 px-3 py-1.5 rounded-full bg-gray-100 text-text-secondary text-sm font-medium">
+                本月
+            </button>
+            <button id="filter-high-risk" class="flex-shrink-0 px-3 py-1.5 rounded-full bg-gray-100 text-text-secondary text-sm font-medium">
+                高风险
+            </button>
+            <button id="filter-medium-risk" class="flex-shrink-0 px-3 py-1.5 rounded-full bg-gray-100 text-text-secondary text-sm font-medium">
+                中风险
+            </button>
+            <button id="filter-low-risk" class="flex-shrink-0 px-3 py-1.5 rounded-full bg-gray-100 text-text-secondary text-sm font-medium">
+                低风险
+            </button>
+        </div>
+    </section>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6">
+        <!-- 诊断历史记录列表 -->
+        <section id="diagnosis-list" class="space-y-4">
+            <!-- 诊断记录项 -->
+            <div id="record-1" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" onclick="window.location.href='P-DIAGNOSIS_HISTORY.html?recordId=1'">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <h3 class="text-base font-medium text-text-primary">诊断记录 #AI-DIAG-20240101-001</h3>
+                        <p class="text-xs text-text-tertiary mt-1">2024-01-01 14:30</p>
+                    </div>
+                    <span class="px-2 py-1 rounded-full risk-high text-xs font-medium">高风险</span>
+                </div>
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-chicken text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-medium text-text-primary">肉鸡，45天</h4>
+                            <p class="text-xs text-text-tertiary">山东省济南市章丘区</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-medium text-text-primary">AIV + NDV</p>
+                        <p class="text-xs text-text-tertiary">主要病原</p>
+                    </div>
+                </div>
+                <div class="border-t border-gray-100 pt-3">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-2 text-sm">
+                            <i class="fas fa-check-circle text-success"></i>
+                            <span class="text-text-secondary">已完成</span>
+                        </div>
+                        <button class="text-xs text-secondary font-medium">查看详情</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 诊断记录项 -->
+            <div id="record-2" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" onclick="window.location.href='P-DIAGNOSIS_HISTORY.html?recordId=2'">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <h3 class="text-base font-medium text-text-primary">诊断记录 #AI-DIAG-20240101-002</h3>
+                        <p class="text-xs text-text-tertiary mt-1">2024-01-01 10:15</p>
+                    </div>
+                    <span class="px-2 py-1 rounded-full risk-medium text-xs font-medium">中风险</span>
+                </div>
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-chicken text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-medium text-text-primary">蛋鸡，120天</h4>
+                            <p class="text-xs text-text-tertiary">河南省郑州市中牟县</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-medium text-text-primary">IBV</p>
+                        <p class="text-xs text-text-tertiary">主要病原</p>
+                    </div>
+                </div>
+                <div class="border-t border-gray-100 pt-3">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-2 text-sm">
+                            <i class="fas fa-check-circle text-success"></i>
+                            <span class="text-text-secondary">已完成</span>
+                        </div>
+                        <button class="text-xs text-secondary font-medium">查看详情</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 诊断记录项 -->
+            <div id="record-3" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" onclick="window.location.href='P-DIAGNOSIS_HISTORY.html?recordId=3'">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <h3 class="text-base font-medium text-text-primary">诊断记录 #AI-DIAG-20231231-001</h3>
+                        <p class="text-xs text-text-tertiary mt-1">2023-12-31 16:45</p>
+                    </div>
+                    <span class="px-2 py-1 rounded-full risk-high text-xs font-medium">高风险</span>
+                </div>
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-chicken text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-medium text-text-primary">肉鸡，30天</h4>
+                            <p class="text-xs text-text-tertiary">江苏省南京市高淳区</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-medium text-text-primary">NDV</p>
+                        <p class="text-xs text-text-tertiary">主要病原</p>
+                    </div>
+                </div>
+                <div class="border-t border-gray-100 pt-3">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-2 text-sm">
+                            <i class="fas fa-check-circle text-success"></i>
+                            <span class="text-text-secondary">已完成</span>
+                        </div>
+                        <button class="text-xs text-secondary font-medium">查看详情</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 诊断记录项 -->
+            <div id="record-4" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" onclick="window.location.href='P-DIAGNOSIS_HISTORY.html?recordId=4'">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <h3 class="text-base font-medium text-text-primary">诊断记录 #AI-DIAG-20231230-001</h3>
+                        <p class="text-xs text-text-tertiary mt-1">2023-12-30 09:15</p>
+                    </div>
+                    <span class="px-2 py-1 rounded-full risk-low text-xs font-medium">低风险</span>
+                </div>
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-chicken text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-medium text-text-primary">蛋鸡，200天</h4>
+                            <p class="text-xs text-text-tertiary">浙江省杭州市萧山区</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-medium text-text-primary">ILT</p>
+                        <p class="text-xs text-text-tertiary">主要病原</p>
+                    </div>
+                </div>
+                <div class="border-t border-gray-100 pt-3">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-2 text-sm">
+                            <i class="fas fa-check-circle text-success"></i>
+                            <span class="text-text-secondary">已完成</span>
+                        </div>
+                        <button class="text-xs text-secondary font-medium">查看详情</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部导航栏 -->
+    <footer id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white shadow-sm safe-bottom">
+        <div class="flex items-center justify-around h-16">
+            <button id="nav-home" class="flex flex-col items-center justify-center text-text-tertiary" onclick="window.location.href='P-HOME_FARMER_SMALL.html'">
+                <i class="fas fa-home text-xl mb-1"></i>
+                <span class="text-xs">首页</span>
+            </button>
+            <button id="nav-diagnosis" class="flex flex-col items-center justify-center text-secondary">
+                <i class="fas fa-stethoscope text-xl mb-1"></i>
+                <span class="text-xs">AI诊断</span>
+            </button>
+            <button id="nav-profile" class="flex flex-col items-center justify-center text-text-tertiary" onclick="window.location.href='P-USER_PROFILE.html'">
+                <i class="fas fa-user text-xl mb-1"></i>
+                <span class="text-xs">我的</span>
+            </button>
+        </div>
+    </footer>
+
+    <!-- 提示框 -->
+    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-text-primary text-white px-4 py-2 rounded-lg text-sm z-50 hidden">
+        <span id="toast-message">提示信息</span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 从URL参数中获取记录ID
+            function getRecordId() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('recordId');
+            }
+            
+            const recordId = getRecordId();
+            
+            // 如果有记录ID，显示记录详情
+            if (recordId) {
+                showRecordDetail(recordId);
+            }
+            
+            // 显示记录详情
+            function showRecordDetail(recordId) {
+                // 这里应该根据记录ID加载记录详情
+                console.log('显示记录详情:', recordId);
+                // 实际应用中，这里应该跳转到记录详情页面
+            }
+            
+            // 显示提示信息
+            function showToast(message, isError = false) {
+                const toast = document.getElementById('toast');
+                const toastMessage = document.getElementById('toast-message');
+                
+                toastMessage.textContent = message;
+                toast.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 3000);
+            }
+            
+            // 筛选按钮点击事件
+            const filterButtons = document.querySelectorAll('[id^="filter-"]');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 移除所有按钮的选中状态
+                    filterButtons.forEach(btn => {
+                        btn.classList.remove('bg-secondary', 'text-white');
+                        btn.classList.add('bg-gray-100', 'text-text-secondary');
+                    });
+                    
+                    // 设置当前按钮为选中状态
+                    this.classList.remove('bg-gray-100', 'text-text-secondary');
+                    this.classList.add('bg-secondary', 'text-white');
+                    
+                    // 这里应该根据筛选条件加载记录列表
+                    showToast('筛选功能开发中');
+                });
+            });
+            
+            // 搜索按钮点击事件
+            document.getElementById('search-btn').addEventListener('click', function() {
+                showToast('搜索功能开发中');
+            });
+            
+            // 导出按钮点击事件
+            document.getElementById('export-btn').addEventListener('click', function() {
+                showToast('导出功能开发中');
+            });
+        });
+    </script>
+</body>
+</html>

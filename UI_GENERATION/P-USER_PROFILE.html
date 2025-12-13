@@ -11,14 +11,22 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#D3F8EE',
-                        secondary: '#3BCCA5', 
-                        accent: '#2B6A5A',
-                        'text-primary': '#1F2937',
-                        'text-secondary': '#6B7280',
-                        'bg-light': '#F9FAFB',
-                        'card-bg': '#FFFFFF'
-                    },
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
                     fontFamily: {
                         'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     },
@@ -32,7 +40,7 @@
     </script>
     <style>
         .gradient-bg {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .card-hover:active {
@@ -49,7 +57,7 @@
         }
         
         .status-bar {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
 
         .modal-overlay {
@@ -360,6 +368,22 @@
                         avatar: "https://s.coze.cn/image/xwFtkvRCsHA/",
                         level: "高级用户",
                         stats: { diagnosisCount: 156, successRate: 98, continuousDays: 45 }
+                    },
+                    "user3": { 
+                        nickname: "张老师", 
+                        role: "教师", 
+                        phone: "137****4321", 
+                        avatar: "https://s.coze.cn/image/UsG4ImTTlDU/",
+                        level: "高级用户",
+                        stats: { diagnosisCount: 0, successRate: 0, continuousDays: 30 }
+                    },
+                    "user4": { 
+                        nickname: "刘研究员", 
+                        role: "科研院所", 
+                        phone: "136****8765", 
+                        avatar: "https://s.coze.cn/image/DUsG4hImTTl/",
+                        level: "高级用户",
+                        stats: { diagnosisCount: 50, successRate: 99, continuousDays: 60 }
                     }
                 };
                 
@@ -376,6 +400,9 @@
                 document.querySelector('#diagnosis-count-card .text-2xl').textContent = user.stats.diagnosisCount;
                 document.querySelector('#success-rate-card .text-2xl').textContent = user.stats.successRate + '%';
                 document.querySelector('#continuous-days-card .text-2xl').textContent = user.stats.continuousDays;
+                
+                // 根据角色更新功能菜单
+                updateMenuByRole(user.role);
             }
 
             // 返回按钮点击事件
@@ -468,6 +495,390 @@
                 document.querySelector('#logout-modal').classList.add('hidden');
             });
 
+            // 根据角色更新功能菜单
+            function updateMenuByRole(role) {
+                // 获取所有功能菜单卡片
+                const myServicesCard = document.getElementById('my-services-card');
+                const accountManagementCard = document.getElementById('account-management-card');
+                const otherCard = document.getElementById('other-card');
+                const logoutBtn = document.getElementById('logout-btn');
+                
+                // 重置菜单
+                myServicesCard.style.display = 'none';
+                accountManagementCard.style.display = 'none';
+                otherCard.style.display = 'none';
+                logoutBtn.style.display = 'block';
+                
+                // 根据角色显示不同的功能菜单
+                if (role === '小散户' || role === '养殖企业') {
+                    // 养殖户功能菜单
+                    myServicesCard.style.display = 'block';
+                    accountManagementCard.style.display = 'block';
+                    otherCard.style.display = 'block';
+                } else if (role === '教师') {
+                    // 教师功能菜单
+                    createTeacherMenu();
+                    accountManagementCard.style.display = 'block';
+                    otherCard.style.display = 'block';
+                } else if (role === '科研院所') {
+                    // 科研院所功能菜单
+                    createResearchMenu();
+                    accountManagementCard.style.display = 'block';
+                    otherCard.style.display = 'block';
+                } else if (role === '服务商') {
+                    // 服务商功能菜单
+                    createServiceProviderMenu();
+                    accountManagementCard.style.display = 'block';
+                    otherCard.style.display = 'block';
+                } else if (role === '疫控机构') {
+                    // 疫控机构功能菜单
+                    createCDCMenu();
+                    accountManagementCard.style.display = 'block';
+                    otherCard.style.display = 'block';
+                } else if (role === '学习阶段学生' || role === '顶岗实习') {
+                    // 学生功能菜单
+                    createStudentMenu();
+                    accountManagementCard.style.display = 'block';
+                    otherCard.style.display = 'block';
+                } else {
+                    // 默认显示基本菜单
+                    myServicesCard.style.display = 'block';
+                    accountManagementCard.style.display = 'block';
+                    otherCard.style.display = 'block';
+                }
+            }
+            
+            // 创建教师功能菜单
+            function createTeacherMenu() {
+                const menuSection = document.getElementById('menu-section');
+                const myServicesCard = document.getElementById('my-services-card');
+                
+                myServicesCard.innerHTML = `
+                    <div class="px-4 py-3 border-b border-gray-100">
+                        <h3 class="text-base font-semibold text-text-primary">我的服务</h3>
+                    </div>
+                    <div class="divide-y divide-gray-100">
+                        <button id="my-students-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user-graduate text-secondary"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-text-primary">我的学生</div>
+                                    <div class="text-sm text-text-secondary">查看和管理学生</div>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </button>
+                        
+                        <button id="my-internships-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-calendar-alt text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-text-primary">实习管理</div>
+                                    <div class="text-sm text-text-secondary">管理实习任务</div>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </button>
+                        
+                        <button id="my-reports-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-file-alt text-yellow-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-text-primary">待批改报告</div>
+                                    <div class="text-sm text-text-secondary">批改学生实习报告</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="px-2 py-1 bg-red-100 text-red-600 text-xs rounded-full">12</span>
+                                <i class="fas fa-chevron-right text-text-secondary"></i>
+                            </div>
+                        </button>
+                    </div>
+                `;
+                
+                // 添加事件监听器
+                document.getElementById('my-students-btn').addEventListener('click', function() {
+                    window.location.href = 'P-MENTOR_DASHBOARD.html';
+                });
+                
+                document.getElementById('my-internships-btn').addEventListener('click', function() {
+                    window.location.href = 'P-MENTOR_DASHBOARD.html';
+                });
+                
+                document.getElementById('my-reports-btn').addEventListener('click', function() {
+                    window.location.href = 'P-MENTOR_DASHBOARD.html';
+                });
+            }
+            
+            // 创建科研院所功能菜单
+            function createResearchMenu() {
+                const menuSection = document.getElementById('menu-section');
+                const myServicesCard = document.getElementById('my-services-card');
+                
+                myServicesCard.innerHTML = `
+                    <div class="px-4 py-3 border-b border-gray-100">
+                        <h3 class="text-base font-semibold text-text-primary">我的服务</h3>
+                    </div>
+                    <div class="divide-y divide-gray-100">
+                        <button id="my-annotations-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-pen-fancy text-secondary"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-text-primary">我的标注</div>
+                                    <div class="text-sm text-text-secondary">查看和管理标注数据</div>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </button>
+                        
+                        <button id="my-groups-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-users text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-text-primary">科研群组</div>
+                                    <div class="text-sm text-text-secondary">管理科研协作群组</div>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </button>
+                        
+                        <button id="my-cases-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-database text-yellow-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-text-primary">采集病例</div>
+                                    <div class="text-sm text-text-secondary">采集和管理特殊病例</div>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </button>
+                    </div>
+                `;
+                
+                // 添加事件监听器
+                document.getElementById('my-annotations-btn').addEventListener('click', function() {
+                    window.location.href = 'P-DATA_ANNOTATION.html';
+                });
+                
+                document.getElementById('my-groups-btn').addEventListener('click', function() {
+                    window.location.href = 'P-RESEARCH_COLLAB.html';
+                });
+                
+                document.getElementById('my-cases-btn').addEventListener('click', function() {
+                    window.location.href = 'P-DATA_ANNOTATION.html';
+                });
+            }
+            
+            // 创建服务商功能菜单
+            function createServiceProviderMenu() {
+                const menuSection = document.getElementById('menu-section');
+                const myServicesCard = document.getElementById('my-services-card');
+                
+                myServicesCard.innerHTML = `
+                    <div class="px-4 py-3 border-b border-gray-100">
+                        <h3 class="text-base font-semibold text-text-primary">我的服务</h3>
+                    </div>
+                    <div class="divide-y divide-gray-100">
+                        <button id="my-customers-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-users text-secondary"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-text-primary">我的客户</div>
+                                    <div class="text-sm text-text-secondary">管理客户档案</div>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </button>
+                        
+                        <button id="my-orders-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-shopping-bag text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-text-primary">我的订单</div>
+                                    <div class="text-sm text-text-secondary">查看历史订单</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="px-2 py-1 bg-red-100 text-red-600 text-xs rounded-full">3</span>
+                                <i class="fas fa-chevron-right text-text-secondary"></i>
+                            </div>
+                        </button>
+                        
+                        <button id="my-advertisements-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-ad text-yellow-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-text-primary">广告投放</div>
+                                    <div class="text-sm text-text-secondary">管理广告投放</div>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </button>
+                    </div>
+                `;
+                
+                // 添加事件监听器
+                document.getElementById('my-customers-btn').addEventListener('click', function() {
+                    window.location.href = 'P-CUSTOMER_MANAGEMENT.html';
+                });
+                
+                document.getElementById('my-orders-btn').addEventListener('click', function() {
+                    console.log('查看历史订单');
+                });
+                
+                document.getElementById('my-advertisements-btn').addEventListener('click', function() {
+                    window.location.href = 'P-AD_PRECISION.html';
+                });
+            }
+            
+            // 创建疫控机构功能菜单
+            function createCDCMenu() {
+                const menuSection = document.getElementById('menu-section');
+                const myServicesCard = document.getElementById('my-services-card');
+                
+                myServicesCard.innerHTML = `
+                    <div class="px-4 py-3 border-b border-gray-100">
+                        <h3 class="text-base font-semibold text-text-primary">我的服务</h3>
+                    </div>
+                    <div class="divide-y divide-gray-100">
+                        <button id="my-alerts-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-bell text-secondary"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-text-primary">疫情预警</div>
+                                    <div class="text-sm text-text-secondary">查看疫情预警信息</div>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </button>
+                        
+                        <button id="my-policies-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-file-alt text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-text-primary">政策下发</div>
+                                    <div class="text-sm text-text-secondary">管理和下发政策</div>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </button>
+                        
+                        <button id="my-heatmap-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-map-marked-alt text-yellow-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-text-primary">疫情热力图</div>
+                                    <div class="text-sm text-text-secondary">查看疫情热力图</div>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </button>
+                    </div>
+                `;
+                
+                // 添加事件监听器
+                document.getElementById('my-alerts-btn').addEventListener('click', function() {
+                    window.location.href = 'P-EPIDEMIC_HEATMAP.html';
+                });
+                
+                document.getElementById('my-policies-btn').addEventListener('click', function() {
+                    window.location.href = 'P-POLICY_PUBLISH.html';
+                });
+                
+                document.getElementById('my-heatmap-btn').addEventListener('click', function() {
+                    window.location.href = 'P-EPIDEMIC_HEATMAP.html';
+                });
+            }
+            
+            // 创建学生功能菜单
+            function createStudentMenu() {
+                const menuSection = document.getElementById('menu-section');
+                const myServicesCard = document.getElementById('my-services-card');
+                
+                myServicesCard.innerHTML = `
+                    <div class="px-4 py-3 border-b border-gray-100">
+                        <h3 class="text-base font-semibold text-text-primary">我的服务</h3>
+                    </div>
+                    <div class="divide-y divide-gray-100">
+                        <button id="my-intern-logs-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-calendar-alt text-secondary"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-text-primary">实习日志</div>
+                                    <div class="text-sm text-text-secondary">查看和管理实习日志</div>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </button>
+                        
+                        <button id="my-reports-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-file-alt text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-text-primary">实习报告</div>
+                                    <div class="text-sm text-text-secondary">查看和提交实习报告</div>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </button>
+                        
+                        <button id="my-knowledge-btn" class="w-full flex items-center justify-between p-4 text-left card-hover">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-book text-yellow-600"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-text-primary">知识学习</div>
+                                    <div class="text-sm text-text-secondary">学习禽病知识</div>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </button>
+                    </div>
+                `;
+                
+                // 添加事件监听器
+                document.getElementById('my-intern-logs-btn').addEventListener('click', function() {
+                    window.location.href = 'P-INTERN_LOG_LIST.html';
+                });
+                
+                document.getElementById('my-reports-btn').addEventListener('click', function() {
+                    window.location.href = 'P-INTERN_LOG_LIST.html';
+                });
+                
+                document.getElementById('my-knowledge-btn').addEventListener('click', function() {
+                    window.location.href = 'P-KNOWLEDGE_GRAPH.html';
+                });
+            }
+            
             // 底部导航栏点击事件
             document.querySelector('#nav-home').addEventListener('click', function(e) {
                 e.preventDefault();
@@ -485,6 +896,10 @@
                     window.location.href = 'P-HOME_STUDENT_LEARNING.html';
                 } else if (userRole === '顶岗实习') {
                     window.location.href = 'P-HOME_STUDENT_INTERNSHIP.html';
+                } else if (userRole === '教师') {
+                    window.location.href = 'P-HOME_INSTITUTION_TEACHER.html';
+                } else if (userRole === '科研院所') {
+                    window.location.href = 'P-HOME_INSTITUTION_RESEARCH.html';
                 } else {
                     window.location.href = 'P-HOME_FARMER_SMALL.html';
                 }
@@ -492,7 +907,7 @@
 
             document.querySelector('#nav-diagnosis').addEventListener('click', function(e) {
                 e.preventDefault();
-                window.location.href = 'P-AI_DIAGNOSIS.html';
+                window.location.href = 'P-AI_DIAGNOSIS_MODE_SELECT.html';
             });
 
             document.querySelector('#nav-profile').addEventListener('click', function(e) {

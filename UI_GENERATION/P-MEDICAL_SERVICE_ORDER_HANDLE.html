@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 诊疗服务接单</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(45, 187, 161, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
+        }
+
+        .status-pending {
+            background-color: #F59E0B;
+            color: white;
+        }
+
+        .status-processing {
+            background-color: #3B82F6;
+            color: white;
+        }
+
+        .status-completed {
+            background-color: #10B981;
+            color: white;
+        }
+
+        .status-cancelled {
+            background-color: #EF4444;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex items-center px-4 py-3">
+            <button id="back-btn" class="mr-3 p-2 -ml-2" onclick="history.back()">
+                <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+            </button>
+            <h1 id="page-title" class="text-lg font-semibold text-text-primary">诊疗服务接单</h1>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6">
+        <!-- 订单状态筛选 -->
+        <section id="order-filter" class="mb-6">
+            <div class="flex space-x-2 bg-white rounded-xl p-1 shadow-card overflow-x-auto">
+                <button id="filter-all" class="flex-shrink-0 px-4 py-2 rounded-lg bg-secondary text-white text-sm font-medium">
+                    全部订单
+                </button>
+                <button id="filter-pending" class="flex-shrink-0 px-4 py-2 rounded-lg bg-gray-100 text-text-secondary text-sm font-medium">
+                    待接单
+                </button>
+                <button id="filter-processing" class="flex-shrink-0 px-4 py-2 rounded-lg bg-gray-100 text-text-secondary text-sm font-medium">
+                    处理中
+                </button>
+                <button id="filter-completed" class="flex-shrink-0 px-4 py-2 rounded-lg bg-gray-100 text-text-secondary text-sm font-medium">
+                    已完成
+                </button>
+                <button id="filter-cancelled" class="flex-shrink-0 px-4 py-2 rounded-lg bg-gray-100 text-text-secondary text-sm font-medium">
+                    已取消
+                </button>
+            </div>
+        </section>
+
+        <!-- 订单列表 -->
+        <section id="order-list" class="mb-6 space-y-4">
+            <!-- 待接单订单 -->
+            <div id="order-1" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" onclick="window.location.href='P-MEDICAL_SERVICE_ORDER_HANDLE.html?orderId=1'">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <h3 class="text-base font-medium text-text-primary">订单编号：ORD-20240101-001</h3>
+                        <p class="text-xs text-text-tertiary mt-1">2024-01-01 14:30 提交</p>
+                    </div>
+                    <span class="px-2 py-1 rounded-full status-pending text-xs font-medium">待接单</span>
+                </div>
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-medium text-text-primary">王养殖户</h4>
+                            <p class="text-xs text-text-tertiary">山东省济南市章丘区</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-medium text-text-primary">¥ 200.00</p>
+                        <p class="text-xs text-text-tertiary">服务费</p>
+                    </div>
+                </div>
+                <div class="border-t border-gray-100 pt-3">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-stethoscope text-sm text-secondary"></i>
+                            <span class="text-sm text-text-secondary">AI初诊：禽流感 + 新城疫混合感染</span>
+                        </div>
+                        <button class="text-xs text-secondary font-medium">查看详情</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 处理中订单 -->
+            <div id="order-2" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" onclick="window.location.href='P-MEDICAL_SERVICE_ORDER_HANDLE.html?orderId=2'">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <h3 class="text-base font-medium text-text-primary">订单编号：ORD-20240101-002</h3>
+                        <p class="text-xs text-text-tertiary mt-1">2024-01-01 10:15 提交</p>
+                    </div>
+                    <span class="px-2 py-1 rounded-full status-processing text-xs font-medium">处理中</span>
+                </div>
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-medium text-text-primary">李企业</h4>
+                            <p class="text-xs text-text-tertiary">河南省郑州市中牟县</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-medium text-text-primary">¥ 500.00</p>
+                        <p class="text-xs text-text-tertiary">服务费</p>
+                    </div>
+                </div>
+                <div class="border-t border-gray-100 pt-3">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-stethoscope text-sm text-secondary"></i>
+                            <span class="text-sm text-text-secondary">AI初诊：传染性支气管炎</span>
+                        </div>
+                        <button class="text-xs text-secondary font-medium">查看详情</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 已完成订单 -->
+            <div id="order-3" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" onclick="window.location.href='P-MEDICAL_SERVICE_ORDER_HANDLE.html?orderId=3'">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <h3 class="text-base font-medium text-text-primary">订单编号：ORD-20231231-001</h3>
+                        <p class="text-xs text-text-tertiary mt-1">2023-12-31 16:45 提交</p>
+                    </div>
+                    <span class="px-2 py-1 rounded-full status-completed text-xs font-medium">已完成</span>
+                </div>
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-medium text-text-primary">张养殖户</h4>
+                            <p class="text-xs text-text-tertiary">江苏省南京市高淳区</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-medium text-text-primary">¥ 300.00</p>
+                        <p class="text-xs text-text-tertiary">服务费</p>
+                    </div>
+                </div>
+                <div class="border-t border-gray-100 pt-3">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-stethoscope text-sm text-secondary"></i>
+                            <span class="text-sm text-text-secondary">AI初诊：新城疫</span>
+                        </div>
+                        <button class="text-xs text-secondary font-medium">查看详情</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部导航栏 -->
+    <footer id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white shadow-sm safe-bottom">
+        <div class="flex items-center justify-around h-16">
+            <button id="nav-home" class="flex flex-col items-center justify-center text-text-tertiary" onclick="window.location.href='P-HOME_INSTITUTION_SERVICE.html'">
+                <i class="fas fa-home text-xl mb-1"></i>
+                <span class="text-xs">首页</span>
+            </button>
+            <button id="nav-orders" class="flex flex-col items-center justify-center text-secondary">
+                <i class="fas fa-shopping-cart text-xl mb-1"></i>
+                <span class="text-xs">订单</span>
+            </button>
+            <button id="nav-profile" class="flex flex-col items-center justify-center text-text-tertiary" onclick="window.location.href='P-USER_PROFILE.html'">
+                <i class="fas fa-user text-xl mb-1"></i>
+                <span class="text-xs">我的</span>
+            </button>
+        </div>
+    </footer>
+
+    <!-- 接单确认弹窗 -->
+    <div id="accept-order-modal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-lg w-full max-w-sm">
+                <div class="p-6">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-question-circle text-2xl text-blue-600"></i>
+                        </div>
+                        <h3 class="text-lg font-medium text-text-primary mb-2">确认接单</h3>
+                        <p class="text-sm text-text-secondary">您确定要接取这个诊疗服务订单吗？</p>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-text-tertiary">订单编号</span>
+                                <span class="text-sm text-text-primary">ORD-20240101-001</span>
+                            </div>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-sm text-text-tertiary">服务费</span>
+                                <span class="text-sm font-medium text-text-primary">¥ 200.00</span>
+                            </div>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button id="cancel-accept-btn" class="flex-1 py-3 px-4 bg-gray-100 text-text-primary font-medium rounded-lg">
+                                取消
+                            </button>
+                            <button id="confirm-accept-btn" class="flex-1 py-3 px-4 bg-secondary text-white font-medium rounded-lg">
+                                确认接单
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 提示框 -->
+    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-text-primary text-white px-4 py-2 rounded-lg text-sm z-50 hidden">
+        <span id="toast-message">提示信息</span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 从URL参数中获取订单ID
+            function getOrderId() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('orderId');
+            }
+            
+            const orderId = getOrderId();
+            
+            // 如果有订单ID，显示订单详情
+            if (orderId) {
+                showOrderDetail(orderId);
+            }
+            
+            // 显示订单详情
+            function showOrderDetail(orderId) {
+                // 这里应该根据订单ID加载订单详情
+                console.log('显示订单详情:', orderId);
+            }
+            
+            // 显示提示信息
+            function showToast(message, isError = false) {
+                const toast = document.getElementById('toast');
+                const toastMessage = document.getElementById('toast-message');
+                
+                toastMessage.textContent = message;
+                toast.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 3000);
+            }
+            
+            // 订单状态筛选
+            const filterButtons = document.querySelectorAll('[id^="filter-"]');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 移除所有按钮的选中状态
+                    filterButtons.forEach(btn => {
+                        btn.classList.remove('bg-secondary', 'text-white');
+                        btn.classList.add('bg-gray-100', 'text-text-secondary');
+                    });
+                    
+                    // 设置当前按钮为选中状态
+                    this.classList.remove('bg-gray-100', 'text-text-secondary');
+                    this.classList.add('bg-secondary', 'text-white');
+                    
+                    // 这里应该根据筛选条件加载订单列表
+                    showToast('筛选功能开发中');
+                });
+            });
+            
+            // 接单按钮点击事件
+            // 注意：这里应该为每个订单的接单按钮添加事件监听器
+            // 由于是静态页面，这里只做演示
+            
+            // 显示接单确认弹窗
+            function showAcceptModal() {
+                const modal = document.getElementById('accept-order-modal');
+                modal.classList.remove('hidden');
+            }
+            
+            // 隐藏接单确认弹窗
+            function hideAcceptModal() {
+                const modal = document.getElementById('accept-order-modal');
+                modal.classList.add('hidden');
+            }
+            
+            // 确认接单按钮点击事件
+            document.getElementById('confirm-accept-btn').addEventListener('click', function() {
+                hideAcceptModal();
+                showToast('接单成功');
+                
+                // 这里应该调用API更新订单状态
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            });
+            
+            // 取消接单按钮点击事件
+            document.getElementById('cancel-accept-btn').addEventListener('click', function() {
+                hideAcceptModal();
+            });
+            
+            // 点击弹窗背景关闭弹窗
+            document.querySelector('#accept-order-modal .bg-black').addEventListener('click', function() {
+                hideAcceptModal();
+            });
+        });
+    </script>
+</body>
+</html>

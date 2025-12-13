@@ -11,14 +11,22 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#D3F8EE',
-                        secondary: '#3BCCA5', 
-                        accent: '#2B6A5A',
-                        'text-primary': '#1F2937',
-                        'text-secondary': '#6B7280',
-                        'bg-light': '#F9FAFB',
-                        'card-bg': '#FFFFFF'
-                    },
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
                     fontFamily: {
                         'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     },
@@ -32,7 +40,7 @@
     </script>
     <style>
         .gradient-bg {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .card-hover:active {
@@ -49,7 +57,7 @@
         }
         
         .status-bar {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .annotation-tool-active {
@@ -159,7 +167,12 @@
                                 <span class="text-xs text-text-secondary">2024-01-15</span>
                             </div>
                         </div>
-                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                        <div class="flex flex-col space-y-2">
+                            <button class="collect-btn text-xs px-2 py-1 bg-secondary text-white rounded-full" data-case-id="case1">
+                                <i class="fas fa-star mr-1"></i>采集
+                            </button>
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </div>
                     </div>
                 </div>
 
@@ -175,7 +188,12 @@
                                 <span class="text-xs text-text-secondary">2024-01-14</span>
                             </div>
                         </div>
-                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                        <div class="flex flex-col space-y-2">
+                            <button class="collect-btn text-xs px-2 py-1 bg-secondary text-white rounded-full" data-case-id="case2">
+                                <i class="fas fa-star mr-1"></i>采集
+                            </button>
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </div>
                     </div>
                 </div>
 
@@ -191,7 +209,12 @@
                                 <span class="text-xs text-text-secondary">2024-01-13</span>
                             </div>
                         </div>
-                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                        <div class="flex flex-col space-y-2">
+                            <button class="collect-btn text-xs px-2 py-1 bg-secondary text-white rounded-full" data-case-id="case3">
+                                <i class="fas fa-star mr-1"></i>采集
+                            </button>
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </div>
                     </div>
                 </div>
 
@@ -207,7 +230,12 @@
                                 <span class="text-xs text-text-secondary">2024-01-12</span>
                             </div>
                         </div>
-                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                        <div class="flex flex-col space-y-2">
+                            <button class="collect-btn text-xs px-2 py-1 bg-secondary text-white rounded-full" data-case-id="case4">
+                                <i class="fas fa-star mr-1"></i>采集
+                            </button>
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -584,6 +612,56 @@
                 }
             });
 
+            // 病例采集功能
+            function setupCaseCollection() {
+                const collectBtns = document.querySelectorAll('.collect-btn');
+                let collectedCases = JSON.parse(localStorage.getItem('collectedCases') || '[]');
+                
+                // 更新采集按钮状态
+                function updateCollectBtnState() {
+                    collectBtns.forEach(btn => {
+                        const caseId = btn.dataset.caseId;
+                        if (collectedCases.includes(caseId)) {
+                            btn.classList.remove('bg-secondary', 'text-white');
+                            btn.classList.add('bg-gray-100', 'text-gray-600');
+                            btn.innerHTML = '<i class="fas fa-star mr-1"></i>已采集';
+                            btn.disabled = true;
+                        } else {
+                            btn.classList.add('bg-secondary', 'text-white');
+                            btn.classList.remove('bg-gray-100', 'text-gray-600');
+                            btn.innerHTML = '<i class="fas fa-star mr-1"></i>采集';
+                            btn.disabled = false;
+                        }
+                    });
+                }
+                
+                // 初始化采集按钮状态
+                updateCollectBtnState();
+                
+                // 采集按钮点击事件
+                collectBtns.forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation(); // 阻止事件冒泡，避免触发病例详情
+                        
+                        const caseId = this.dataset.caseId;
+                        if (!collectedCases.includes(caseId)) {
+                            showLoading();
+                            setTimeout(() => {
+                                hideLoading();
+                                collectedCases.push(caseId);
+                                localStorage.setItem('collectedCases', JSON.stringify(collectedCases));
+                                updateCollectBtnState();
+                                alert('病例已采集');
+                                console.log('采集病例:', caseId);
+                            }, 1000);
+                        }
+                    });
+                });
+            }
+            
+            // 调用病例采集功能
+            setupCaseCollection();
+            
             // 下载高清原图
             downloadBtn.addEventListener('click', function() {
                 showLoading();

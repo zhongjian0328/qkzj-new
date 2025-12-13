@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 诊疗服务下单</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(45, 187, 161, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex items-center px-4 py-3">
+            <button id="back-btn" class="mr-3 p-2 -ml-2" onclick="window.location.href='P-AI_PRE_DIAGNOSIS_REPORT.html'">
+                <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+            </button>
+            <h1 id="page-title" class="text-lg font-semibold text-text-primary">诊疗服务下单</h1>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6">
+        <!-- 服务类型选择 -->
+        <section id="service-type-section" class="mb-6">
+            <h3 class="text-lg font-semibold text-text-primary mb-4">选择服务类型</h3>
+            <div class="grid grid-cols-2 gap-4">
+                <button id="service-type-research" class="bg-card-bg rounded-xl p-5 shadow-card card-hover border-2 border-secondary">
+                    <div class="flex items-center justify-center w-12 h-12 gradient-bg rounded-full mb-3">
+                        <i class="fas fa-university text-accent text-xl"></i>
+                    </div>
+                    <h4 class="text-base font-medium text-text-primary mb-1">科研院所服务</h4>
+                    <p class="text-sm text-text-secondary">专业实验室检测与科研支持</p>
+                </button>
+                <button id="service-type-provider" class="bg-card-bg rounded-xl p-5 shadow-card card-hover border-2 border-gray-200">
+                    <div class="flex items-center justify-center w-12 h-12 gradient-bg rounded-full mb-3">
+                        <i class="fas fa-user-md text-accent text-xl"></i>
+                    </div>
+                    <h4 class="text-base font-medium text-text-primary mb-1">服务商服务</h4>
+                    <p class="text-sm text-text-secondary">上门诊疗与技术指导</p>
+                </button>
+            </div>
+        </section>
+
+        <!-- 服务人员/团队列表 -->
+        <section id="service-provider-section" class="mb-6">
+            <h3 class="text-lg font-semibold text-text-primary mb-4">选择服务人员/团队</h3>
+            <div class="space-y-4">
+                <!-- 服务团队1 -->
+                <div id="provider-1" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer border-2 border-transparent">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-users text-blue-600 text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-medium text-text-primary">动物疫病防控中心团队</h4>
+                                <div class="flex items-center">
+                                    <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                    <span class="text-sm text-text-secondary">4.9</span>
+                                </div>
+                            </div>
+                            <p class="text-sm text-text-secondary mb-2">国家动物疫病防控中心</p>
+                            <div class="flex items-center space-x-3 text-xs text-text-tertiary">
+                                <span><i class="fas fa-map-marker-alt mr-1"></i> 全国覆盖</span>
+                                <span><i class="fas fa-clock mr-1"></i> 24小时响应</span>
+                                <span><i class="fas fa-certificate mr-1"></i> 官方认证</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 服务团队2 -->
+                <div id="provider-2" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer border-2 border-transparent">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user-md text-green-600 text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-medium text-text-primary">专业兽医团队</h4>
+                                <div class="flex items-center">
+                                    <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                    <span class="text-sm text-text-secondary">4.8</span>
+                                </div>
+                            </div>
+                            <p class="text-sm text-text-secondary mb-2">北京农科动物诊疗服务有限公司</p>
+                            <div class="flex items-center space-x-3 text-xs text-text-tertiary">
+                                <span><i class="fas fa-map-marker-alt mr-1"></i> 北京地区</span>
+                                <span><i class="fas fa-clock mr-1"></i> 8-24小时</span>
+                                <span><i class="fas fa-medkit mr-1"></i> 上门服务</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 服务团队3 -->
+                <div id="provider-3" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer border-2 border-transparent">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-graduation-cap text-purple-600 text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-medium text-text-primary">农业大学科研团队</h4>
+                                <div class="flex items-center">
+                                    <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                    <span class="text-sm text-text-secondary">4.7</span>
+                                </div>
+                            </div>
+                            <p class="text-sm text-text-secondary mb-2">中国农业大学动物医学院</p>
+                            <div class="flex items-center space-x-3 text-xs text-text-tertiary">
+                                <span><i class="fas fa-map-marker-alt mr-1"></i> 全国覆盖</span>
+                                <span><i class="fas fa-clock mr-1"></i> 48小时响应</span>
+                                <span><i class="fas fa-flask mr-1"></i> 实验室检测</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 服务内容描述 -->
+        <section id="service-content-section" class="mb-6">
+            <h3 class="text-lg font-semibold text-text-primary mb-4">服务内容描述</h3>
+            <div class="bg-card-bg rounded-xl p-4 shadow-card">
+                <div class="mb-4">
+                    <label for="service-description" class="block text-sm font-medium text-text-primary mb-2">补充服务需求</label>
+                    <textarea id="service-description" rows="4" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="请详细描述您的需求，以便服务团队更好地为您提供服务..."></textarea>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex-1">
+                        <label for="urgency-level" class="block text-sm font-medium text-text-primary mb-2">紧急程度</label>
+                        <select id="urgency-level" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent">
+                            <option value="normal">普通（3-5天）</option>
+                            <option value="urgent">紧急（1-2天）</option>
+                            <option value="emergency">特急（24小时内）</option>
+                        </select>
+                    </div>
+                    <div class="flex-1">
+                        <label for="service-date" class="block text-sm font-medium text-text-primary mb-2">期望服务日期</label>
+                        <input type="date" id="service-date" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 联系方式确认 -->
+        <section id="contact-info-section" class="mb-6">
+            <h3 class="text-lg font-semibold text-text-primary mb-4">联系方式确认</h3>
+            <div class="bg-card-bg rounded-xl p-4 shadow-card">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="contact-name" class="block text-sm font-medium text-text-primary mb-2">联系人姓名</label>
+                        <input type="text" id="contact-name" value="张三" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent">
+                    </div>
+                    <div>
+                        <label for="contact-phone" class="block text-sm font-medium text-text-primary mb-2">联系电话</label>
+                        <input type="tel" id="contact-phone" value="13800138000" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent">
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label for="contact-address" class="block text-sm font-medium text-text-primary mb-2">服务地址</label>
+                    <input type="text" id="contact-address" value="北京市朝阳区农业科技园A区1号" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent">
+                </div>
+            </div>
+        </section>
+
+        <!-- 提交订单按钮 -->
+        <section id="submit-order-section" class="mb-6">
+            <button id="submit-order-btn" class="w-full gradient-bg text-accent font-semibold py-4 rounded-xl shadow-button">
+                <i class="fas fa-shopping-cart mr-2"></i>
+                提交订单
+            </button>
+        </section>
+    </main>
+
+    <!-- 底部导航栏 -->
+    <footer id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white shadow-sm safe-bottom">
+        <div class="flex items-center justify-around h-16">
+            <button id="nav-home" class="flex flex-col items-center justify-center text-text-tertiary" onclick="window.location.href='P-HOME_FARMER_SMALL.html'">
+                <i class="fas fa-home text-xl mb-1"></i>
+                <span class="text-xs">首页</span>
+            </button>
+            <button id="nav-diagnosis" class="flex flex-col items-center justify-center text-secondary">
+                <i class="fas fa-robot text-xl mb-1"></i>
+                <span class="text-xs">AI诊断</span>
+            </button>
+            <button id="nav-mine" class="flex flex-col items-center justify-center text-text-tertiary" onclick="window.location.href='P-USER_PROFILE.html'">
+                <i class="fas fa-user text-xl mb-1"></i>
+                <span class="text-xs">我的</span>
+            </button>
+        </div>
+    </footer>
+
+    <!-- 提示框 -->
+    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-text-primary text-white px-4 py-2 rounded-lg text-sm z-50 hidden">
+        <span id="toast-message">提示信息</span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 服务类型选择
+            const serviceTypeBtns = document.querySelectorAll('#service-type-section button');
+            serviceTypeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    serviceTypeBtns.forEach(b => b.classList.remove('border-secondary'));
+                    serviceTypeBtns.forEach(b => b.classList.add('border-gray-200'));
+                    this.classList.remove('border-gray-200');
+                    this.classList.add('border-secondary');
+                    
+                    // 根据服务类型过滤服务人员/团队
+                    filterServiceProviders(this.id);
+                });
+            });
+
+            // 服务人员/团队选择
+            const providerCards = document.querySelectorAll('#service-provider-section [id^="provider-"]');
+            let selectedProvider = null;
+            
+            providerCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    providerCards.forEach(c => c.classList.remove('border-secondary'));
+                    providerCards.forEach(c => c.classList.add('border-transparent'));
+                    this.classList.remove('border-transparent');
+                    this.classList.add('border-secondary');
+                    
+                    selectedProvider = this.id;
+                    updateServiceFee(this.id);
+                });
+            });
+            
+            // 根据服务类型过滤服务人员/团队
+            function filterServiceProviders(serviceTypeId) {
+                // 模拟根据服务类型过滤
+                const isResearch = serviceTypeId === 'service-type-research';
+                
+                providerCards.forEach(card => {
+                    const cardText = card.textContent.toLowerCase();
+                    if (isResearch && (cardText.includes('疫病防控') || cardText.includes('农业大学'))) {
+                        card.style.display = 'block';
+                    } else if (!isResearch && cardText.includes('农科动物')) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // 重置选择
+                selectedProvider = null;
+                updateServiceFee(null);
+            }
+            
+            // 更新服务费用
+            function updateServiceFee(providerId) {
+                const feeContainer = document.getElementById('service-fee');
+                if (!feeContainer) {
+                    // 创建费用展示容器
+                    createFeeContainer();
+                }
+                
+                let fee = 0;
+                let serviceName = '';
+                
+                // 根据选择的服务人员/团队设置费用
+                switch(providerId) {
+                    case 'provider-1':
+                        fee = 800;
+                        serviceName = '动物疫病防控中心团队服务';
+                        break;
+                    case 'provider-2':
+                        fee = 500;
+                        serviceName = '北京农科动物诊疗服务';
+                        break;
+                    case 'provider-3':
+                        fee = 1200;
+                        serviceName = '农业大学科研团队服务';
+                        break;
+                    default:
+                        fee = 0;
+                        serviceName = '请选择服务人员/团队';
+                }
+                
+                document.getElementById('service-fee-amount').textContent = `¥${fee}`;
+                document.getElementById('service-name').textContent = serviceName;
+            }
+            
+            // 创建费用展示容器
+            function createFeeContainer() {
+                const submitSection = document.querySelector('#submit-order-section');
+                const feeSection = document.createElement('section');
+                feeSection.id = 'service-fee-section';
+                feeSection.className = 'mb-6';
+                feeSection.innerHTML = `
+                    <div class="bg-card-bg rounded-xl p-4 shadow-card">
+                        <h3 class="text-lg font-semibold text-text-primary mb-4">服务费用确认</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-text-secondary">服务项目</span>
+                                <span id="service-name" class="text-sm font-medium text-text-primary">请选择服务人员/团队</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-text-secondary">服务费用</span>
+                                <span id="service-fee-amount" class="text-lg font-bold text-primary">¥0</span>
+                            </div>
+                            <div class="w-full h-px bg-border-color"></div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-medium text-text-primary">总计</span>
+                                <span id="total-amount" class="text-lg font-bold text-accent">¥0</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                submitSection.parentNode.insertBefore(feeSection, submitSection);
+            }
+
+            // 显示提示框函数
+            function showToast(message, isError = false) {
+                const toast = document.querySelector('#toast');
+                const toastMessage = document.querySelector('#toast-message');
+                
+                toastMessage.textContent = message;
+                
+                // 设置不同的背景色
+                if (isError) {
+                    toast.classList.add('bg-error');
+                    toast.classList.remove('bg-text-primary');
+                } else {
+                    toast.classList.add('bg-text-primary');
+                    toast.classList.remove('bg-error');
+                }
+                
+                toast.classList.remove('hidden');
+                
+                // 3秒后自动隐藏
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 3000);
+            }
+
+            // 提交订单
+            document.querySelector('#submit-order-btn').addEventListener('click', function() {
+                // 表单验证
+                const serviceDescription = document.querySelector('#service-description').value;
+                const serviceDate = document.querySelector('#service-date').value;
+                
+                if (!serviceDescription) {
+                    showToast('请补充服务需求', true);
+                    return;
+                }
+                
+                if (!serviceDate) {
+                    showToast('请选择期望服务日期', true);
+                    return;
+                }
+                
+                if (!selectedProvider) {
+                    showToast('请选择服务人员/团队', true);
+                    return;
+                }
+                
+                // 收集订单数据
+                const orderData = {
+                    serviceType: document.querySelector('#service-type-section button.border-secondary').id,
+                    serviceProvider: selectedProvider,
+                    serviceDescription: serviceDescription,
+                    urgencyLevel: document.querySelector('#urgency-level').value,
+                    serviceDate: serviceDate,
+                    contactName: document.querySelector('#contact-name').value,
+                    contactPhone: document.querySelector('#contact-phone').value,
+                    contactAddress: document.querySelector('#contact-address').value,
+                    serviceFee: document.querySelector('#service-fee-amount').textContent.replace('¥', '')
+                };
+                
+                console.log('提交订单:', orderData);
+                
+                // 显示订单确认弹窗
+                showOrderConfirmation(orderData);
+            });
+            
+            // 显示订单确认弹窗
+            function showOrderConfirmation(orderData) {
+                // 模拟订单确认弹窗
+                if (confirm(`确认提交订单吗？\n\n服务项目: ${document.getElementById('service-name').textContent}\n服务费用: ${document.getElementById('service-fee-amount').textContent}\n期望服务日期: ${orderData.serviceDate}`)) {
+                    // 模拟提交订单
+                    showToast('订单提交成功');
+                    
+                    // 延迟跳转到订单列表页（此处简化处理）
+                    setTimeout(() => {
+                        window.location.href = 'P-HOME_FARMER_SMALL.html';
+                    }, 1500);
+                }
+            }
+            
+            // 初始化页面
+            function initPage() {
+                // 默认选择科研院所服务
+                serviceTypeBtns[0].click();
+            }
+            
+            // 初始化页面
+            initPage();
+        });
+    </script>
+</body>
+</html>

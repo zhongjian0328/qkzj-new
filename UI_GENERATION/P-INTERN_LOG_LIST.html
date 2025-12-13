@@ -11,14 +11,22 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#D3F8EE',
-                        secondary: '#3BCCA5', 
-                        accent: '#2B6A5A',
-                        'text-primary': '#1F2937',
-                        'text-secondary': '#6B7280',
-                        'bg-light': '#F9FAFB',
-                        'card-bg': '#FFFFFF'
-                    },
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
                     fontFamily: {
                         'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     },
@@ -32,7 +40,7 @@
     </script>
     <style>
         .gradient-bg {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .card-hover:active {
@@ -49,7 +57,7 @@
         }
         
         .status-bar {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
 
         .search-input:focus {
@@ -80,7 +88,7 @@
         </div>
     </div>
 
-    <!-- 顶部导航栏 -->
+    <!-- 顶部导航�?-->
     <header id="top-header" class="bg-white shadow-sm">
         <div class="flex justify-between items-center px-4 py-3">
             <div class="flex items-center space-x-3">
@@ -95,7 +103,7 @@
         </div>
     </header>
 
-    <!-- 搜索和筛选区域 -->
+    <!-- 搜索和筛选区�?-->
     <section id="search-filter-section" class="px-4 py-4 bg-white border-b border-gray-100">
         <div class="flex space-x-3">
             <div class="flex-1 relative">
@@ -108,18 +116,18 @@
             </button>
         </div>
         
-        <!-- 筛选下拉菜单 -->
+        <!-- 筛选下拉菜�?-->
         <div id="filter-dropdown" class="filter-dropdown mt-3 bg-white border border-gray-200 rounded-lg shadow-card">
             <div class="p-4">
-                <h3 class="font-medium text-text-primary mb-3">筛选条件</h3>
+                <h3 class="font-medium text-text-primary mb-3">筛选条�?/h3>
                 <div class="space-y-3">
                     <div>
-                        <label class="block text-sm text-text-secondary mb-2">状态</label>
+                        <label class="block text-sm text-text-secondary mb-2">状�?/label>
                         <select id="status-filter" class="w-full px-3 py-2 border border-gray-200 rounded-lg">
-                            <option value="">全部状态</option>
+                            <option value="">全部状�?/option>
                             <option value="draft">草稿</option>
-                            <option value="submitted">已提交</option>
-                            <option value="reviewed">已批阅</option>
+                            <option value="submitted">已提�?/option>
+                            <option value="reviewed">已批�?/option>
                         </select>
                     </div>
                     <div>
@@ -131,7 +139,7 @@
                     </div>
                 </div>
                 <div class="flex space-x-3 mt-4">
-                    <button id="apply-filter-btn" class="flex-1 px-4 py-2 bg-secondary text-white rounded-lg">应用筛选</button>
+                    <button id="apply-filter-btn" class="flex-1 px-4 py-2 bg-secondary text-white rounded-lg">应用筛�?/button>
                     <button id="reset-filter-btn" class="flex-1 px-4 py-2 border border-gray-200 rounded-lg">重置</button>
                 </div>
             </div>
@@ -149,11 +157,11 @@
                 </div>
                 <div id="submitted-logs-card" class="bg-card-bg rounded-xl p-4 shadow-card text-center">
                     <div class="text-2xl font-bold text-blue-600 mb-1">8</div>
-                    <div class="text-sm text-text-secondary">已提交</div>
+                    <div class="text-sm text-text-secondary">已提�?/div>
                 </div>
                 <div id="reviewed-logs-card" class="bg-card-bg rounded-xl p-4 shadow-card text-center">
                     <div class="text-2xl font-bold text-green-600 mb-1">6</div>
-                    <div class="text-sm text-text-secondary">已批阅</div>
+                    <div class="text-sm text-text-secondary">已批�?/div>
                 </div>
             </div>
         </section>
@@ -162,17 +170,17 @@
         <section id="logs-section">
             <div class="flex justify-between items-center mb-4">
                 <h2 id="logs-title" class="text-lg font-semibold text-text-primary">我的日志</h2>
-                <span id="logs-count" class="text-sm text-text-secondary">共12条</span>
+                <span id="logs-count" class="text-sm text-text-secondary">�?2�?/span>
             </div>
             
             <div id="logs-list" class="space-y-3">
-                <!-- 日志项1 -->
+                <!-- 日志�? -->
                 <div id="log-item-1" class="bg-card-bg rounded-xl p-4 shadow-card card-hover" data-log-id="log_001">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
                             <div class="flex items-center space-x-2 mb-2">
                                 <h3 id="log-title-1" class="font-medium text-text-primary">新城疫病例观察与诊断</h3>
-                                <span id="log-status-1" class="px-2 py-1 bg-green-100 rounded-full text-xs text-green-700">已批阅</span>
+                                <span id="log-status-1" class="px-2 py-1 bg-green-100 rounded-full text-xs text-green-700">已批�?/span>
                             </div>
                             <p id="log-preview-1" class="text-sm text-text-secondary mb-3 line-clamp-2">
                                 今天在鸡舍观察到多只鸡出现精神萎靡、呼吸困难等症状，通过AI诊断初步判断为新城疫...
@@ -183,28 +191,25 @@
                                         <i class="far fa-calendar mr-1"></i>2024-01-15
                                     </span>
                                     <span id="log-images-1">
-                                        <i class="far fa-image mr-1"></i>3张图片
-                                    </span>
+                                        <i class="far fa-image mr-1"></i>3张图�?                                    </span>
                                     <span id="log-location-1">
-                                        <i class="fas fa-map-marker-alt mr-1"></i>养殖场A区
-                                    </span>
+                                        <i class="fas fa-map-marker-alt mr-1"></i>养殖场A�?                                    </span>
                                 </div>
                                 <div id="mentor-comment-1" class="flex items-center text-xs text-blue-600">
-                                    <i class="fas fa-comment mr-1"></i>导师已批注
-                                </div>
+                                    <i class="fas fa-comment mr-1"></i>导师已批�?                                </div>
                             </div>
                         </div>
                         <i class="fas fa-chevron-right text-text-secondary ml-3"></i>
                     </div>
                 </div>
 
-                <!-- 日志项2 -->
+                <!-- 日志�? -->
                 <div id="log-item-2" class="bg-card-bg rounded-xl p-4 shadow-card card-hover" data-log-id="log_002">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
                             <div class="flex items-center space-x-2 mb-2">
-                                <h3 id="log-title-2" class="font-medium text-text-primary">禽流感防控措施实践</h3>
-                                <span id="log-status-2" class="px-2 py-1 bg-blue-100 rounded-full text-xs text-blue-700">已提交</span>
+                                <h3 id="log-title-2" class="font-medium text-text-primary">禽流感防控措施实�?/h3>
+                                <span id="log-status-2" class="px-2 py-1 bg-blue-100 rounded-full text-xs text-blue-700">已提�?/span>
                             </div>
                             <p id="log-preview-2" class="text-sm text-text-secondary mb-3 line-clamp-2">
                                 参与了禽流感疫苗接种工作，学习了正确的接种方法和注意事项，记录了接种过程中的关键步骤...
@@ -215,11 +220,9 @@
                                         <i class="far fa-calendar mr-1"></i>2024-01-14
                                     </span>
                                     <span id="log-images-2">
-                                        <i class="far fa-image mr-1"></i>5张图片
-                                    </span>
+                                        <i class="far fa-image mr-1"></i>5张图�?                                    </span>
                                     <span id="log-location-2">
-                                        <i class="fas fa-map-marker-alt mr-1"></i>养殖场B区
-                                    </span>
+                                        <i class="fas fa-map-marker-alt mr-1"></i>养殖场B�?                                    </span>
                                 </div>
                                 <div id="mentor-comment-2" class="flex items-center text-xs text-text-secondary">
                                     <i class="far fa-clock mr-1"></i>等待批注
@@ -230,7 +233,7 @@
                     </div>
                 </div>
 
-                <!-- 日志项3 -->
+                <!-- 日志�? -->
                 <div id="log-item-3" class="bg-card-bg rounded-xl p-4 shadow-card card-hover" data-log-id="log_003">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
@@ -239,7 +242,7 @@
                                 <span id="log-status-3" class="px-2 py-1 bg-yellow-100 rounded-full text-xs text-yellow-700">草稿</span>
                             </div>
                             <p id="log-preview-3" class="text-sm text-text-secondary mb-3 line-clamp-2">
-                                学习了鸡舍温湿度控制、通风管理的重要性，记录了不同时间段的环境参数变化...
+                                学习了鸡舍温湿度控制、通风管理的重要性，记录了不同时间段的环境参数变�?..
                             </p>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-4 text-xs text-text-secondary">
@@ -247,31 +250,28 @@
                                         <i class="far fa-calendar mr-1"></i>2024-01-13
                                     </span>
                                     <span id="log-images-3">
-                                        <i class="far fa-image mr-1"></i>2张图片
-                                    </span>
+                                        <i class="far fa-image mr-1"></i>2张图�?                                    </span>
                                     <span id="log-location-3">
-                                        <i class="fas fa-map-marker-alt mr-1"></i>养殖场C区
-                                    </span>
+                                        <i class="fas fa-map-marker-alt mr-1"></i>养殖场C�?                                    </span>
                                 </div>
                                 <div id="mentor-comment-3" class="flex items-center text-xs text-text-secondary">
-                                    <i class="far fa-edit mr-1"></i>草稿状态
-                                </div>
+                                    <i class="far fa-edit mr-1"></i>草稿状�?                                </div>
                             </div>
                         </div>
                         <i class="fas fa-chevron-right text-text-secondary ml-3"></i>
                     </div>
                 </div>
 
-                <!-- 日志项4 -->
+                <!-- 日志�? -->
                 <div id="log-item-4" class="bg-card-bg rounded-xl p-4 shadow-card card-hover" data-log-id="log_004">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
                             <div class="flex items-center space-x-2 mb-2">
-                                <h3 id="log-title-4" class="font-medium text-text-primary">饲料配方与营养管理</h3>
-                                <span id="log-status-4" class="px-2 py-1 bg-green-100 rounded-full text-xs text-green-700">已批阅</span>
+                                <h3 id="log-title-4" class="font-medium text-text-primary">饲料配方与营养管�?/h3>
+                                <span id="log-status-4" class="px-2 py-1 bg-green-100 rounded-full text-xs text-green-700">已批�?/span>
                             </div>
                             <p id="log-preview-4" class="text-sm text-text-secondary mb-3 line-clamp-2">
-                                跟随兽医学习了不同生长阶段鸡的饲料配方特点，了解了营养缺乏症的识别方法...
+                                跟随兽医学习了不同生长阶段鸡的饲料配方特点，了解了营养缺乏症的识别方�?..
                             </p>
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-4 text-xs text-text-secondary">
@@ -279,28 +279,26 @@
                                         <i class="far fa-calendar mr-1"></i>2024-01-12
                                     </span>
                                     <span id="log-images-4">
-                                        <i class="far fa-image mr-1"></i>1张图片
-                                    </span>
+                                        <i class="far fa-image mr-1"></i>1张图�?                                    </span>
                                     <span id="log-location-4">
                                         <i class="fas fa-map-marker-alt mr-1"></i>饲料加工车间
                                     </span>
                                 </div>
                                 <div id="mentor-comment-4" class="flex items-center text-xs text-blue-600">
-                                    <i class="fas fa-comment mr-1"></i>导师已批注
-                                </div>
+                                    <i class="fas fa-comment mr-1"></i>导师已批�?                                </div>
                             </div>
                         </div>
                         <i class="fas fa-chevron-right text-text-secondary ml-3"></i>
                     </div>
                 </div>
 
-                <!-- 日志项5 -->
+                <!-- 日志�? -->
                 <div id="log-item-5" class="bg-card-bg rounded-xl p-4 shadow-card card-hover" data-log-id="log_005">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
                             <div class="flex items-center space-x-2 mb-2">
                                 <h3 id="log-title-5" class="font-medium text-text-primary">生物安全措施执行</h3>
-                                <span id="log-status-5" class="px-2 py-1 bg-blue-100 rounded-full text-xs text-blue-700">已提交</span>
+                                <span id="log-status-5" class="px-2 py-1 bg-blue-100 rounded-full text-xs text-blue-700">已提�?/span>
                             </div>
                             <p id="log-preview-5" class="text-sm text-text-secondary mb-3 line-clamp-2">
                                 参与了养殖场的生物安全检查，包括车辆消毒、人员进出管理等环节...
@@ -311,11 +309,9 @@
                                         <i class="far fa-calendar mr-1"></i>2024-01-11
                                     </span>
                                     <span id="log-images-5">
-                                        <i class="far fa-image mr-1"></i>4张图片
-                                    </span>
+                                        <i class="far fa-image mr-1"></i>4张图�?                                    </span>
                                     <span id="log-location-5">
-                                        <i class="fas fa-map-marker-alt mr-1"></i>养殖场入口
-                                    </span>
+                                        <i class="fas fa-map-marker-alt mr-1"></i>养殖场入�?                                    </span>
                                 </div>
                                 <div id="mentor-comment-5" class="flex items-center text-xs text-text-secondary">
                                     <i class="far fa-clock mr-1"></i>等待批注
@@ -336,7 +332,15 @@
         </section>
     </main>
 
-    <!-- 底部导航栏 -->
+    <!-- �ײ������� -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
+        <div id="nav-content"></div>
+    </nav>
+
+    <!-- ����ͨ�õ����ű� -->
+    <script src="common-nav.js"></script>
+
+    <!-- 底部导航�?-->
     <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
         <a id="nav-home" href="#" class="flex flex-col items-center p-2 text-text-secondary">
             <i class="fas fa-home text-xl"></i>
@@ -364,44 +368,37 @@
                 window.location.href = 'P-INTERN_LOG_DETAIL.html';
             });
 
-            // 筛选按钮点击事件
-            document.querySelector('#filter-btn').addEventListener('click', function() {
+            // 筛选按钮点击事�?            document.querySelector('#filter-btn').addEventListener('click', function() {
                 const dropdown = document.querySelector('#filter-dropdown');
                 dropdown.classList.toggle('show');
             });
 
-            // 应用筛选按钮点击事件
-            document.querySelector('#apply-filter-btn').addEventListener('click', function() {
+            // 应用筛选按钮点击事�?            document.querySelector('#apply-filter-btn').addEventListener('click', function() {
                 const statusFilter = document.querySelector('#status-filter').value;
                 const startDate = document.querySelector('#start-date').value;
                 const endDate = document.querySelector('#end-date').value;
                 
                 // 这里可以添加筛选逻辑
-                console.log('应用筛选:', { statusFilter, startDate, endDate });
+                console.log('应用筛�?', { statusFilter, startDate, endDate });
                 
-                // 隐藏筛选下拉菜单
-                document.querySelector('#filter-dropdown').classList.remove('show');
+                // 隐藏筛选下拉菜�?                document.querySelector('#filter-dropdown').classList.remove('show');
                 
-                // 模拟筛选成功提示
-                alert('筛选已应用');
+                // 模拟筛选成功提�?                alert('筛选已应用');
             });
 
-            // 重置筛选按钮点击事件
-            document.querySelector('#reset-filter-btn').addEventListener('click', function() {
+            // 重置筛选按钮点击事�?            document.querySelector('#reset-filter-btn').addEventListener('click', function() {
                 document.querySelector('#status-filter').value = '';
                 document.querySelector('#start-date').value = '';
                 document.querySelector('#end-date').value = '';
             });
 
-            // 搜索输入框事件
-            document.querySelector('#search-input').addEventListener('input', function() {
+            // 搜索输入框事�?            document.querySelector('#search-input').addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase();
                 // 这里可以添加搜索逻辑
                 console.log('搜索:', searchTerm);
             });
 
-            // 日志列表项点击事件
-            const logItems = document.querySelectorAll('[data-log-id]');
+            // 日志列表项点击事�?            const logItems = document.querySelectorAll('[data-log-id]');
             logItems.forEach(item => {
                 item.addEventListener('click', function() {
                     const logId = this.getAttribute('data-log-id');
@@ -413,17 +410,16 @@
             document.querySelector('#load-more-btn').addEventListener('click', function() {
                 // 这里可以添加加载更多逻辑
                 console.log('加载更多日志');
-                this.textContent = '加载中...';
+                this.textContent = '加载�?..';
                 
                 // 模拟加载延迟
                 setTimeout(() => {
                     this.textContent = '加载更多日志';
-                    alert('已加载全部日志');
+                    alert('已加载全部日�?);
                 }, 1000);
             });
 
-            // 底部导航栏点击事件
-            document.querySelector('#nav-home').addEventListener('click', function(e) {
+            // 底部导航栏点击事�?            document.querySelector('#nav-home').addEventListener('click', function(e) {
                 e.preventDefault();
                 window.location.href = 'P-HOME_STUDENT_INTERNSHIP.html';
             });
@@ -449,8 +445,7 @@
                 });
             });
 
-            // 点击页面其他地方关闭筛选下拉菜单
-            document.addEventListener('click', function(e) {
+            // 点击页面其他地方关闭筛选下拉菜�?            document.addEventListener('click', function(e) {
                 const filterBtn = document.querySelector('#filter-btn');
                 const filterDropdown = document.querySelector('#filter-dropdown');
                 

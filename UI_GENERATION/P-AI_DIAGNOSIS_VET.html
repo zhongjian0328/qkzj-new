@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - AI兽医诊断</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(45, 187, 161, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
+        }
+
+        .tab-active {
+            background-color: #2DBBA1;
+            color: white;
+        }
+
+        .tab-inactive {
+            background-color: #F3F4F6;
+            color: #6B7280;
+        }
+
+        .tab-content {
+            display: block;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #2DBBA1 0%, #1F5E52 100%);
+            height: 4px;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .confidence-high {
+            background-color: #10B981;
+            color: white;
+        }
+
+        .confidence-medium {
+            background-color: #F59E0B;
+            color: white;
+        }
+
+        .confidence-low {
+            background-color: #EF4444;
+            color: white;
+        }
+
+        /* 阶段指示器样式 */
+        .stage-indicator {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stage-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .stage-circle {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: medium;
+            margin-bottom: 4px;
+        }
+
+        .stage-line {
+            flex: 1;
+            height: 2px;
+            background-color: #E5E7EB;
+            margin: 0 -12px;
+        }
+
+        .stage-text {
+            font-size: 12px;
+            color: #9CA3AF;
+        }
+
+        .stage-active .stage-circle {
+            background-color: #2DBBA1;
+            color: white;
+        }
+
+        .stage-active .stage-text {
+            color: #2DBBA1;
+            font-weight: medium;
+        }
+
+        .stage-completed .stage-circle {
+            background-color: #10B981;
+            color: white;
+        }
+
+        .stage-completed .stage-text {
+            color: #10B981;
+        }
+
+        .stage-completed .stage-line {
+            background-color: #10B981;
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex items-center px-4 py-3">
+            <button id="back-btn" class="mr-3 p-2 -ml-2" onclick="window.location.href='P-AI_DIAGNOSIS_MODE_SELECT.html'">
+                <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+            </button>
+            <h1 id="page-title" class="text-lg font-semibold text-text-primary">AI兽医诊断</h1>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6">
+        <!-- 阶段指示器 -->
+        <section id="stage-indicator" class="mb-6">
+            <div class="stage-indicator">
+                <div id="stage-1" class="stage-item stage-active">
+                    <div class="stage-circle">1</div>
+                    <div class="stage-text">基础信息</div>
+                </div>
+                <div class="stage-line"></div>
+                <div id="stage-2" class="stage-item">
+                    <div class="stage-circle">2</div>
+                    <div class="stage-text">综合数据</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 数据录入标签页 -->
+        <section id="data-input-section" class="mb-6">
+            <div id="input-tabs" class="flex space-x-2 mb-4 bg-gray-100 rounded-lg p-1 overflow-x-auto">
+                <button id="tab-basic" class="flex-shrink-0 py-2 px-3 text-sm font-medium rounded-md tab-active whitespace-nowrap" role="tab">
+                    基础信息
+                </button>
+                <button id="tab-clinical" class="flex-shrink-0 py-2 px-3 text-sm font-medium rounded-md tab-inactive whitespace-nowrap" role="tab">
+                    临床表现
+                </button>
+                <button id="tab-pathological" class="flex-shrink-0 py-2 px-3 text-sm font-medium rounded-md tab-inactive whitespace-nowrap" role="tab">
+                    病理变化
+                </button>
+                <button id="tab-rapid-test" class="flex-shrink-0 py-2 px-3 text-sm font-medium rounded-md tab-inactive whitespace-nowrap" role="tab">
+                    快速检测
+                </button>
+                <button id="tab-sampling" class="flex-shrink-0 py-2 px-3 text-sm font-medium rounded-md tab-inactive whitespace-nowrap" role="tab">
+                    采样信息
+                </button>
+                <button id="tab-experiment" class="flex-shrink-0 py-2 px-3 text-sm font-medium rounded-md tab-inactive whitespace-nowrap" role="tab">
+                    实验数据
+                </button>
+            </div>
+
+            <!-- 基础养殖信息 -->
+            <div id="basic-content" class="tab-content">
+                <div class="bg-card-bg rounded-xl p-4 shadow-card space-y-4">
+                    <div>
+                        <label for="farm-location" class="block text-sm font-medium text-text-primary mb-2">场址</label>
+                        <input type="text" id="farm-location" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="请输入养殖场地址">
+                    </div>
+                    <div>
+                        <label for="chicken-breed" class="block text-sm font-medium text-text-primary mb-2">鸡只品种</label>
+                        <select id="chicken-breed" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent">
+                            <option value="">请选择品种</option>
+                            <option value="broiler">肉鸡</option>
+                            <option value="layer">蛋鸡</option>
+                            <option value="breeder">种鸡</option>
+                            <option value="local">地方品种</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="age-days" class="block text-sm font-medium text-text-primary mb-2">日龄</label>
+                            <input type="number" id="age-days" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="如：45">
+                        </div>
+                        <div>
+                            <label for="stock-quantity" class="block text-sm font-medium text-text-primary mb-2">存栏量</label>
+                            <input type="number" id="stock-quantity" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="如：5000">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="onset-time" class="block text-sm font-medium text-text-primary mb-2">发病时间</label>
+                        <input type="date" id="onset-time" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 临床表现 -->
+            <div id="clinical-content" class="tab-content hidden">
+                <div class="bg-card-bg rounded-xl p-4 shadow-card space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-3">核心症状（可多选）</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                <input type="checkbox" name="symptoms" value="fever" class="text-secondary focus:ring-secondary">
+                                <span class="text-sm">发热</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                <input type="checkbox" name="symptoms" value="cough" class="text-secondary focus:ring-secondary">
+                                <span class="text-sm">咳嗽</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                <input type="checkbox" name="symptoms" value="diarrhea" class="text-secondary focus:ring-secondary">
+                                <span class="text-sm">腹泻</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                <input type="checkbox" name="symptoms" value="lethargy" class="text-secondary focus:ring-secondary">
+                                <span class="text-sm">精神沉郁</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                <input type="checkbox" name="symptoms" value="respiratory" class="text-secondary focus:ring-secondary">
+                                <span class="text-sm">呼吸困难</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                <input type="checkbox" name="symptoms" value="decreased-appetite" class="text-secondary focus:ring-secondary">
+                                <span class="text-sm">采食量下降</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="average-temperature" class="block text-sm font-medium text-text-primary mb-2">平均体温 (°C)</label>
+                            <input type="number" step="0.1" id="average-temperature" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="如：41.5">
+                        </div>
+                        <div>
+                            <label for="respiratory-rate" class="block text-sm font-medium text-text-primary mb-2">呼吸频率 (次/分)</label>
+                            <input type="number" id="respiratory-rate" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="如：35">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="mortality-rate" class="block text-sm font-medium text-text-primary mb-2">死亡率 (%)</label>
+                            <input type="number" step="0.1" id="mortality-rate" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="如：2.5">
+                        </div>
+                        <div>
+                            <label for="feed-decrease" class="block text-sm font-medium text-text-primary mb-2">采食量下降 (%)</label>
+                            <input type="number" step="0.1" id="feed-decrease" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="如：20">
+                        </div>
+                    </div>
+                    <div id="egg-production-section" class="hidden">
+                        <div>
+                            <label for="egg-decrease" class="block text-sm font-medium text-text-primary mb-2">产蛋率下降 (%)</label>
+                            <input type="number" step="0.1" id="egg-decrease" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="如：15">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 病理变化 -->
+            <div id="pathological-content" class="tab-content hidden">
+                <div class="bg-card-bg rounded-xl p-4 shadow-card space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-3">特征病变部位（可多选）</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                <input type="checkbox" name="pathology" value="lung" class="text-secondary focus:ring-secondary">
+                                <span class="text-sm">肺部</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                <input type="checkbox" name="pathology" value="liver" class="text-secondary focus:ring-secondary">
+                                <span class="text-sm">肝脏</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                <input type="checkbox" name="pathology" value="kidney" class="text-secondary focus:ring-secondary">
+                                <span class="text-sm">肾脏</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                <input type="checkbox" name="pathology" value="intestine" class="text-secondary focus:ring-secondary">
+                                <span class="text-sm">肠道</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                <input type="checkbox" name="pathology" value="heart" class="text-secondary focus:ring-secondary">
+                                <span class="text-sm">心脏</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                <input type="checkbox" name="pathology" value="spleen" class="text-secondary focus:ring-secondary">
+                                <span class="text-sm">脾脏</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="pathology-description" class="block text-sm font-medium text-text-primary mb-2">病变描述</label>
+                        <textarea id="pathology-description" rows="3" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="请描述观察到的病理变化..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 快速检测结果 -->
+            <div id="rapid-test-content" class="tab-content hidden">
+                <div class="bg-card-bg rounded-xl p-4 shadow-card space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-3">病原检测项目（可多选）</label>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                                <span class="text-sm">禽流感病毒 (AIV)</span>
+                                <select name="aiv-test" class="text-sm border border-border-color rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-secondary">
+                                    <option value="">未检测</option>
+                                    <option value="positive">阳性</option>
+                                    <option value="negative">阴性</option>
+                                    <option value="suspected">疑似</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                                <span class="text-sm">新城疫病毒 (NDV)</span>
+                                <select name="ndv-test" class="text-sm border border-border-color rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-secondary">
+                                    <option value="">未检测</option>
+                                    <option value="positive">阳性</option>
+                                    <option value="negative">阴性</option>
+                                    <option value="suspected">疑似</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                                <span class="text-sm">传染性支气管炎 (IBV)</span>
+                                <select name="ibv-test" class="text-sm border border-border-color rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-secondary">
+                                    <option value="">未检测</option>
+                                    <option value="positive">阳性</option>
+                                    <option value="negative">阴性</option>
+                                    <option value="suspected">疑似</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 采样信息 -->
+            <div id="sampling-content" class="tab-content hidden">
+                <div class="bg-card-bg rounded-xl p-4 shadow-card space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="sample-count" class="block text-sm font-medium text-text-primary mb-2">样本总数</label>
+                            <input type="number" id="sample-count" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="如：10">
+                        </div>
+                        <div>
+                            <label for="sample-preservation" class="block text-sm font-medium text-text-primary mb-2">保存条件</label>
+                            <select id="sample-preservation" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent">
+                                <option value="">请选择</option>
+                                <option value="refrigerated">冷藏 (2-8°C)</option>
+                                <option value="frozen">冷冻 (-20°C)</option>
+                                <option value="ambient">常温</option>
+                                <option value="special">特殊保存</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-3">采样部位（可多选）</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                <input type="checkbox" name="sampling-sites" value="throat" class="text-secondary focus:ring-secondary">
+                                <span class="text-sm">咽喉拭子</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                <input type="checkbox" name="sampling-sites" value="cloaca" class="text-secondary focus:ring-secondary">
+                                <span class="text-sm">泄殖腔拭子</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                <input type="checkbox" name="sampling-sites" value="tissue" class="text-secondary focus:ring-secondary">
+                                <span class="text-sm">组织样本</span>
+                            </label>
+                            <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                <input type="checkbox" name="sampling-sites" value="blood" class="text-secondary focus:ring-secondary">
+                                <span class="text-sm">血液样本</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 实验数据 -->
+            <div id="experiment-content" class="tab-content hidden">
+                <div class="bg-card-bg rounded-xl p-4 shadow-card space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-3">实验项目（可多选）</label>
+                        <div class="space-y-3">
+                            <div class="p-3 border border-gray-200 rounded-lg">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium">血常规检查</span>
+                                    <input type="checkbox" name="experiment" value="blood-routine" class="text-secondary focus:ring-secondary">
+                                </div>
+                                <div class="grid grid-cols-2 gap-3 mt-2">
+                                    <div>
+                                        <label for="wbc-count" class="block text-xs text-text-tertiary mb-1">白细胞计数 (WBC)</label>
+                                        <input type="number" id="wbc-count" class="w-full px-2 py-1 text-sm border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="如：25.0">
+                                    </div>
+                                    <div>
+                                        <label for="rbc-count" class="block text-xs text-text-tertiary mb-1">红细胞计数 (RBC)</label>
+                                        <input type="number" id="rbc-count" class="w-full px-2 py-1 text-sm border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="如：3.5">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3 border border-gray-200 rounded-lg">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium">生化检查</span>
+                                    <input type="checkbox" name="experiment" value="biochemical" class="text-secondary focus:ring-secondary">
+                                </div>
+                                <div class="grid grid-cols-2 gap-3 mt-2">
+                                    <div>
+                                        <label for="alt-level" class="block text-xs text-text-tertiary mb-1">谷丙转氨酶 (ALT)</label>
+                                        <input type="number" id="alt-level" class="w-full px-2 py-1 text-sm border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="如：45.0">
+                                    </div>
+                                    <div>
+                                        <label for="ast-level" class="block text-xs text-text-tertiary mb-1">谷草转氨酶 (AST)</label>
+                                        <input type="number" id="ast-level" class="w-full px-2 py-1 text-sm border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="如：60.0">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="experiment-description" class="block text-sm font-medium text-text-primary mb-2">实验数据补充说明</label>
+                        <textarea id="experiment-description" rows="2" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="请补充说明实验数据..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 图片上传区域 -->
+        <section id="image-upload-section" class="mb-6">
+            <h3 class="text-lg font-semibold text-text-primary mb-4">上传病禽图片</h3>
+            <div id="upload-container" class="grid grid-cols-3 gap-3">
+                <div id="upload-area" class="aspect-square bg-gray-100 rounded-xl flex flex-col items-center justify-center border-2 border-dashed border-gray-300 cursor-pointer hover:border-secondary transition-colors">
+                    <i class="fas fa-camera text-2xl text-gray-400 mb-2"></i>
+                    <span class="text-sm text-gray-500">拍照上传</span>
+                </div>
+                <div id="upload-area-2" class="aspect-square bg-gray-100 rounded-xl flex flex-col items-center justify-center border-2 border-dashed border-gray-300 cursor-pointer hover:border-secondary transition-colors">
+                    <i class="fas fa-images text-2xl text-gray-400 mb-2"></i>
+                    <span class="text-sm text-gray-500">选择图片</span>
+                </div>
+                <div id="upload-area-3" class="aspect-square bg-gray-100 rounded-xl flex flex-col items-center justify-center border-2 border-dashed border-gray-300 cursor-pointer hover:border-secondary transition-colors">
+                    <i class="fas fa-plus text-2xl text-gray-400 mb-2"></i>
+                    <span class="text-sm text-gray-500">添加更多</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 提交按钮 -->
+        <section id="submit-section" class="mb-6">
+            <button id="submit-data-btn" class="w-full gradient-bg text-accent font-semibold py-4 rounded-xl shadow-button">
+                <i class="fas fa-robot mr-2"></i>
+                开始AI诊断
+            </button>
+        </section>
+
+        <!-- AI诊断结果展示区 -->
+        <section id="diagnosis-result-section" class="hidden">
+            <h3 class="text-lg font-semibold text-text-primary mb-4">AI诊断结果</h3>
+            
+            <!-- 诊断概览卡片 -->
+            <div id="diagnosis-overview" class="bg-card-bg rounded-xl p-4 shadow-card mb-4">
+                <h4 class="font-medium text-text-primary mb-3">诊断概览</h4>
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div class="bg-green-50 p-3 rounded-lg">
+                        <i class="fas fa-virus text-2xl text-green-600 mb-2"></i>
+                        <h5 class="font-medium text-text-primary">主要病原</h5>
+                        <p class="text-sm text-text-secondary">AIV + NDV</p>
+                    </div>
+                    <div class="bg-red-50 p-3 rounded-lg">
+                        <i class="fas fa-exclamation-triangle text-2xl text-red-600 mb-2"></i>
+                        <h5 class="font-medium text-text-primary">风险等级</h5>
+                        <p class="text-sm text-text-secondary">高风险</p>
+                    </div>
+                    <div class="bg-blue-50 p-3 rounded-lg">
+                        <i class="fas fa-clock text-2xl text-blue-600 mb-2"></i>
+                        <h5 class="font-medium text-text-primary">建议响应</h5>
+                        <p class="text-sm text-text-secondary">0-24小时</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 单项病原诊断结果 -->
+            <div id="single-diagnosis" class="bg-card-bg rounded-xl p-4 shadow-card mb-4">
+                <div class="flex items-center justify-between mb-3">
+                    <h4 class="font-medium text-text-primary">单项病原诊断</h4>
+                    <button class="text-sm text-secondary toggle-result">
+                        <i class="fas fa-chevron-down mr-1"></i>展开全部
+                    </button>
+                </div>
+                <div class="space-y-3">
+                    <div id="diagnosis-item-1" class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                        <div>
+                            <h5 class="font-medium text-text-primary">禽流感病毒 (H9N2)</h5>
+                            <p class="text-sm text-text-secondary">核心依据：发热、呼吸道症状、肺部病变</p>
+                        </div>
+                        <div class="px-3 py-1 rounded-full confidence-high text-sm font-medium">
+                            95%
+                        </div>
+                    </div>
+                    <div id="diagnosis-item-2" class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                        <div>
+                            <h5 class="font-medium text-text-primary">新城疫病毒</h5>
+                            <p class="text-sm text-text-secondary">核心依据：神经症状、消化道病变</p>
+                        </div>
+                        <div class="px-3 py-1 rounded-full confidence-medium text-sm font-medium">
+                            78%
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 混合感染风险评估 -->
+            <div id="mixed-infection-risk" class="bg-card-bg rounded-xl p-4 shadow-card mb-4">
+                <h4 class="font-medium text-text-primary mb-3">混合感染风险评估</h4>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-text-secondary">风险等级</span>
+                        <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">高风险</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-text-secondary">主要感染组合</span>
+                        <span class="text-sm font-medium text-text-primary">AIV + NDV</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-text-secondary">感染概率</span>
+                        <span class="text-sm font-medium text-text-primary">82%</span>
+                    </div>
+                    <!-- 风险可视化 -->
+                    <div class="mt-3">
+                        <div class="flex justify-between text-xs text-text-secondary mb-1">
+                            <span>低风险</span>
+                            <span>中风险</span>
+                            <span>高风险</span>
+                            <span>极高风险</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="bg-red-500 h-3 rounded-full" style="width: 82%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                    <h5 class="font-medium text-orange-800 mb-1">核心威胁提示</h5>
+                    <p class="text-sm text-orange-700">混合感染可能导致死亡率显著上升，建议立即采取应急防控措施</p>
+                </div>
+            </div>
+
+            <!-- 应急防控方案 -->
+            <div id="emergency-plan" class="bg-card-bg rounded-xl p-4 shadow-card mb-4">
+                <h4 class="font-medium text-text-primary mb-3">应急防控方案</h4>
+                <div class="flex space-x-2 mb-3 bg-gray-100 rounded-lg p-1 overflow-x-auto">
+                    <button id="plan-emergency" class="flex-shrink-0 py-2 px-3 text-sm font-medium rounded-md tab-active min-w-[80px]">
+                        0-24小时
+                    </button>
+                    <button id="plan-short-term" class="flex-shrink-0 py-2 px-3 text-sm font-medium rounded-md tab-inactive min-w-[80px]">
+                        1-7天
+                    </button>
+                    <button id="plan-biosafety" class="flex-shrink-0 py-2 px-3 text-sm font-medium rounded-md tab-inactive min-w-[80px]">
+                        生物安全
+                    </button>
+                </div>
+                
+                <div id="emergency-content" class="tab-content">
+                    <div class="space-y-3">
+                        <div class="p-3 border border-gray-200 rounded-lg">
+                            <h5 class="font-medium text-text-primary mb-2">
+                                <i class="fas fa-user-shield text-secondary mr-2"></i>
+                                分类隔离
+                            </h5>
+                            <p class="text-sm text-text-secondary">立即隔离病禽，将健康禽群转移至安全区域</p>
+                        </div>
+                        <div class="p-3 border border-gray-200 rounded-lg">
+                            <h5 class="font-medium text-text-primary mb-2">
+                                <i class="fas fa-syringe text-secondary mr-2"></i>
+                                紧急免疫
+                            </h5>
+                            <p class="text-sm text-text-secondary">对健康禽群进行紧急疫苗接种，推荐使用H9亚型禽流感疫苗</p>
+                        </div>
+                        <div class="p-3 border border-gray-200 rounded-lg">
+                            <h5 class="font-medium text-text-primary mb-2">
+                                <i class="fas fa-pills text-secondary mr-2"></i>
+                                综合用药
+                            </h5>
+                            <p class="text-sm text-text-secondary">使用抗病毒药物（如奥司他韦）和广谱抗生素控制继发感染</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="short-term-content" class="tab-content hidden">
+                    <div class="space-y-3">
+                        <div class="p-3 border border-gray-200 rounded-lg">
+                            <h5 class="font-medium text-text-primary mb-2">对症治疗</h5>
+                            <p class="text-sm text-text-secondary">根据临床症状进行针对性治疗，缓解呼吸道症状</p>
+                        </div>
+                        <div class="p-3 border border-gray-200 rounded-lg">
+                            <h5 class="font-medium text-text-primary mb-2">营养支持</h5>
+                            <p class="text-sm text-text-secondary">提供高能量饲料，添加维生素和电解质</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="biosafety-content" class="tab-content hidden">
+                    <div class="space-y-3">
+                        <div class="p-3 border border-gray-200 rounded-lg">
+                            <h5 class="font-medium text-text-primary mb-2">无害化处理</h5>
+                            <p class="text-sm text-text-secondary">严格按照规范处理病死禽只，避免病毒扩散</p>
+                        </div>
+                        <div class="p-3 border border-gray-200 rounded-lg">
+                            <h5 class="font-medium text-text-primary mb-2">消毒防控</h5>
+                            <p class="text-sm text-text-secondary">对养殖场进行全面消毒，建议使用醛类消毒剂</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 确诊方案推荐 -->
+            <div id="detection-plan" class="bg-card-bg rounded-xl p-4 shadow-card mb-4">
+                <h4 class="font-medium text-text-primary mb-3">确诊方案推荐</h4>
+                <div class="space-y-3">
+                    <div class="p-3 border border-red-200 rounded-lg bg-red-50">
+                        <h5 class="font-medium text-red-800 mb-2">紧急检测项目</h5>
+                        <ul class="text-sm text-red-700 space-y-1">
+                            <li>• 实时荧光RT-PCR检测AIV和NDV</li>
+                            <li>• 病毒分离鉴定</li>
+                        </ul>
+                    </div>
+                    <div class="p-3 border border-blue-200 rounded-lg bg-blue-50">
+                        <h5 class="font-medium text-blue-800 mb-2">重要检测项目</h5>
+                        <ul class="text-sm text-blue-700 space-y-1">
+                            <li>• 血清学检测（HI试验）</li>
+                            <li>• 病理组织学检查</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- 检测机构推荐 -->
+                <div class="mt-4 pt-3 border-t border-gray-200">
+                    <h5 class="font-medium text-text-primary mb-2">推荐检测机构</h5>
+                    <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-hospital text-blue-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h6 class="font-medium text-text-primary">国家动物疫病防控中心</h6>
+                            <p class="text-xs text-text-secondary">检测时间：24-48小时 | 准确率：99.5%</p>
+                        </div>
+                        <button class="text-xs bg-blue-100 text-blue-600 px-3 py-1 rounded-full">联系机构</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 学生模拟诊断区域 -->
+            <div id="student-diagnosis-section" class="bg-card-bg rounded-xl p-4 shadow-card mb-4 hidden">
+                <h4 class="font-medium text-text-primary mb-3">学生模拟诊断</h4>
+                
+                <!-- 学生诊断输入区域 -->
+                <div id="student-diagnosis-input-section" class="space-y-3">
+                    <div>
+                        <label for="student-diagnosis-input" class="block text-sm font-medium text-text-primary mb-2">请输入您的诊断判断</label>
+                        <textarea id="student-diagnosis-input" rows="3" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="请描述您的诊断思路和结果..."></textarea>
+                    </div>
+                    <button id="submit-student-diagnosis" class="w-full bg-secondary text-white font-medium py-2 rounded-lg">
+                        提交诊断
+                    </button>
+                </div>
+                
+                <!-- 诊断结果对比区域 -->
+                <div id="diagnosis-comparison-section" class="space-y-3 hidden">
+                    <div class="border-t border-gray-100 pt-3 mt-3">
+                        <h5 class="font-medium text-text-primary mb-2">诊断结果对比</h5>
+                        
+                        <!-- 对比项：诊断思路 -->
+                        <div class="mb-4">
+                            <h6 class="text-sm font-medium text-text-primary mb-2">诊断思路</h6>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="p-3 bg-blue-50 border border-blue-100 rounded-lg">
+                                    <div class="flex items-center space-x-2 mb-2">
+                                        <i class="fas fa-user-graduate text-blue-600"></i>
+                                        <span class="text-sm font-medium text-blue-800">学生诊断</span>
+                                    </div>
+                                    <p id="student-diagnosis-thoughts" class="text-sm text-text-secondary">学生诊断思路...</p>
+                                </div>
+                                <div class="p-3 bg-green-50 border border-green-100 rounded-lg">
+                                    <div class="flex items-center space-x-2 mb-2">
+                                        <i class="fas fa-robot text-green-600"></i>
+                                        <span class="text-sm font-medium text-green-800">AI诊断</span>
+                                    </div>
+                                    <p class="text-sm text-text-secondary">基于临床症状、病理变化和实验数据，结合AI模型分析，判断为禽流感和新城疫混合感染...</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 对比项：主要病原 -->
+                        <div class="mb-4">
+                            <h6 class="text-sm font-medium text-text-primary mb-2">主要病原</h6>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="p-3 bg-blue-50 border border-blue-100 rounded-lg">
+                                    <div class="flex items-center space-x-2 mb-2">
+                                        <i class="fas fa-user-graduate text-blue-600"></i>
+                                        <span class="text-sm font-medium text-blue-800">学生诊断</span>
+                                    </div>
+                                    <p id="student-diagnosis-pathogens" class="text-sm font-medium text-text-primary">新城疫</p>
+                                </div>
+                                <div class="p-3 bg-green-50 border border-green-100 rounded-lg">
+                                    <div class="flex items-center space-x-2 mb-2">
+                                        <i class="fas fa-robot text-green-600"></i>
+                                        <span class="text-sm font-medium text-green-800">AI诊断</span>
+                                    </div>
+                                    <p class="text-sm font-medium text-text-primary">AIV + NDV</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 对比项：风险等级 -->
+                        <div class="mb-4">
+                            <h6 class="text-sm font-medium text-text-primary mb-2">风险等级</h6>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="p-3 bg-blue-50 border border-blue-100 rounded-lg">
+                                    <div class="flex items-center space-x-2 mb-2">
+                                        <i class="fas fa-user-graduate text-blue-600"></i>
+                                        <span class="text-sm font-medium text-blue-800">学生诊断</span>
+                                    </div>
+                                    <p id="student-diagnosis-risk" class="text-sm font-medium text-text-primary">中风险</p>
+                                </div>
+                                <div class="p-3 bg-green-50 border border-green-100 rounded-lg">
+                                    <div class="flex items-center space-x-2 mb-2">
+                                        <i class="fas fa-robot text-green-600"></i>
+                                        <span class="text-sm font-medium text-green-800">AI诊断</span>
+                                    </div>
+                                    <p class="text-sm font-medium text-text-primary">高风险</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 对比项：诊断得分 -->
+                        <div class="mb-4">
+                            <h6 class="text-sm font-medium text-text-primary mb-2">诊断得分</h6>
+                            <div class="p-3 bg-yellow-50 border border-yellow-100 rounded-lg">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-sm font-medium text-yellow-800">学生诊断得分</span>
+                                    <span id="student-diagnosis-score" class="text-lg font-bold text-yellow-600">85</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="bg-yellow-500 h-3 rounded-full" style="width: 85%"></div>
+                                </div>
+                                <p class="text-xs text-yellow-700 mt-1">诊断思路清晰，病原判断基本准确，但风险等级评估偏低</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div id="result-actions" class="flex flex-col space-y-3">
+                <!-- 诊疗服务下单按钮 -->
+                <button id="order-service-btn" class="w-full bg-secondary text-white font-medium py-3 rounded-xl">
+                    <i class="fas fa-shopping-cart mr-2"></i>
+                    诊疗服务下单
+                </button>
+                <!-- 查看治疗方案和保存诊断记录按钮 -->
+                <div class="flex space-x-3">
+                    <button id="view-treatment-plan" class="flex-1 bg-white border-2 border-secondary text-secondary font-medium py-3 rounded-xl">
+                        <i class="fas fa-prescription-bottle mr-2"></i>
+                        查看治疗方案
+                    </button>
+                    <button id="save-diagnosis" class="flex-1 bg-white border-2 border-secondary text-secondary font-medium py-3 rounded-xl">
+                        <i class="fas fa-save mr-2"></i>
+                        保存诊断记录
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI分析中加载状态 -->
+        <section id="loading-section" class="hidden">
+            <div class="bg-card-bg rounded-xl p-8 shadow-card text-center">
+                <div class="w-16 h-16 border-4 border-secondary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <h3 class="text-lg font-medium text-text-primary mb-2">AI正在分析中</h3>
+                <p class="text-sm text-text-secondary mb-4">请稍候，AI正在分析您提供的数据...</p>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div id="progress-bar" class="progress-bar w-0"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- 提示框 -->
+    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-text-primary text-white px-4 py-2 rounded-lg text-sm z-50 hidden">
+        <span id="toast-message">提示信息</span>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 从URL参数或localStorage中获取用户角色
+            function getCurrentUserRole() {
+                // 优先从URL参数获取
+                const urlParams = new URLSearchParams(window.location.search);
+                const roleFromUrl = urlParams.get('role');
+                if (roleFromUrl) {
+                    return roleFromUrl;
+                }
+                
+                // 从localStorage获取
+                const roleFromStorage = localStorage.getItem('userRole');
+                if (roleFromStorage) {
+                    return roleFromStorage;
+                }
+                
+                // 默认角色为养殖户
+                return 'farmer';
+            }
+            
+            // 获取当前用户角色
+            const userRole = getCurrentUserRole(); // 可选值：'farmer'（养殖户）, 'service_provider'（服务商）, 'research_institute'（科研院所）, 'student'（学生）, 'teacher'（教师）
+            
+            // 根据角色权限动态显示标签页
+            function updateTabsByRole() {
+                const stageTwoTabs = ['tab-pathological', 'tab-rapid-test', 'tab-sampling', 'tab-experiment'];
+                const stageTwoContents = ['pathological-content', 'rapid-test-content', 'sampling-content', 'experiment-content'];
+                const studentOnlyTabs = ['student-diagnosis-section'];
+                
+                // 只有科研院所、服务商和教师可以访问阶段二标签页
+                const canAccessStageTwo = userRole === 'service_provider' || userRole === 'research_institute' || userRole === 'teacher';
+                
+                if (!canAccessStageTwo) {
+                    // 隐藏阶段二标签页
+                    stageTwoTabs.forEach(tabId => {
+                        const tab = document.getElementById(tabId);
+                        if (tab) {
+                            tab.style.display = 'none';
+                        }
+                    });
+                    
+                    // 隐藏阶段二内容
+                    stageTwoContents.forEach(contentId => {
+                        const content = document.getElementById(contentId);
+                        if (content) {
+                            content.classList.add('hidden');
+                        }
+                    });
+                }
+                
+                // 只有学生角色显示学生模拟诊断区域
+                if (userRole !== 'student') {
+                    studentOnlyTabs.forEach(sectionId => {
+                        const section = document.getElementById(sectionId);
+                        if (section) {
+                            section.classList.add('hidden');
+                        }
+                    });
+                }
+                
+                // 根据角色显示不同的操作按钮
+                updateActionButtonsByRole();
+            }
+            
+            // 根据角色显示不同的操作按钮
+            function updateActionButtonsByRole() {
+                const orderServiceBtn = document.getElementById('order-service-btn');
+                const viewTreatmentPlanBtn = document.getElementById('view-treatment-plan');
+                const saveDiagnosisBtn = document.getElementById('save-diagnosis');
+                
+                // 只有养殖户可以下单诊疗服务
+                if (userRole !== 'farmer') {
+                    if (orderServiceBtn) {
+                        orderServiceBtn.style.display = 'none';
+                    }
+                }
+                
+                // 只有学生不显示查看治疗方案按钮
+                if (userRole === 'student') {
+                    if (viewTreatmentPlanBtn) {
+                        viewTreatmentPlanBtn.style.display = 'none';
+                    }
+                }
+            }
+            
+            // 执行角色权限控制
+            updateTabsByRole();
+            
+            // 标签页切换功能
+            const tabs = document.querySelectorAll('[role="tab"]');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.id.replace('tab-', '');
+                    
+                    // 重置所有标签样式
+                    tabs.forEach(t => {
+                        t.classList.remove('tab-active');
+                        t.classList.add('tab-inactive');
+                    });
+                    
+                    // 设置当前标签样式
+                    this.classList.remove('tab-inactive');
+                    this.classList.add('tab-active');
+                    
+                    // 隐藏所有内容
+                    tabContents.forEach(content => {
+                        content.classList.add('hidden');
+                    });
+                    
+                    // 显示对应内容
+                    const contentId = tabId + '-content';
+                    const content = document.querySelector('#' + contentId);
+                    if (content) {
+                        content.classList.remove('hidden');
+                    }
+                });
+            });
+
+            // 品种选择联动显示产蛋率输入框
+            const chickenBreed = document.querySelector('#chicken-breed');
+            const eggProductionSection = document.querySelector('#egg-production-section');
+            
+            chickenBreed.addEventListener('change', function() {
+                if (this.value === 'layer') {
+                    eggProductionSection.classList.remove('hidden');
+                } else {
+                    eggProductionSection.classList.add('hidden');
+                }
+            });
+
+            // 应急防控方案标签页切换
+            const planTabs = document.querySelectorAll('[id^="plan-"]');
+            const planContents = document.querySelectorAll('[id$="-content"]');
+            
+            planTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.id.replace('plan-', '');
+                    
+                    // 重置所有标签样式
+                    planTabs.forEach(t => {
+                        t.classList.remove('tab-active');
+                        t.classList.add('tab-inactive');
+                    });
+                    
+                    // 设置当前标签样式
+                    this.classList.remove('tab-inactive');
+                    this.classList.add('tab-active');
+                    
+                    // 隐藏所有内容
+                    planContents.forEach(content => {
+                        if (content.id.includes('emergency') || content.id.includes('short-term') || content.id.includes('biosafety')) {
+                            content.classList.add('hidden');
+                        }
+                    });
+                    
+                    // 显示对应内容
+                    const contentId = tabId + '-content';
+                    const content = document.querySelector('#' + contentId);
+                    if (content) {
+                        content.classList.remove('hidden');
+                    }
+                });
+            });
+
+            // 图片上传功能
+            const uploadAreas = document.querySelectorAll('[id^="upload-area"]');
+            uploadAreas.forEach(area => {
+                area.addEventListener('click', function() {
+                    console.log('需要调用第三方接口实现相机拍照或图片选择功能');
+                    // 注释：此功能需要调用设备相机API或相册选择API，在原型阶段仅做UI展示
+                });
+            });
+
+            // 显示提示框函数
+            function showToast(message, isError = false) {
+                const toast = document.querySelector('#toast');
+                const toastMessage = document.querySelector('#toast-message');
+                
+                toastMessage.textContent = message;
+                
+                // 设置不同的背景色
+                if (isError) {
+                    toast.classList.add('bg-error');
+                    toast.classList.remove('bg-text-primary');
+                } else {
+                    toast.classList.add('bg-text-primary');
+                    toast.classList.remove('bg-error');
+                }
+                
+                toast.classList.remove('hidden');
+                
+                // 3秒后自动隐藏
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 3000);
+            }
+            
+            // 提交数据开始诊断
+            document.querySelector('#submit-data-btn').addEventListener('click', function() {
+                // 表单验证
+                const chickenBreed = document.querySelector('#chicken-breed').value;
+                const ageDays = document.querySelector('#age-days').value;
+                const stockQuantity = document.querySelector('#stock-quantity').value;
+                const symptoms = document.querySelectorAll('input[name="symptoms"]:checked');
+                
+                if (!chickenBreed) {
+                    showToast('请选择鸡只品种', true);
+                    return;
+                }
+                if (!ageDays || parseInt(ageDays) <= 0) {
+                    showToast('请输入有效的日龄', true);
+                    return;
+                }
+                if (!stockQuantity || parseInt(stockQuantity) <= 0) {
+                    showToast('请输入有效的存栏量', true);
+                    return;
+                }
+                if (symptoms.length === 0) {
+                    showToast('请至少选择一项核心症状', true);
+                    return;
+                }
+                
+                // 隐藏输入区域，显示加载状态
+                document.querySelector('#data-input-section').classList.add('hidden');
+                document.querySelector('#image-upload-section').classList.add('hidden');
+                document.querySelector('#submit-section').classList.add('hidden');
+                document.querySelector('#loading-section').classList.remove('hidden');
+                
+                // 模拟AI分析进度
+                let progress = 0;
+                const progressBar = document.querySelector('#progress-bar');
+                const progressInterval = setInterval(() => {
+                    progress += 10;
+                    progressBar.style.width = progress + '%';
+                    
+                    if (progress >= 100) {
+                        clearInterval(progressInterval);
+                        
+                        // 隐藏加载状态，跳转到AI初诊报告页面
+                        window.location.href = 'P-AI_PRE_DIAGNOSIS_REPORT.html';
+                    }
+                }, 200);
+            });
+
+            // 学生提交模拟诊断
+            document.querySelector('#submit-student-diagnosis').addEventListener('click', function() {
+                const studentDiagnosis = document.querySelector('#student-diagnosis-input').value;
+                if (studentDiagnosis.trim()) {
+                    // 显示提交成功消息
+                    showToast('模拟诊断已提交，正在生成对比结果...');
+                    
+                    // 模拟对比分析过程
+                    setTimeout(function() {
+                        // 显示对比结果
+                        showStudentDiagnosisComparison(studentDiagnosis);
+                    }, 1500);
+                } else {
+                    showToast('请输入您的诊断判断', true);
+                }
+            });
+
+            // 显示学生诊断与AI结果对比
+            function showStudentDiagnosisComparison(studentDiagnosis) {
+                // 隐藏输入区域
+                const inputSection = document.getElementById('student-diagnosis-input-section');
+                inputSection.classList.add('hidden');
+                
+                // 显示对比区域
+                const comparisonSection = document.getElementById('diagnosis-comparison-section');
+                comparisonSection.classList.remove('hidden');
+                
+                // 更新学生诊断思路
+                const studentThoughtsElement = document.getElementById('student-diagnosis-thoughts');
+                studentThoughtsElement.textContent = studentDiagnosis;
+                
+                // 这里可以根据学生诊断结果生成得分和评价
+                // 实际应用中，这里应该调用AI模型进行分析和评分
+                
+                // 显示得分和评价
+                const scoreElement = document.getElementById('student-diagnosis-score');
+                const progressBarElement = document.querySelector('.bg-yellow-500');
+                const feedbackElement = document.querySelector('.text-yellow-700');
+                
+                // 模拟不同诊断结果的得分变化
+                // 实际应用中，这里应该根据学生的诊断结果动态计算得分
+                if (studentDiagnosis.includes('禽流感') && studentDiagnosis.includes('新城疫')) {
+                    scoreElement.textContent = '95';
+                    progressBarElement.style.width = '95%';
+                    feedbackElement.textContent = '诊断思路清晰，病原判断准确，风险等级评估合理，诊断结果优秀';
+                    
+                    // 更新主要病原和风险等级
+                    document.getElementById('student-diagnosis-pathogens').textContent = 'AIV + NDV';
+                    document.getElementById('student-diagnosis-risk').textContent = '高风险';
+                } else if (studentDiagnosis.includes('新城疫')) {
+                    scoreElement.textContent = '85';
+                    progressBarElement.style.width = '85%';
+                    feedbackElement.textContent = '诊断思路清晰，病原判断基本准确，但风险等级评估偏低';
+                    
+                    // 更新主要病原和风险等级
+                    document.getElementById('student-diagnosis-pathogens').textContent = 'NDV';
+                    document.getElementById('student-diagnosis-risk').textContent = '中风险';
+                } else if (studentDiagnosis.includes('禽流感')) {
+                    scoreElement.textContent = '80';
+                    progressBarElement.style.width = '80%';
+                    feedbackElement.textContent = '诊断思路清晰，病原判断基本准确，但风险等级评估偏低';
+                    
+                    // 更新主要病原和风险等级
+                    document.getElementById('student-diagnosis-pathogens').textContent = 'AIV';
+                    document.getElementById('student-diagnosis-risk').textContent = '中风险';
+                } else {
+                    scoreElement.textContent = '70';
+                    progressBarElement.style.width = '70%';
+                    feedbackElement.textContent = '诊断思路基本清晰，但病原判断有误，需要进一步学习';
+                    
+                    // 更新主要病原和风险等级
+                    document.getElementById('student-diagnosis-pathogens').textContent = '未知';
+                    document.getElementById('student-diagnosis-risk').textContent = '低风险';
+                }
+            }
+
+            // 诊疗服务下单按钮点击事件
+            document.querySelector('#order-service-btn').addEventListener('click', function() {
+                window.location.href = 'P-MEDICAL_SERVICE_ORDER.html';
+            });
+
+            // 查看治疗方案按钮点击事件
+            document.querySelector('#view-treatment-plan').addEventListener('click', function() {
+                window.location.href = 'P-TREATMENT_PLAN.html';
+            });
+
+            // 保存诊断记录按钮点击事件
+            document.querySelector('#save-diagnosis').addEventListener('click', function() {
+                showToast('诊断记录已保存');
+            });
+
+
+        });
+    </script>
+</body>
+</html>

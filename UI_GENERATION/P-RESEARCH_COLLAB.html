@@ -11,14 +11,22 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#D3F8EE',
-                        secondary: '#3BCCA5', 
-                        accent: '#2B6A5A',
-                        'text-primary': '#1F2937',
-                        'text-secondary': '#6B7280',
-                        'bg-light': '#F9FAFB',
-                        'card-bg': '#FFFFFF'
-                    },
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
                     fontFamily: {
                         'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     },
@@ -32,7 +40,7 @@
     </script>
     <style>
         .gradient-bg {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .card-hover:active {
@@ -49,7 +57,7 @@
         }
         
         .status-bar {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .modal-overlay {
@@ -212,19 +220,19 @@
                         <div>
                             <label for="group-name" class="block text-sm font-medium text-text-primary mb-2">群组名称</label>
                             <input type="text" id="group-name" name="group-name" 
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" 
+                                   class="w-full px-4 py-3 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" 
                                    placeholder="请输入群组名称" required>
                         </div>
                         
                         <div>
                             <label for="group-description" class="block text-sm font-medium text-text-primary mb-2">群组描述</label>
                             <textarea id="group-description" name="group-description" rows="3"
-                                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" 
+                                      class="w-full px-4 py-3 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" 
                                       placeholder="请输入群组描述"></textarea>
                         </div>
                         
                         <div class="flex space-x-3 pt-4">
-                            <button type="button" id="cancel-create" class="flex-1 py-3 border border-gray-300 text-text-secondary rounded-lg">
+                            <button type="button" id="cancel-create" class="flex-1 py-3 border border-border-color text-text-secondary rounded-lg">
                                 取消
                             </button>
                             <button type="submit" class="flex-1 py-3 bg-secondary text-white rounded-lg">
@@ -308,11 +316,16 @@
                         <div>
                             <div class="flex justify-between items-center mb-3">
                                 <h4 class="font-medium text-text-primary">共享文件 (8)</h4>
-                                <button id="upload-file-btn" class="text-sm text-secondary">
-                                    <i class="fas fa-upload mr-1"></i>上传文件
-                                </button>
+                                <div class="flex space-x-2">
+                                    <button id="upload-file-btn" class="text-sm text-secondary">
+                                        <i class="fas fa-upload mr-1"></i>上传文件
+                                    </button>
+                                    <button id="share-case-btn" class="text-sm text-secondary">
+                                        <i class="fas fa-share-alt mr-1"></i>共享病例
+                                    </button>
+                                </div>
                             </div>
-                            <div id="files-list" class="space-y-2 max-h-40 overflow-y-auto">
+                            <div id="files-list" class="space-y-2 max-h-48 overflow-y-auto">
                                 <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                     <div class="flex items-center space-x-3">
                                         <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -320,12 +333,18 @@
                                         </div>
                                         <div>
                                             <p class="text-sm font-medium text-text-primary">禽流感病理分析报告.pdf</p>
-                                            <p class="text-xs text-text-secondary">2.5 MB · 2小时前</p>
+                                            <p class="text-xs text-text-secondary">2.5 MB · 2小时前 · 李教授</p>
+                                            <p class="text-xs text-success">所有人可访问</p>
                                         </div>
                                     </div>
-                                    <button class="text-text-secondary">
-                                        <i class="fas fa-download"></i>
-                                    </button>
+                                    <div class="flex space-x-2">
+                                        <button class="text-text-secondary">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                        <button class="text-text-secondary">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 
                                 <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -335,11 +354,77 @@
                                         </div>
                                         <div>
                                             <p class="text-sm font-medium text-text-primary">病例数据集.xlsx</p>
-                                            <p class="text-xs text-text-secondary">1.8 MB · 1天前</p>
+                                            <p class="text-xs text-text-secondary">1.8 MB · 1天前 · 张研究员</p>
+                                            <p class="text-xs text-success">所有人可访问</p>
                                         </div>
                                     </div>
-                                    <button class="text-text-secondary">
-                                        <i class="fas fa-download"></i>
+                                    <div class="flex space-x-2">
+                                        <button class="text-text-secondary">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                        <button class="text-text-secondary">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-images text-red-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-text-primary">病例图片集.zip</p>
+                                            <p class="text-xs text-text-secondary">15.6 MB · 3天前 · 王博士</p>
+                                            <p class="text-xs text-warning">仅管理员可编辑</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button class="text-text-secondary">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                        <button class="text-text-secondary">
+                                            <i class="fas fa-ellipsis-h"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 共享病例数据 -->
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <h4 class="font-medium text-text-primary">共享病例数据 (5)</h4>
+                                <button id="view-all-cases-btn" class="text-sm text-secondary">
+                                    <i class="fas fa-eye mr-1"></i>查看全部
+                                </button>
+                            </div>
+                            <div id="shared-cases-list" class="space-y-2 max-h-40 overflow-y-auto">
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="https://s.coze.cn/image/Vs9ADzmfxB4/" 
+                                             alt="病例图片" data-category="动物" class="w-10 h-10 rounded-lg object-cover">
+                                        <div>
+                                            <p class="text-sm font-medium text-text-primary">新城疫疑似病例</p>
+                                            <p class="text-xs text-text-secondary">AI诊断：新城疫 (95%) · 今天</p>
+                                        </div>
+                                    </div>
+                                    <button class="text-secondary">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </button>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="https://s.coze.cn/image/JJNM-XZlh0M/" 
+                                             alt="病例图片" data-category="动物" class="w-10 h-10 rounded-lg object-cover">
+                                        <div>
+                                            <p class="text-sm font-medium text-text-primary">禽流感确诊病例</p>
+                                            <p class="text-xs text-text-secondary">AI诊断：禽流感 (88%) · 昨天</p>
+                                        </div>
+                                    </div>
+                                    <button class="text-secondary">
+                                        <i class="fas fa-external-link-alt"></i>
                                     </button>
                                 </div>
                             </div>
@@ -445,6 +530,26 @@
                 // 注释：此功能需要调用文件上传API，在原型阶段仅做UI展示
             });
 
+            // 共享病例按钮
+            document.querySelector('#share-case-btn').addEventListener('click', function() {
+                alert('共享病例功能已触发，可选择要共享的病例数据');
+                // 这里可以实现选择并共享病例数据的逻辑
+            });
+            
+            // 查看全部病例按钮
+            document.querySelector('#view-all-cases-btn').addEventListener('click', function() {
+                alert('查看全部共享病例数据');
+                // 这里可以实现查看全部共享病例的逻辑
+            });
+            
+            // 共享病例点击事件
+            document.querySelectorAll('#shared-cases-list button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    alert('跳转到病例详情页面');
+                    // 这里可以实现跳转到病例详情页面的逻辑
+                });
+            });
+            
             // 发起讨论按钮
             document.querySelector('#add-discussion-btn').addEventListener('click', function() {
                 const discussion = prompt('请输入讨论内容：');

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - AI诊断模式选择</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(45, 187, 161, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex items-center px-4 py-3">
+            <button id="back-btn" class="mr-3 p-2 -ml-2" onclick="history.back()">
+                <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+            </button>
+            <h1 id="page-title" class="text-lg font-semibold text-text-primary">选择AI诊断模式</h1>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6">
+        <!-- 模式选择说明 -->
+        <section id="mode-intro" class="mb-6">
+            <div class="bg-card-bg rounded-xl p-4 shadow-card">
+                <h3 class="text-base font-medium text-text-primary mb-2">请选择适合您的AI诊断模式</h3>
+                <p class="text-sm text-text-secondary">根据您的需求选择不同的诊断模式，系统将为您提供相应的诊断服务</p>
+            </div>
+        </section>
+
+        <!-- 模式选择卡片 -->
+        <section id="mode-cards" class="space-y-4">
+            <!-- 对话问诊模式卡片 -->
+            <div id="chat-mode-card" class="bg-card-bg rounded-xl p-6 shadow-card card-hover cursor-pointer" onclick="window.location.href='P-AI_DIAGNOSIS_CHAT.html'">
+                <div class="flex items-start space-x-4">
+                    <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-comments text-accent text-xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold text-text-primary mb-2">对话问诊模式</h3>
+                        <p class="text-sm text-text-secondary mb-4">直接用文字描述症状，上传图片，采用对话模式，可以支持多轮对话，获取初步诊断建议</p>
+                        <div class="flex items-center text-xs text-text-tertiary">
+                            <i class="fas fa-check-circle text-success mr-1"></i>
+                            <span>适合描述清晰、症状明确的情况</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI兽医模式卡片 -->
+            <div id="vet-mode-card" class="bg-card-bg rounded-xl p-6 shadow-card card-hover cursor-pointer" onclick="window.location.href='P-AI_DIAGNOSIS_VET.html'">
+                <div class="flex items-start space-x-4">
+                    <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-stethoscope text-accent text-xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold text-text-primary mb-2">AI兽医模式</h3>
+                        <p class="text-sm text-text-secondary mb-4">通过标准化诊断流程，分阶段录入基础信息、临床表现等数据，获取AI初诊和确诊报告</p>
+                        <div class="flex items-center text-xs text-text-tertiary">
+                            <i class="fas fa-check-circle text-success mr-1"></i>
+                            <span>适合需要详细诊断、分阶段录入数据的情况</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 注意事项 -->
+        <section id="notes" class="mt-8">
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-info-circle text-info text-xl mt-0.5 flex-shrink-0"></i>
+                    <div>
+                        <h3 class="text-sm font-medium text-text-primary mb-1">温馨提示</h3>
+                        <p class="text-xs text-text-secondary">无论选择哪种模式，系统都会为您提供专业的AI诊断服务。如果您不确定如何描述症状，建议选择AI兽医模式，按照标准化流程进行诊断。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部导航栏 -->
+    <footer id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white shadow-sm safe-bottom">
+        <div class="flex items-center justify-around h-16">
+            <button id="nav-home" class="flex flex-col items-center justify-center text-text-tertiary" onclick="window.location.href='P-HOME_FARMER_SMALL.html'">
+                <i class="fas fa-home text-xl mb-1"></i>
+                <span class="text-xs">首页</span>
+            </button>
+            <button id="nav-diagnosis" class="flex flex-col items-center justify-center text-secondary">
+                <i class="fas fa-robot text-xl mb-1"></i>
+                <span class="text-xs">AI诊断</span>
+            </button>
+            <button id="nav-mine" class="flex flex-col items-center justify-center text-text-tertiary" onclick="window.location.href='P-USER_PROFILE.html'">
+                <i class="fas fa-user text-xl mb-1"></i>
+                <span class="text-xs">我的</span>
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 模式选择卡片点击效果
+            const modeCards = document.querySelectorAll('.card-hover');
+            modeCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // 添加点击动画效果
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 100);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -11,14 +11,22 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#D3F8EE',
-                        secondary: '#3BCCA5', 
-                        accent: '#2B6A5A',
-                        'text-primary': '#1F2937',
-                        'text-secondary': '#6B7280',
-                        'bg-light': '#F9FAFB',
-                        'card-bg': '#FFFFFF'
-                    },
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
                     fontFamily: {
                         'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     },
@@ -32,7 +40,7 @@
     </script>
     <style>
         .gradient-bg {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .card-hover:active {
@@ -49,7 +57,7 @@
         }
         
         .status-bar {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .modal-overlay {
@@ -89,7 +97,7 @@
         </div>
     </div>
 
-    <!-- 顶部导航栏 -->
+    <!-- 顶部导航�?-->
     <header id="top-header" class="bg-white shadow-sm">
         <div class="flex justify-between items-center px-4 py-3">
             <div class="flex items-center space-x-3">
@@ -104,11 +112,11 @@
         </div>
     </header>
 
-    <!-- 搜索和筛选区域 -->
+    <!-- 搜索和筛选区�?-->
     <section id="search-filter-section" class="px-4 py-4 bg-white">
         <div class="flex space-x-3">
             <div class="flex-1 relative">
-                <input type="text" id="search-input" placeholder="搜索客户姓名或联系方式" 
+                <input type="text" id="search-input" placeholder="搜索客户姓名或联系方�? 
                        class="w-full px-4 py-3 pl-10 bg-bg-light border border-gray-200 rounded-lg search-input">
                 <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
             </div>
@@ -131,7 +139,7 @@
             </div>
             <div id="pending-consultations-card" class="bg-card-bg rounded-xl p-4 shadow-card text-center">
                 <div class="text-2xl font-bold text-orange-600 mb-1">12</div>
-                <div class="text-sm text-text-secondary">待处理咨询</div>
+                <div class="text-sm text-text-secondary">待处理咨�?/div>
             </div>
         </div>
     </section>
@@ -140,11 +148,11 @@
     <main id="main-content" class="px-4 pb-20">
         <div class="flex justify-between items-center mb-4">
             <h2 id="customers-list-title" class="text-lg font-semibold text-text-primary">客户列表</h2>
-            <span id="customers-count" class="text-sm text-text-secondary">共128个客户</span>
+            <span id="customers-count" class="text-sm text-text-secondary">�?28个客�?/span>
         </div>
         
         <div id="customers-list" class="space-y-3">
-            <!-- 客户项1 -->
+            <!-- 客户�? -->
             <div id="customer-item-1" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" data-customer-id="1">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
@@ -167,7 +175,7 @@
                 </div>
             </div>
 
-            <!-- 客户项2 -->
+            <!-- 客户�? -->
             <div id="customer-item-2" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" data-customer-id="2">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
@@ -183,21 +191,21 @@
                     </div>
                     <div class="text-right">
                         <div id="customer-status-2" class="px-2 py-1 bg-blue-100 rounded-full mb-1">
-                            <span class="text-xs text-blue-700">新客户</span>
+                            <span class="text-xs text-blue-700">新客�?/span>
                         </div>
                         <i class="fas fa-chevron-right text-text-secondary"></i>
                     </div>
                 </div>
             </div>
 
-            <!-- 客户项3 -->
+            <!-- 客户�? -->
             <div id="customer-item-3" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" data-customer-id="3">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
                         <img id="customer-avatar-3" src="https://s.coze.cn/image/-a8QLwYDP5U/" 
                              alt="客户头像" data-category="人物" class="w-12 h-12 rounded-full border-2 border-secondary">
                         <div class="flex-1">
-                            <h4 id="customer-name-3" class="font-medium text-text-primary">张养殖企业</h4>
+                            <h4 id="customer-name-3" class="font-medium text-text-primary">张养殖企�?/h4>
                             <p id="customer-phone-3" class="text-sm text-text-secondary">136****1234</p>
                             <p id="customer-last-interaction-3" class="text-xs text-text-secondary">
                                 <i class="fas fa-clock mr-1"></i>最近互动：2024-01-13 16:45
@@ -213,7 +221,7 @@
                 </div>
             </div>
 
-            <!-- 客户项4 -->
+            <!-- 客户�? -->
             <div id="customer-item-4" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" data-customer-id="4">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
@@ -236,7 +244,7 @@
                 </div>
             </div>
 
-            <!-- 客户项5 -->
+            <!-- 客户�? -->
             <div id="customer-item-5" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" data-customer-id="5">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
@@ -268,6 +276,14 @@
         </div>
     </main>
 
+    <!-- �ײ������� -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
+        <div id="nav-content"></div>
+    </nav>
+
+    <!-- ����ͨ�õ����ű� -->
+    <script src="common-nav.js"></script>
+
     <!-- 添加客户弹窗 -->
     <div id="add-customer-modal" class="fixed inset-0 z-50 hidden">
         <div class="modal-overlay absolute inset-0"></div>
@@ -283,19 +299,19 @@
                     <div>
                         <label for="customer-name-input" class="block text-sm font-medium text-text-primary mb-2">客户姓名</label>
                         <input type="text" id="customer-name-input" name="customerName" 
-                               class="w-full px-4 py-3 border border-gray-200 rounded-lg search-input" placeholder="请输入客户姓名" required>
+                               class="w-full px-4 py-3 border border-gray-200 rounded-lg search-input" placeholder="请输入客户姓�? required>
                     </div>
                     <div>
                         <label for="customer-phone-input" class="block text-sm font-medium text-text-primary mb-2">联系电话</label>
                         <input type="tel" id="customer-phone-input" name="customerPhone" 
-                               class="w-full px-4 py-3 border border-gray-200 rounded-lg search-input" placeholder="请输入联系电话" required>
+                               class="w-full px-4 py-3 border border-gray-200 rounded-lg search-input" placeholder="请输入联系电�? required>
                     </div>
                     <div>
                         <label for="customer-type-select" class="block text-sm font-medium text-text-primary mb-2">客户类型</label>
                         <select id="customer-type-select" name="customerType" 
                                 class="w-full px-4 py-3 border border-gray-200 rounded-lg search-input">
-                            <option value="small">小散户</option>
-                            <option value="cooperative">合作社</option>
+                            <option value="small">小散�?/option>
+                            <option value="cooperative">合作�?/option>
                             <option value="enterprise">养殖企业</option>
                         </select>
                     </div>
@@ -333,23 +349,23 @@
                     <h4 class="font-medium text-text-primary mb-3">基本信息</h4>
                     <div class="space-y-2">
                         <div class="flex justify-between">
-                            <span class="text-text-secondary">客户姓名：</span>
+                            <span class="text-text-secondary">客户姓名�?/span>
                             <span id="detail-customer-name" class="text-text-primary">王养殖户</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-text-secondary">联系电话：</span>
+                            <span class="text-text-secondary">联系电话�?/span>
                             <span id="detail-customer-phone" class="text-text-primary">13812345678</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-text-secondary">客户类型：</span>
-                            <span id="detail-customer-type" class="text-text-primary">小散户</span>
+                            <span class="text-text-secondary">客户类型�?/span>
+                            <span id="detail-customer-type" class="text-text-primary">小散�?/span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-text-secondary">地址：</span>
+                            <span class="text-text-secondary">地址�?/span>
                             <span id="detail-customer-address" class="text-text-primary">山东省青岛市</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-text-secondary">注册时间：</span>
+                            <span class="text-text-secondary">注册时间�?/span>
                             <span id="detail-customer-register-time" class="text-text-primary">2024-01-01</span>
                         </div>
                     </div>
@@ -366,7 +382,7 @@
                             </div>
                             <div class="text-right">
                                 <span class="text-sm font-medium text-text-primary">¥298.00</span>
-                                <p class="text-xs text-green-600">已完成</p>
+                                <p class="text-xs text-green-600">已完�?/p>
                             </div>
                         </div>
                         <div class="flex justify-between items-center p-3 bg-bg-light rounded-lg">
@@ -376,7 +392,7 @@
                             </div>
                             <div class="text-right">
                                 <span class="text-sm font-medium text-text-primary">¥1,580.00</span>
-                                <p class="text-xs text-green-600">已完成</p>
+                                <p class="text-xs text-green-600">已完�?/p>
                             </div>
                         </div>
                     </div>
@@ -388,22 +404,22 @@
                     <div id="customer-diagnosis-list" class="space-y-2">
                         <div class="flex justify-between items-center p-3 bg-bg-light rounded-lg">
                             <div>
-                                <span class="text-sm font-medium text-text-primary">新城疫诊断</span>
+                                <span class="text-sm font-medium text-text-primary">新城疫诊�?/span>
                                 <p class="text-xs text-text-secondary">2024-01-15 14:25</p>
                             </div>
                             <div class="text-right">
-                                <span class="text-xs text-blue-600">置信度 95%</span>
-                                <p class="text-xs text-green-600">已处理</p>
+                                <span class="text-xs text-blue-600">置信�?95%</span>
+                                <p class="text-xs text-green-600">已处�?/p>
                             </div>
                         </div>
                         <div class="flex justify-between items-center p-3 bg-bg-light rounded-lg">
                             <div>
-                                <span class="text-sm font-medium text-text-primary">禽流感诊断</span>
+                                <span class="text-sm font-medium text-text-primary">禽流感诊�?/span>
                                 <p class="text-xs text-text-secondary">2024-01-14 09:10</p>
                             </div>
                             <div class="text-right">
-                                <span class="text-xs text-blue-600">置信度 88%</span>
-                                <p class="text-xs text-blue-600">治疗中</p>
+                                <span class="text-xs text-blue-600">置信�?88%</span>
+                                <p class="text-xs text-blue-600">治疗�?/p>
                             </div>
                         </div>
                     </div>
@@ -418,14 +434,14 @@
                                 <span class="text-sm font-medium text-text-primary">在线咨询</span>
                                 <span class="text-xs text-text-secondary">2024-01-15 14:30</span>
                             </div>
-                            <p class="text-xs text-text-secondary">客户咨询新城疫治疗方案，已提供详细建议</p>
+                            <p class="text-xs text-text-secondary">客户咨询新城疫治疗方案，已提供详细建�?/p>
                         </div>
                         <div class="p-3 bg-bg-light rounded-lg">
                             <div class="flex justify-between items-start mb-2">
-                                <span class="text-sm font-medium text-text-primary">电话沟通</span>
+                                <span class="text-sm font-medium text-text-primary">电话沟�?/span>
                                 <span class="text-xs text-text-secondary">2024-01-14 16:45</span>
                             </div>
-                            <p class="text-xs text-text-secondary">跟进治疗情况，客户反馈病情好转</p>
+                            <p class="text-xs text-text-secondary">跟进治疗情况，客户反馈病情好�?/p>
                         </div>
                     </div>
                 </div>
@@ -436,7 +452,7 @@
                     <form id="add-interaction-form" class="space-y-3">
                         <textarea id="interaction-content" name="interactionContent" rows="3" 
                                   class="w-full px-4 py-3 border border-gray-200 rounded-lg search-input" 
-                                  placeholder="请输入互动内容..."></textarea>
+                                  placeholder="请输入互动内�?.."></textarea>
                         <button type="submit" class="w-full py-3 bg-secondary text-white rounded-lg shadow-button">
                             添加记录
                         </button>
@@ -446,7 +462,7 @@
         </div>
     </div>
 
-    <!-- 底部导航栏 -->
+    <!-- 底部导航�?-->
     <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
         <a id="nav-home" href="#" class="flex flex-col items-center p-2 text-text-secondary">
             <i class="fas fa-home text-xl"></i>
@@ -473,7 +489,7 @@
                     avatar: 'https://s.coze.cn/image/7XDcFb-0Ge4/',
                     lastInteraction: '2024-01-15 14:30',
                     status: 'active',
-                    type: '小散户',
+                    type: '小散�?,
                     address: '山东省青岛市',
                     registerTime: '2024-01-01'
                 },
@@ -484,13 +500,13 @@
                     avatar: 'https://s.coze.cn/image/-8m-hh2yEKU/',
                     lastInteraction: '2024-01-14 09:15',
                     status: 'new',
-                    type: '合作社',
+                    type: '合作�?,
                     address: '山东省潍坊市',
                     registerTime: '2024-01-10'
                 },
                 {
                     id: 3,
-                    name: '张养殖企业',
+                    name: '张养殖企�?,
                     phone: '13612341234',
                     avatar: 'https://s.coze.cn/image/YeXpOgiyBb0/',
                     lastInteraction: '2024-01-13 16:45',
@@ -506,7 +522,7 @@
                     avatar: 'https://s.coze.cn/image/0BN_NwU0KkU/',
                     lastInteraction: '2024-01-12 11:20',
                     status: 'dormant',
-                    type: '小散户',
+                    type: '小散�?,
                     address: '山东省烟台市',
                     registerTime: '2023-12-01'
                 },
@@ -517,7 +533,7 @@
                     avatar: 'https://s.coze.cn/image/kpb_HI-ytgg/',
                     lastInteraction: '2024-01-11 15:30',
                     status: 'active',
-                    type: '合作社',
+                    type: '合作�?,
                     address: '山东省淄博市',
                     registerTime: '2023-11-15'
                 }
@@ -567,12 +583,11 @@
                 customers.push(customerData);
                 renderCustomerList();
                 
-                // 关闭弹窗并重置表单
-                document.querySelector('#add-customer-modal').classList.add('hidden');
+                // 关闭弹窗并重置表�?                document.querySelector('#add-customer-modal').classList.add('hidden');
                 this.reset();
                 
                 // 显示成功提示
-                alert('客户添加成功！');
+                alert('客户添加成功�?);
             });
 
             // 搜索功能
@@ -608,16 +623,14 @@
                     // 这里应该调用API添加互动记录
                     console.log('添加互动记录:', content);
                     
-                    // 清空输入框
-                    document.querySelector('#interaction-content').value = '';
+                    // 清空输入�?                    document.querySelector('#interaction-content').value = '';
                     
                     // 显示成功提示
-                    alert('互动记录添加成功！');
+                    alert('互动记录添加成功�?);
                 }
             });
 
-            // 底部导航栏
-            document.querySelector('#nav-home').addEventListener('click', function(e) {
+            // 底部导航�?            document.querySelector('#nav-home').addEventListener('click', function(e) {
                 e.preventDefault();
                 window.location.href = 'P-HOME_INSTITUTION_SERVICE.html';
             });
@@ -675,7 +688,7 @@
                 });
 
                 // 更新客户数量
-                document.querySelector('#customers-count').textContent = `共${filteredCustomers.length}个客户`;
+                document.querySelector('#customers-count').textContent = `�?{filteredCustomers.length}个客户`;
             }
 
             // 获取状态样式类
@@ -688,11 +701,10 @@
                 }
             }
 
-            // 获取状态文本
-            function getStatusText(status) {
+            // 获取状态文�?            function getStatusText(status) {
                 switch(status) {
                     case 'active': return '活跃';
-                    case 'new': return '新客户';
+                    case 'new': return '新客�?;
                     case 'dormant': return '休眠';
                     default: return '未知';
                 }
@@ -707,7 +719,7 @@
                 document.querySelector('#detail-customer-name').textContent = customer.name;
                 document.querySelector('#detail-customer-phone').textContent = customer.phone;
                 document.querySelector('#detail-customer-type').textContent = customer.type;
-                document.querySelector('#detail-customer-address').textContent = customer.address || '未填写';
+                document.querySelector('#detail-customer-address').textContent = customer.address || '未填�?;
                 document.querySelector('#detail-customer-register-time').textContent = customer.registerTime;
 
                 // 显示详情弹窗
@@ -736,8 +748,7 @@
                 });
             });
 
-            // 初始化页面
-            renderCustomerList();
+            // 初始化页�?            renderCustomerList();
         });
     </script>
 </body>

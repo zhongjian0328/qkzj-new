@@ -11,14 +11,22 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#D3F8EE',
-                        secondary: '#3BCCA5', 
-                        accent: '#2B6A5A',
-                        'text-primary': '#1F2937',
-                        'text-secondary': '#6B7280',
-                        'bg-light': '#F9FAFB',
-                        'card-bg': '#FFFFFF'
-                    },
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
                     fontFamily: {
                         'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     },
@@ -32,7 +40,7 @@
     </script>
     <style>
         .gradient-bg {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .card-hover:active {
@@ -49,7 +57,7 @@
         }
         
         .status-bar {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
 
         .image-preview {
@@ -98,7 +106,7 @@
         </div>
     </div>
 
-    <!-- 顶部导航栏 -->
+    <!-- 顶部导航�?-->
     <header id="top-header" class="bg-white shadow-sm">
         <div class="flex items-center px-4 py-3">
             <button id="back-btn" class="mr-3 p-2 -ml-2">
@@ -120,7 +128,7 @@
                     </div>
                 </div>
                 <input type="date" id="log-date" name="log-date" 
-                       class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input-focus" 
+                       class="w-full px-4 py-3 border border-border-color rounded-lg form-input-focus" 
                        value="2024-01-15">
             </div>
         </section>
@@ -130,8 +138,8 @@
             <div class="bg-card-bg rounded-xl p-4 shadow-card">
                 <label for="internship-content-text" class="block text-sm font-medium text-text-primary mb-3">实习内容</label>
                 <textarea id="internship-content-text" name="internship-content-text" rows="6"
-                          class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input-focus resize-none"
-                          placeholder="请详细描述今天的实习内容、观察到的病例情况、学习到的知识等...">今天在养殖场实习，主要观察了鸡群的健康状况。上午协助兽医对发病鸡只进行检查，发现部分鸡只出现呼吸道症状，羽毛蓬松，精神不振。下午参与了疫苗接种工作，学习了不同疫苗的使用方法和注意事项。</textarea>
+                          class="w-full px-4 py-3 border border-border-color rounded-lg form-input-focus resize-none"
+                          placeholder="请详细描述今天的实习内容、观察到的病例情况、学习到的知识等...">今天在养殖场实习，主要观察了鸡群的健康状况。上午协助兽医对发病鸡只进行检查，发现部分鸡只出现呼吸道症状，羽毛蓬松，精神不振。下午参与了疫苗接种工作，学习了不同疫苗的使用方法和注意事项�?/textarea>
             </div>
         </section>
 
@@ -140,7 +148,7 @@
             <div class="bg-card-bg rounded-xl p-4 shadow-card">
                 <h3 class="text-sm font-medium text-text-primary mb-3">病例图片</h3>
                 
-                <!-- 已上传图片预览 -->
+                <!-- 已上传图片预�?-->
                 <div id="uploaded-images" class="grid grid-cols-3 gap-3 mb-4">
                     <div class="image-preview">
                         <img src="https://s.coze.cn/image/uRvx3Em0xps/" 
@@ -178,21 +186,21 @@
             <div class="bg-card-bg rounded-xl p-4 shadow-card">
                 <label for="student-diagnosis-text" class="block text-sm font-medium text-text-primary mb-3">我的诊断判断</label>
                 <textarea id="student-diagnosis-text" name="student-diagnosis-text" rows="4"
-                          class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input-focus resize-none"
-                          placeholder="根据观察到的症状，你的初步诊断是什么？">根据症状观察，初步判断可能是新城疫感染，表现为呼吸道症状明显，精神沉郁。建议进行进一步的实验室检测确认。</textarea>
+                          class="w-full px-4 py-3 border border-border-color rounded-lg form-input-focus resize-none"
+                          placeholder="根据观察到的症状，你的初步诊断是什么？">根据症状观察，初步判断可能是新城疫感染，表现为呼吸道症状明显，精神沉郁。建议进行进一步的实验室检测确认�?/textarea>
             </div>
         </section>
 
-        <!-- AI参考诊断 -->
+        <!-- AI参考诊�?-->
         <section id="ai-reference" class="mb-6">
             <div class="bg-card-bg rounded-xl p-4 shadow-card">
-                <h3 class="text-sm font-medium text-text-primary mb-3">AI参考诊断</h3>
+                <h3 class="text-sm font-medium text-text-primary mb-3">AI参考诊�?/h3>
                 <div class="bg-gray-50 rounded-lg p-3">
                     <div class="flex items-start space-x-2">
                         <i class="fas fa-robot text-secondary mt-1"></i>
                         <div>
-                            <p class="text-sm text-text-primary">新城疫</p>
-                            <p class="text-xs text-text-secondary mt-1">置信度：92% | 核心症状：呼吸道症状、精神沉郁</p>
+                            <p class="text-sm text-text-primary">新城�?/p>
+                            <p class="text-xs text-text-secondary mt-1">置信度：92% | 核心症状：呼吸道症状、精神沉�?/p>
                         </div>
                     </div>
                 </div>
@@ -204,7 +212,7 @@
             <div class="bg-card-bg rounded-xl p-4 shadow-card">
                 <h3 class="text-sm font-medium text-text-primary mb-3">导师批注</h3>
                 
-                <!-- 已有的导师批注 -->
+                <!-- 已有的导师批�?-->
                 <div id="existing-comments" class="space-y-3">
                     <div class="mentor-comment rounded-lg p-3">
                         <div class="flex items-start space-x-2">
@@ -213,20 +221,20 @@
                                  class="w-8 h-8 rounded-full">
                             <div class="flex-1">
                                 <div class="flex items-center space-x-2 mb-1">
-                                    <span class="text-sm font-medium text-text-primary">张教授</span>
+                                    <span class="text-sm font-medium text-text-primary">张教�?/span>
                                     <span class="text-xs text-text-secondary">2024-01-15 16:30</span>
                                 </div>
-                                <p class="text-sm text-text-primary">诊断判断准确，观察仔细。建议在描述中增加更多细节，比如发病鸡只的具体数量、症状出现的时间等，这样能更好地进行分析。</p>
+                                <p class="text-sm text-text-primary">诊断判断准确，观察仔细。建议在描述中增加更多细节，比如发病鸡只的具体数量、症状出现的时间等，这样能更好地进行分析�?/p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 批注状态 -->
+                <!-- 批注状�?-->
                 <div id="comment-status" class="mt-3 p-3 bg-green-50 rounded-lg border border-green-200">
                     <div class="flex items-center space-x-2">
                         <i class="fas fa-check-circle text-green-600"></i>
-                        <span class="text-sm text-green-800">已收到导师批注</span>
+                        <span class="text-sm text-green-800">已收到导师批�?/span>
                     </div>
                 </div>
             </div>
@@ -252,10 +260,17 @@
         </section>
     </main>
 
+    <!-- �ײ������� -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
+        <div id="nav-content"></div>
+    </nav>
+
+    <!-- ����ͨ�õ����ű� -->
+    <script src="common-nav.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 解析URL参数的辅助函数
-            function getUrlParams() {
+            // 解析URL参数的辅助函�?            function getUrlParams() {
                 const params = {};
                 const queryString = window.location.search.substring(1);
                 const urlParams = new URLSearchParams(queryString);
@@ -309,22 +324,19 @@
                 }
 
                 // 模拟提交过程
-                this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>提交中...';
+                this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>提交�?..';
                 this.disabled = true;
 
                 setTimeout(() => {
                     alert('日志已提交，等待导师批阅');
-                    // 更新状态显示
-                    document.querySelector('#log-status span').textContent = '待批阅';
+                    // 更新状态显�?                    document.querySelector('#log-status span').textContent = '待批�?;
                     document.querySelector('#log-status').className = 'px-2 py-1 bg-yellow-100 rounded-full';
                     document.querySelector('#log-status span').className = 'text-xs text-yellow-700';
                     
-                    // 重置按钮状态
-                    this.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>提交日志';
+                    // 重置按钮状�?                    this.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>提交日志';
                     this.disabled = false;
                     
-                    // 返回日志列表页
-                    window.location.href = 'P-INTERN_LOG_LIST.html';
+                    // 返回日志列表�?                    window.location.href = 'P-INTERN_LOG_LIST.html';
                 }, 1500);
             });
 
@@ -339,11 +351,11 @@
                 }
 
                 // 模拟保存过程
-                this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>保存中...';
+                this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>保存�?..';
                 this.disabled = true;
 
                 setTimeout(() => {
-                    alert('草稿已保存');
+                    alert('草稿已保�?);
                     this.innerHTML = '<i class="fas fa-save mr-2"></i>保存草稿';
                     this.disabled = false;
                 }, 1000);
@@ -352,7 +364,7 @@
             // 生成报告按钮
             document.querySelector('#generate-report-btn').addEventListener('click', function() {
                 // 模拟生成报告过程
-                this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>生成中...';
+                this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>生成�?..';
                 this.disabled = true;
 
                 setTimeout(() => {
@@ -362,16 +374,15 @@
                 }, 2000);
             });
 
-            // 加载日志数据的函数
-            function loadLogData(logId) {
+            // 加载日志数据的函�?            function loadLogData(logId) {
                 // 在实际应用中，这里会调用API获取数据
                 // 但在这个示例中，我们模拟数据加载
                 const mockLogs = {
                     "log1": {
                         date: "2024-01-15",
-                        content: "今天在养殖场实习，主要观察了鸡群的健康状况。上午协助兽医对发病鸡只进行检查，发现部分鸡只出现呼吸道症状，羽毛蓬松，精神不振。下午参与了疫苗接种工作，学习了不同疫苗的使用方法和注意事项。",
-                        diagnosis: "根据症状观察，初步判断可能是新城疫感染，表现为呼吸道症状明显，精神沉郁。建议进行进一步的实验室检测确认。",
-                        status: "已批阅",
+                        content: "今天在养殖场实习，主要观察了鸡群的健康状况。上午协助兽医对发病鸡只进行检查，发现部分鸡只出现呼吸道症状，羽毛蓬松，精神不振。下午参与了疫苗接种工作，学习了不同疫苗的使用方法和注意事项�?,
+                        diagnosis: "根据症状观察，初步判断可能是新城疫感染，表现为呼吸道症状明显，精神沉郁。建议进行进一步的实验室检测确认�?,
+                        status: "已批�?,
                         images: [
                             "https://s.coze.cn/image/EJGu-48Dmjo/",
                             "https://s.coze.cn/image/9SCpQEKLklQ/"
@@ -379,8 +390,8 @@
                     },
                     "log2": {
                         date: "2024-01-14",
-                        content: "今天学习了禽病的诊断方法，包括临床检查和实验室检测的基本流程。",
-                        diagnosis: "通过学习，了解了常见禽病的诊断要点。",
+                        content: "今天学习了禽病的诊断方法，包括临床检查和实验室检测的基本流程�?,
+                        diagnosis: "通过学习，了解了常见禽病的诊断要点�?,
                         status: "草稿",
                         images: []
                     }
@@ -392,10 +403,9 @@
                     document.querySelector('#internship-content-text').value = logData.content;
                     document.querySelector('#student-diagnosis-text').value = logData.diagnosis;
                     
-                    // 更新状态显示
-                    const statusElement = document.querySelector('#log-status span');
-                    if(logData.status === '已批阅') {
-                        statusElement.textContent = '已批阅';
+                    // 更新状态显�?                    const statusElement = document.querySelector('#log-status span');
+                    if(logData.status === '已批�?) {
+                        statusElement.textContent = '已批�?;
                         document.querySelector('#log-status').className = 'px-2 py-1 bg-green-100 rounded-full';
                         statusElement.className = 'text-xs text-green-700';
                     }

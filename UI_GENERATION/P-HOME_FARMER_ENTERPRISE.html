@@ -12,14 +12,22 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#D3F8EE',
-                        secondary: '#3BCCA5', 
-                        accent: '#2B6A5A',
-                        'text-primary': '#1F2937',
-                        'text-secondary': '#6B7280',
-                        'bg-light': '#F9FAFB',
-                        'card-bg': '#FFFFFF'
-                    },
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
                     fontFamily: {
                         'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     },
@@ -33,7 +41,7 @@
     </script>
     <style>
         .gradient-bg {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .card-hover:active {
@@ -50,7 +58,7 @@
         }
         
         .status-bar {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .chart-container {
@@ -112,10 +120,10 @@
                         <i class="fas fa-chart-line text-secondary"></i>
                     </div>
                     <div class="flex items-baseline space-x-1">
-                        <span id="death-count" class="text-2xl font-bold text-red-600">12</span>
-                        <span class="text-xs text-red-500">+3</span>
+                        <span id="death-count" class="text-2xl font-bold text-red-600">8</span>
+                        <span class="text-xs text-green-500">-2</span>
                     </div>
-                    <p class="text-xs text-text-secondary mt-1">较昨日增加</p>
+                    <p class="text-xs text-text-secondary mt-1">较昨日减少</p>
                 </div>
 
                 <div id="vaccine-countdown-card" class="bg-card-bg rounded-xl p-4 shadow-card">
@@ -124,7 +132,7 @@
                         <i class="fas fa-syringe text-secondary"></i>
                     </div>
                     <div class="flex items-baseline space-x-1">
-                        <span id="vaccine-days" class="text-2xl font-bold text-blue-600">3</span>
+                        <span id="vaccine-days" class="text-2xl font-bold text-blue-600">2</span>
                         <span class="text-xs text-text-secondary">天</span>
                     </div>
                     <p class="text-xs text-text-secondary mt-1">新城疫疫苗</p>
@@ -136,7 +144,7 @@
                         <i class="fas fa-layer-group text-secondary"></i>
                     </div>
                     <div class="flex items-baseline space-x-1">
-                        <span id="livestock-count" class="text-2xl font-bold text-green-600">15,680</span>
+                        <span id="livestock-count" class="text-2xl font-bold text-green-600">15,672</span>
                         <span class="text-xs text-text-secondary">只</span>
                     </div>
                     <p class="text-xs text-text-secondary mt-1">共5个批次</p>
@@ -148,7 +156,7 @@
                         <i class="fas fa-balance-scale text-secondary"></i>
                     </div>
                     <div class="flex items-baseline space-x-1">
-                        <span id="feed-ratio" class="text-2xl font-bold text-purple-600">1.85</span>
+                        <span id="feed-ratio" class="text-2xl font-bold text-purple-600">1.82</span>
                         <span class="text-xs text-text-secondary">:1</span>
                     </div>
                     <p class="text-xs text-text-secondary mt-1">目标: 1.80</p>
@@ -169,40 +177,40 @@
                     </div>
                     <div id="mortality-chart" class="chart-container rounded-lg p-4 h-32 flex items-end justify-between space-x-2">
                         <div class="flex flex-col items-center space-y-1">
-                            <div class="w-6 bg-secondary rounded-t" style="height: 40%"></div>
+                            <div class="w-6 bg-secondary rounded-t" style="height: 35%"></div>
                             <span class="text-xs text-text-secondary">1/10</span>
                         </div>
                         <div class="flex flex-col items-center space-y-1">
-                            <div class="w-6 bg-secondary rounded-t" style="height: 60%"></div>
+                            <div class="w-6 bg-secondary rounded-t" style="height: 42%"></div>
                             <span class="text-xs text-text-secondary">1/11</span>
                         </div>
                         <div class="flex flex-col items-center space-y-1">
-                            <div class="w-6 bg-secondary rounded-t" style="height: 35%"></div>
+                            <div class="w-6 bg-secondary rounded-t" style="height: 38%"></div>
                             <span class="text-xs text-text-secondary">1/12</span>
                         </div>
                         <div class="flex flex-col items-center space-y-1">
-                            <div class="w-6 bg-secondary rounded-t" style="height: 70%"></div>
+                            <div class="w-6 bg-secondary rounded-t" style="height: 45%"></div>
                             <span class="text-xs text-text-secondary">1/13</span>
                         </div>
                         <div class="flex flex-col items-center space-y-1">
-                            <div class="w-6 bg-secondary rounded-t" style="height: 45%"></div>
+                            <div class="w-6 bg-secondary rounded-t" style="height: 52%"></div>
                             <span class="text-xs text-text-secondary">1/14</span>
                         </div>
                         <div class="flex flex-col items-center space-y-1">
-                            <div class="w-6 bg-red-500 rounded-t" style="height: 85%"></div>
+                            <div class="w-6 bg-red-500 rounded-t" style="height: 68%"></div>
                             <span class="text-xs text-text-secondary">1/15</span>
                         </div>
                         <div class="flex flex-col items-center space-y-1">
-                            <div class="w-6 bg-secondary rounded-t" style="height: 55%"></div>
+                            <div class="w-6 bg-secondary rounded-t" style="height: 48%"></div>
                             <span class="text-xs text-text-secondary">1/16</span>
                         </div>
                     </div>
                     <div class="flex justify-between items-center mt-3 text-xs text-text-secondary">
-                        <span>平均死淘率: 2.3%</span>
+                        <span>平均死淘率: 1.8%</span>
                         <span>目标: ≤2.0%</span>
                     </div>
                 </div>
-
+                
                 <!-- 耗料分析柱状图 -->
                 <div id="feed-chart-card" class="bg-card-bg rounded-xl p-4 shadow-card">
                     <div class="flex justify-between items-center mb-4">
@@ -217,25 +225,43 @@
                             <span class="text-sm text-text-secondary">1/16</span>
                             <div class="flex-1 mx-3">
                                 <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="progress-bar h-2 rounded-full" style="width: 78%"></div>
+                                </div>
+                            </div>
+                            <span class="text-sm font-medium">2.9吨</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-text-secondary">1/15</span>
+                            <div class="flex-1 mx-3">
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="progress-bar h-2 rounded-full" style="width: 85%"></div>
+                                </div>
+                            </div>
+                            <span class="text-sm font-medium">3.2吨</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-text-secondary">1/14</span>
+                            <div class="flex-1 mx-3">
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="progress-bar h-2 rounded-full" style="width: 72%"></div>
+                                </div>
+                            </div>
+                            <span class="text-sm font-medium">2.7吨</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-text-secondary">1/13</span>
+                            <div class="flex-1 mx-3">
+                                <div class="w-full bg-gray-200 rounded-full h-2">
                                     <div class="progress-bar h-2 rounded-full" style="width: 75%"></div>
                                 </div>
                             </div>
                             <span class="text-sm font-medium">2.8吨</span>
                         </div>
                         <div class="flex items-center justify-between">
-                            <span class="text-sm text-text-secondary">1/15</span>
+                            <span class="text-sm text-text-secondary">1/12</span>
                             <div class="flex-1 mx-3">
                                 <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="progress-bar h-2 rounded-full" style="width: 82%"></div>
-                                </div>
-                            </div>
-                            <span class="text-sm font-medium">3.1吨</span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm text-text-secondary">1/14</span>
-                            <div class="flex-1 mx-3">
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="progress-bar h-2 rounded-full" style="width: 68%"></div>
+                                    <div class="progress-bar h-2 rounded-full" style="width: 70%"></div>
                                 </div>
                             </div>
                             <span class="text-sm font-medium">2.6吨</span>
@@ -351,15 +377,15 @@
 
     <!-- 底部导航栏 -->
     <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
-        <a id="nav-home" href="#" class="flex flex-col items-center p-2 text-secondary">
+        <a id="nav-home" href="P-HOME_FARMER_ENTERPRISE.html" class="flex flex-col items-center p-2">
             <i class="fas fa-home text-xl"></i>
             <span class="text-xs mt-0.5">首页</span>
         </a>
-        <a id="nav-production" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+        <a id="nav-production" href="P-PRODUCTION_DASHBOARD.html" class="flex flex-col items-center p-2">
             <i class="fas fa-chart-bar text-xl"></i>
             <span class="text-xs mt-0.5">生产管理</span>
         </a>
-        <a id="nav-profile" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+        <a id="nav-profile" href="P-USER_PROFILE.html" class="flex flex-col items-center p-2">
             <i class="fas fa-user text-xl"></i>
             <span class="text-xs mt-0.5">我的</span>
         </a>
@@ -367,6 +393,26 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // 动态设置底部导航栏激活状态
+            function setActiveNavItem() {
+                const currentUrl = window.location.href;
+                const navItems = document.querySelectorAll('#bottom-nav a');
+                
+                navItems.forEach(item => {
+                    const href = item.getAttribute('href');
+                    if (currentUrl.includes(href)) {
+                        item.classList.add('text-secondary');
+                        item.classList.remove('text-text-secondary');
+                    } else {
+                        item.classList.add('text-text-secondary');
+                        item.classList.remove('text-secondary');
+                    }
+                });
+            }
+            
+            // 初始化导航栏激活状态
+            setActiveNavItem();
+            
             // 顶部导航栏点击事件
             document.querySelector('#profile-btn').addEventListener('click', function() {
                 window.location.href = 'P-USER_PROFILE.html';
@@ -395,7 +441,6 @@
 
             // 底部导航栏点击事件
             document.querySelector('#nav-home').addEventListener('click', function(e) {
-                e.preventDefault();
                 // 已在首页，无需操作
             });
 

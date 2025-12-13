@@ -1,0 +1,688 @@
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import Header from '../components/Header';
+import { styles } from '../styles';
+
+// 日志数据结构
+interface InternLog {
+  id: string;
+  title: string;
+  content: string;
+  date: string;
+  status: 'draft' | 'submitted' | 'approved' | 'rejected';
+  mentorComments?: string;
+  mentorName?: string;
+  rating?: number;
+}
+
+const InternLogScreen: React.FC = () => {
+  const navigation = useNavigation<any>();
+  const [activeStatus, setActiveStatus] = useState('all');
+  const [selectedLog, setSelectedLog] = useState<InternLog | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState('');
+  const [editContent, setEditContent] = useState('');
+  const [showAddLog, setShowAddLog] = useState(false);
+  const [newLogTitle, setNewLogTitle] = useState('');
+  const [newLogContent, setNewLogContent] = useState('');
+
+  // 模拟日志数据
+  const [logs, setLogs] = useState<InternLog[]>([
+    {
+      id: '1',
+      title: '第一天实习记录',
+      content: '今天开始了在禽康智检的实习，主要了解了公司的业务流程和产品功能。上午参加了入职培训，下午跟随导师学习了AI诊断系统的基本操作。',
+      date: '2024-01-15',
+      status: 'approved',
+      mentorComments: '实习第一天表现良好，学习态度认真，建议加强对AI诊断原理的理解。',
+      mentorName: '张导师',
+      rating: 4.5
+    },
+    {
+      id: '2',
+      title: 'AI诊断系统实操',
+      content: '今天进行了AI诊断系统的实操练习，尝试上传病禽图片并获取诊断结果。遇到了一些问题，导师耐心指导后顺利完成。',
+      date: '2024-01-16',
+      status: 'submitted',
+      mentorComments: '实操过程中遇到问题能主动请教，进步很快，继续保持。',
+      mentorName: '张导师',
+      rating: 4.0
+    },
+    {
+      id: '3',
+      title: '生产管理模块学习',
+      content: '今天学习了生产管理模块，了解了批次管理、死淘率记录等功能。',
+      date: '2024-01-17',
+      status: 'draft'
+    }
+  ]);
+
+  // 状态筛选选项
+  const statusOptions = [
+    { id: 'all', name: '全部' },
+    { id: 'draft', name: '草稿' },
+    { id: 'submitted', name: '已提交' },
+    { id: 'approved', name: '已通过' },
+    { id: 'rejected', name: '已驳回' }
+  ];
+
+  // 过滤日志
+  const filteredLogs = logs.filter(log => {
+    if (activeStatus === 'all') return true;
+    return log.status === activeStatus;
+  });
+
+  // 获取状态文本
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'draft': return '草稿';
+      case 'submitted': return '已提交';
+      case 'approved': return '已通过';
+      case 'rejected': return '已驳回';
+      default: return '未知';
+    }
+  };
+
+  // 获取状态样式
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case 'draft': return { backgroundColor: '#E5E7EB', color: '#6B7280' };
+      case 'submitted': return { backgroundColor: '#FEF3C7', color: '#92400E' };
+      case 'approved': return { backgroundColor: '#D1FAE5', color: '#1F5E52' };
+      case 'rejected': return { backgroundColor: '#FEE2E2', color: '#991B1B' };
+      default: return { backgroundColor: '#E5E7EB', color: '#6B7280' };
+    }
+  };
+
+  // 选择日志
+  const handleSelectLog = (log: InternLog) => {
+    setSelectedLog(log);
+    setIsEditing(false);
+  };
+
+  // 开始编辑日志
+  const handleStartEdit = () => {
+    if (selectedLog) {
+      setEditTitle(selectedLog.title);
+      setEditContent(selectedLog.content);
+      setIsEditing(true);
+    }
+  };
+
+  // 保存编辑
+  const handleSaveEdit = () => {
+    if (selectedLog) {
+      const updatedLogs = logs.map(log => {
+        if (log.id === selectedLog.id) {
+          return {
+            ...log,
+            title: editTitle,
+            content: editContent
+          };
+        }
+        return log;
+      });
+      setLogs(updatedLogs as InternLog[]);
+      setSelectedLog({
+        ...selectedLog,
+        title: editTitle,
+        content: editContent
+      });
+      setIsEditing(false);
+      Alert.alert('成功', '日志已更新');
+    }
+  };
+
+  // 删除日志
+  const handleDeleteLog = () => {
+    if (selectedLog) {
+      Alert.alert(
+        '确认删除',
+        '确定要删除这篇日志吗？',
+        [
+          { text: '取消', style: 'cancel' },
+          {
+            text: '删除',
+            style: 'destructive',
+            onPress: () => {
+              const updatedLogs = logs.filter(log => log.id !== selectedLog.id);
+              setLogs(updatedLogs);
+              setSelectedLog(null);
+              setIsEditing(false);
+              Alert.alert('成功', '日志已删除');
+            }
+          }
+        ]
+      );
+    }
+  };
+
+  // 提交日志
+  const handleSubmitLog = () => {
+    if (selectedLog) {
+      const updatedLogs = logs.map(log => {
+        if (log.id === selectedLog.id) {
+          return {
+            ...log,
+            status: 'submitted' as const
+          };
+        }
+        return log;
+      });
+      setLogs(updatedLogs);
+      setSelectedLog({
+        ...selectedLog,
+        status: 'submitted' as const
+      });
+      Alert.alert('成功', '日志已提交');
+    }
+  };
+
+  // 添加新日志
+  const handleAddLog = () => {
+    if (!newLogTitle.trim() || !newLogContent.trim()) {
+      Alert.alert('提示', '请填写日志标题和内容');
+      return;
+    }
+
+    const newLog: InternLog = {
+      id: Date.now().toString(),
+      title: newLogTitle,
+      content: newLogContent,
+      date: new Date().toISOString().split('T')[0],
+      status: 'draft'
+    };
+
+    setLogs([newLog, ...logs]);
+    setNewLogTitle('');
+    setNewLogContent('');
+    setShowAddLog(false);
+    Alert.alert('成功', '日志已创建');
+  };
+
+  return (
+    <View style={styles.container}>
+      <Header 
+        title="实习日志" 
+        showBackButton 
+        onBack={() => navigation.goBack()} 
+      />
+      
+      <ScrollView contentContainerStyle={{ padding: 16 }}>
+        {/* 筛选条件 */}
+        <View style={{ marginBottom: 16 }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827', marginBottom: 8 }}>
+            日志状态
+          </Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              {statusOptions.map(option => (
+                <TouchableOpacity
+                  key={option.id}
+                  style={[
+                    {
+                      paddingHorizontal: 16,
+                      paddingVertical: 8,
+                      borderRadius: 20,
+                      backgroundColor: activeStatus === option.id ? '#2DBBA1' : '#F3F4F6'
+                    }
+                  ]}
+                  onPress={() => setActiveStatus(option.id)}
+                >
+                  <Text style={[
+                    {
+                      fontSize: 14,
+                      fontWeight: '500',
+                      color: activeStatus === option.id ? '#FFFFFF' : '#6B7280'
+                    }
+                  ]}>
+                    {option.name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </ScrollView>
+        </View>
+
+        {/* 添加日志按钮 */}
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#2DBBA1',
+            borderRadius: 12,
+            padding: 16,
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: 16,
+            flexDirection: 'row',
+            gap: 8
+          }}
+          onPress={() => setShowAddLog(true)}
+        >
+          <Text style={{ fontSize: 18 }}>✍️</Text>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#FFFFFF' }}>
+            撰写新日志
+          </Text>
+        </TouchableOpacity>
+
+        {/* 添加日志表单 */}
+        {showAddLog && (
+          <View style={{
+            backgroundColor: '#FFFFFF',
+            borderRadius: 12,
+            padding: 16,
+            marginBottom: 16,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.06,
+            shadowRadius: 3.84,
+            elevation: 2
+          }}>
+            <Text style={{ fontSize: 18, fontWeight: '600', color: '#111827', marginBottom: 16 }}>
+              撰写新日志
+            </Text>
+            
+            <TextInput
+              style={{
+                fontSize: 16,
+                fontWeight: '600',
+                color: '#111827',
+                marginBottom: 12,
+                padding: 12,
+                borderBottomWidth: 2,
+                borderBottomColor: '#E5E7EB'
+              }}
+              placeholder="日志标题"
+              placeholderTextColor="#9CA3AF"
+              value={newLogTitle}
+              onChangeText={setNewLogTitle}
+            />
+            
+            <TextInput
+              style={{
+                fontSize: 14,
+                color: '#4B5563',
+                marginBottom: 16,
+                padding: 12,
+                borderWidth: 2,
+                borderColor: '#E5E7EB',
+                borderRadius: 8,
+                minHeight: 120,
+                textAlignVertical: 'top'
+              }}
+              placeholder="日志内容"
+              placeholderTextColor="#9CA3AF"
+              value={newLogContent}
+              onChangeText={setNewLogContent}
+              multiline
+            />
+            
+            <View style={{
+              flexDirection: 'row',
+              gap: 12
+            }}>
+              <TouchableOpacity
+                style={{
+                  flex: 1,
+                  backgroundColor: '#FFFFFF',
+                  borderWidth: 2,
+                  borderColor: '#E5E7EB',
+                  borderRadius: 8,
+                  padding: 12,
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+                onPress={() => setShowAddLog(false)}
+              >
+                <Text style={{ fontSize: 14, fontWeight: '500', color: '#6B7280' }}>
+                  取消
+                </Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity
+                style={{
+                  flex: 1,
+                  backgroundColor: '#2DBBA1',
+                  borderRadius: 8,
+                  padding: 12,
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+                onPress={handleAddLog}
+              >
+                <Text style={{ fontSize: 14, fontWeight: '500', color: '#FFFFFF' }}>
+                  保存草稿
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
+        {/* 日志详情 */}
+        {selectedLog && (
+          <View style={{
+            backgroundColor: '#FFFFFF',
+            borderRadius: 12,
+            padding: 16,
+            marginBottom: 16,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.06,
+            shadowRadius: 3.84,
+            elevation: 2
+          }}>
+            {isEditing ? (
+              // 编辑模式
+              <View>
+                <Text style={{ fontSize: 18, fontWeight: '600', color: '#111827', marginBottom: 16 }}>
+                  编辑日志
+                </Text>
+                
+                <TextInput
+                  style={{
+                    fontSize: 16,
+                    fontWeight: '600',
+                    color: '#111827',
+                    marginBottom: 12,
+                    padding: 12,
+                    borderBottomWidth: 2,
+                    borderBottomColor: '#E5E7EB'
+                  }}
+                  placeholder="日志标题"
+                  placeholderTextColor="#9CA3AF"
+                  value={editTitle}
+                  onChangeText={setEditTitle}
+                />
+                
+                <TextInput
+                  style={{
+                    fontSize: 14,
+                    color: '#4B5563',
+                    marginBottom: 16,
+                    padding: 12,
+                    borderWidth: 2,
+                    borderColor: '#E5E7EB',
+                    borderRadius: 8,
+                    minHeight: 120,
+                    textAlignVertical: 'top'
+                  }}
+                  placeholder="日志内容"
+                  placeholderTextColor="#9CA3AF"
+                  value={editContent}
+                  onChangeText={setEditContent}
+                  multiline
+                />
+                
+                <View style={{
+                  flexDirection: 'row',
+                  gap: 12
+                }}>
+                  <TouchableOpacity
+                    style={{
+                      flex: 1,
+                      backgroundColor: '#FFFFFF',
+                      borderWidth: 2,
+                      borderColor: '#E5E7EB',
+                      borderRadius: 8,
+                      padding: 12,
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                    onPress={() => setIsEditing(false)}
+                  >
+                    <Text style={{ fontSize: 14, fontWeight: '500', color: '#6B7280' }}>
+                      取消
+                    </Text>
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity
+                    style={{
+                      flex: 1,
+                      backgroundColor: '#2DBBA1',
+                      borderRadius: 8,
+                      padding: 12,
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                    onPress={handleSaveEdit}
+                  >
+                    <Text style={{ fontSize: 14, fontWeight: '500', color: '#FFFFFF' }}>
+                      保存
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ) : (
+              // 查看模式
+              <View>
+                <View style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: 8
+                }}>
+                  <Text style={{ fontSize: 18, fontWeight: '600', color: '#111827' }}>
+                    {selectedLog.title}
+                  </Text>
+                  <View style={[
+                    {
+                      paddingHorizontal: 12,
+                      paddingVertical: 6,
+                      borderRadius: 16,
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    },
+                    getStatusStyle(selectedLog.status)
+                  ]}>
+                    <Text style={[
+                      {
+                        fontSize: 12,
+                        fontWeight: '500'
+                      },
+                      { color: getStatusStyle(selectedLog.status).color }
+                    ]}>
+                      {getStatusText(selectedLog.status)}
+                    </Text>
+                  </View>
+                </View>
+                
+                <Text style={{ fontSize: 14, color: '#6B7280', marginBottom: 16 }}>
+                  {selectedLog.date}
+                </Text>
+                
+                <Text style={{ fontSize: 14, color: '#4B5563', lineHeight: 22, marginBottom: 20 }}>
+                  {selectedLog.content}
+                </Text>
+                
+                {/* 导师批注 */}
+                {selectedLog.status === 'approved' || selectedLog.status === 'rejected' ? (
+                  <View style={{
+                    backgroundColor: '#F3F4F6',
+                    borderRadius: 8,
+                    padding: 16,
+                    marginBottom: 16
+                  }}>
+                    <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827', marginBottom: 12 }}>
+                      导师批注
+                    </Text>
+                    
+                    {selectedLog.rating && (
+                      <View style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        marginBottom: 12
+                      }}>
+                        <Text style={{ fontSize: 14, fontWeight: '500', color: '#4B5563', marginRight: 8 }}>
+                          评分：
+                        </Text>
+                        <View style={{ flexDirection: 'row' }}>
+                          {[...Array(5)].map((_, index) => (
+                            <Text key={index} style={{ fontSize: 16, color: index < selectedLog.rating ? '#FBBF24' : '#D1D5DB' }}>
+                              ⭐
+                            </Text>
+                          ))}
+                        </View>
+                      </View>
+                    )}
+                    
+                    <Text style={{ fontSize: 14, color: '#4B5563', lineHeight: 22 }}>
+                      {selectedLog.mentorComments || '暂无批注'}
+                    </Text>
+                    
+                    {selectedLog.mentorName && (
+                      <Text style={{ fontSize: 14, fontWeight: '500', color: '#6B7280', marginTop: 8, textAlign: 'right' }}>
+                        —— {selectedLog.mentorName}
+                      </Text>
+                    )}
+                  </View>
+                ) : null}
+                
+                {/* 操作按钮 */}
+                <View style={{
+                  flexDirection: 'row',
+                  gap: 12
+                }}>
+                  <TouchableOpacity
+                    style={{
+                      flex: 1,
+                      backgroundColor: '#FFFFFF',
+                      borderWidth: 2,
+                      borderColor: '#E5E7EB',
+                      borderRadius: 8,
+                      padding: 12,
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                    onPress={handleStartEdit}
+                  >
+                    <Text style={{ fontSize: 14, fontWeight: '500', color: '#6B7280' }}>
+                      编辑
+                    </Text>
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity
+                    style={{
+                      flex: 1,
+                      backgroundColor: '#EF4444',
+                      borderRadius: 8,
+                      padding: 12,
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                    onPress={handleDeleteLog}
+                  >
+                    <Text style={{ fontSize: 14, fontWeight: '500', color: '#FFFFFF' }}>
+                      删除
+                    </Text>
+                  </TouchableOpacity>
+                  
+                  {selectedLog.status === 'draft' && (
+                    <TouchableOpacity
+                      style={{
+                        flex: 1,
+                        backgroundColor: '#2DBBA1',
+                        borderRadius: 8,
+                        padding: 12,
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                      onPress={handleSubmitLog}
+                    >
+                      <Text style={{ fontSize: 14, fontWeight: '500', color: '#FFFFFF' }}>
+                        提交
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </View>
+            )}
+          </View>
+        )}
+
+        {/* 日志列表 */}
+        <View>
+          <Text style={{ fontSize: 18, fontWeight: '600', color: '#111827', marginBottom: 12 }}>
+            日志列表 ({filteredLogs.length} 篇)
+          </Text>
+          
+          {filteredLogs.map(log => (
+            <TouchableOpacity
+              key={log.id}
+              style={[
+                {
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: 12,
+                  padding: 16,
+                  marginBottom: 12,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.06,
+                  shadowRadius: 3.84,
+                  elevation: 2
+                },
+                selectedLog?.id === log.id && {
+                  borderWidth: 2,
+                  borderColor: '#2DBBA1',
+                  backgroundColor: '#E6F7F3'
+                }
+              ]}
+              onPress={() => handleSelectLog(log)}
+            >
+              <View style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                marginBottom: 8
+              }}>
+                <Text style={[
+                  {
+                    fontSize: 16,
+                    fontWeight: '600',
+                    color: '#111827',
+                    flex: 1
+                  },
+                  selectedLog?.id === log.id && {
+                    color: '#1F5E52'
+                  }
+                ]}>
+                  {log.title}
+                </Text>
+                <View style={[
+                  {
+                    paddingHorizontal: 10,
+                    paddingVertical: 4,
+                    borderRadius: 12,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginLeft: 8
+                  },
+                  getStatusStyle(log.status)
+                ]}>
+                  <Text style={[
+                    {
+                      fontSize: 12,
+                      fontWeight: '500'
+                    },
+                    { color: getStatusStyle(log.status).color }
+                  ]}>
+                    {getStatusText(log.status)}
+                  </Text>
+                </View>
+              </View>
+              
+              <Text style={{ fontSize: 14, color: '#6B7280', marginBottom: 8 }}>
+                {log.date}
+              </Text>
+              
+              <Text style={{ fontSize: 14, color: '#9CA3AF', lineHeight: 20 }} numberOfLines={2}>
+                {log.content}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
+    </View>
+  );
+};
+
+export default InternLogScreen;

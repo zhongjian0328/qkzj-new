@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 角色体验</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)',
+                        'selected': '0 0 0 2px rgba(59, 204, 165, 0.3)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
+        }
+        
+        .role-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .role-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .role-card.selected {
+            border-color: #3BCCA5;
+            background-color: rgba(59, 204, 165, 0.05);
+            box-shadow: 0 0 0 2px rgba(59, 204, 165, 0.3);
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex items-center px-4 py-3">
+            <button id="back-btn" class="mr-3 p-2 -ml-2">
+                <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+            </button>
+            <h1 id="page-title" class="text-lg font-semibold text-text-primary">体验角色选择</h1>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6 pb-32">
+        <!-- 体验说明 -->
+        <section id="experience-info" class="mb-8">
+            <div id="info-card" class="bg-card-bg rounded-xl p-4 shadow-card">
+                <div class="flex items-start space-x-3">
+                    <div id="info-icon" class="w-8 h-8 bg-secondary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-info-circle text-secondary text-sm"></i>
+                    </div>
+                    <div>
+                        <h4 id="info-title" class="font-medium text-text-primary mb-2">体验说明</h4>
+                        <p id="info-content" class="text-sm text-text-secondary leading-relaxed">
+                            您可以选择以下角色体验APP功能，每个设备最多可体验3次不同角色，每次体验时长不超过24小时。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 角色选择区域 -->
+        <section id="roles-section" class="mb-8">
+            <h2 id="roles-title" class="text-lg font-semibold text-text-primary mb-4">请选择要体验的角色</h2>
+            
+            <div id="roles-grid" class="space-y-4">
+                <!-- 养殖户（小散户） -->
+                <div id="role-farmer-small" class="role-card bg-card-bg rounded-xl p-6 shadow-card cursor-pointer" data-role="farmer-small">
+                    <div class="flex items-center space-x-4">
+                        <div id="farmer-small-icon" class="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-seedling text-2xl text-secondary"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 id="farmer-small-title" class="text-lg font-semibold text-text-primary mb-1">养殖户（小散户）</h3>
+                            <p id="farmer-small-desc" class="text-sm text-text-secondary">小规模养殖，个人或家庭经营</p>
+                        </div>
+                        <div id="farmer-small-arrow" class="w-6 h-6 flex items-center justify-center">
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 养殖户（企业） -->
+                <div id="role-farmer-enterprise" class="role-card bg-card-bg rounded-xl p-6 shadow-card cursor-pointer" data-role="farmer-enterprise">
+                    <div class="flex items-center space-x-4">
+                        <div id="farmer-enterprise-icon" class="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-industry text-2xl text-secondary"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 id="farmer-enterprise-title" class="text-lg font-semibold text-text-primary mb-1">养殖户（企业）</h3>
+                            <p id="farmer-enterprise-desc" class="text-sm text-text-secondary">规模化养殖企业，专业管理团队</p>
+                        </div>
+                        <div id="farmer-enterprise-arrow" class="w-6 h-6 flex items-center justify-center">
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 疫控机构 -->
+                <div id="role-institution-cdc" class="role-card bg-card-bg rounded-xl p-6 shadow-card cursor-pointer" data-role="institution-cdc">
+                    <div class="flex items-center space-x-4">
+                        <div id="institution-cdc-icon" class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-shield-alt text-2xl text-blue-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 id="institution-cdc-title" class="text-lg font-semibold text-text-primary mb-1">疫控机构</h3>
+                            <p id="institution-cdc-desc" class="text-sm text-text-secondary">负责疫情监测、预警和防控</p>
+                        </div>
+                        <div id="institution-cdc-arrow" class="w-6 h-6 flex items-center justify-center">
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 学生（实习） -->
+                <div id="role-student-internship" class="role-card bg-card-bg rounded-xl p-6 shadow-card cursor-pointer" data-role="student-internship">
+                    <div class="flex items-center space-x-4">
+                        <div id="student-internship-icon" class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-graduation-cap text-2xl text-purple-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 id="student-internship-title" class="text-lg font-semibold text-text-primary mb-1">学生（实习）</h3>
+                            <p id="student-internship-desc" class="text-sm text-text-secondary">顶岗实习，实践技能提升</p>
+                        </div>
+                        <div id="student-internship-arrow" class="w-6 h-6 flex items-center justify-center">
+                            <i class="fas fa-chevron-right text-text-secondary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部按钮 -->
+    <div id="bottom-action" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 safe-bottom">
+        <button id="start-experience-btn" class="w-full gradient-bg text-accent font-semibold py-4 rounded-xl shadow-button disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            开始体验
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let selectedRole = null;
+
+            // 角色选择
+            const roleCards = document.querySelectorAll('.role-card');
+            const startExperienceBtn = document.querySelector('#start-experience-btn');
+
+            roleCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const role = this.dataset.role;
+                    
+                    // 清除之前的选择
+                    roleCards.forEach(c => c.classList.remove('selected'));
+                    
+                    // 选中当前角色
+                    this.classList.add('selected');
+                    selectedRole = role;
+                    
+                    // 更新按钮状态
+                    startExperienceBtn.disabled = false;
+                });
+            });
+
+            // 开始体验按钮点击
+            startExperienceBtn.addEventListener('click', function() {
+                if (!selectedRole) {
+                    alert('请选择要体验的角色');
+                    return;
+                }
+
+                // 根据角色跳转到对应首页
+                let homePage = '';
+                switch(selectedRole) {
+                    case 'farmer-small':
+                        homePage = 'P-HOME_FARMER_SMALL.html';
+                        break;
+                    case 'farmer-enterprise':
+                        homePage = 'P-HOME_FARMER_ENTERPRISE.html';
+                        break;
+                    case 'institution-cdc':
+                        homePage = 'P-HOME_INSTITUTION_CDC.html';
+                        break;
+                    case 'student-internship':
+                        homePage = 'P-HOME_STUDENT_INTERNSHIP.html';
+                        break;
+                    default:
+                        homePage = 'P-HOME_FARMER_SMALL.html';
+                }
+
+                // 模拟体验开始，跳转到对应首页
+                alert('体验开始，您选择的角色是：' + selectedRole);
+                setTimeout(() => {
+                    window.location.href = homePage;
+                }, 1000);
+            });
+
+            // 返回按钮
+            document.querySelector('#back-btn').addEventListener('click', function() {
+                window.location.href = 'P-LOGIN_REGISTER.html';
+            });
+        });
+    </script>
+</body>
+</html>

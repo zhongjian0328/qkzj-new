@@ -11,14 +11,22 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#D3F8EE',
-                        secondary: '#3BCCA5', 
-                        accent: '#2B6A5A',
-                        'text-primary': '#1F2937',
-                        'text-secondary': '#6B7280',
-                        'bg-light': '#F9FAFB',
-                        'card-bg': '#FFFFFF'
-                    },
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
                     fontFamily: {
                         'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     },
@@ -32,7 +40,7 @@
     </script>
     <style>
         .gradient-bg {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .card-hover:active {
@@ -49,35 +57,7 @@
         }
         
         .status-bar {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
-        }
-
-        .export-type-option {
-            transition: all 0.2s ease;
-        }
-
-        .export-type-option.selected {
-            background-color: #3BCCA5;
-            color: white;
-        }
-
-        .export-type-option:not(.selected) {
-            background-color: #FFFFFF;
-            color: #1F2937;
-            border: 1px solid #E5E7EB;
-        }
-
-        .progress-bar {
-            background: linear-gradient(90deg, #3BCCA5 0%, #2B6A5A 100%);
-            transition: width 0.3s ease;
-        }
-
-        .download-btn {
-            transition: all 0.2s ease;
-        }
-
-        .download-btn:active {
-            transform: scale(0.95);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
     </style>
 </head>
@@ -96,277 +76,131 @@
 
     <!-- 顶部导航栏 -->
     <header id="top-header" class="bg-white shadow-sm">
-        <div class="flex items-center px-4 py-3">
-            <button id="back-btn" class="mr-3 p-2 -ml-2">
-                <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+        <div class="flex justify-between items-center px-4 py-3">
+            <button id="back-btn" class="flex items-center">
+                <i class="fas fa-arrow-left text-text-secondary text-xl"></i>
             </button>
             <h1 id="page-title" class="text-lg font-semibold text-text-primary">数据导出</h1>
+            <div class="w-6"></div>
         </div>
     </header>
 
     <!-- 主要内容区域 -->
-    <main id="main-content" class="px-4 py-6">
-        <!-- 导出配置区域 -->
-        <section id="export-config" class="mb-8">
-            <h2 id="config-title" class="text-lg font-semibold text-text-primary mb-4">导出配置</h2>
+    <main id="main-content" class="px-4 py-6 pb-20">
+        <!-- 导出类型选择 -->
+        <section id="export-type" class="mb-8">
+            <h2 id="export-type-title" class="text-lg font-semibold text-text-primary mb-4">选择导出类型</h2>
             
-            <!-- 导出类型选择 -->
-            <div id="export-type-section" class="mb-6">
-                <label id="export-type-label" class="block text-sm font-medium text-text-primary mb-3">导出类型</label>
-                <div id="export-type-options" class="space-y-3">
-                    <div id="type-production" class="export-type-option selected p-4 rounded-xl cursor-pointer" data-type="production">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-chart-line text-secondary"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-medium">生产数据</h4>
-                                    <p class="text-sm opacity-75">包含批次信息、死淘记录、耗料数据等</p>
-                                </div>
-                            </div>
-                            <i class="fas fa-check text-lg"></i>
-                        </div>
-                    </div>
-
-                    <div id="type-customer" class="export-type-option p-4 rounded-xl cursor-pointer" data-type="customer">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-users text-blue-600"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-medium">客户数据</h4>
-                                    <p class="text-sm opacity-75">包含客户档案、互动记录、订单信息等</p>
-                                </div>
-                            </div>
-                            <i class="fas fa-check text-lg opacity-0"></i>
-                        </div>
-                    </div>
-
-                    <div id="type-internship" class="export-type-option p-4 rounded-xl cursor-pointer" data-type="internship">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-graduation-cap text-purple-600"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-medium">实习报告</h4>
-                                    <p class="text-sm opacity-75">包含实习日志、导师批注、学习记录等</p>
-                                </div>
-                            </div>
-                            <i class="fas fa-check text-lg opacity-0"></i>
-                        </div>
-                    </div>
-
-                    <div id="type-diagnosis" class="export-type-option p-4 rounded-xl cursor-pointer" data-type="diagnosis">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-stethoscope text-orange-600"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-medium">诊断记录</h4>
-                                    <p class="text-sm opacity-75">包含AI诊断历史、治疗方案等</p>
-                                </div>
-                            </div>
-                            <i class="fas fa-check text-lg opacity-0"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 时间范围选择 -->
-            <div id="time-range-section" class="mb-6">
-                <label id="time-range-label" class="block text-sm font-medium text-text-primary mb-3">时间范围</label>
-                <div id="time-range-options" class="space-y-3">
-                    <div id="range-recent" class="export-type-option selected p-4 rounded-xl cursor-pointer" data-range="recent">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-calendar-week text-green-600"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-medium">最近7天</h4>
-                                    <p class="text-sm opacity-75">快速查看近期数据</p>
-                                </div>
-                            </div>
-                            <i class="fas fa-check text-lg"></i>
-                        </div>
-                    </div>
-
-                    <div id="range-month" class="export-type-option p-4 rounded-xl cursor-pointer" data-range="month">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-calendar-alt text-blue-600"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-medium">本月</h4>
-                                    <p class="text-sm opacity-75">查看本月完整数据</p>
-                                </div>
-                            </div>
-                            <i class="fas fa-check text-lg opacity-0"></i>
-                        </div>
-                    </div>
-
-                    <div id="range-quarter" class="export-type-option p-4 rounded-xl cursor-pointer" data-range="quarter">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-chart-bar text-purple-600"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-medium">本季度</h4>
-                                    <p class="text-sm opacity-75">查看季度汇总数据</p>
-                                </div>
-                            </div>
-                            <i class="fas fa-check text-lg opacity-0"></i>
-                        </div>
-                    </div>
-
-                    <div id="range-custom" class="export-type-option p-4 rounded-xl cursor-pointer" data-range="custom">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-calendar-check text-gray-600"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-medium">自定义范围</h4>
-                                    <p class="text-sm opacity-75">选择特定的时间区间</p>
-                                </div>
-                            </div>
-                            <i class="fas fa-check text-lg opacity-0"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 自定义时间范围（隐藏，选择自定义时显示） -->
-            <div id="custom-date-section" class="mb-6 hidden">
-                <div class="bg-card-bg rounded-xl p-4 shadow-card">
-                    <div class="space-y-4">
-                        <div>
-                            <label for="start-date" class="block text-sm font-medium text-text-primary mb-2">开始日期</label>
-                            <input type="date" id="start-date" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent">
+            <div id="export-type-grid" class="grid grid-cols-2 gap-4">
+                <div id="production-data-card" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-chart-line text-xl text-secondary"></i>
                         </div>
                         <div>
-                            <label for="end-date" class="block text-sm font-medium text-text-primary mb-2">结束日期</label>
-                            <input type="date" id="end-date" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent">
+                            <h4 class="font-semibold text-text-primary">生产数据</h4>
+                            <p class="text-xs text-text-secondary">死淘、耗料、存栏等</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="diagnosis-data-card" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-stethoscope text-xl text-secondary"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-text-primary">诊断数据</h4>
+                            <p class="text-xs text-text-secondary">AI诊断记录</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="customer-data-card" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-users text-xl text-secondary"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-text-primary">客户数据</h4>
+                            <p class="text-xs text-text-secondary">客户档案、互动记录</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="internship-data-card" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-graduation-cap text-xl text-secondary"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-text-primary">实习数据</h4>
+                            <p class="text-xs text-text-secondary">实习日志、报告</p>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- 导出按钮 -->
-            <button id="export-btn" class="w-full gradient-bg text-accent font-semibold py-4 rounded-xl shadow-button card-hover">
-                <i class="fas fa-download mr-2"></i>
-                开始导出
-            </button>
         </section>
 
-        <!-- 导出进度（隐藏，导出时显示） -->
-        <section id="export-progress" class="mb-8 hidden">
-            <div class="bg-card-bg rounded-xl p-6 shadow-card">
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-sync-alt text-2xl text-secondary animate-spin"></i>
-                    </div>
-                    <h3 class="text-lg font-semibold text-text-primary mb-2">正在导出数据</h3>
-                    <p class="text-text-secondary mb-4">请稍候，正在为您准备数据文件...</p>
-                    
-                    <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
-                        <div id="progress-bar" class="progress-bar h-2 rounded-full" style="width: 0%"></div>
+        <!-- 时间范围选择 -->
+        <section id="time-range" class="mb-8">
+            <h2 id="time-range-title" class="text-lg font-semibold text-text-primary mb-4">选择时间范围</h2>
+            
+            <div id="time-range-card" class="bg-card-bg rounded-xl p-4 shadow-card">
+                <div class="flex flex-col space-y-4">
+                    <div class="flex items-center justify-between">
+                        <label for="start-date" class="text-text-primary font-medium">开始日期</label>
+                        <input type="date" id="start-date" class="bg-gray-100 rounded-lg px-3 py-2 text-text-primary">
                     </div>
                     
-                    <p id="progress-text" class="text-sm text-text-secondary">0%</p>
+                    <div class="flex items-center justify-between">
+                        <label for="end-date" class="text-text-primary font-medium">结束日期</label>
+                        <input type="date" id="end-date" class="bg-gray-100 rounded-lg px-3 py-2 text-text-primary">
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <label for="export-format" class="text-text-primary font-medium">导出格式</label>
+                        <select id="export-format" class="bg-gray-100 rounded-lg px-3 py-2 text-text-primary">
+                            <option value="excel">Excel (.xlsx)</option>
+                            <option value="csv">CSV (.csv)</option>
+                        </select>
+                    </div>
                 </div>
             </div>
+        </section>
+
+        <!-- 导出按钮 -->
+        <section id="export-button" class="mb-8">
+            <button id="export-btn" class="w-full bg-secondary text-accent font-semibold py-3 rounded-xl shadow-button">
+                导出数据
+            </button>
         </section>
 
         <!-- 导出历史记录 -->
         <section id="export-history">
-            <div class="flex justify-between items-center mb-4">
-                <h2 id="history-title" class="text-lg font-semibold text-text-primary">导出历史</h2>
-                <button id="clear-history" class="text-sm text-text-secondary">
-                    <i class="fas fa-trash-alt mr-1"></i>
-                    清空
-                </button>
-            </div>
+            <h2 id="export-history-title" class="text-lg font-semibold text-text-primary mb-4">导出历史</h2>
             
             <div id="history-list" class="space-y-3">
                 <div id="history-item-1" class="bg-card-bg rounded-xl p-4 shadow-card">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
-                                <i class="fas fa-file-excel text-secondary"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-medium text-text-primary">生产数据_20240115.xlsx</h4>
-                                <p class="text-sm text-text-secondary">2024-01-15 14:30</p>
-                                <p class="text-xs text-text-secondary">大小：2.3 MB</p>
-                            </div>
+                        <div>
+                            <h4 id="history-title-1" class="font-semibold text-text-primary">生产数据_20240101-20240115</h4>
+                            <p id="history-time-1" class="text-xs text-text-secondary">2024-01-15 14:30</p>
                         </div>
-                        <button id="download-btn-1" class="download-btn px-4 py-2 bg-secondary text-white rounded-lg text-sm">
-                            <i class="fas fa-download mr-1"></i>
-                            下载
+                        <button id="download-btn-1" class="text-secondary font-medium">
+                            <i class="fas fa-download mr-1"></i> 下载
                         </button>
                     </div>
                 </div>
 
                 <div id="history-item-2" class="bg-card-bg rounded-xl p-4 shadow-card">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-file-excel text-blue-600"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-medium text-text-primary">客户数据_20240114.xlsx</h4>
-                                <p class="text-sm text-text-secondary">2024-01-14 09:15</p>
-                                <p class="text-xs text-text-secondary">大小：1.8 MB</p>
-                            </div>
+                        <div>
+                            <h4 id="history-title-2" class="font-semibold text-text-primary">诊断数据_20240101-20240115</h4>
+                            <p id="history-time-2" class="text-xs text-text-secondary">2024-01-15 10:20</p>
                         </div>
-                        <button id="download-btn-2" class="download-btn px-4 py-2 bg-secondary text-white rounded-lg text-sm">
-                            <i class="fas fa-download mr-1"></i>
-                            下载
-                        </button>
-                    </div>
-                </div>
-
-                <div id="history-item-3" class="bg-card-bg rounded-xl p-4 shadow-card">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-file-pdf text-purple-600"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-medium text-text-primary">实习报告_20240113.pdf</h4>
-                                <p class="text-sm text-text-secondary">2024-01-13 16:45</p>
-                                <p class="text-xs text-text-secondary">大小：4.1 MB</p>
-                            </div>
-                        </div>
-                        <button id="download-btn-3" class="download-btn px-4 py-2 bg-secondary text-white rounded-lg text-sm">
-                            <i class="fas fa-download mr-1"></i>
-                            下载
-                        </button>
-                    </div>
-                </div>
-
-                <div id="history-item-4" class="bg-card-bg rounded-xl p-4 shadow-card">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-file-excel text-orange-600"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-medium text-text-primary">诊断记录_20240112.xlsx</h4>
-                                <p class="text-sm text-text-secondary">2024-01-12 11:20</p>
-                                <p class="text-xs text-text-secondary">大小：3.5 MB</p>
-                            </div>
-                        </div>
-                        <button id="download-btn-4" class="download-btn px-4 py-2 bg-secondary text-white rounded-lg text-sm">
-                            <i class="fas fa-download mr-1"></i>
-                            下载
+                        <button id="download-btn-2" class="text-secondary font-medium">
+                            <i class="fas fa-download mr-1"></i> 下载
                         </button>
                     </div>
                 </div>
@@ -374,215 +208,93 @@
         </section>
     </main>
 
+    <!-- 底部导航栏 -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
+        <a id="nav-home" href="P-HOME_FARMER_ENTERPRISE.html" class="flex flex-col items-center p-2">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-xs mt-0.5">首页</span>
+        </a>
+        <a id="nav-production" href="P-PRODUCTION_DASHBOARD.html" class="flex flex-col items-center p-2">
+            <i class="fas fa-chart-bar text-xl"></i>
+            <span class="text-xs mt-0.5">生产管理</span>
+        </a>
+        <a id="nav-profile" href="P-USER_PROFILE.html" class="flex flex-col items-center p-2">
+            <i class="fas fa-user text-xl"></i>
+            <span class="text-xs mt-0.5">我的</span>
+        </a>
+    </nav>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            let selectedExportType = 'production';
-            let selectedTimeRange = 'recent';
+            // 动态设置底部导航栏激活状态
+            function setActiveNavItem() {
+                const currentUrl = window.location.href;
+                const navItems = document.querySelectorAll('#bottom-nav a');
+                
+                navItems.forEach(item => {
+                    const href = item.getAttribute('href');
+                    if (currentUrl.includes(href)) {
+                        item.classList.add('text-secondary');
+                        item.classList.remove('text-text-secondary');
+                    } else {
+                        item.classList.add('text-text-secondary');
+                        item.classList.remove('text-secondary');
+                    }
+                });
+            }
             
-            // 返回按钮
+            // 初始化导航栏激活状态
+            setActiveNavItem();
+            
+            // 返回按钮点击事件
             document.querySelector('#back-btn').addEventListener('click', function() {
                 window.history.back();
             });
-
-            // 导出类型选择
-            const exportTypeOptions = document.querySelectorAll('.export-type-option[data-type]');
-            exportTypeOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    // 清除所有选中状态
-                    exportTypeOptions.forEach(opt => {
-                        opt.classList.remove('selected');
-                        opt.querySelector('.fa-check').classList.add('opacity-0');
-                    });
-                    
-                    // 设置当前选中
-                    this.classList.add('selected');
-                    this.querySelector('.fa-check').classList.remove('opacity-0');
-                    
-                    selectedExportType = this.dataset.type;
-                });
-            });
-
-            // 时间范围选择
-            const timeRangeOptions = document.querySelectorAll('.export-type-option[data-range]');
-            const customDateSection = document.querySelector('#custom-date-section');
             
-            timeRangeOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    // 清除所有选中状态
-                    timeRangeOptions.forEach(opt => {
-                        opt.classList.remove('selected');
-                        opt.querySelector('.fa-check').classList.add('opacity-0');
-                    });
-                    
-                    // 设置当前选中
-                    this.classList.add('selected');
-                    this.querySelector('.fa-check').classList.remove('opacity-0');
-                    
-                    selectedTimeRange = this.dataset.range;
-                    
-                    // 显示/隐藏自定义日期选择
-                    if (selectedTimeRange === 'custom') {
-                        customDateSection.classList.remove('hidden');
-                    } else {
-                        customDateSection.classList.add('hidden');
-                    }
-                });
-            });
-
-            // 导出按钮
+            // 导出数据按钮点击事件
             document.querySelector('#export-btn').addEventListener('click', function() {
-                const exportConfig = {
-                    type: selectedExportType,
-                    range: selectedTimeRange
-                };
-                
-                if (selectedTimeRange === 'custom') {
-                    const startDate = document.querySelector('#start-date').value;
-                    const endDate = document.querySelector('#end-date').value;
-                    
-                    if (!startDate || !endDate) {
-                        alert('请选择完整的自定义时间范围');
-                        return;
-                    }
-                    
-                    if (new Date(startDate) > new Date(endDate)) {
-                        alert('开始日期不能晚于结束日期');
-                        return;
-                    }
-                    
-                    exportConfig.customStart = startDate;
-                    exportConfig.customEnd = endDate;
-                }
-                
-                startExport(exportConfig);
+                // 模拟导出数据
+                console.log('导出数据');
+                // 显示导出成功提示
+                alert('数据导出成功，请到导出历史查看下载链接');
             });
-
-            // 开始导出
-            function startExport(config) {
-                const exportBtn = document.querySelector('#export-btn');
-                const exportConfig = document.querySelector('#export-config');
-                const exportProgress = document.querySelector('#export-progress');
-                const progressBar = document.querySelector('#progress-bar');
-                const progressText = document.querySelector('#progress-text');
-                
-                // 隐藏配置区域，显示进度区域
-                exportConfig.classList.add('hidden');
-                exportProgress.classList.remove('hidden');
-                
-                // 模拟导出进度
-                let progress = 0;
-                const progressInterval = setInterval(() => {
-                    progress += Math.random() * 15 + 5; // 随机增加5-20%
-                    
-                    if (progress >= 100) {
-                        progress = 100;
-                        clearInterval(progressInterval);
-                        
-                        // 导出完成
-                        setTimeout(() => {
-                            exportProgress.classList.add('hidden');
-                            exportConfig.classList.remove('hidden');
-                            
-                            // 添加到历史记录
-                            addToHistory(config);
-                            
-                            alert('数据导出完成！');
-                        }, 500);
-                    }
-                    
-                    progressBar.style.width = progress + '%';
-                    progressText.textContent = Math.round(progress) + '%';
-                }, 200);
-            }
-
-            // 添加到历史记录
-            function addToHistory(config) {
-                const historyList = document.querySelector('#history-list');
-                const now = new Date();
-                const timestamp = now.toLocaleString('zh-CN');
-                const fileName = `${getExportTypeName(config.type)}_${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}.${config.type === 'internship' ? 'pdf' : 'xlsx'}`;
-                
-                const fileIcon = config.type === 'internship' ? 'fas fa-file-pdf text-purple-600' : 'fas fa-file-excel';
-                const iconBg = config.type === 'internship' ? 'bg-purple-100' : 
-                             config.type === 'customer' ? 'bg-blue-100' : 
-                             config.type === 'diagnosis' ? 'bg-orange-100' : 'bg-secondary/10';
-                const iconColor = config.type === 'internship' ? 'text-purple-600' : 
-                                config.type === 'customer' ? 'text-blue-600' : 
-                                config.type === 'diagnosis' ? 'text-orange-600' : 'text-secondary';
-                
-                const historyItem = document.createElement('div');
-                historyItem.className = 'bg-card-bg rounded-xl p-4 shadow-card';
-                historyItem.innerHTML = `
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-12 h-12 ${iconBg} rounded-full flex items-center justify-center">
-                                <i class="${fileIcon} ${iconColor}"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-medium text-text-primary">${fileName}</h4>
-                                <p class="text-sm text-text-secondary">${timestamp}</p>
-                                <p class="text-xs text-text-secondary">大小：${(Math.random() * 3 + 1).toFixed(1)} MB</p>
-                            </div>
-                        </div>
-                        <button class="download-btn px-4 py-2 bg-secondary text-white rounded-lg text-sm">
-                            <i class="fas fa-download mr-1"></i>
-                            下载
-                        </button>
-                    </div>
-                `;
-                
-                // 添加到历史记录顶部
-                historyList.insertBefore(historyItem, historyList.firstChild);
-                
-                // 绑定下载事件
-                historyItem.querySelector('.download-btn').addEventListener('click', function() {
-                    downloadFile(fileName);
+            
+            // 导出类型卡片点击事件
+            document.querySelector('#production-data-card').addEventListener('click', function() {
+                console.log('选择生产数据导出');
+            });
+            
+            document.querySelector('#diagnosis-data-card').addEventListener('click', function() {
+                console.log('选择诊断数据导出');
+            });
+            
+            document.querySelector('#customer-data-card').addEventListener('click', function() {
+                console.log('选择客户数据导出');
+            });
+            
+            document.querySelector('#internship-data-card').addEventListener('click', function() {
+                console.log('选择实习数据导出');
+            });
+            
+            // 下载历史记录按钮点击事件
+            document.querySelector('#download-btn-1').addEventListener('click', function() {
+                console.log('下载历史记录 1');
+            });
+            
+            document.querySelector('#download-btn-2').addEventListener('click', function() {
+                console.log('下载历史记录 2');
+            });
+            
+            // 卡片点击效果
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach(card => {
+                card.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
                 });
-            }
-
-            // 获取导出类型名称
-            function getExportTypeName(type) {
-                const typeNames = {
-                    'production': '生产数据',
-                    'customer': '客户数据',
-                    'internship': '实习报告',
-                    'diagnosis': '诊断记录'
-                };
-                return typeNames[type] || '数据文件';
-            }
-
-            // 下载文件
-            function downloadFile(fileName) {
-                console.log('下载文件:', fileName);
-                // 模拟下载
-                const link = document.createElement('a');
-                link.href = '#';
-                link.download = fileName;
-                link.click();
-                
-                alert('文件下载已开始');
-            }
-
-            // 历史记录下载按钮
-            const downloadButtons = document.querySelectorAll('.download-btn');
-            downloadButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const fileName = this.closest('.bg-card-bg').querySelector('h4').textContent;
-                    downloadFile(fileName);
+                card.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
                 });
             });
-
-            // 清空历史记录
-            document.querySelector('#clear-history').addEventListener('click', function() {
-                if (confirm('确定要清空所有导出历史吗？')) {
-                    document.querySelector('#history-list').innerHTML = '<p class="text-center text-text-secondary py-8">暂无导出历史</p>';
-                }
-            });
-
-            // 设置默认日期
-            const today = new Date().toISOString().split('T')[0];
-            document.querySelector('#start-date').value = today;
-            document.querySelector('#end-date').value = today;
         });
     </script>
 </body>

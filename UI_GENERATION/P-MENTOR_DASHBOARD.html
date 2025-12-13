@@ -11,14 +11,22 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#D3F8EE',
-                        secondary: '#3BCCA5', 
-                        accent: '#2B6A5A',
-                        'text-primary': '#1F2937',
-                        'text-secondary': '#6B7280',
-                        'bg-light': '#F9FAFB',
-                        'card-bg': '#FFFFFF'
-                    },
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
                     fontFamily: {
                         'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     },
@@ -32,7 +40,7 @@
     </script>
     <style>
         .gradient-bg {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .card-hover:active {
@@ -49,7 +57,7 @@
         }
         
         .status-bar {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .student-active {
@@ -79,7 +87,7 @@
         </div>
     </div>
 
-    <!-- 顶部导航栏 -->
+    <!-- 顶部导航�?-->
     <header id="top-header" class="bg-white shadow-sm">
         <div class="flex justify-between items-center px-4 py-3">
             <div class="flex items-center space-x-3">
@@ -88,7 +96,7 @@
                 </button>
                 <div>
                     <h1 id="page-title" class="text-lg font-semibold text-text-primary">导师管理</h1>
-                    <p id="mentor-info" class="text-sm text-text-secondary">农业大学 - 李教授</p>
+                    <p id="mentor-info" class="text-sm text-text-secondary">农业大学 - 李教�?/p>
                 </div>
             </div>
             <div id="header-actions" class="flex items-center space-x-3">
@@ -111,11 +119,11 @@
                 </div>
                 <div id="pending-reviews-card" class="bg-card-bg rounded-xl p-4 shadow-card text-center">
                     <div class="text-2xl font-bold text-orange-500 mb-1">3</div>
-                    <div class="text-sm text-text-secondary">待批阅</div>
+                    <div class="text-sm text-text-secondary">待批�?/div>
                 </div>
                 <div id="completed-logs-card" class="bg-card-bg rounded-xl p-4 shadow-card text-center">
                     <div class="text-2xl font-bold text-green-500 mb-1">45</div>
-                    <div class="text-sm text-text-secondary">已完成</div>
+                    <div class="text-sm text-text-secondary">已完�?/div>
                 </div>
             </div>
         </section>
@@ -136,13 +144,13 @@
                             <img id="student-1-avatar" src="https://s.coze.cn/image/tXspHwyhyMw/" 
                                  alt="学生头像" data-category="人物" class="w-12 h-12 rounded-full border-2 border-secondary">
                             <div>
-                                <h4 id="student-1-name" class="font-medium text-text-primary">张小明</h4>
+                                <h4 id="student-1-name" class="font-medium text-text-primary">张小�?/h4>
                                 <p id="student-1-group" class="text-sm text-text-secondary">实习组A · 动物医学专业</p>
                                 <div class="flex items-center space-x-2 mt-1">
                                     <span id="student-1-status" class="px-2 py-1 bg-orange-100 rounded-full">
                                         <span class="text-xs text-orange-700">2篇待批阅</span>
                                     </span>
-                                    <span id="student-1-progress" class="text-xs text-text-secondary">已完成8篇</span>
+                                    <span id="student-1-progress" class="text-xs text-text-secondary">已完�?�?/span>
                                 </div>
                             </div>
                         </div>
@@ -156,13 +164,13 @@
                             <img id="student-2-avatar" src="https://s.coze.cn/image/WIiOkkCEP3M/" 
                                  alt="学生头像" data-category="人物" class="w-12 h-12 rounded-full border-2 border-secondary">
                             <div>
-                                <h4 id="student-2-name" class="font-medium text-text-primary">李小红</h4>
+                                <h4 id="student-2-name" class="font-medium text-text-primary">李小�?/h4>
                                 <p id="student-2-group" class="text-sm text-text-secondary">实习组B · 畜牧兽医专业</p>
                                 <div class="flex items-center space-x-2 mt-1">
                                     <span id="student-2-status" class="px-2 py-1 bg-green-100 rounded-full">
-                                        <span class="text-xs text-green-700">已批阅</span>
+                                        <span class="text-xs text-green-700">已批�?/span>
                                     </span>
-                                    <span id="student-2-progress" class="text-xs text-text-secondary">已完成12篇</span>
+                                    <span id="student-2-progress" class="text-xs text-text-secondary">已完�?2�?/span>
                                 </div>
                             </div>
                         </div>
@@ -176,13 +184,13 @@
                             <img id="student-3-avatar" src="https://s.coze.cn/image/Sg0sRpmvwJo/" 
                                  alt="学生头像" data-category="人物" class="w-12 h-12 rounded-full border-2 border-secondary">
                             <div>
-                                <h4 id="student-3-name" class="font-medium text-text-primary">王大力</h4>
+                                <h4 id="student-3-name" class="font-medium text-text-primary">王大�?/h4>
                                 <p id="student-3-group" class="text-sm text-text-secondary">实习组A · 动物医学专业</p>
                                 <div class="flex items-center space-x-2 mt-1">
                                     <span id="student-3-status" class="px-2 py-1 bg-orange-100 rounded-full">
                                         <span class="text-xs text-orange-700">1篇待批阅</span>
                                     </span>
-                                    <span id="student-3-progress" class="text-xs text-text-secondary">已完成6篇</span>
+                                    <span id="student-3-progress" class="text-xs text-text-secondary">已完�?�?/span>
                                 </div>
                             </div>
                         </div>
@@ -196,13 +204,13 @@
                             <img id="student-4-avatar" src="https://s.coze.cn/image/kl36SjA3E28/" 
                                  alt="学生头像" data-category="人物" class="w-12 h-12 rounded-full border-2 border-secondary">
                             <div>
-                                <h4 id="student-4-name" class="font-medium text-text-primary">陈美丽</h4>
+                                <h4 id="student-4-name" class="font-medium text-text-primary">陈美�?/h4>
                                 <p id="student-4-group" class="text-sm text-text-secondary">实习组B · 畜牧兽医专业</p>
                                 <div class="flex items-center space-x-2 mt-1">
                                     <span id="student-4-status" class="px-2 py-1 bg-green-100 rounded-full">
-                                        <span class="text-xs text-green-700">已批阅</span>
+                                        <span class="text-xs text-green-700">已批�?/span>
                                     </span>
-                                    <span id="student-4-progress" class="text-xs text-text-secondary">已完成10篇</span>
+                                    <span id="student-4-progress" class="text-xs text-text-secondary">已完�?0�?/span>
                                 </div>
                             </div>
                         </div>
@@ -231,13 +239,13 @@
                                 <i class="fas fa-clock text-orange-600"></i>
                             </div>
                             <div>
-                                <h4 id="log-1-title" class="font-medium text-text-primary">新城疫病例观察记录</h4>
+                                <h4 id="log-1-title" class="font-medium text-text-primary">新城疫病例观察记�?/h4>
                                 <p id="log-1-date" class="text-sm text-text-secondary">2024-01-15</p>
-                                <p id="log-1-status" class="text-xs text-orange-600">待批阅</p>
+                                <p id="log-1-status" class="text-xs text-orange-600">待批�?/p>
                             </div>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <span class="text-xs text-text-secondary">3张图片</span>
+                            <span class="text-xs text-text-secondary">3张图�?/span>
                             <i class="fas fa-chevron-right text-text-secondary"></i>
                         </div>
                     </div>
@@ -250,13 +258,13 @@
                                 <i class="fas fa-clock text-orange-600"></i>
                             </div>
                             <div>
-                                <h4 id="log-2-title" class="font-medium text-text-primary">禽流感诊断实习</h4>
+                                <h4 id="log-2-title" class="font-medium text-text-primary">禽流感诊断实�?/h4>
                                 <p id="log-2-date" class="text-sm text-text-secondary">2024-01-14</p>
-                                <p id="log-2-status" class="text-xs text-orange-600">待批阅</p>
+                                <p id="log-2-status" class="text-xs text-orange-600">待批�?/p>
                             </div>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <span class="text-xs text-text-secondary">5张图片</span>
+                            <span class="text-xs text-text-secondary">5张图�?/span>
                             <i class="fas fa-chevron-right text-text-secondary"></i>
                         </div>
                     </div>
@@ -271,11 +279,11 @@
                             <div>
                                 <h4 id="log-3-title" class="font-medium text-text-primary">鸡舍日常管理实习</h4>
                                 <p id="log-3-date" class="text-sm text-text-secondary">2024-01-13</p>
-                                <p id="log-3-status" class="text-xs text-green-600">已批阅</p>
+                                <p id="log-3-status" class="text-xs text-green-600">已批�?/p>
                             </div>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <span class="text-xs text-text-secondary">2张图片</span>
+                            <span class="text-xs text-text-secondary">2张图�?/span>
                             <i class="fas fa-chevron-right text-text-secondary"></i>
                         </div>
                     </div>
@@ -283,9 +291,9 @@
             </div>
         </section>
 
-        <!-- 快速操作 -->
+        <!-- 快速操�?-->
         <section id="quick-actions">
-            <h2 id="quick-actions-title" class="text-lg font-semibold text-text-primary mb-4">快速操作</h2>
+            <h2 id="quick-actions-title" class="text-lg font-semibold text-text-primary mb-4">快速操�?/h2>
             
             <div id="actions-grid" class="grid grid-cols-2 gap-4">
                 <div id="action-batch-review" class="bg-card-bg rounded-xl p-4 shadow-card card-hover text-center">
@@ -293,7 +301,7 @@
                         <i class="fas fa-tasks text-secondary"></i>
                     </div>
                     <h4 class="text-sm font-medium text-text-primary">批量批阅</h4>
-                    <p class="text-xs text-text-secondary mt-1">集中处理待批阅日志</p>
+                    <p class="text-xs text-text-secondary mt-1">集中处理待批阅日�?/p>
                 </div>
 
                 <div id="action-statistics" class="bg-card-bg rounded-xl p-4 shadow-card card-hover text-center">
@@ -306,6 +314,14 @@
             </div>
         </section>
     </main>
+
+    <!-- �ײ������� -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
+        <div id="nav-content"></div>
+    </nav>
+
+    <!-- ����ͨ�õ����ű� -->
+    <script src="common-nav.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -323,8 +339,7 @@
                     currentStudentId = this.dataset.studentId;
                     const studentName = this.querySelector('h4').textContent;
                     
-                    // 高亮当前选中的学生
-                    studentItems.forEach(student => {
+                    // 高亮当前选中的学�?                    studentItems.forEach(student => {
                         student.classList.remove('student-active');
                     });
                     this.classList.add('student-active');
@@ -345,8 +360,7 @@
                 document.querySelector('#students-section').classList.remove('hidden');
                 document.querySelector('#quick-actions').classList.remove('hidden');
                 
-                // 清除学生选中状态
-                studentItems.forEach(student => {
+                // 清除学生选中状�?                studentItems.forEach(student => {
                     student.classList.remove('student-active');
                 });
                 currentStudentId = null;

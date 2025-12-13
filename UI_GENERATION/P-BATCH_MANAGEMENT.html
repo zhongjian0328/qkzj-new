@@ -11,14 +11,22 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#D3F8EE',
-                        secondary: '#3BCCA5', 
-                        accent: '#2B6A5A',
-                        'text-primary': '#1F2937',
-                        'text-secondary': '#6B7280',
-                        'bg-light': '#F9FAFB',
-                        'card-bg': '#FFFFFF'
-                    },
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
                     fontFamily: {
                         'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     },
@@ -32,12 +40,38 @@
     </script>
     <style>
         .gradient-bg {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
+        /* 触摸反馈效果 */
         .card-hover:active {
             transform: scale(0.98);
             transition: transform 0.1s ease;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .btn-touch:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        input:active,
+        select:active,
+        textarea:active {
+            transform: scale(0.995);
+            transition: transform 0.1s ease;
+        }
+        
+        /* 焦点反馈效果 */
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: 2px solid #3BCCA5;
+            outline-offset: 2px;
         }
         
         .safe-top {
@@ -49,11 +83,28 @@
         }
         
         .status-bar {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
 
         .modal-overlay {
             background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+        }
+
+        .modal-content-wrapper {
+            transform: scale(0.95);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .modal-content-wrapper.active {
+            transform: scale(1);
+            opacity: 1;
         }
 
         .batch-status-active {
@@ -64,6 +115,78 @@
         .batch-status-finished {
             background-color: #F3F4F6;
             color: #6B7280;
+        }
+
+        /* Toast动画 */
+        #toast {
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translate(-50%, -10px);
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+        
+        /* 响应式设计优化 */
+        @media (max-width: 320px) {
+            /* 超小屏幕设备 */
+            h1 {
+                font-size: 1.125rem;
+            }
+            
+            h2 {
+                font-size: 1rem;
+            }
+            
+            .text-2xl {
+                font-size: 1.25rem;
+            }
+            
+            #main-content {
+                padding: 1rem;
+            }
+            
+            .modal-content-wrapper {
+                padding: 0.5rem;
+            }
+            
+            #modal-content,
+            #detail-modal-content {
+                border-radius: 1rem;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            /* 平板及以上设备 */
+            #batch-modal .modal-content-wrapper,
+            #batch-detail-modal .modal-content-wrapper {
+                padding: 1rem;
+            }
+            
+            #modal-content,
+            #detail-modal-content {
+                max-width: 600px;
+            }
+            
+            #batch-list {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 1rem;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            /* 桌面设备 */
+            body {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+            
+            #main-content {
+                max-width: 1000px;
+                margin: 0 auto;
+            }
         }
     </style>
 </head>
@@ -355,7 +478,7 @@
     <!-- 新建/编辑批次模态框 -->
     <div id="batch-modal" class="fixed inset-0 z-50 hidden">
         <div class="modal-overlay absolute inset-0"></div>
-        <div class="relative flex items-center justify-center min-h-screen p-4">
+        <div class="relative flex items-center justify-center min-h-screen p-4 modal-content-wrapper">
             <div id="modal-content" class="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-y-auto">
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-6">
@@ -414,11 +537,16 @@
             </div>
         </div>
     </div>
+    
+    <!-- 提示框 -->
+    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-text-primary text-white px-4 py-2 rounded-lg text-sm z-50 hidden">
+        <span id="toast-message">提示信息</span>
+    </div>
 
     <!-- 批次详情模态框 -->
     <div id="batch-detail-modal" class="fixed inset-0 z-50 hidden">
         <div class="modal-overlay absolute inset-0"></div>
-        <div class="relative flex items-center justify-center min-h-screen p-4">
+        <div class="relative flex items-center justify-center min-h-screen p-4 modal-content-wrapper">
             <div id="detail-modal-content" class="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-y-auto">
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-6">
@@ -560,34 +688,115 @@
             document.querySelector('#species-filter').addEventListener('change', filterBatches);
             document.querySelector('#status-filter').addEventListener('change', filterBatches);
             
+            // 显示模态框函数
+            function showModal(modalId) {
+                const modal = document.getElementById(modalId);
+                const overlay = modal.querySelector('.modal-overlay');
+                const contentWrapper = modal.querySelector('.modal-content-wrapper');
+                
+                modal.classList.remove('hidden');
+                // 触发重排以确保动画正常执行
+                void modal.offsetWidth;
+                overlay.classList.add('active');
+                contentWrapper.classList.add('active');
+            }
+            
+            // 隐藏模态框函数
+            function hideModal(modalId) {
+                const modal = document.getElementById(modalId);
+                const overlay = modal.querySelector('.modal-overlay');
+                const contentWrapper = modal.querySelector('.modal-content-wrapper');
+                
+                overlay.classList.remove('active');
+                contentWrapper.classList.remove('active');
+                
+                // 动画结束后隐藏
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+            
             // 新建批次按钮
             document.querySelector('#create-batch-btn').addEventListener('click', function() {
                 currentEditingBatchId = null;
                 document.querySelector('#modal-title').textContent = '新建批次';
                 document.querySelector('#batch-form').reset();
-                document.querySelector('#batch-modal').classList.remove('hidden');
+                showModal('batch-modal');
             });
             
             // 关闭模态框
             document.querySelector('#close-modal-btn').addEventListener('click', function() {
-                document.querySelector('#batch-modal').classList.add('hidden');
+                hideModal('batch-modal');
             });
             
             document.querySelector('#cancel-btn').addEventListener('click', function() {
-                document.querySelector('#batch-modal').classList.add('hidden');
+                hideModal('batch-modal');
             });
             
             // 点击模态框背景关闭
-            document.querySelector('.modal-overlay').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    document.querySelector('#batch-modal').classList.add('hidden');
-                    document.querySelector('#batch-detail-modal').classList.add('hidden');
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('modal-overlay')) {
+                    const modal = e.target.closest('.fixed');
+                    if (modal) {
+                        hideModal(modal.id);
+                    }
                 }
             });
+            
+            // 显示提示框函数
+            function showToast(message, isError = false) {
+                const toast = document.querySelector('#toast');
+                const toastMessage = document.querySelector('#toast-message');
+                
+                toastMessage.textContent = message;
+                
+                // 设置不同的背景色
+                if (isError) {
+                    toast.classList.add('bg-red-600');
+                    toast.classList.remove('bg-text-primary');
+                } else {
+                    toast.classList.add('bg-text-primary');
+                    toast.classList.remove('bg-red-600');
+                }
+                
+                toast.classList.remove('hidden');
+                toast.classList.add('show');
+                
+                // 3秒后自动隐藏
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => {
+                        toast.classList.add('hidden');
+                    }, 300);
+                }, 3000);
+            }
             
             // 批次表单提交
             document.querySelector('#batch-form').addEventListener('submit', function(e) {
                 e.preventDefault();
+                
+                // 表单验证
+                const batchName = document.querySelector('#batch-name').value.trim();
+                const batchSpecies = document.querySelector('#batch-species').value;
+                const initialQuantity = document.querySelector('#initial-quantity').value;
+                const entryDate = document.querySelector('#entry-date').value;
+                
+                if (!batchName) {
+                    showToast('请输入批次名称', true);
+                    return;
+                }
+                if (!batchSpecies) {
+                    showToast('请选择禽类品种', true);
+                    return;
+                }
+                if (!initialQuantity || parseInt(initialQuantity) <= 0) {
+                    showToast('请输入有效的初始数量', true);
+                    return;
+                }
+                if (!entryDate) {
+                    showToast('请选择入栏日期', true);
+                    return;
+                }
                 
                 const formData = new FormData(this);
                 const batchData = {
@@ -600,13 +809,14 @@
                 if (currentEditingBatchId) {
                     // 编辑批次逻辑
                     updateBatchInList(currentEditingBatchId, batchData);
+                    showToast('批次编辑成功！');
                 } else {
                     // 新建批次逻辑
                     addBatchToList(batchData);
+                    showToast('批次创建成功！');
                 }
                 
-                document.querySelector('#batch-modal').classList.add('hidden');
-                alert('批次保存成功！');
+                hideModal('batch-modal');
             });
             
             // 批次项点击事件
@@ -637,13 +847,17 @@
                         'px-2 py-1 rounded-full text-xs font-medium batch-status-active' :
                         'px-2 py-1 rounded-full text-xs font-medium batch-status-finished';
                     
-                    document.querySelector('#batch-detail-modal').classList.remove('hidden');
+                    // 设置当前批次ID到详情模态框
+                    const detailModal = document.querySelector('#batch-detail-modal');
+                    detailModal.dataset.currentBatchId = batchId;
+                    
+                    showModal('batch-detail-modal');
                 }
             }
             
             // 关闭详情模态框
             document.querySelector('#close-detail-modal-btn').addEventListener('click', function() {
-                document.querySelector('#batch-detail-modal').classList.add('hidden');
+                hideModal('batch-detail-modal');
             });
             
             // 录入数据按钮
@@ -666,8 +880,11 @@
                     document.querySelector('#initial-quantity').value = batchData.initialQuantity;
                     document.querySelector('#entry-date').value = batchData.entryDate;
                     
-                    document.querySelector('#batch-detail-modal').classList.add('hidden');
-                    document.querySelector('#batch-modal').classList.remove('hidden');
+                    hideModal('batch-detail-modal');
+                    // 等待动画结束后显示编辑模态框
+                    setTimeout(() => {
+                        showModal('batch-modal');
+                    }, 300);
                 }
             });
             
@@ -676,8 +893,8 @@
                 if (confirm('确定要删除这个批次吗？删除后无法恢复。')) {
                     const currentBatchId = document.querySelector('#batch-detail-modal').dataset.currentBatchId;
                     deleteBatchFromList(currentBatchId);
-                    document.querySelector('#batch-detail-modal').classList.add('hidden');
-                    alert('批次已删除！');
+                    hideModal('batch-detail-modal');
+                    showToast('批次已删除！');
                 }
             });
             
@@ -750,8 +967,77 @@
             
             // 辅助函数：添加批次到列表
             function addBatchToList(batchData) {
-                // 这里简化处理，实际应用中应该调用API
-                console.log('添加新批次:', batchData);
+                // 生成新批次ID
+                const newBatchId = 'batch-' + Date.now();
+                
+                // 创建新批次DOM元素
+                const batchElement = document.createElement('div');
+                batchElement.id = `batch-item-${newBatchId}`;
+                batchElement.className = 'bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer opacity-0 transform translate-y-2 transition-all duration-300';
+                batchElement.setAttribute('data-batch-id', newBatchId);
+                
+                // 计算当前日龄
+                const entryDate = new Date(batchData.entryDate);
+                const today = new Date();
+                const daysOld = Math.floor((today - entryDate) / (1000 * 60 * 60 * 24));
+                
+                batchElement.innerHTML = `
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-drumstick-bite text-xl text-secondary"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-text-primary">${batchData.name}</h3>
+                                <p class="text-sm text-text-secondary">${batchData.species}</p>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-sm font-medium batch-status-active">
+                            进行中
+                        </span>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                            <p class="text-2xl font-bold text-text-primary">${parseInt(batchData.initialQuantity).toLocaleString()}</p>
+                            <p class="text-xs text-text-secondary">初始数量</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-text-primary">${parseInt(batchData.initialQuantity).toLocaleString()}</p>
+                            <p class="text-xs text-text-secondary">当前存栏</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold text-text-primary">0.0%</p>
+                            <p class="text-xs text-text-secondary">死淘率</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
+                        <div class="flex items-center space-x-4 text-sm text-text-secondary">
+                            <span><i class="fas fa-calendar-alt mr-1"></i>入栏：${batchData.entryDate}</span>
+                            <span><i class="fas fa-clock mr-1"></i>${daysOld}日龄</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-text-secondary"></i>
+                    </div>
+                `;
+                
+                // 添加点击事件
+                batchElement.addEventListener('click', function() {
+                    showBatchDetail(newBatchId);
+                });
+                
+                // 添加到列表顶部
+                const batchList = document.querySelector('#batch-list');
+                batchList.insertBefore(batchElement, batchList.firstChild);
+                
+                // 添加动画效果
+                setTimeout(() => {
+                    batchElement.classList.remove('opacity-0', 'translate-y-2');
+                    batchElement.classList.add('opacity-100', 'translate-y-0');
+                }, 50);
+                
+                // 更新批次数量
+                filterBatches();
             }
             
             // 辅助函数：从列表中删除批次

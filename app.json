@@ -2,59 +2,63 @@
   "expo": {
     "name": "禽康智检",
     "slug": "qinkangzhijian",
-    "version": "2.0.0",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon_downloaded.png",
-    "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "userInterfaceStyle": "light",
+    
+    "splash": {
+      "image": "./assets/images/icon_downloaded.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff",
+      "animation": {
+        "fade": true
+      }
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.qinkangzhijian.app"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/icon_downloaded.png",
         "backgroundColor": "#ffffff"
       },
+      "package": "com.qinkangzhijian.app",
+      "versionCode": 1,
       "permissions": [
-        "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "INTERNET",
+        "ACCESS_NETWORK_STATE"
       ]
     },
     "web": {
-      "bundler": "metro",
-      "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router",
       [
-        "expo-splash-screen",
+        "expo-image-picker",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
-        }
-      ],
-      [
-        "expo-camera",
-        {
-          "cameraPermission": "Allow 禽康智检 to access your camera",
-          "microphonePermission": "Allow 禽康智检 to access your microphone",
-          "recordAudioAndroid": true
+          "photosPermission": "允许应用访问您的照片库以选择诊断图像",
+          "cameraPermission": "允许应用访问您的相机以拍摄诊断图像"
         }
       ]
     ],
-    "experiments": {
-      "typedRoutes": true
+    "updates": {
+      "enabled": true,
+      "fallbackToCacheTimeout": 0
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
     },
     "extra": {
-      "router": {},
       "eas": {
         "projectId": "44f33fb6-f70d-4f10-8f61-28523e8bed84"
-      }
+      },
+      "apiUrl": "http://localhost:3000/api"
     },
-    "owner": "zhongjian475"
+    
   }
 }

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - AI确诊报告</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(45, 187, 161, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
+        }
+
+        .confidence-high {
+            background-color: #10B981;
+            color: white;
+        }
+
+        .confidence-medium {
+            background-color: #F59E0B;
+            color: white;
+        }
+
+        .confidence-low {
+            background-color: #EF4444;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex items-center px-4 py-3">
+            <button id="back-btn" class="mr-3 p-2 -ml-2" onclick="window.history.back()">
+                <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+            </button>
+            <h1 id="page-title" class="text-lg font-semibold text-text-primary">AI确诊报告</h1>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6">
+        <!-- 报告头部信息 -->
+        <section id="report-header" class="mb-6">
+            <div class="bg-card-bg rounded-xl p-4 shadow-card">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <h2 class="text-lg font-semibold text-text-primary">确诊报告</h2>
+                        <p class="text-sm text-text-tertiary">报告编号：AI-20240601-0001-FINAL</p>
+                    </div>
+                    <div class="text-sm text-text-tertiary">
+                        <p>确诊时间：2024-06-01 15:45</p>
+                        <p>诊断模式：AI兽医模式</p>
+                    </div>
+                </div>
+                <div class="w-full h-px bg-border-color"></div>
+            </div>
+        </section>
+
+        <!-- 发病基本情况 -->
+        <section id="basic-info" class="mb-6">
+            <div class="bg-card-bg rounded-xl p-4 shadow-card">
+                <h3 class="text-base font-medium text-text-primary mb-3 flex items-center">
+                    <i class="fas fa-info-circle text-secondary mr-2"></i>
+                    发病基本情况
+                </h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-xs text-text-tertiary mb-1">场址</p>
+                        <p class="text-sm text-text-primary">北京市昌平区某养殖场</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-text-tertiary mb-1">鸡只品种</p>
+                        <p class="text-sm text-text-primary">肉鸡</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-text-tertiary mb-1">日龄</p>
+                        <p class="text-sm text-text-primary">45天</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-text-tertiary mb-1">存栏量</p>
+                        <p class="text-sm text-text-primary">5000只</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-text-tertiary mb-1">发病时间</p>
+                        <p class="text-sm text-text-primary">2024-05-30</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-text-tertiary mb-1">死亡率</p>
+                        <p class="text-sm text-text-primary">2.5%</p>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <p class="text-xs text-text-tertiary mb-1">核心症状</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 text-xs bg-blue-50 text-blue-600 rounded-full">发热</span>
+                        <span class="px-2 py-1 text-xs bg-blue-50 text-blue-600 rounded-full">咳嗽</span>
+                        <span class="px-2 py-1 text-xs bg-blue-50 text-blue-600 rounded-full">呼吸困难</span>
+                        <span class="px-2 py-1 text-xs bg-blue-50 text-blue-600 rounded-full">采食量下降</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI确诊结论 -->
+        <section id="final-conclusion" class="mb-6">
+            <div class="bg-card-bg rounded-xl p-4 shadow-card">
+                <h3 class="text-base font-medium text-text-primary mb-3 flex items-center">
+                    <i class="fas fa-robot text-secondary mr-2"></i>
+                    AI确诊结论
+                </h3>
+                <div class="p-3 border border-green-200 rounded-lg bg-green-50">
+                    <h4 class="text-sm font-medium text-green-800 mb-2">混合感染：禽流感病毒 (H9N2) + 新城疫病毒</h4>
+                    <p class="text-sm text-green-700">基于完整的数据（基础信息、临床表现、病理变化、快速检测结果、采样信息及实验数据），AI综合分析得出确诊结论。</p>
+                </div>
+                <div class="mt-3">
+                    <h4 class="text-sm font-medium text-text-primary mb-2">确诊依据：</h4>
+                    <ul class="text-sm text-text-secondary space-y-1">
+                        <li>• 临床症状：发热、咳嗽、呼吸困难、采食量下降</li>
+                        <li>• 病理变化：肺部病变、消化道病变</li>
+                        <li>• 快速检测结果：AIV阳性、NDV阳性</li>
+                        <li>• 实验数据：血常规异常、生化指标异常</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 应急防治方案 -->
+        <section id="emergency-prevention" class="mb-6">
+            <div class="bg-card-bg rounded-xl p-4 shadow-card">
+                <h3 class="text-base font-medium text-text-primary mb-3 flex items-center">
+                    <i class="fas fa-exclamation-triangle text-warning mr-2"></i>
+                    应急防治方案
+                </h3>
+                <div class="flex space-x-2 mb-3 bg-gray-100 rounded-lg p-1 overflow-x-auto">
+                    <button id="plan-emergency" class="flex-shrink-0 py-2 px-3 text-sm font-medium rounded-md bg-secondary text-white min-w-[80px]">
+                        0-24小时
+                    </button>
+                    <button id="plan-short-term" class="flex-shrink-0 py-2 px-3 text-sm font-medium rounded-md bg-white text-text-secondary min-w-[80px]">
+                        1-7天
+                    </button>
+                    <button id="plan-biosafety" class="flex-shrink-0 py-2 px-3 text-sm font-medium rounded-md bg-white text-text-secondary min-w-[80px]">
+                        生物安全
+                    </button>
+                </div>
+                
+                <div id="emergency-content" class="tab-content">
+                    <div class="space-y-3">
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-success mt-1 mr-3 flex-shrink-0"></i>
+                            <div>
+                                <h4 class="text-sm font-medium text-text-primary mb-1">分类隔离</h4>
+                                <p class="text-sm text-text-secondary">立即隔离病禽，将健康禽群转移至安全区域，避免交叉感染</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-success mt-1 mr-3 flex-shrink-0"></i>
+                            <div>
+                                <h4 class="text-sm font-medium text-text-primary mb-1">紧急免疫</h4>
+                                <p class="text-sm text-text-secondary">对健康禽群进行紧急疫苗接种，推荐使用H9亚型禽流感疫苗和新城疫疫苗</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-success mt-1 mr-3 flex-shrink-0"></i>
+                            <div>
+                                <h4 class="text-sm font-medium text-text-primary mb-1">综合用药</h4>
+                                <p class="text-sm text-text-secondary">使用抗病毒药物（如奥司他韦）和广谱抗生素控制继发感染</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-success mt-1 mr-3 flex-shrink-0"></i>
+                            <div>
+                                <h4 class="text-sm font-medium text-text-primary mb-1">环境消毒</h4>
+                                <p class="text-sm text-text-secondary">对养殖场进行全面消毒，建议使用醛类消毒剂，重点消毒鸡舍、器具和运输工具</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="short-term-content" class="tab-content hidden">
+                    <div class="space-y-3">
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-success mt-1 mr-3 flex-shrink-0"></i>
+                            <div>
+                                <h4 class="text-sm font-medium text-text-primary mb-1">对症治疗</h4>
+                                <p class="text-sm text-text-secondary">根据临床症状进行针对性治疗，缓解呼吸道症状</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-success mt-1 mr-3 flex-shrink-0"></i>
+                            <div>
+                                <h4 class="text-sm font-medium text-text-primary mb-1">营养支持</h4>
+                                <p class="text-sm text-text-secondary">提供高能量饲料，添加维生素和电解质</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-success mt-1 mr-3 flex-shrink-0"></i>
+                            <div>
+                                <h4 class="text-sm font-medium text-text-primary mb-1">监测评估</h4>
+                                <p class="text-sm text-text-secondary">定期监测鸡群健康状况，评估治疗效果</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="biosafety-content" class="tab-content hidden">
+                    <div class="space-y-3">
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-success mt-1 mr-3 flex-shrink-0"></i>
+                            <div>
+                                <h4 class="text-sm font-medium text-text-primary mb-1">无害化处理</h4>
+                                <p class="text-sm text-text-secondary">严格按照规范处理病死禽只，避免病毒扩散</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-success mt-1 mr-3 flex-shrink-0"></i>
+                            <div>
+                                <h4 class="text-sm font-medium text-text-primary mb-1">消毒防控</h4>
+                                <p class="text-sm text-text-secondary">建立定期消毒制度，使用有效消毒剂</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-success mt-1 mr-3 flex-shrink-0"></i>
+                            <div>
+                                <h4 class="text-sm font-medium text-text-primary mb-1">人员/物资管理</h4>
+                                <p class="text-sm text-text-secondary">严格控制人员和物资流动，防止交叉感染</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 生物安全体系优化方案 -->
+        <section id="biosafety-optimization" class="mb-6">
+            <div class="bg-card-bg rounded-xl p-4 shadow-card">
+                <h3 class="text-base font-medium text-text-primary mb-3 flex items-center">
+                    <i class="fas fa-shield-alt text-secondary mr-2"></i>
+                    生物安全体系优化方案
+                </h3>
+                <div class="space-y-3">
+                    <div class="p-3 border border-blue-200 rounded-lg bg-blue-50">
+                        <h4 class="text-sm font-medium text-blue-800 mb-2">养殖场布局优化</h4>
+                        <p class="text-sm text-blue-700">建议重新规划养殖场布局，设置明确的功能分区，包括生产区、隔离区、消毒区等，减少交叉感染风险。</p>
+                    </div>
+                    <div class="p-3 border border-green-200 rounded-lg bg-green-50">
+                        <h4 class="text-sm font-medium text-green-800 mb-2">免疫程序优化</h4>
+                        <p class="text-sm text-green-700">根据当地疫情流行情况，制定科学的免疫程序，定期进行疫苗接种和抗体监测。</p>
+                    </div>
+                    <div class="p-3 border border-purple-200 rounded-lg bg-purple-50">
+                        <h4 class="text-sm font-medium text-purple-800 mb-2">监测预警体系</h4>
+                        <p class="text-sm text-purple-700">建立完善的监测预警体系，定期检测鸡群健康状况，及时发现异常情况。</p>
+                    </div>
+                    <div class="p-3 border border-orange-200 rounded-lg bg-orange-50">
+                        <h4 class="text-sm font-medium text-orange-800 mb-2">人员培训</h4>
+                        <p class="text-sm text-orange-700">加强员工生物安全意识培训，提高其对疫情的识别和应对能力。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 操作按钮 -->
+        <section id="action-buttons" class="mb-6">
+            <button id="save-report-btn" class="w-full bg-white border-2 border-secondary text-secondary font-semibold py-4 rounded-xl">
+                <i class="fas fa-save mr-2"></i>
+                保存确诊报告
+            </button>
+        </section>
+
+        <!-- 分享报告按钮 -->
+        <section id="share-report" class="mb-6">
+            <button id="share-report-btn" class="w-full gradient-bg text-accent font-semibold py-4 rounded-xl shadow-button">
+                <i class="fas fa-share-alt mr-2"></i>
+                分享确诊报告
+            </button>
+        </section>
+    </main>
+
+    <!-- 提示框 -->
+    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-text-primary text-white px-4 py-2 rounded-lg text-sm z-50 hidden">
+        <span id="toast-message">提示信息</span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 显示提示框函数
+            function showToast(message, isError = false) {
+                const toast = document.querySelector('#toast');
+                const toastMessage = document.querySelector('#toast-message');
+                
+                toastMessage.textContent = message;
+                
+                // 设置不同的背景色
+                if (isError) {
+                    toast.classList.add('bg-error');
+                    toast.classList.remove('bg-text-primary');
+                } else {
+                    toast.classList.add('bg-text-primary');
+                    toast.classList.remove('bg-error');
+                }
+                
+                toast.classList.remove('hidden');
+                
+                // 3秒后自动隐藏
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 3000);
+            }
+
+            // 保存确诊报告按钮点击事件
+            document.querySelector('#save-report-btn').addEventListener('click', function() {
+                showToast('确诊报告已保存');
+            });
+
+            // 分享报告按钮点击事件
+            document.querySelector('#share-report-btn').addEventListener('click', function() {
+                showToast('报告分享功能暂未实现');
+            });
+
+            // 应急防治方案标签页切换
+            const planTabs = document.querySelectorAll('[id^="plan-"]');
+            const planContents = document.querySelectorAll('[id$="-content"]');
+            
+            planTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.id.replace('plan-', '');
+                    
+                    // 重置所有标签样式
+                    planTabs.forEach(t => {
+                        t.classList.remove('bg-secondary');
+                        t.classList.remove('text-white');
+                        t.classList.add('bg-white');
+                        t.classList.add('text-text-secondary');
+                    });
+                    
+                    // 设置当前标签样式
+                    this.classList.remove('bg-white');
+                    this.classList.remove('text-text-secondary');
+                    this.classList.add('bg-secondary');
+                    this.classList.add('text-white');
+                    
+                    // 隐藏所有内容
+                    planContents.forEach(content => {
+                        if (content.id.includes('emergency') || content.id.includes('short-term') || content.id.includes('biosafety')) {
+                            content.classList.add('hidden');
+                        }
+                    });
+                    
+                    // 显示对应内容
+                    const contentId = tabId + '-content';
+                    const content = document.querySelector('#' + contentId);
+                    if (content) {
+                        content.classList.remove('hidden');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

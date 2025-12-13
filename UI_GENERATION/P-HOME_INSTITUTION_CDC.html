@@ -11,14 +11,22 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#D3F8EE',
-                        secondary: '#3BCCA5', 
-                        accent: '#2B6A5A',
-                        'text-primary': '#1F2937',
-                        'text-secondary': '#6B7280',
-                        'bg-light': '#F9FAFB',
-                        'card-bg': '#FFFFFF'
-                    },
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
                     fontFamily: {
                         'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     },
@@ -32,7 +40,7 @@
     </script>
     <style>
         .gradient-bg {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .card-hover:active {
@@ -49,7 +57,7 @@
         }
         
         .status-bar {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .map-container {
@@ -356,15 +364,15 @@
 
     <!-- 底部导航栏 -->
     <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
-        <a id="nav-home" href="#" class="flex flex-col items-center p-2 text-secondary">
+        <a id="nav-home" href="P-HOME_INSTITUTION_CDC.html" class="flex flex-col items-center p-2 text-secondary">
             <i class="fas fa-home text-xl"></i>
             <span class="text-xs mt-0.5">首页</span>
         </a>
-        <a id="nav-monitoring" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+        <a id="nav-monitoring" href="P-EPIDEMIC_HEATMAP.html" class="flex flex-col items-center p-2 text-text-secondary">
             <i class="fas fa-map text-xl"></i>
             <span class="text-xs mt-0.5">疫情监测</span>
         </a>
-        <a id="nav-profile" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+        <a id="nav-profile" href="P-USER_PROFILE.html" class="flex flex-col items-center p-2 text-text-secondary">
             <i class="fas fa-user text-xl"></i>
             <span class="text-xs mt-0.5">我的</span>
         </a>
@@ -411,18 +419,18 @@
             });
 
             document.querySelector('#epidemic-report-card').addEventListener('click', function() {
-                console.log('生成疫情报告');
-                // 实际应用中会生成和下载报告
+                alert('疫情报告生成功能开发中...');
+                // 后续可跳转到报告生成页面
             });
 
             document.querySelector('#emergency-contact-card').addEventListener('click', function() {
-                console.log('打开应急联系');
-                // 实际应用中会显示联系列表
+                alert('应急联系功能开发中...');
+                // 后续可显示联系列表
             });
 
             document.querySelector('#data-analysis-card').addEventListener('click', function() {
-                console.log('打开数据分析');
-                // 实际应用中会跳转到详细分析页面
+                alert('数据分析功能开发中...');
+                // 后续可跳转到详细分析页面
             });
 
             // 底部导航栏点击事件

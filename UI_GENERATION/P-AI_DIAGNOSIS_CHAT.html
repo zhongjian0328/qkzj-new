@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - AI对话问诊</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(45, 187, 161, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
+        }
+        
+        /* 对话气泡样式 */
+        .message-bubble {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+            margin-bottom: 12px;
+        }
+        
+        .message-user {
+            background-color: #2DBBA1;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 6px;
+        }
+        
+        .message-ai {
+            background-color: #F3F4F6;
+            color: #111827;
+            align-self: flex-start;
+            border-bottom-left-radius: 6px;
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #2DBBA1;
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1F5E52;
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex items-center px-4 py-3">
+            <button id="back-btn" class="mr-3 p-2 -ml-2" onclick="window.location.href='P-AI_DIAGNOSIS_MODE_SELECT.html'">
+                <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+            </button>
+            <h1 id="page-title" class="text-lg font-semibold text-text-primary">AI对话问诊</h1>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="flex flex-col h-[calc(100vh-128px)]">
+        <!-- 对话消息区 -->
+        <div id="chat-messages" class="flex-1 overflow-y-auto px-4 py-6 space-y-4">
+            <!-- 欢迎消息 -->
+            <div class="flex items-start">
+                <div class="message-bubble message-ai">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-robot text-secondary mr-2"></i>
+                        <span class="text-sm font-medium">AI助手</span>
+                    </div>
+                    <p class="text-sm">您好！我是禽康智检的AI助手，很高兴为您服务。请描述您遇到的问题，或者上传病禽图片，我会尽力为您提供诊断建议。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 输入区域 -->
+        <div id="input-area" class="bg-white border-t border-border-color px-4 py-3 safe-bottom">
+            <!-- 图片预览区域 -->
+            <div id="image-preview-container" class="mb-3 overflow-x-auto hidden">
+                <div id="image-preview-list" class="flex space-x-3"></div>
+            </div>
+
+            <!-- 输入框和操作按钮 -->
+            <div class="flex items-end space-x-3">
+                <!-- 功能按钮 -->
+                <div class="flex items-center space-x-2">
+                    <!-- 图片上传按钮 -->
+                    <button id="image-upload-btn" class="w-10 h-10 rounded-full bg-bg-light flex items-center justify-center text-text-secondary hover:bg-gray-200 transition-colors">
+                        <i class="fas fa-image text-lg"></i>
+                        <input type="file" id="image-input" accept="image/*" multiple class="hidden">
+                    </button>
+                    <!-- 语音输入按钮 -->
+                    <button id="voice-input-btn" class="w-10 h-10 rounded-full bg-bg-light flex items-center justify-center text-text-secondary hover:bg-gray-200 transition-colors">
+                        <i class="fas fa-microphone text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- 消息输入框 -->
+                <div class="flex-1">
+                    <textarea id="message-input" class="w-full px-3 py-2 border border-border-color rounded-full focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent resize-none" rows="1" placeholder="请描述症状或输入问题..."></textarea>
+                </div>
+
+                <!-- 发送按钮 -->
+                <button id="send-btn" class="w-10 h-10 rounded-full gradient-bg flex items-center justify-center text-accent hover:opacity-90 transition-opacity">
+                    <i class="fas fa-paper-plane text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取DOM元素
+            const chatMessages = document.querySelector('#chat-messages');
+            const messageInput = document.querySelector('#message-input');
+            const sendBtn = document.querySelector('#send-btn');
+            const imageUploadBtn = document.querySelector('#image-upload-btn');
+            const imageInput = document.querySelector('#image-input');
+            const voiceInputBtn = document.querySelector('#voice-input-btn');
+            const imagePreviewContainer = document.querySelector('#image-preview-container');
+            const imagePreviewList = document.querySelector('#image-preview-list');
+
+            // 已选择的图片列表
+            let selectedImages = [];
+            
+            // 对话历史记录
+            let conversationHistory = [];
+            
+            // 诊断状态
+            let diagnosisState = {
+                hasSymptoms: false,
+                hasImages: false,
+                hasBasicInfo: false,
+                hasClinicalInfo: false
+            };
+
+            // 自动调整输入框高度
+            messageInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+            });
+
+            // 获取当前时间
+            function getCurrentTime() {
+                const now = new Date();
+                return now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+            }
+
+            // 发送消息功能
+            function sendMessage() {
+                const message = messageInput.value.trim();
+                if (message || selectedImages.length > 0) {
+                    // 添加用户消息
+                    addMessage('user', message, selectedImages);
+                    
+                    // 更新对话历史
+                    conversationHistory.push({
+                        type: 'user',
+                        content: message,
+                        images: selectedImages,
+                        timestamp: new Date()
+                    });
+                    
+                    // 更新诊断状态
+                    if (message) {
+                        diagnosisState.hasSymptoms = true;
+                        if (message.includes('品种') || message.includes('日龄') || message.includes('数量')) {
+                            diagnosisState.hasBasicInfo = true;
+                        }
+                        if (message.includes('发热') || message.includes('咳嗽') || message.includes('精神') || message.includes('采食')) {
+                            diagnosisState.hasClinicalInfo = true;
+                        }
+                    }
+                    if (selectedImages.length > 0) {
+                        diagnosisState.hasImages = true;
+                    }
+                    
+                    // 清空输入框和图片预览
+                    messageInput.value = '';
+                    messageInput.style.height = 'auto';
+                    selectedImages = [];
+                    imagePreviewContainer.classList.add('hidden');
+                    imagePreviewList.innerHTML = '';
+
+                    // 显示AI正在输入状态
+                    showTypingIndicator();
+
+                    // 模拟AI回复
+                    setTimeout(() => {
+                        hideTypingIndicator();
+                        generateAIResponse();
+                    }, 1000);
+                }
+            }
+
+            // 显示AI正在输入状态
+            function showTypingIndicator() {
+                const typingDiv = document.createElement('div');
+                typingDiv.id = 'typing-indicator';
+                typingDiv.className = 'flex justify-start';
+                typingDiv.innerHTML = `
+                    <div class="message-bubble message-ai">
+                        <div class="flex items-center mb-2">
+                            <i class="fas fa-robot text-secondary mr-2"></i>
+                            <span class="text-sm font-medium">AI助手</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-2 h-2 bg-text-tertiary rounded-full animate-bounce" style="animation-delay: 0ms;"></div>
+                            <div class="w-2 h-2 bg-text-tertiary rounded-full animate-bounce" style="animation-delay: 150ms;"></div>
+                            <div class="w-2 h-2 bg-text-tertiary rounded-full animate-bounce" style="animation-delay: 300ms;"></div>
+                        </div>
+                    </div>
+                `;
+                chatMessages.appendChild(typingDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // 隐藏AI正在输入状态
+            function hideTypingIndicator() {
+                const typingIndicator = document.querySelector('#typing-indicator');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+            }
+
+            // 生成AI回复
+            function generateAIResponse() {
+                const lastUserMessage = conversationHistory[conversationHistory.length - 1].content;
+                let aiResponse = '';
+                let showDiagnosis = false;
+                
+                // 根据对话历史和诊断状态生成AI回复
+                if (!diagnosisState.hasBasicInfo) {
+                    aiResponse = '为了更准确地诊断，请您提供以下信息：\n1. 鸡只的品种和日龄\n2. 存栏数量\n3. 发病时间\n4. 目前的死亡情况';
+                } else if (!diagnosisState.hasClinicalInfo) {
+                    aiResponse = '请详细描述鸡只的临床症状，例如：\n1. 精神状态\n2. 采食和饮水情况\n3. 呼吸症状\n4. 粪便情况\n5. 其他异常表现';
+                } else if (!diagnosisState.hasImages) {
+                    aiResponse = '请上传病禽的照片，尤其是：\n1. 整体外观\n2. 头部和呼吸道\n3. 粪便\n4. 解剖后的病理变化（如果有）';
+                } else {
+                    // 收集到足够信息，生成初步诊断建议
+                    aiResponse = generatePreliminaryDiagnosis();
+                    showDiagnosis = true;
+                }
+                
+                // 添加AI回复
+                addMessage('ai', aiResponse, []);
+                
+                // 更新对话历史
+                conversationHistory.push({
+                    type: 'ai',
+                    content: aiResponse,
+                    timestamp: new Date()
+                });
+                
+                // 如果可以生成诊断报告，显示诊断按钮
+                if (showDiagnosis) {
+                    setTimeout(() => {
+                        showDiagnosisOptions();
+                    }, 1500);
+                }
+            }
+            
+            // 生成初步诊断建议
+            function generatePreliminaryDiagnosis() {
+                // 模拟根据对话历史生成初步诊断
+                return `根据您提供的信息和图片，我的初步诊断如下：
+
+**发病基本情况**
+- 疑似疾病：禽流感（H9N2亚型）
+- 风险等级：中高风险
+- 置信度：78%
+
+**诊断依据**
+1. 临床症状：发热、咳嗽、精神沉郁、采食量下降
+2. 流行病学：近期周边地区有类似病例
+3. 初步观察：图片显示病禽羽毛凌乱，精神状态不佳
+
+**应急处置建议**
+1. 立即隔离病禽，避免交叉感染
+2. 对养殖场进行全面消毒
+3. 加强通风和温度管理
+4. 密切观察健康鸡群的状况
+
+**后续建议**
+您可以选择：
+- 查看详细的AI初步诊断报告
+- 进入AI兽医模式进行更精确的诊断
+- 直接下单诊疗服务，由专业兽医进行诊断`;
+            }
+            
+            // 显示诊断选项
+            function showDiagnosisOptions() {
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'flex justify-center my-4';
+                optionsDiv.innerHTML = `
+                    <div class="flex flex-col space-y-3 w-full max-w-md">
+                        <button onclick="window.location.href='P-AI_PRE_DIAGNOSIS_REPORT.html'" class="w-full bg-secondary text-white font-medium py-3 rounded-xl shadow-button">
+                            <i class="fas fa-file-medical-alt mr-2"></i>
+                            查看AI初步诊断报告
+                        </button>
+                        <div class="flex space-x-3">
+                            <button onclick="window.location.href='P-AI_DIAGNOSIS_VET.html'" class="flex-1 bg-white border-2 border-secondary text-secondary font-medium py-3 rounded-xl">
+                                <i class="fas fa-user-md mr-2"></i>
+                                切换到AI兽医模式
+                            </button>
+                            <button onclick="window.location.href='P-MEDICAL_SERVICE_ORDER.html'" class="flex-1 bg-white border-2 border-secondary text-secondary font-medium py-3 rounded-xl">
+                                <i class="fas fa-shopping-cart mr-2"></i>
+                                诊疗服务下单
+                            </button>
+                        </div>
+                    </div>
+                `;
+                chatMessages.appendChild(optionsDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // 添加消息到对话区
+            function addMessage(type, content, images) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `flex ${type === 'user' ? 'justify-end' : 'justify-start'}`;
+                
+                let messageContent = '';
+                const time = getCurrentTime();
+                
+                if (type === 'user') {
+                    messageContent = `
+                        <div class="flex flex-col items-end">
+                            <div class="message-bubble message-user max-w-[80%]">
+                                <p class="text-sm">${content}</p>
+                                ${images.length > 0 ? `<div class="mt-2 flex space-x-2 overflow-x-auto pb-2">${images.map(img => `<img src="${img.url}" alt="上传图片" class="w-24 h-24 object-cover rounded-lg">`).join('')}</div>` : ''}
+                            </div>
+                            <span class="text-xs text-text-tertiary mt-1 mr-1">${time}</span>
+                        </div>
+                    `;
+                } else {
+                    messageContent = `
+                        <div class="flex flex-col items-start">
+                            <div class="message-bubble message-ai max-w-[80%]">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-robot text-secondary mr-2"></i>
+                                    <span class="text-sm font-medium">AI助手</span>
+                                </div>
+                                <p class="text-sm whitespace-pre-line">${content}</p>
+                            </div>
+                            <span class="text-xs text-text-tertiary mt-1 ml-1">${time}</span>
+                        </div>
+                    `;
+                }
+                
+                messageDiv.innerHTML = messageContent;
+                chatMessages.appendChild(messageDiv);
+                
+                // 滚动到底部
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // 图片上传功能
+            imageUploadBtn.addEventListener('click', function() {
+                imageInput.click();
+            });
+
+            // 图片选择处理
+            imageInput.addEventListener('change', function(e) {
+                const files = Array.from(e.target.files);
+                
+                files.forEach(file => {
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            selectedImages.push({ url: event.target.result, file: file });
+                            updateImagePreview();
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            });
+
+            // 更新图片预览
+            function updateImagePreview() {
+                imagePreviewList.innerHTML = '';
+                
+                selectedImages.forEach((img, index) => {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'relative w-20 h-20';
+                    previewItem.innerHTML = `
+                        <img src="${img.url}" alt="预览图片" class="w-full h-full object-cover rounded-lg">
+                        <button class="absolute top-1 right-1 w-6 h-6 bg-error text-white rounded-full flex items-center justify-center" onclick="removeImage(${index})">
+                            <i class="fas fa-times text-xs"></i>
+                        </button>
+                    `;
+                    imagePreviewList.appendChild(previewItem);
+                });
+                
+                if (selectedImages.length > 0) {
+                    imagePreviewContainer.classList.remove('hidden');
+                }
+            }
+
+            // 移除图片
+            window.removeImage = function(index) {
+                selectedImages.splice(index, 1);
+                updateImagePreview();
+                
+                if (selectedImages.length === 0) {
+                    imagePreviewContainer.classList.add('hidden');
+                }
+            };
+
+            // 发送按钮点击事件
+            sendBtn.addEventListener('click', sendMessage);
+
+            // 回车键发送消息
+            messageInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

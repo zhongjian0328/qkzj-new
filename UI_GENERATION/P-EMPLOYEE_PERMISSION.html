@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 员工权限管理</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
+        }
+        
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .role-badge {
+            transition: all 0.2s ease;
+        }
+        
+        .role-badge.active {
+            background-color: #3BCCA5;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex items-center px-4 py-3">
+            <button id="back-btn" class="mr-3 p-2 -ml-2">
+                <i class="fas fa-arrow-left text-xl text-text-secondary"></i>
+            </button>
+            <h1 id="page-title" class="text-lg font-semibold text-text-primary">员工权限管理</h1>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6">
+        <!-- 新建员工按钮 -->
+        <div id="create-employee-section" class="mb-6">
+            <button id="create-employee-btn" class="w-full gradient-bg text-accent font-semibold py-4 px-6 rounded-xl shadow-button flex items-center justify-center space-x-2">
+                <i class="fas fa-plus text-lg"></i>
+                <span>添加员工</span>
+            </button>
+        </div>
+
+        <!-- 员工列表 -->
+        <div id="employee-list-section" class="mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="employee-list-title" class="text-lg font-semibold text-text-primary">员工列表</h2>
+                <span id="employee-count" class="text-sm text-text-secondary">共 5 名员工</span>
+            </div>
+
+            <div id="employee-list" class="space-y-4">
+                <!-- 员工项 1 -->
+                <div id="employee-item-1" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" data-employee-id="emp-001">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-blue-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-text-primary">张三</h3>
+                                <p class="text-sm text-text-secondary">场长</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm text-text-primary">13800138001</p>
+                            <p class="text-xs text-secondary mt-1">所有权限</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">批次管理</span>
+                        <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">生产数据</span>
+                        <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">员工管理</span>
+                        <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">数据导出</span>
+                    </div>
+                </div>
+
+                <!-- 员工项 2 -->
+                <div id="employee-item-2" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" data-employee-id="emp-002">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-green-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-text-primary">李四</h3>
+                                <p class="text-sm text-text-secondary">饲养员</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm text-text-primary">13800138002</p>
+                            <p class="text-xs text-secondary mt-1">基本权限</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">生产数据录入</span>
+                        <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">批次查看</span>
+                    </div>
+                </div>
+
+                <!-- 员工项 3 -->
+                <div id="employee-item-3" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" data-employee-id="emp-003">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-purple-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-text-primary">王五</h3>
+                                <p class="text-sm text-text-secondary">数据分析师</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm text-text-primary">13800138003</p>
+                            <p class="text-xs text-secondary mt-1">数据分析权限</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">数据查看</span>
+                        <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">数据导出</span>
+                        <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">报表生成</span>
+                    </div>
+                </div>
+
+                <!-- 员工项 4 -->
+                <div id="employee-item-4" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" data-employee-id="emp-004">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-orange-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-text-primary">赵六</h3>
+                                <p class="text-sm text-text-secondary">兽医</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm text-text-primary">13800138004</p>
+                            <p class="text-xs text-secondary mt-1">兽医权限</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">AI诊断</span>
+                        <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">治疗方案</span>
+                        <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">疫情上报</span>
+                    </div>
+                </div>
+
+                <!-- 员工项 5 -->
+                <div id="employee-item-5" class="bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer" data-employee-id="emp-005">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-green-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-text-primary">孙七</h3>
+                                <p class="text-sm text-text-secondary">饲养员</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm text-text-primary">13800138005</p>
+                            <p class="text-xs text-secondary mt-1">基本权限</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">生产数据录入</span>
+                        <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">批次查看</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 角色管理 -->
+        <div id="role-management-section" class="mb-6">
+            <h2 id="role-management-title" class="text-lg font-semibold text-text-primary mb-4">角色管理</h2>
+            
+            <div id="role-list" class="space-y-3">
+                <!-- 场长角色 -->
+                <div id="role-farmer" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user-tie text-blue-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-text-primary">场长</h3>
+                                <p class="text-sm text-text-secondary">最高权限，管理全场事务</p>
+                            </div>
+                        </div>
+                        <button class="p-2 text-text-secondary">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-gray-100 text-text-secondary text-xs rounded-full">员工管理</span>
+                        <span class="px-2 py-1 bg-gray-100 text-text-secondary text-xs rounded-full">批次管理</span>
+                        <span class="px-2 py-1 bg-gray-100 text-text-secondary text-xs rounded-full">生产数据</span>
+                        <span class="px-2 py-1 bg-gray-100 text-text-secondary text-xs rounded-full">AI诊断</span>
+                    </div>
+                </div>
+
+                <!-- 饲养员角色 -->
+                <div id="role-breeder" class="bg-card-bg rounded-xl p-4 shadow-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user-alt text-green-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-text-primary">饲养员</h3>
+                                <p class="text-sm text-text-secondary">负责日常饲养管理</p>
+                            </div>
+                        </div>
+                        <button class="p-2 text-text-secondary">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-gray-100 text-text-secondary text-xs rounded-full">生产数据录入</span>
+                        <span class="px-2 py-1 bg-gray-100 text-text-secondary text-xs rounded-full">批次查看</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 提示框 -->
+    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-text-primary text-white px-4 py-2 rounded-lg text-sm z-50 hidden">
+        <span id="toast-message">提示信息</span>
+    </div>
+    
+    <!-- 添加/编辑员工模态框 -->
+    <div id="employee-modal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0"></div>
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+            <div id="modal-content" class="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 id="modal-title" class="text-lg font-semibold text-text-primary">添加员工</h3>
+                        <button id="close-modal-btn" class="p-2 -mr-2">
+                            <i class="fas fa-times text-text-secondary"></i>
+                        </button>
+                    </div>
+                    
+                    <form id="employee-form" class="space-y-4">
+                        <div>
+                            <label for="employee-name" class="block text-sm font-medium text-text-primary mb-2">姓名 *</label>
+                            <input type="text" id="employee-name" name="employee-name" 
+                                   class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-secondary" 
+                                   placeholder="请输入员工姓名" required>
+                        </div>
+                        
+                        <div>
+                            <label for="employee-phone" class="block text-sm font-medium text-text-primary mb-2">手机号 *</label>
+                            <input type="tel" id="employee-phone" name="employee-phone" 
+                                   class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-secondary" 
+                                   placeholder="请输入手机号" required>
+                        </div>
+                        
+                        <div>
+                            <label for="employee-role" class="block text-sm font-medium text-text-primary mb-2">角色 *</label>
+                            <select id="employee-role" name="employee-role" 
+                                    class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-secondary" required>
+                                <option value="">请选择角色</option>
+                                <option value="manager">场长</option>
+                                <option value="breeder">饲养员</option>
+                                <option value="analyst">数据分析师</option>
+                                <option value="veterinarian">兽医</option>
+                                <option value="admin">管理员</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">权限配置</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                    <input type="checkbox" name="permission" value="employee-management" class="text-secondary focus:ring-secondary">
+                                    <span class="text-sm text-text-primary">员工管理</span>
+                                </label>
+                                <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                    <input type="checkbox" name="permission" value="batch-management" class="text-secondary focus:ring-secondary">
+                                    <span class="text-sm text-text-primary">批次管理</span>
+                                </label>
+                                <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                    <input type="checkbox" name="permission" value="production-data" class="text-secondary focus:ring-secondary">
+                                    <span class="text-sm text-text-primary">生产数据</span>
+                                </label>
+                                <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                    <input type="checkbox" name="permission" value="ai-diagnosis" class="text-secondary focus:ring-secondary">
+                                    <span class="text-sm text-text-primary">AI诊断</span>
+                                </label>
+                                <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                    <input type="checkbox" name="permission" value="data-export" class="text-secondary focus:ring-secondary">
+                                    <span class="text-sm text-text-primary">数据导出</span>
+                                </label>
+                                <label class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg cursor-pointer">
+                                    <input type="checkbox" name="permission" value="report-generation" class="text-secondary focus:ring-secondary">
+                                    <span class="text-sm text-text-primary">报表生成</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="flex space-x-3 pt-4">
+                            <button type="button" id="cancel-btn" 
+                                    class="flex-1 py-3 px-4 border border-gray-200 rounded-lg text-text-secondary font-medium">
+                                取消
+                            </button>
+                            <button type="submit" id="save-btn" 
+                                    class="flex-1 py-3 px-4 gradient-bg text-accent font-medium rounded-lg shadow-button">
+                                保存
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let currentEditingEmployeeId = null;
+            
+            // 返回按钮
+            document.querySelector('#back-btn').addEventListener('click', function() {
+                // 根据来源页面返回，这里默认返回生产管理看板
+                window.location.href = 'P-PRODUCTION_DASHBOARD.html';
+            });
+            
+            // 添加员工按钮
+            document.querySelector('#create-employee-btn').addEventListener('click', function() {
+                currentEditingEmployeeId = null;
+                document.querySelector('#modal-title').textContent = '添加员工';
+                document.querySelector('#employee-form').reset();
+                document.querySelector('#employee-modal').classList.remove('hidden');
+            });
+            
+            // 关闭模态框
+            document.querySelector('#close-modal-btn').addEventListener('click', function() {
+                document.querySelector('#employee-modal').classList.add('hidden');
+            });
+            
+            document.querySelector('#cancel-btn').addEventListener('click', function() {
+                document.querySelector('#employee-modal').classList.add('hidden');
+            });
+            
+            // 点击模态框背景关闭
+            document.querySelector('.modal-overlay').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    document.querySelector('#employee-modal').classList.add('hidden');
+                }
+            });
+            
+            // 员工表单提交
+            document.querySelector('#employee-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // 收集表单数据
+                const formData = new FormData(this);
+                const employeeData = {
+                    name: document.querySelector('#employee-name').value,
+                    phone: document.querySelector('#employee-phone').value,
+                    role: document.querySelector('#employee-role').value,
+                    permissions: Array.from(formData.getAll('permission'))
+                };
+                
+                if (currentEditingEmployeeId) {
+                    // 编辑员工逻辑
+                    updateEmployeeInList(currentEditingEmployeeId, employeeData);
+                } else {
+                    // 添加员工逻辑
+                    addEmployeeToList(employeeData);
+                }
+                
+                document.querySelector('#employee-modal').classList.add('hidden');
+                alert('员工信息已保存！');
+            });
+            
+            // 员工项点击事件
+            const employeeItems = document.querySelectorAll('[data-employee-id]');
+            employeeItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const employeeId = this.dataset.employeeId;
+                    showEmployeeDetail(employeeId);
+                });
+            });
+            
+            // 显示员工详情
+            function showEmployeeDetail(employeeId) {
+                // 根据员工ID获取数据并显示
+                console.log('查看员工详情:', employeeId);
+                // 这里可以展开显示更多详情或编辑
+            }
+            
+            // 辅助函数：更新列表中的员工
+            function updateEmployeeInList(employeeId, employeeData) {
+                const employeeElement = document.querySelector(`[data-employee-id="${employeeId}"]`);
+                if (employeeElement) {
+                    employeeElement.querySelector('h3').textContent = employeeData.name;
+                    employeeElement.querySelector('p:nth-of-type(1)').textContent = employeeData.role;
+                    employeeElement.querySelector('.text-right p:nth-of-type(1)').textContent = employeeData.phone;
+                }
+            }
+            
+            // 辅助函数：添加员工到列表
+            function addEmployeeToList(employeeData) {
+                // 生成新员工ID
+                const newEmployeeId = 'emp-' + Date.now();
+                
+                // 创建新员工DOM元素
+                const employeeElement = document.createElement('div');
+                employeeElement.id = `employee-item-${newEmployeeId}`;
+                employeeElement.className = 'bg-card-bg rounded-xl p-4 shadow-card card-hover cursor-pointer';
+                employeeElement.setAttribute('data-employee-id', newEmployeeId);
+                
+                // 角色名称映射
+                const roleMapping = {
+                    manager: '场长',
+                    breeder: '饲养员',
+                    analyst: '数据分析师',
+                    veterinarian: '兽医',
+                    admin: '管理员'
+                };
+                
+                employeeElement.innerHTML = `
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-blue-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-text-primary">${employeeData.name}</h3>
+                                <p class="text-sm text-text-secondary">${roleMapping[employeeData.role] || employeeData.role}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm text-text-primary">${employeeData.phone}</p>
+                            <p class="text-xs text-secondary mt-1">${employeeData.permissions.length}项权限</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-2">
+                        ${employeeData.permissions.map(perm => {
+                            const permNameMapping = {
+                                'employee-management': '员工管理',
+                                'batch-management': '批次管理',
+                                'production-data': '生产数据',
+                                'ai-diagnosis': 'AI诊断',
+                                'data-export': '数据导出',
+                                'report-generation': '报表生成'
+                            };
+                            return `<span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">${permNameMapping[perm] || perm}</span>`;
+                        }).join('')}
+                    </div>
+                `;
+                
+                // 添加点击事件
+                employeeElement.addEventListener('click', function() {
+                    showEmployeeDetail(newEmployeeId);
+                });
+                
+                // 添加到列表顶部
+                const employeeList = document.querySelector('#employee-list');
+                employeeList.insertBefore(employeeElement, employeeList.firstChild);
+                
+                // 更新员工数量
+                updateEmployeeCount();
+            }
+            
+            // 更新员工数量
+            function updateEmployeeCount() {
+                const employeeCount = document.querySelectorAll('#employee-list [data-employee-id]').length;
+                document.querySelector('#employee-count').textContent = `共 ${employeeCount} 名员工`;
+            }
+            
+            // 角色项点击事件
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('#role-list .bg-card-bg')) {
+                    console.log('查看角色详情');
+                    // 这里可以展开显示角色详情或编辑权限
+                }
+            });
+            
+            // 卡片点击效果
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach(card => {
+                card.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                card.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

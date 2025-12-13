@@ -11,14 +11,22 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#D3F8EE',
-                        secondary: '#3BCCA5', 
-                        accent: '#2B6A5A',
-                        'text-primary': '#1F2937',
-                        'text-secondary': '#6B7280',
-                        'bg-light': '#F9FAFB',
-                        'card-bg': '#FFFFFF'
-                    },
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
                     fontFamily: {
                         'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     },
@@ -32,7 +40,7 @@
     </script>
     <style>
         .gradient-bg {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .card-hover:active {
@@ -49,7 +57,7 @@
         }
         
         .status-bar {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
 
         .progress-bar {
@@ -302,15 +310,15 @@
 
     <!-- 底部导航栏 -->
     <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
-        <a id="nav-home" href="#" class="flex flex-col items-center p-2 text-secondary">
+        <a id="nav-home" href="P-HOME_STUDENT_LEARNING.html" class="flex flex-col items-center p-2">
             <i class="fas fa-home text-xl"></i>
             <span class="text-xs mt-0.5">首页</span>
         </a>
-        <a id="nav-learning" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+        <a id="nav-learning" href="P-KNOWLEDGE_GRAPH.html" class="flex flex-col items-center p-2">
             <i class="fas fa-graduation-cap text-xl"></i>
             <span class="text-xs mt-0.5">学习</span>
         </a>
-        <a id="nav-profile" href="#" class="flex flex-col items-center p-2 text-text-secondary">
+        <a id="nav-profile" href="P-USER_PROFILE.html" class="flex flex-col items-center p-2">
             <i class="fas fa-user text-xl"></i>
             <span class="text-xs mt-0.5">我的</span>
         </a>
@@ -318,6 +326,26 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // 动态设置底部导航栏激活状态
+            function setActiveNavItem() {
+                const currentUrl = window.location.href;
+                const navItems = document.querySelectorAll('#bottom-nav a');
+                
+                navItems.forEach(item => {
+                    const href = item.getAttribute('href');
+                    if (currentUrl.includes(href)) {
+                        item.classList.add('text-secondary');
+                        item.classList.remove('text-text-secondary');
+                    } else {
+                        item.classList.add('text-text-secondary');
+                        item.classList.remove('text-secondary');
+                    }
+                });
+            }
+            
+            // 初始化导航栏激活状态
+            setActiveNavItem();
+            
             // 图谱百科入口点击事件
             document.querySelector('#knowledge-graph-card').addEventListener('click', function() {
                 window.location.href = 'P-KNOWLEDGE_GRAPH.html';
@@ -346,7 +374,6 @@
 
             // 底部导航栏点击事件
             document.querySelector('#nav-home').addEventListener('click', function(e) {
-                e.preventDefault();
                 // 已在首页，无需操作
             });
 
@@ -371,14 +398,14 @@
 
             // 查看全部任务按钮
             document.querySelector('#view-all-tasks').addEventListener('click', function() {
-                console.log('查看全部学习任务');
-                // 这里可以跳转到任务列表页面
+                alert('学习任务列表功能开发中...');
+                // 后续可跳转到专门的任务列表页面
             });
 
             // 查看全部记录按钮
             document.querySelector('#view-all-records').addEventListener('click', function() {
-                console.log('查看全部学习记录');
-                // 这里可以跳转到学习记录页面
+                alert('学习记录列表功能开发中...');
+                // 后续可跳转到专门的学习记录页面
             });
 
             // 卡片点击效果

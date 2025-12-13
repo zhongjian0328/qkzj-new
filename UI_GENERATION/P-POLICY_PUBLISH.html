@@ -11,14 +11,22 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#D3F8EE',
-                        secondary: '#3BCCA5', 
-                        accent: '#2B6A5A',
-                        'text-primary': '#1F2937',
-                        'text-secondary': '#6B7280',
-                        'bg-light': '#F9FAFB',
-                        'card-bg': '#FFFFFF'
-                    },
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
                     fontFamily: {
                         'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     },
@@ -32,7 +40,7 @@
     </script>
     <style>
         .gradient-bg {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .card-hover:active {
@@ -49,7 +57,7 @@
         }
         
         .status-bar {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
 
         .modal-overlay {
@@ -288,31 +296,56 @@
                         <div>
                             <label for="policy-title-input" class="block text-sm font-medium text-text-primary mb-2">政策标题 *</label>
                             <input type="text" id="policy-title-input" name="title" 
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus" 
+                                   class="w-full px-3 py-2 border border-border-color rounded-lg form-input-focus" 
                                    placeholder="请输入政策标题" required>
                         </div>
                         
                         <div>
                             <label for="policy-content-input" class="block text-sm font-medium text-text-primary mb-2">政策内容 *</label>
                             <textarea id="policy-content-input" name="content" rows="6"
-                                      class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus resize-none" 
+                                      class="w-full px-3 py-2 border border-border-color rounded-lg form-input-focus resize-none" 
                                       placeholder="请输入政策详细内容" required></textarea>
                         </div>
                         
                         <div>
                             <label for="policy-scope-select" class="block text-sm font-medium text-text-primary mb-2">下发范围</label>
                             <select id="policy-scope-select" name="scope" 
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus">
+                                    class="w-full px-3 py-2 border border-border-color rounded-lg form-input-focus">
                                 <option value="all">全部用户</option>
-                                <option value="farmers">养殖户</option>
-                                <option value="enterprises">养殖企业</option>
-                                <option value="local">本地区用户</option>
+                                <option value="farmers">所有养殖户</option>
+                                <option value="farmers_small">小散户</option>
+                                <option value="farmers_cooperative">合作社</option>
+                                <option value="farmers_enterprise">养殖企业</option>
+                                <option value="institutions">所有机构</option>
+                                <option value="institutions_cdc">疫控机构</option>
+                                <option value="institutions_research">科研院所</option>
+                                <option value="institutions_service">服务商</option>
+                                <option value="students">所有学生</option>
+                                <option value="students_learning">学习阶段学生</option>
+                                <option value="students_internship">实习阶段学生</option>
+                                <option value="area">指定区域</option>
                             </select>
+                        </div>
+                        
+                        <!-- 指定区域选择，默认隐藏 -->
+                        <div id="area-selection" class="hidden">
+                            <label class="block text-sm font-medium text-text-primary mb-2">选择区域</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button type="button" class="area-btn px-3 py-2 border border-border-color rounded-lg text-sm form-input-focus">华东地区</button>
+                                <button type="button" class="area-btn px-3 py-2 border border-border-color rounded-lg text-sm form-input-focus">华南地区</button>
+                                <button type="button" class="area-btn px-3 py-2 border border-border-color rounded-lg text-sm form-input-focus">华北地区</button>
+                                <button type="button" class="area-btn px-3 py-2 border border-border-color rounded-lg text-sm form-input-focus">华中地区</button>
+                                <button type="button" class="area-btn px-3 py-2 border border-border-color rounded-lg text-sm form-input-focus">西南地区</button>
+                                <button type="button" class="area-btn px-3 py-2 border border-border-color rounded-lg text-sm form-input-focus">西北地区</button>
+                                <button type="button" class="area-btn px-3 py-2 border border-border-color rounded-lg text-sm form-input-focus">东北地区</button>
+                                <button type="button" class="area-btn px-3 py-2 border border-border-color rounded-lg text-sm form-input-focus">本省市</button>
+                                <button type="button" class="area-btn px-3 py-2 border border-border-color rounded-lg text-sm form-input-focus">本区县</button>
+                            </div>
                         </div>
                         
                         <div class="flex space-x-3 pt-4">
                             <button type="button" id="cancel-publish-btn" 
-                                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-text-secondary font-medium">
+                                    class="flex-1 px-4 py-2 border border-border-color rounded-lg text-text-secondary font-medium">
                                 取消
                             </button>
                             <button type="submit" id="confirm-publish-btn" 
@@ -362,7 +395,7 @@
                         
                         <div class="flex space-x-3 pt-4">
                             <button id="edit-policy-btn" 
-                                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-text-secondary font-medium">
+                                    class="flex-1 px-4 py-2 border border-border-color rounded-lg text-text-secondary font-medium">
                                 编辑
                             </button>
                             <button id="delete-policy-btn" 
@@ -447,6 +480,37 @@
                 document.querySelector('#publish-modal').classList.add('hidden');
             });
 
+            // 下发范围选择变化事件
+            document.querySelector('#policy-scope-select').addEventListener('change', function() {
+                const selectedScope = this.value;
+                const areaSelection = document.querySelector('#area-selection');
+                
+                if (selectedScope === 'area') {
+                    areaSelection.classList.remove('hidden');
+                } else {
+                    areaSelection.classList.add('hidden');
+                    // 清除已选区域
+                    document.querySelectorAll('.area-btn').forEach(btn => {
+                        btn.classList.remove('bg-secondary', 'text-white');
+                        btn.classList.add('bg-white');
+                    });
+                }
+            });
+            
+            // 区域按钮点击事件
+            document.querySelectorAll('.area-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 切换选中状态
+                    if (this.classList.contains('bg-secondary')) {
+                        this.classList.remove('bg-secondary', 'text-white');
+                        this.classList.add('bg-white');
+                    } else {
+                        this.classList.add('bg-secondary', 'text-white');
+                        this.classList.remove('bg-white');
+                    }
+                });
+            });
+            
             // 政策发布表单提交
             document.querySelector('#policy-form').addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -458,6 +522,19 @@
                 if (!title || !content) {
                     alert('请填写必填项');
                     return;
+                }
+                
+                // 收集选中的区域
+                let selectedAreas = [];
+                if (scope === 'area') {
+                    document.querySelectorAll('.area-btn.bg-secondary').forEach(btn => {
+                        selectedAreas.push(btn.textContent);
+                    });
+                    
+                    if (selectedAreas.length === 0) {
+                        alert('请选择至少一个区域');
+                        return;
+                    }
                 }
                 
                 // 模拟发布成功

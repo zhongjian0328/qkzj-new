@@ -11,14 +11,22 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#D3F8EE',
-                        secondary: '#3BCCA5', 
-                        accent: '#2B6A5A',
-                        'text-primary': '#1F2937',
-                        'text-secondary': '#6B7280',
-                        'bg-light': '#F9FAFB',
-                        'card-bg': '#FFFFFF'
-                    },
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
                     fontFamily: {
                         'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     },
@@ -40,7 +48,7 @@
         }
         
         .status-bar {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
 
         .setting-item:active {
@@ -113,7 +121,7 @@
         </div>
     </div>
 
-    <!-- 顶部导航栏 -->
+    <!-- 顶部导航�?-->
     <header id="top-header" class="bg-white shadow-sm">
         <div class="flex items-center px-4 py-3">
             <button id="back-btn" class="mr-3 p-2 -ml-2">
@@ -137,7 +145,7 @@
                         </div>
                         <div>
                             <h3 class="font-medium text-text-primary">通知设置</h3>
-                            <p class="text-sm text-text-secondary">接收诊断结果和系统消息</p>
+                            <p class="text-sm text-text-secondary">接收诊断结果和系统消�?/p>
                         </div>
                     </div>
                     <div id="notification-toggle" class="toggle-switch active"></div>
@@ -152,7 +160,7 @@
                         </div>
                         <div>
                             <h3 class="font-medium text-text-primary">隐私设置</h3>
-                            <p class="text-sm text-text-secondary">管理个人信息和数据权限</p>
+                            <p class="text-sm text-text-secondary">管理个人信息和数据权�?/p>
                         </div>
                     </div>
                     <i class="fas fa-chevron-right text-text-secondary"></i>
@@ -167,7 +175,7 @@
                         </div>
                         <div>
                             <h3 class="font-medium text-text-primary">清除缓存</h3>
-                            <p class="text-sm text-text-secondary">清理临时文件，释放存储空间</p>
+                            <p class="text-sm text-text-secondary">清理临时文件，释放存储空�?/p>
                         </div>
                     </div>
                     <span id="cache-size" class="text-sm text-text-secondary">128.5 MB</span>
@@ -187,7 +195,7 @@
                         </div>
                         <div>
                             <h3 class="font-medium text-text-primary">关于我们</h3>
-                            <p class="text-sm text-text-secondary">了解禽康智检的更多信息</p>
+                            <p class="text-sm text-text-secondary">了解禽康智检的更多信�?/p>
                         </div>
                     </div>
                     <i class="fas fa-chevron-right text-text-secondary"></i>
@@ -211,6 +219,14 @@
         </section>
     </main>
 
+    <!-- �ײ������� -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
+        <div id="nav-content"></div>
+    </nav>
+
+    <!-- ����ͨ�õ����ű� -->
+    <script src="common-nav.js"></script>
+
     <!-- 清除缓存确认弹窗 -->
     <div id="clear-cache-modal" class="fixed inset-0 z-50 hidden">
         <div class="modal-overlay absolute inset-0"></div>
@@ -221,7 +237,7 @@
                         <i class="fas fa-broom text-2xl text-orange-600"></i>
                     </div>
                     <h3 class="text-lg font-semibold text-text-primary mb-2">清除缓存</h3>
-                    <p class="text-text-secondary mb-6">确定要清除所有缓存数据吗？这将释放 128.5 MB 存储空间。</p>
+                    <p class="text-text-secondary mb-6">确定要清除所有缓存数据吗？这将释�?128.5 MB 存储空间�?/p>
                     
                     <div class="flex space-x-3">
                         <button id="cancel-clear-cache" class="flex-1 py-3 px-4 bg-gray-100 text-text-primary rounded-xl font-medium">
@@ -240,7 +256,7 @@
     <div id="success-toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 hidden">
         <div class="flex items-center space-x-2">
             <i class="fas fa-check-circle"></i>
-            <span id="toast-message">缓存已清除</span>
+            <span id="toast-message">缓存已清�?/span>
         </div>
     </div>
 
@@ -251,16 +267,15 @@
                 window.location.href = 'P-USER_PROFILE.html';
             });
 
-            // 通知设置开关
-            document.querySelector('#notification-toggle').addEventListener('click', function() {
+            // 通知设置开�?            document.querySelector('#notification-toggle').addEventListener('click', function() {
                 this.classList.toggle('active');
                 const isActive = this.classList.contains('active');
-                console.log('通知设置已' + (isActive ? '开启' : '关闭'));
+                console.log('通知设置�? + (isActive ? '开�? : '关闭'));
             });
 
             // 隐私设置
             document.querySelector('#privacy-setting').addEventListener('click', function() {
-                console.log('跳转到隐私设置页面');
+                console.log('跳转到隐私设置页�?);
                 // 这里可以跳转到隐私设置子页面，但PRD中未定义具体页面
                 showToast('隐私设置功能开发中');
             });
@@ -272,7 +287,7 @@
 
             // 关于我们
             document.querySelector('#about-us-setting').addEventListener('click', function() {
-                console.log('跳转到关于我们页面');
+                console.log('跳转到关于我们页�?);
                 // 这里可以跳转到关于我们页面，但PRD中未定义具体页面
                 showToast('关于我们页面开发中');
             });
@@ -280,7 +295,7 @@
             // 版本信息点击
             document.querySelector('#version-setting').addEventListener('click', function() {
                 console.log('查看版本详情');
-                showToast('当前已是最新版本');
+                showToast('当前已是最新版�?);
             });
 
             // 清除缓存弹窗事件
@@ -293,7 +308,7 @@
                 // 模拟清除缓存
                 setTimeout(() => {
                     document.querySelector('#cache-size').textContent = '0 MB';
-                    showToast('缓存已清除');
+                    showToast('缓存已清�?);
                 }, 500);
             });
 

@@ -11,14 +11,22 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#D3F8EE',
-                        secondary: '#3BCCA5', 
-                        accent: '#2B6A5A',
-                        'text-primary': '#1F2937',
-                        'text-secondary': '#6B7280',
-                        'bg-light': '#F9FAFB',
-                        'card-bg': '#FFFFFF'
-                    },
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
                     fontFamily: {
                         'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     },
@@ -32,7 +40,7 @@
     </script>
     <style>
         .gradient-bg {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .card-hover:active {
@@ -49,7 +57,7 @@
         }
         
         .status-bar {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .upload-area {
@@ -156,14 +164,14 @@
                         <div>
                             <label for="enterprise-name" class="block text-sm font-medium text-text-primary mb-2">企业名称 *</label>
                             <input type="text" id="enterprise-name" name="enterprise-name" 
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input" 
+                                   class="w-full px-4 py-3 border border-border-color rounded-lg form-input" 
                                    placeholder="请输入企业全称" required>
                         </div>
                         
                         <div>
                             <label for="enterprise-type" class="block text-sm font-medium text-text-primary mb-2">企业类型 *</label>
                             <select id="enterprise-type" name="enterprise-type" 
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input" required>
+                                    class="w-full px-4 py-3 border border-border-color rounded-lg form-input" required>
                                 <option value="">请选择企业类型</option>
                                 <option value="cooperative">养殖合作社</option>
                                 <option value="enterprise">养殖企业</option>
@@ -174,14 +182,14 @@
                         <div>
                             <label for="contact-person" class="block text-sm font-medium text-text-primary mb-2">联系人 *</label>
                             <input type="text" id="contact-person" name="contact-person" 
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input" 
+                                   class="w-full px-4 py-3 border border-border-color rounded-lg form-input" 
                                    placeholder="请输入联系人姓名" required>
                         </div>
                         
                         <div>
                             <label for="contact-phone" class="block text-sm font-medium text-text-primary mb-2">联系电话 *</label>
                             <input type="tel" id="contact-phone" name="contact-phone" 
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input" 
+                                   class="w-full px-4 py-3 border border-border-color rounded-lg form-input" 
                                    placeholder="请输入联系电话" required>
                         </div>
                     </div>
@@ -222,21 +230,21 @@
                         <div>
                             <label for="school-name" class="block text-sm font-medium text-text-primary mb-2">学校名称 *</label>
                             <input type="text" id="school-name" name="school-name" 
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input" 
+                                   class="w-full px-4 py-3 border border-border-color rounded-lg form-input" 
                                    placeholder="请输入学校全称" required>
                         </div>
                         
                         <div>
                             <label for="student-id" class="block text-sm font-medium text-text-primary mb-2">学号 *</label>
                             <input type="text" id="student-id" name="student-id" 
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input" 
+                                   class="w-full px-4 py-3 border border-border-color rounded-lg form-input" 
                                    placeholder="请输入学号" required>
                         </div>
                         
                         <div>
                             <label for="mentor-code" class="block text-sm font-medium text-text-primary mb-2">导师邀请码</label>
                             <input type="text" id="mentor-code" name="mentor-code" 
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input" 
+                                   class="w-full px-4 py-3 border border-border-color rounded-lg form-input" 
                                    placeholder="请输入导师邀请码（可选）">
                         </div>
                     </div>
@@ -250,14 +258,14 @@
                         <div>
                             <label for="institution-name" class="block text-sm font-medium text-text-primary mb-2">机构名称 *</label>
                             <input type="text" id="institution-name" name="institution-name" 
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input" 
+                                   class="w-full px-4 py-3 border border-border-color rounded-lg form-input" 
                                    placeholder="请输入机构全称" required>
                         </div>
                         
                         <div>
                             <label for="institution-type" class="block text-sm font-medium text-text-primary mb-2">机构类型 *</label>
                             <select id="institution-type" name="institution-type" 
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input" required>
+                                    class="w-full px-4 py-3 border border-border-color rounded-lg form-input" required>
                                 <option value="">请选择机构类型</option>
                                 <option value="cdc">疫控机构</option>
                                 <option value="research">科研院所</option>
@@ -297,18 +305,22 @@
             <div class="bg-card-bg rounded-xl p-4 shadow-card">
                 <div class="text-center">
                     <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <i class="fas fa-clock text-yellow-600 text-2xl"></i>
+                        <i class="fas fa-clock text-yellow-600 text-xl"></i>
                     </div>
                     <h3 class="font-semibold text-text-primary mb-2">审核中</h3>
-                    <p class="text-sm text-text-secondary mb-4">
-                        您的认证材料已提交，我们将在1-3个工作日内完成审核
-                    </p>
-                    <button id="check-status-btn" class="px-6 py-2 bg-secondary text-white rounded-lg text-sm">
-                        查看审核进度
+                    <p class="text-sm text-text-secondary mb-4">您的认证申请已提交，我们将在1-3个工作日内完成审核</p>
+                    
+                    <button id="check-status-btn" class="px-6 py-2 border border-secondary text-secondary font-medium rounded-lg shadow-sm">
+                        <i class="fas fa-eye mr-2"></i>查看审核进度
                     </button>
                 </div>
             </div>
         </section>
+        
+        <!-- 提示框 -->
+        <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-text-primary text-white px-4 py-2 rounded-lg text-sm z-50 hidden">
+            <span id="toast-message">提示信息</span>
+        </div>
     </main>
 
     <script>
@@ -446,6 +458,32 @@
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>提交中...';
                 submitBtn.disabled = true;
 
+                // 收集表单数据
+                const formData = new FormData(this);
+                const authData = {
+                    role: userRole,
+                    timestamp: new Date().toISOString()
+                };
+
+                // 根据角色添加特定字段
+                if (userRole.includes('farmer')) {
+                    authData.enterpriseName = document.querySelector('#enterprise-name').value;
+                    authData.enterpriseType = document.querySelector('#enterprise-type').value;
+                    authData.contactPerson = document.querySelector('#contact-person').value;
+                    authData.contactPhone = document.querySelector('#contact-phone').value;
+                    authData.licenseFile = document.querySelector('#license-file').files[0]?.name;
+                } else if (userRole.includes('student')) {
+                    authData.schoolName = document.querySelector('#school-name').value;
+                    authData.studentId = document.querySelector('#student-id').value;
+                    authData.mentorCode = document.querySelector('#mentor-code').value;
+                } else if (userRole.includes('institution')) {
+                    authData.institutionName = document.querySelector('#institution-name').value;
+                    authData.institutionType = document.querySelector('#institution-type').value;
+                    authData.qualificationFile = document.querySelector('#qualification-file-input').files[0]?.name;
+                }
+
+                console.log('提交认证数据:', authData);
+
                 // 模拟提交过程
                 setTimeout(function() {
                     // 隐藏表单，显示审核状态
@@ -464,6 +502,30 @@
                 }, 2000);
             });
 
+            // 显示提示框函数
+            function showToast(message, isError = false) {
+                const toast = document.querySelector('#toast');
+                const toastMessage = document.querySelector('#toast-message');
+                
+                toastMessage.textContent = message;
+                
+                // 设置不同的背景色
+                if (isError) {
+                    toast.classList.add('bg-red-600');
+                    toast.classList.remove('bg-text-primary');
+                } else {
+                    toast.classList.add('bg-text-primary');
+                    toast.classList.remove('bg-red-600');
+                }
+                
+                toast.classList.remove('hidden');
+                
+                // 3秒后自动隐藏
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 3000);
+            }
+            
             // 表单验证函数
             function validateForm() {
                 const currentRole = userRole;
@@ -477,23 +539,23 @@
                     const licenseFile = document.querySelector('#license-file').files.length;
 
                     if (!enterpriseName) {
-                        alert('请输入企业名称');
+                        showToast('请输入企业名称', true);
                         return false;
                     }
                     if (!enterpriseType) {
-                        alert('请选择企业类型');
+                        showToast('请选择企业类型', true);
                         return false;
                     }
                     if (!contactPerson) {
-                        alert('请输入联系人姓名');
+                        showToast('请输入联系人姓名', true);
                         return false;
                     }
                     if (!contactPhone) {
-                        alert('请输入联系电话');
+                        showToast('请输入联系电话', true);
                         return false;
                     }
                     if (!licenseFile) {
-                        alert('请上传营业执照');
+                        showToast('请上传营业执照', true);
                         return false;
                     }
                 } else if (currentRole.includes('student')) {
@@ -502,11 +564,11 @@
                     const studentId = document.querySelector('#student-id').value.trim();
 
                     if (!schoolName) {
-                        alert('请输入学校名称');
+                        showToast('请输入学校名称', true);
                         return false;
                     }
                     if (!studentId) {
-                        alert('请输入学号');
+                        showToast('请输入学号', true);
                         return false;
                     }
                 } else if (currentRole.includes('institution')) {
@@ -516,15 +578,15 @@
                     const qualificationFile = document.querySelector('#qualification-file-input').files.length;
 
                     if (!institutionName) {
-                        alert('请输入机构名称');
+                        showToast('请输入机构名称', true);
                         return false;
                     }
                     if (!institutionType) {
-                        alert('请选择机构类型');
+                        showToast('请选择机构类型', true);
                         return false;
                     }
                     if (!qualificationFile) {
-                        alert('请上传资质证书');
+                        showToast('请上传资质证书', true);
                         return false;
                     }
                 }

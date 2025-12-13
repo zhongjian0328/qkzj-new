@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>禽康智检 - 治疗方案</title>
+    <script src="https://unpkg.byted-static.com/coze/space_ppt_lib/1.0.3-alpha.12/lib/tailwindcss.js"></script>
+    <script src="https://unpkg.byted-static.com/fortawesome/fontawesome-free/6.7.2/js/all.min.js" data-auto-replace-svg="nest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
+                    fontFamily: {
+                        'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
+                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
+        }
+        
+        .card-hover:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+        
+        .safe-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .status-bar {
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
+        }
+    </style>
+</head>
+<body class="bg-bg-light font-sans">
+    <!-- 状态栏 -->
+    <div id="status-bar" class="status-bar safe-top">
+        <div class="flex justify-between items-center px-4 py-2 text-sm font-medium text-accent">
+            <span>9:41</span>
+            <div class="flex items-center space-x-1">
+                <i class="fas fa-signal text-xs"></i>
+                <i class="fas fa-wifi text-xs"></i>
+                <i class="fas fa-battery-three-quarters text-xs"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航栏 -->
+    <header id="top-header" class="bg-white shadow-sm">
+        <div class="flex justify-between items-center px-4 py-3">
+            <button id="back-btn" class="flex items-center">
+                <i class="fas fa-arrow-left text-text-secondary text-xl"></i>
+            </button>
+            <h1 id="page-title" class="text-lg font-semibold text-text-primary">治疗方案</h1>
+            <div class="flex items-center space-x-4">
+                <button id="share-btn" class="text-text-secondary">
+                    <i class="fas fa-share-alt text-xl"></i>
+                </button>
+                <button id="favorite-btn" class="text-text-secondary">
+                    <i class="far fa-heart text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main id="main-content" class="px-4 py-6 pb-20">
+        <!-- 诊断结果摘要 -->
+        <section id="diagnosis-summary" class="mb-8">
+            <div id="diagnosis-card" class="bg-card-bg rounded-xl p-4 shadow-card">
+                <h2 id="diagnosis-title" class="text-lg font-semibold text-text-primary mb-2">AI诊断结果</h2>
+                <p id="diagnosis-desc" class="text-sm text-text-secondary mb-4">根据您提供的数据，AI系统已生成诊断结果和治疗方案</p>
+                
+                <div id="disease-tags" class="flex flex-wrap gap-2 mb-4">
+                    <div id="disease-tag-1" class="bg-secondary/20 text-accent px-3 py-1 rounded-full text-sm">新城疫</div>
+                    <div id="disease-tag-2" class="bg-secondary/20 text-accent px-3 py-1 rounded-full text-sm">大肠杆菌病</div>
+                    <div id="disease-tag-3" class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">混合感染</div>
+                </div>
+                
+                <div id="confidence-score" class="flex items-center space-x-2">
+                    <span class="text-sm text-text-secondary">置信度：</span>
+                    <span class="font-semibold text-accent">95%</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 治疗方案详情 -->
+        <section id="treatment-plan" class="mb-8">
+            <h2 id="treatment-title" class="text-lg font-semibold text-text-primary mb-4">推荐治疗方案</h2>
+            
+            <div id="treatment-card" class="bg-card-bg rounded-xl p-4 shadow-card">
+                <!-- 紧急措施 -->
+                <div id="emergency-measures" class="mb-6">
+                    <h3 id="emergency-title" class="font-medium text-text-primary mb-3 flex items-center">
+                        <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
+                        紧急措施（0-24小时）
+                    </h3>
+                    
+                    <div id="emergency-list" class="space-y-2">
+                        <div id="emergency-item-1" class="flex items-start">
+                            <div class="w-5 h-5 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <span class="text-xs text-white">1</span>
+                            </div>
+                            <p id="emergency-content-1" class="text-sm text-text-secondary ml-3">立即隔离病禽，对鸡舍进行全面消毒</p>
+                        </div>
+                        
+                        <div id="emergency-item-2" class="flex items-start">
+                            <div class="w-5 h-5 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <span class="text-xs text-white">2</span>
+                            </div>
+                            <p id="emergency-content-2" class="text-sm text-text-secondary ml-3">对健康鸡群紧急接种新城疫疫苗</p>
+                        </div>
+                        
+                        <div id="emergency-item-3" class="flex items-start">
+                            <div class="w-5 h-5 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <span class="text-xs text-white">3</span>
+                            </div>
+                            <p id="emergency-content-3" class="text-sm text-text-secondary ml-3">使用抗生素控制大肠杆菌感染</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 短期治疗 -->
+                <div id="short-term-treatment" class="mb-6">
+                    <h3 id="short-term-title" class="font-medium text-text-primary mb-3 flex items-center">
+                        <i class="fas fa-calendar-day text-orange-500 mr-2"></i>
+                        短期治疗（1-7天）
+                    </h3>
+                    
+                    <div id="short-term-list" class="space-y-2">
+                        <div id="short-term-item-1" class="flex items-start">
+                            <div class="w-5 h-5 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <span class="text-xs text-white">1</span>
+                            </div>
+                            <p id="short-term-content-1" class="text-sm text-text-secondary ml-3">继续使用抗生素，根据病情调整剂量</p>
+                        </div>
+                        
+                        <div id="short-term-item-2" class="flex items-start">
+                            <div class="w-5 h-5 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <span class="text-xs text-white">2</span>
+                            </div>
+                            <p id="short-term-content-2" class="text-sm text-text-secondary ml-3">补充维生素和电解质，增强鸡群免疫力</p>
+                        </div>
+                        
+                        <div id="short-term-item-3" class="flex items-start">
+                            <div class="w-5 h-5 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <span class="text-xs text-white">3</span>
+                            </div>
+                            <p id="short-term-content-3" class="text-sm text-text-secondary ml-3">加强鸡舍通风，保持环境清洁干燥</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 长期防控 -->
+                <div id="long-term-prevention">
+                    <h3 id="long-term-title" class="font-medium text-text-primary mb-3 flex items-center">
+                        <i class="fas fa-shield-alt text-green-500 mr-2"></i>
+                        长期防控
+                    </h3>
+                    
+                    <div id="long-term-list" class="space-y-2">
+                        <div id="long-term-item-1" class="flex items-start">
+                            <div class="w-5 h-5 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <span class="text-xs text-white">1</span>
+                            </div>
+                            <p id="long-term-content-1" class="text-sm text-text-secondary ml-3">制定合理的疫苗免疫程序，定期接种</p>
+                        </div>
+                        
+                        <div id="long-term-item-2" class="flex items-start">
+                            <div class="w-5 h-5 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <span class="text-xs text-white">2</span>
+                            </div>
+                            <p id="long-term-content-2" class="text-sm text-text-secondary ml-3">加强生物安全措施，防止病原体传入</p>
+                        </div>
+                        
+                        <div id="long-term-item-3" class="flex items-start">
+                            <div class="w-5 h-5 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <span class="text-xs text-white">3</span>
+                            </div>
+                            <p id="long-term-content-3" class="text-sm text-text-secondary ml-3">定期监测鸡群健康状况，及时发现和处理异常</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 药物推荐 -->
+        <section id="drug-recommendation" class="mb-8">
+            <h2 id="drug-title" class="text-lg font-semibold text-text-primary mb-4">推荐药物</h2>
+            
+            <div id="drug-list" class="space-y-3">
+                <div id="drug-item-1" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div id="drug-icon-1" class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                                <i class="fas fa-pills text-xl text-secondary"></i>
+                            </div>
+                            <div>
+                                <h4 id="drug-name-1" class="font-semibold text-text-primary">阿莫西林</h4>
+                                <p id="drug-desc-1" class="text-xs text-text-secondary">用于控制大肠杆菌感染</p>
+                            </div>
+                        </div>
+                        <button id="buy-drug-1" class="text-secondary font-medium text-sm">
+                            <i class="fas fa-shopping-cart mr-1"></i> 购买
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="drug-item-2" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div id="drug-icon-2" class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                                <i class="fas fa-syringe text-xl text-secondary"></i>
+                            </div>
+                            <div>
+                                <h4 id="drug-name-2" class="font-semibold text-text-primary">新城疫疫苗</h4>
+                                <p id="drug-desc-2" class="text-xs text-text-secondary">用于紧急接种和常规免疫</p>
+                            </div>
+                        </div>
+                        <button id="buy-drug-2" class="text-secondary font-medium text-sm">
+                            <i class="fas fa-shopping-cart mr-1"></i> 购买
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="drug-item-3" class="bg-card-bg rounded-xl p-4 shadow-card card-hover">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div id="drug-icon-3" class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center">
+                                <i class="fas fa-prescription-bottle text-xl text-secondary"></i>
+                            </div>
+                            <div>
+                                <h4 id="drug-name-3" class="font-semibold text-text-primary">多维电解质</h4>
+                                <p id="drug-desc-3" class="text-xs text-text-secondary">补充营养，增强免疫力</p>
+                            </div>
+                        </div>
+                        <button id="buy-drug-3" class="text-secondary font-medium text-sm">
+                            <i class="fas fa-shopping-cart mr-1"></i> 购买
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 确诊方案推荐 -->
+        <section id="confirmation-plan">
+            <h2 id="confirmation-title" class="text-lg font-semibold text-text-primary mb-4">确诊方案推荐</h2>
+            
+            <div id="confirmation-card" class="bg-card-bg rounded-xl p-4 shadow-card">
+                <p id="confirmation-desc" class="text-sm text-text-secondary mb-4">建议进行以下实验室检测，以确诊病情：</p>
+                
+                <div id="confirmation-list" class="space-y-2">
+                    <div id="confirmation-item-1" class="flex items-start">
+                        <div class="w-5 h-5 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fas fa-check text-xs text-white"></i>
+                        </div>
+                        <p id="confirmation-content-1" class="text-sm text-text-secondary ml-3">新城疫病毒RT-PCR检测</p>
+                    </div>
+                    
+                    <div id="confirmation-item-2" class="flex items-start">
+                        <div class="w-5 h-5 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fas fa-check text-xs text-white"></i>
+                        </div>
+                        <p id="confirmation-content-2" class="text-sm text-text-secondary ml-3">大肠杆菌分离培养与药敏试验</p>
+                    </div>
+                    
+                    <div id="confirmation-item-3" class="flex items-start">
+                        <div class="w-5 h-5 rounded-full bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fas fa-check text-xs text-white"></i>
+                        </div>
+                        <p id="confirmation-content-3" class="text-sm text-text-secondary ml-3">血清学检测（HI试验）</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部导航栏 -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
+        <a id="nav-home" href="P-HOME_FARMER_SMALL.html" class="flex flex-col items-center p-2">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-xs mt-0.5">首页</span>
+        </a>
+        <a id="nav-diagnosis" href="P-AI_DIAGNOSIS_MODE_SELECT.html" class="flex flex-col items-center p-2">
+            <i class="fas fa-stethoscope text-xl"></i>
+            <span class="text-xs mt-0.5">AI诊断</span>
+        </a>
+        <a id="nav-profile" href="P-USER_PROFILE.html" class="flex flex-col items-center p-2">
+            <i class="fas fa-user text-xl"></i>
+            <span class="text-xs mt-0.5">我的</span>
+        </a>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 动态设置底部导航栏激活状态
+            function setActiveNavItem() {
+                const currentUrl = window.location.href;
+                const navItems = document.querySelectorAll('#bottom-nav a');
+                
+                navItems.forEach(item => {
+                    const href = item.getAttribute('href');
+                    if (currentUrl.includes(href)) {
+                        item.classList.add('text-secondary');
+                        item.classList.remove('text-text-secondary');
+                    } else {
+                        item.classList.add('text-text-secondary');
+                        item.classList.remove('text-secondary');
+                    }
+                });
+            }
+            
+            // 初始化导航栏激活状态
+            setActiveNavItem();
+            
+            // 返回按钮点击事件
+            document.querySelector('#back-btn').addEventListener('click', function() {
+                window.history.back();
+            });
+            
+            // 分享按钮点击事件
+            document.querySelector('#share-btn').addEventListener('click', function() {
+                console.log('分享治疗方案');
+            });
+            
+            // 收藏按钮点击事件
+            document.querySelector('#favorite-btn').addEventListener('click', function() {
+                this.querySelector('i').classList.toggle('far');
+                this.querySelector('i').classList.toggle('fas');
+                this.querySelector('i').classList.toggle('text-red-500');
+            });
+            
+            // 购买药物按钮点击事件
+            document.querySelector('#buy-drug-1').addEventListener('click', function() {
+                window.location.href = 'P-VETERINARY_MALL.html?drug=1';
+            });
+            
+            document.querySelector('#buy-drug-2').addEventListener('click', function() {
+                window.location.href = 'P-VETERINARY_MALL.html?drug=2';
+            });
+            
+            document.querySelector('#buy-drug-3').addEventListener('click', function() {
+                window.location.href = 'P-VETERINARY_MALL.html?drug=3';
+            });
+            
+            // 卡片点击效果
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach(card => {
+                card.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                card.addEventListener('touchend', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -11,14 +11,22 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#D3F8EE',
-                        secondary: '#3BCCA5', 
-                        accent: '#2B6A5A',
-                        'text-primary': '#1F2937',
-                        'text-secondary': '#6B7280',
-                        'bg-light': '#F9FAFB',
-                        'card-bg': '#FFFFFF'
-                    },
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
                     fontFamily: {
                         'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     },
@@ -32,7 +40,7 @@
     </script>
     <style>
         .gradient-bg {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .card-hover:active {
@@ -49,7 +57,7 @@
         }
         
         .status-bar {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
 
         .heatmap-container {
@@ -502,8 +510,7 @@
             // 弹窗处理按钮
             document.querySelector('#popup-handle').addEventListener('click', function() {
                 document.querySelector('#alert-popup').classList.add('hidden');
-                console.log('处理疫情报警');
-                // 这里可以添加处理逻辑或跳转到处理页面
+                handleAlert();
             });
 
             // 点击弹窗外部关闭
@@ -554,6 +561,7 @@
                 
                 // 模拟数据更新
                 updateStatsData(timeRange, diseaseType);
+                checkForAnomalies();
             }
 
             // 更新统计数据
@@ -566,6 +574,49 @@
                 document.querySelector('#total-cases-card .text-2xl').textContent = totalCases;
                 document.querySelector('#high-risk-card .text-2xl').textContent = highRisk;
                 document.querySelector('#alert-count-card .text-2xl').textContent = alerts;
+            }
+
+            // 检测异常情况
+            function checkForAnomalies() {
+                // 模拟检测异常高发情况
+                const highRiskPoints = document.querySelectorAll('.heatmap-point.heatmap-high, .heatmap-point.heatmap-alert');
+                if (highRiskPoints.length > 5) {
+                    showAnomalyAlert();
+                }
+            }
+
+            // 显示异常高发报警
+            function showAnomalyAlert() {
+                // 检查是否已经显示过报警
+                if (!document.querySelector('#anomaly-alert')) {
+                    const alertDiv = document.createElement('div');
+                    alertDiv.id = 'anomaly-alert';
+                    alertDiv.className = 'fixed top-20 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center space-x-3';
+                    alertDiv.innerHTML = `
+                        <i class="fas fa-exclamation-triangle text-xl"></i>
+                        <div>
+                            <div class="font-medium">异常高发报警</div>
+                            <div class="text-sm opacity-90">发现多处高风险区域，请立即查看</div>
+                        </div>
+                        <button id="close-anomaly-alert" class="text-white hover:text-red-100">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    
+                    document.body.appendChild(alertDiv);
+                    
+                    // 添加关闭事件
+                    document.querySelector('#close-anomaly-alert').addEventListener('click', function() {
+                        alertDiv.remove();
+                    });
+                    
+                    // 10秒后自动关闭
+                    setTimeout(() => {
+                        if (alertDiv.parentNode) {
+                            alertDiv.remove();
+                        }
+                    }, 10000);
+                }
             }
 
             // 显示报警弹窗
@@ -619,6 +670,32 @@
                 
                 popup.classList.remove('hidden');
             }
+
+            // 处理报警
+            function handleAlert() {
+                // 模拟处理报警流程
+                console.log('处理疫情报警');
+                
+                // 可以跳转到报警处理页面或更新报警状态
+                showToast('报警已标记为处理中');
+            }
+
+            // 显示提示框
+            function showToast(message, isError = false) {
+                const toast = document.createElement('div');
+                toast.className = `fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-${isError ? 'red-500' : 'text-primary'} text-white px-6 py-3 rounded-lg shadow-lg z-50`;
+                toast.textContent = message;
+                
+                document.body.appendChild(toast);
+                
+                // 3秒后自动关闭
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
+            }
+
+            // 初始化异常检测
+            checkForAnomalies();
 
             // 点击其他地方关闭下拉菜单
             document.addEventListener('click', function(e) {

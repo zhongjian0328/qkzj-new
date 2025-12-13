@@ -11,14 +11,22 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#D3F8EE',
-                        secondary: '#3BCCA5', 
-                        accent: '#2B6A5A',
-                        'text-primary': '#1F2937',
-                        'text-secondary': '#6B7280',
-                        'bg-light': '#F9FAFB',
-                        'card-bg': '#FFFFFF'
-                    },
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
                     fontFamily: {
                         'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     },
@@ -32,7 +40,7 @@
     </script>
     <style>
         .gradient-bg {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .card-hover:active {
@@ -49,7 +57,7 @@
         }
         
         .status-bar {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
 
         .modal-overlay {
@@ -74,7 +82,7 @@
         </div>
     </div>
 
-    <!-- 顶部导航栏 -->
+    <!-- 顶部导航�?-->
     <header id="top-header" class="bg-white shadow-sm">
         <div class="flex justify-between items-center px-4 py-3">
             <div class="flex items-center space-x-3">
@@ -111,7 +119,7 @@
                 <div id="active-ads-card" class="bg-card-bg rounded-xl p-4 shadow-card">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-text-secondary">运行中</p>
+                            <p class="text-sm text-text-secondary">运行�?/p>
                             <p class="text-2xl font-bold text-green-600">8</p>
                         </div>
                         <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
@@ -123,7 +131,7 @@
                 <div id="total-budget-card" class="bg-card-bg rounded-xl p-4 shadow-card">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-text-secondary">总预算</p>
+                            <p class="text-sm text-text-secondary">总预�?/p>
                             <p class="text-2xl font-bold text-text-primary">¥25,800</p>
                         </div>
                         <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
@@ -135,7 +143,7 @@
                 <div id="total-clicks-card" class="bg-card-bg rounded-xl p-4 shadow-card">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-text-secondary">总点击</p>
+                            <p class="text-sm text-text-secondary">总点�?/p>
                             <p class="text-2xl font-bold text-orange-600">1,247</p>
                         </div>
                         <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
@@ -152,10 +160,10 @@
                 <h2 id="ads-list-title" class="text-lg font-semibold text-text-primary">广告列表</h2>
                 <div id="filter-controls" class="flex items-center space-x-2">
                     <select id="status-filter" class="bg-white border border-gray-200 rounded-lg px-3 py-1 text-sm">
-                        <option value="all">全部状态</option>
-                        <option value="active">运行中</option>
-                        <option value="paused">已暂停</option>
-                        <option value="ended">已结束</option>
+                        <option value="all">全部状�?/option>
+                        <option value="active">运行�?/option>
+                        <option value="paused">已暂�?/option>
+                        <option value="ended">已结�?/option>
                     </select>
                 </div>
             </div>
@@ -168,8 +176,8 @@
                             <img id="ad-image-1" src="https://s.coze.cn/image/gaiyvSOpVZY/" 
                                  alt="兽药广告图片" data-category="商业科技" class="w-16 h-16 rounded-lg object-cover">
                             <div class="flex-1">
-                                <h3 id="ad-title-1" class="font-semibold text-text-primary mb-1">高效禽流感疫苗推广</h3>
-                                <p id="ad-desc-1" class="text-sm text-text-secondary mb-2">针对冬季高发期，专业禽流感防控疫苗</p>
+                                <h3 id="ad-title-1" class="font-semibold text-text-primary mb-1">高效禽流感疫苗推�?/h3>
+                                <p id="ad-desc-1" class="text-sm text-text-secondary mb-2">针对冬季高发期，专业禽流感防控疫�?/p>
                                 <div class="flex items-center space-x-4 text-xs text-text-secondary">
                                     <span><i class="fas fa-eye mr-1"></i>曝光: 2,341</span>
                                     <span><i class="fas fa-mouse-pointer mr-1"></i>点击: 156</span>
@@ -178,7 +186,7 @@
                             </div>
                         </div>
                         <div id="ad-status-1" class="px-3 py-1 bg-green-100 rounded-full">
-                            <span class="text-xs text-green-700 font-medium">运行中</span>
+                            <span class="text-xs text-green-700 font-medium">运行�?/span>
                         </div>
                     </div>
                     
@@ -198,7 +206,7 @@
                             <img id="ad-image-2" src="https://s.coze.cn/image/xc8MhDVY1Y8/" 
                                  alt="饲料广告图片" data-category="商业科技" class="w-16 h-16 rounded-lg object-cover">
                             <div class="flex-1">
-                                <h3 id="ad-title-2" class="font-semibold text-text-primary mb-1">高蛋白蛋鸡饲料</h3>
+                                <h3 id="ad-title-2" class="font-semibold text-text-primary mb-1">高蛋白蛋鸡饲�?/h3>
                                 <p id="ad-desc-2" class="text-sm text-text-secondary mb-2">提升产蛋率，增强免疫力的优质饲料</p>
                                 <div class="flex items-center space-x-4 text-xs text-text-secondary">
                                     <span><i class="fas fa-eye mr-1"></i>曝光: 1,892</span>
@@ -208,7 +216,7 @@
                             </div>
                         </div>
                         <div id="ad-status-2" class="px-3 py-1 bg-yellow-100 rounded-full">
-                            <span class="text-xs text-yellow-700 font-medium">已暂停</span>
+                            <span class="text-xs text-yellow-700 font-medium">已暂�?/span>
                         </div>
                     </div>
                     
@@ -226,7 +234,7 @@
                     <div class="flex items-start justify-between mb-3">
                         <div class="flex items-center space-x-3 flex-1">
                             <img id="ad-image-3" src="https://s.coze.cn/image/Qq1ipxSKD4A/" 
-                                 alt="消毒剂广告图片" data-category="商业科技" class="w-16 h-16 rounded-lg object-cover">
+                                 alt="消毒剂广告图�? data-category="商业科技" class="w-16 h-16 rounded-lg object-cover">
                             <div class="flex-1">
                                 <h3 id="ad-title-3" class="font-semibold text-text-primary mb-1">高效养殖场消毒剂</h3>
                                 <p id="ad-desc-3" class="text-sm text-text-secondary mb-2">广谱杀菌，安全环保的专业消毒剂</p>
@@ -238,7 +246,7 @@
                             </div>
                         </div>
                         <div id="ad-status-3" class="px-3 py-1 bg-green-100 rounded-full">
-                            <span class="text-xs text-green-700 font-medium">运行中</span>
+                            <span class="text-xs text-green-700 font-medium">运行�?/span>
                         </div>
                     </div>
                     
@@ -256,9 +264,9 @@
                     <div class="flex items-start justify-between mb-3">
                         <div class="flex items-center space-x-3 flex-1">
                             <img id="ad-image-4" src="https://s.coze.cn/image/NL3MDsN7NoQ/" 
-                                 alt="维生素广告图片" data-category="商业科技" class="w-16 h-16 rounded-lg object-cover">
+                                 alt="维生素广告图�? data-category="商业科技" class="w-16 h-16 rounded-lg object-cover">
                             <div class="flex-1">
-                                <h3 id="ad-title-4" class="font-semibold text-text-primary mb-1">禽用复合维生素</h3>
+                                <h3 id="ad-title-4" class="font-semibold text-text-primary mb-1">禽用复合维生�?/h3>
                                 <p id="ad-desc-4" class="text-sm text-text-secondary mb-2">增强体质，促进生长的维生素补充剂</p>
                                 <div class="flex items-center space-x-4 text-xs text-text-secondary">
                                     <span><i class="fas fa-eye mr-1"></i>曝光: 1,567</span>
@@ -268,7 +276,7 @@
                             </div>
                         </div>
                         <div id="ad-status-4" class="px-3 py-1 bg-gray-100 rounded-full">
-                            <span class="text-xs text-gray-700 font-medium">已结束</span>
+                            <span class="text-xs text-gray-700 font-medium">已结�?/span>
                         </div>
                     </div>
                     
@@ -283,6 +291,14 @@
             </div>
         </section>
     </main>
+
+    <!-- �ײ������� -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
+        <div id="nav-content"></div>
+    </nav>
+
+    <!-- ����ͨ�õ����ű� -->
+    <script src="common-nav.js"></script>
 
     <!-- 新建广告模态框 -->
     <div id="new-ad-modal" class="fixed inset-0 z-50 hidden">
@@ -300,35 +316,35 @@
                     <form id="new-ad-form" class="space-y-4">
                         <div>
                             <label for="ad-title-input" class="block text-sm font-medium text-text-primary mb-2">广告标题</label>
-                            <input type="text" id="ad-title-input" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="请输入广告标题">
+                            <input type="text" id="ad-title-input" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="请输入广告标�?>
                         </div>
                         
                         <div>
                             <label for="ad-desc-input" class="block text-sm font-medium text-text-primary mb-2">广告描述</label>
-                            <textarea id="ad-desc-input" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="请输入广告描述"></textarea>
+                            <textarea id="ad-desc-input" rows="3" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="请输入广告描�?></textarea>
                         </div>
                         
                         <div>
                             <label for="ad-budget-input" class="block text-sm font-medium text-text-primary mb-2">广告预算</label>
                             <div class="relative">
                                 <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary">¥</span>
-                                <input type="number" id="ad-budget-input" class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="请输入预算金额">
+                                <input type="number" id="ad-budget-input" class="w-full pl-8 pr-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent" placeholder="请输入预算金�?>
                             </div>
                         </div>
                         
                         <div>
                             <label for="ad-target-input" class="block text-sm font-medium text-text-primary mb-2">目标受众</label>
-                            <select id="ad-target-input" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent">
+                            <select id="ad-target-input" class="w-full px-3 py-2 border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent">
                                 <option value="">请选择目标受众</option>
-                                <option value="small-farmer">小散户</option>
+                                <option value="small-farmer">小散�?/option>
                                 <option value="enterprise">养殖企业</option>
-                                <option value="cooperative">合作社</option>
+                                <option value="cooperative">合作�?/option>
                                 <option value="all">全部用户</option>
                             </select>
                         </div>
                         
                         <div class="flex space-x-3 pt-4">
-                            <button type="button" id="cancel-btn" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-text-secondary">取消</button>
+                            <button type="button" id="cancel-btn" class="flex-1 px-4 py-2 border border-border-color rounded-lg text-text-secondary">取消</button>
                             <button type="submit" id="submit-btn" class="flex-1 px-4 py-2 bg-secondary text-white rounded-lg font-medium">创建广告</button>
                         </div>
                     </form>
@@ -351,7 +367,7 @@
                     </div>
                     
                     <div id="ad-detail-content" class="space-y-4">
-                        <!-- 广告详情内容将通过JavaScript动态填充 -->
+                        <!-- 广告详情内容将通过JavaScript动态填�?-->
                     </div>
                 </div>
             </div>
@@ -394,15 +410,14 @@
                 }
                 
                 // 模拟创建广告
-                alert('广告创建成功！');
+                alert('广告创建成功�?);
                 document.querySelector('#new-ad-modal').classList.add('hidden');
                 document.querySelector('#new-ad-form').reset();
                 
                 // 这里可以添加刷新广告列表的逻辑
             });
 
-            // 广告列表项点击事件
-            const adItems = document.querySelectorAll('[id^="ad-item-"]');
+            // 广告列表项点击事�?            const adItems = document.querySelectorAll('[id^="ad-item-"]');
             adItems.forEach(item => {
                 item.addEventListener('click', function() {
                     const adId = this.dataset.adId;
@@ -434,8 +449,7 @@
                 document.querySelector('#ad-detail-modal').classList.add('hidden');
             });
 
-            // 状态筛选
-            document.querySelector('#status-filter').addEventListener('change', function() {
+            // 状态筛�?            document.querySelector('#status-filter').addEventListener('change', function() {
                 const selectedStatus = this.value;
                 filterAdsByStatus(selectedStatus);
             });
@@ -455,7 +469,7 @@
                     
                     <div class="space-y-3">
                         <div class="flex justify-between">
-                            <span class="text-text-secondary">广告状态</span>
+                            <span class="text-text-secondary">广告状�?/span>
                             <span class="px-2 py-1 ${getStatusBadgeClass(adData.status)} rounded-full text-xs font-medium">${getStatusText(adData.status)}</span>
                         </div>
                         
@@ -500,7 +514,7 @@
                                 `<button class="flex-1 px-4 py-2 bg-yellow-500 text-white rounded-lg text-sm">暂停广告</button>` : 
                                 `<button class="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg text-sm">启动广告</button>`
                             }
-                            <button class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm text-text-secondary">编辑广告</button>
+                            <button class="flex-1 px-4 py-2 border border-border-color rounded-lg text-sm text-text-secondary">编辑广告</button>
                         </div>
                     </div>
                 `;
@@ -513,8 +527,8 @@
                 const adData = {
                     'ad001': {
                         id: 'ad001',
-                        title: '高效禽流感疫苗推广',
-                        description: '针对冬季高发期，专业禽流感防控疫苗，有效预防H5、H7亚型禽流感病毒',
+                        title: '高效禽流感疫苗推�?,
+                        description: '针对冬季高发期，专业禽流感防控疫苗，有效预防H5、H7亚型禽流感病�?,
                         image: 'https://s.coze.cn/image/MAk-A9rGtXc/',
                         status: 'active',
                         budget: '3,000',
@@ -526,7 +540,7 @@
                     },
                     'ad002': {
                         id: 'ad002',
-                        title: '高蛋白蛋鸡饲料',
+                        title: '高蛋白蛋鸡饲�?,
                         description: '提升产蛋率，增强免疫力的优质饲料，富含蛋白质和维生素',
                         image: 'https://s.coze.cn/image/S8UGqKtdfIA/',
                         status: 'paused',
@@ -540,7 +554,7 @@
                     'ad003': {
                         id: 'ad003',
                         title: '高效养殖场消毒剂',
-                        description: '广谱杀菌，安全环保的专业消毒剂，适用于各种养殖环境',
+                        description: '广谱杀菌，安全环保的专业消毒剂，适用于各种养殖环�?,
                         image: 'https://s.coze.cn/image/MYvlIAmQ41c/',
                         status: 'active',
                         budget: '4,200',
@@ -552,8 +566,8 @@
                     },
                     'ad004': {
                         id: 'ad004',
-                        title: '禽用复合维生素',
-                        description: '增强体质，促进生长的维生素补充剂，提高抗病能力',
+                        title: '禽用复合维生�?,
+                        description: '增强体质，促进生长的维生素补充剂，提高抗病能�?,
                         image: 'https://s.coze.cn/image/SnEKpD6uWCE/',
                         status: 'ended',
                         budget: '1,800',
@@ -578,29 +592,27 @@
                 return classes[status] || 'bg-gray-100 text-gray-700';
             }
 
-            // 获取状态文本
-            function getStatusText(status) {
+            // 获取状态文�?            function getStatusText(status) {
                 const texts = {
-                    'active': '运行中',
-                    'paused': '已暂停',
-                    'ended': '已结束'
+                    'active': '运行�?,
+                    'paused': '已暂�?,
+                    'ended': '已结�?
                 };
-                return texts[status] || '未知状态';
+                return texts[status] || '未知状�?;
             }
 
             // 获取目标受众文本
             function getTargetText(target) {
                 const texts = {
-                    'small-farmer': '小散户',
+                    'small-farmer': '小散�?,
                     'enterprise': '养殖企业',
-                    'cooperative': '合作社',
+                    'cooperative': '合作�?,
                     'all': '全部用户'
                 };
                 return texts[target] || '未知';
             }
 
-            // 根据状态筛选广告
-            function filterAdsByStatus(status) {
+            // 根据状态筛选广�?            function filterAdsByStatus(status) {
                 const adItems = document.querySelectorAll('[id^="ad-item-"]');
                 
                 adItems.forEach(item => {

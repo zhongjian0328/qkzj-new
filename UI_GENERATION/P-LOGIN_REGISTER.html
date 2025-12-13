@@ -11,20 +11,28 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#D3F8EE',
-                        secondary: '#3BCCA5', 
-                        accent: '#2B6A5A',
-                        'text-primary': '#1F2937',
-                        'text-secondary': '#6B7280',
-                        'bg-light': '#F9FAFB',
-                        'card-bg': '#FFFFFF'
-                    },
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
                     fontFamily: {
                         'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     },
                     boxShadow: {
                         'card': '0 2px 8px rgba(0, 0, 0, 0.06)',
-                        'button': '0 2px 4px rgba(59, 204, 165, 0.2)'
+                        'button': '0 2px 4px rgba(45, 187, 161, 0.2)'
                     }
                 }
             }
@@ -32,7 +40,7 @@
     </script>
     <style>
         .gradient-bg {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .safe-top {
@@ -44,7 +52,7 @@
         }
         
         .status-bar {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .form-input-focus:focus {
@@ -110,7 +118,7 @@
                 <div id="login-phone-group" class="space-y-2">
                     <label for="login-phone" class="block text-sm font-medium text-text-primary">手机号</label>
                     <input type="tel" id="login-phone" name="phone" 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-xl form-input-focus" 
+                           class="w-full px-4 py-3 border border-border-color rounded-lg form-input-focus" 
                            placeholder="请输入手机号" maxlength="11">
                 </div>
 
@@ -118,17 +126,17 @@
                     <label for="login-code" class="block text-sm font-medium text-text-primary">验证码</label>
                     <div class="flex space-x-3">
                         <input type="text" id="login-code" name="code" 
-                               class="flex-1 px-4 py-3 border border-gray-300 rounded-xl form-input-focus" 
+                               class="flex-1 px-4 py-3 border border-border-color rounded-lg form-input-focus" 
                                placeholder="请输入验证码" maxlength="6">
                         <button type="button" id="login-get-code-btn" 
-                                class="px-4 py-3 bg-secondary text-white rounded-xl font-medium button-hover">
+                                class="px-4 py-3 bg-secondary text-white rounded-lg font-medium button-hover">
                             获取验证码
                         </button>
                     </div>
                 </div>
 
                 <button type="submit" id="login-submit-btn" 
-                        class="w-full py-3 gradient-bg text-accent font-semibold rounded-xl shadow-button button-hover">
+                        class="w-full py-3 gradient-bg text-accent font-semibold rounded-lg shadow-button button-hover">
                     登录
                 </button>
             </form>
@@ -138,7 +146,7 @@
                 <div id="register-phone-group" class="space-y-2">
                     <label for="register-phone" class="block text-sm font-medium text-text-primary">手机号</label>
                     <input type="tel" id="register-phone" name="phone" 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-xl form-input-focus" 
+                           class="w-full px-4 py-3 border border-border-color rounded-lg form-input-focus" 
                            placeholder="请输入手机号" maxlength="11">
                 </div>
 
@@ -146,10 +154,10 @@
                     <label for="register-code" class="block text-sm font-medium text-text-primary">验证码</label>
                     <div class="flex space-x-3">
                         <input type="text" id="register-code" name="code" 
-                               class="flex-1 px-4 py-3 border border-gray-300 rounded-xl form-input-focus" 
+                               class="flex-1 px-4 py-3 border border-border-color rounded-lg form-input-focus" 
                                placeholder="请输入验证码" maxlength="6">
                         <button type="button" id="register-get-code-btn" 
-                                class="px-4 py-3 bg-secondary text-white rounded-xl font-medium button-hover">
+                                class="px-4 py-3 bg-secondary text-white rounded-lg font-medium button-hover">
                             获取验证码
                         </button>
                     </div>
@@ -159,7 +167,7 @@
                     <label for="register-password" class="block text-sm font-medium text-text-primary">设置密码</label>
                     <div class="relative">
                         <input type="password" id="register-password" name="password" 
-                               class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl form-input-focus" 
+                               class="w-full px-4 py-3 pr-12 border border-border-color rounded-lg form-input-focus" 
                                placeholder="请设置6-20位密码">
                         <button type="button" id="toggle-password" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-text-secondary">
                             <i class="far fa-eye"></i>
@@ -168,7 +176,7 @@
                 </div>
 
                 <button type="submit" id="register-submit-btn" 
-                        class="w-full py-3 gradient-bg text-accent font-semibold rounded-xl shadow-button button-hover">
+                        class="w-full py-3 gradient-bg text-accent font-semibold rounded-lg shadow-button button-hover">
                     注册
                 </button>
             </form>
@@ -192,7 +200,7 @@
         <!-- 体验APP按钮 -->
         <div id="experience-section" class="px-6 pb-8 safe-bottom">
             <button id="experience-btn" 
-                    class="w-full py-3 border-2 border-secondary text-secondary font-medium rounded-xl button-hover">
+                    class="w-full py-3 border-2 border-secondary text-secondary font-medium rounded-lg button-hover">
                 <i class="fas fa-play-circle mr-2"></i>
                 体验APP
             </button>
@@ -317,10 +325,11 @@
                     return;
                 }
                 
-                // 模拟登录成功，跳转到小散户首页（实际应根据用户角色跳转）
+                // 模拟登录成功，根据用户角色跳转不同首页
                 showToast('登录成功');
                 setTimeout(() => {
-                    window.location.href = 'P-HOME_FARMER_SMALL.html';
+                    // 这里应该根据用户角色从后端获取实际的首页，这里暂时跳转到角色选择页模拟
+                    window.location.href = 'P-ROLE_SELECT.html';
                 }, 1000);
             });
 

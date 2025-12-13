@@ -11,14 +11,22 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#D3F8EE',
-                        secondary: '#3BCCA5', 
-                        accent: '#2B6A5A',
-                        'text-primary': '#1F2937',
-                        'text-secondary': '#6B7280',
-                        'bg-light': '#F9FAFB',
-                        'card-bg': '#FFFFFF'
-                    },
+                primary: '#E6F7F3',
+                secondary: '#2DBBA1',
+                accent: '#1F5E52',
+                'text-primary': '#111827',
+                'text-secondary': '#4B5563',
+                'text-tertiary': '#9CA3AF',
+                'bg-light': '#F3F4F6',
+                'card-bg': '#FFFFFF',
+                'border-color': '#E5E7EB',
+                'success': '#10B981',
+                'warning': '#F59E0B',
+                'error': '#EF4444',
+                'info': '#3B82F6'
+            },
+            
+            
                     fontFamily: {
                         'sans': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     },
@@ -32,7 +40,7 @@
     </script>
     <style>
         .gradient-bg {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
         
         .card-hover:active {
@@ -49,7 +57,7 @@
         }
         
         .status-bar {
-            background: linear-gradient(135deg, #D3F8EE 0%, #3BCCA5 100%);
+            background: linear-gradient(135deg, #E6F7F3 0%, #2DBBA1 100%);
         }
     </style>
 </head>
@@ -257,26 +265,78 @@
     </main>
 
     <!-- 底部导航栏 -->
-    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 safe-bottom z-40">
-        <a id="nav-home" href="#" class="flex flex-col items-center p-2 text-secondary">
-            <i class="fas fa-home text-xl"></i>
-            <span class="text-xs mt-0.5">首页</span>
-        </a>
-        <a id="nav-diagnosis" href="#" class="flex flex-col items-center p-2 text-text-secondary">
-            <i class="fas fa-stethoscope text-xl"></i>
-            <span class="text-xs mt-0.5">AI诊断</span>
-        </a>
-        <a id="nav-profile" href="#" class="flex flex-col items-center p-2 text-text-secondary">
-            <i class="fas fa-user text-xl"></i>
-            <span class="text-xs mt-0.5">我的</span>
-        </a>
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 h-16 px-2 safe-bottom z-40">
+        <div id="nav-content" class="flex justify-around items-center h-full w-full"></div>
     </nav>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // 动态生成底部导航栏
+            function generateDynamicNavigation(userRole) {
+                // 不同角色的导航配置
+                const navConfig = {
+                    'farmer-small': [
+                        { id: 'nav-home', icon: 'fa-home', text: '首页', url: 'P-HOME_FARMER_SMALL.html', active: true },
+                        { id: 'nav-diagnosis', icon: 'fa-robot', text: 'AI诊断', url: 'P-AI_DIAGNOSIS_MODE_SELECT.html', active: false },
+                        { id: 'nav-profile', icon: 'fa-user', text: '我的', url: 'P-USER_PROFILE.html', active: false }
+                    ],
+                    'farmer-enterprise': [
+                        { id: 'nav-home', icon: 'fa-home', text: '首页', url: 'P-HOME_FARMER_ENTERPRISE.html', active: false },
+                        { id: 'nav-production', icon: 'fa-chart-line', text: '生产管理', url: 'P-PRODUCTION_DASHBOARD.html', active: false },
+                        { id: 'nav-profile', icon: 'fa-user', text: '我的', url: 'P-USER_PROFILE.html', active: false }
+                    ],
+                    'institution-cdc': [
+                        { id: 'nav-home', icon: 'fa-home', text: '首页', url: 'P-HOME_INSTITUTION_CDC.html', active: false },
+                        { id: 'nav-epidemic', icon: 'fa-map-marker-alt', text: '疫情监测', url: 'P-EPIDEMIC_HEATMAP.html', active: false },
+                        { id: 'nav-profile', icon: 'fa-user', text: '我的', url: 'P-USER_PROFILE.html', active: false }
+                    ],
+                    'institution-service': [
+                        { id: 'nav-home', icon: 'fa-home', text: '首页', url: 'P-HOME_INSTITUTION_SERVICE.html', active: false },
+                        { id: 'nav-customer', icon: 'fa-users', text: '客户管理', url: 'P-CUSTOMER_MANAGEMENT.html', active: false },
+                        { id: 'nav-profile', icon: 'fa-user', text: '我的', url: 'P-USER_PROFILE.html', active: false }
+                    ],
+                    'student-learning': [
+                        { id: 'nav-home', icon: 'fa-home', text: '首页', url: 'P-HOME_STUDENT_LEARNING.html', active: false },
+                        { id: 'nav-learning', icon: 'fa-book', text: '学习', url: 'P-KNOWLEDGE_GRAPH.html', active: false },
+                        { id: 'nav-profile', icon: 'fa-user', text: '我的', url: 'P-USER_PROFILE.html', active: false }
+                    ],
+                    'student-internship': [
+                        { id: 'nav-home', icon: 'fa-home', text: '首页', url: 'P-HOME_STUDENT_INTERNSHIP.html', active: false },
+                        { id: 'nav-internship', icon: 'fa-user-graduate', text: '实习', url: 'P-INTERN_LOG_LIST.html', active: false },
+                        { id: 'nav-profile', icon: 'fa-user', text: '我的', url: 'P-USER_PROFILE.html', active: false }
+                    ]
+                };
+                
+                // 获取当前页面的导航配置
+                const config = navConfig[userRole] || navConfig['farmer-small'];
+                const navContent = document.getElementById('nav-content');
+                
+                // 清空现有内容
+                navContent.innerHTML = '';
+                
+                // 生成导航项
+                config.forEach(item => {
+                    const navItem = document.createElement('a');
+                    navItem.id = item.id;
+                    navItem.href = item.url;
+                    navItem.className = `flex flex-col items-center p-2 ${item.active ? 'text-secondary' : 'text-text-secondary'}`;
+                    
+                    navItem.innerHTML = `
+                        <i class="fas ${item.icon} text-xl"></i>
+                        <span class="text-xs mt-0.5">${item.text}</span>
+                    `;
+                    
+                    navContent.appendChild(navItem);
+                });
+            }
+            
+            // 初始化导航栏
+            const userRole = 'farmer-small'; // 模拟用户角色，实际应从用户数据获取
+            generateDynamicNavigation(userRole);
+            
             // AI诊断主按钮点击事件
             document.querySelector('#ai-diagnosis-main').addEventListener('click', function() {
-                window.location.href = 'P-AI_DIAGNOSIS.html';
+                window.location.href = 'P-AI_DIAGNOSIS_MODE_SELECT.html';
             });
 
             // 治疗方案卡片点击事件
@@ -348,7 +408,7 @@
 
             document.querySelector('#nav-diagnosis').addEventListener('click', function(e) {
                 e.preventDefault();
-                window.location.href = 'P-AI_DIAGNOSIS.html';
+                window.location.href = 'P-AI_DIAGNOSIS_MODE_SELECT.html';
             });
 
             document.querySelector('#nav-profile').addEventListener('click', function(e) {
