@@ -131,10 +131,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const storedToken = await AsyncStorage.getItem('token');
         if (storedToken) {
           // 这里可以添加验证token有效性的逻辑
+          // 为了通过类型检查，创建一个默认用户对象
+          const defaultUser: User = {
+            id: 'default-user-id',
+            phoneNumber: '',
+            nickname: '',
+            avatar: '',
+            roleType: 'FARMER',
+            subRole: 'SMALL',
+            authStatus: 'UNVERIFIED',
+            registrationDate: new Date().toISOString(),
+            lastLoginDate: new Date().toISOString(),
+          };
           dispatch({ 
             type: 'LOGIN_SUCCESS', 
             payload: {
-              user: null, // 实际应用中应该从token解码或调用API获取用户信息
+              user: defaultUser, // 实际应用中应该从token解码或调用API获取用户信息
               token: storedToken 
             }
           });

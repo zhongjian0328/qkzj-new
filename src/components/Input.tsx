@@ -124,6 +124,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: '#111827',
     fontSize: 16,
+    width: '100%',
   },
   // Variants
   primary: {

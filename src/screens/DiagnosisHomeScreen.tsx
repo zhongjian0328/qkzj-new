@@ -35,6 +35,8 @@ const DiagnosisHomeScreen: React.FC = () => {
         title={getDiagnosisTitle()} 
         showBackButton={true} 
         onBack={() => navigation.goBack()} 
+        backgroundColor="#FFFFFF"
+        elevation={2}
       />
       
       <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 }]}>

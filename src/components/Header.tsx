@@ -60,15 +60,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   leftContainer: {
-    flex: 1,
+    width: 56,
     alignItems: 'flex-start',
   },
   centerContainer: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   rightContainer: {
-    flex: 1,
+    width: 56,
     alignItems: 'flex-end',
   },
   backButton: {

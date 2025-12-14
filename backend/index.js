@@ -20,24 +20,23 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 const connectDB = async () => {
   try {
     const mongooseOptions = {
-      maxPoolSize: 50,
-      minPoolSize: 5,
-      maxIdleTimeMS: 30000,
-      connectTimeoutMS: 10000,
-      socketTimeoutMS: 45000,
-      serverSelectionTimeoutMS: 5000,
-      retryWrites: true,
-      retryReads: true,
-      readPreference: 'primary',
-      writeConcern: {
-        w: 'majority',
-        wtimeout: 2000
-      },
-      serverSelectionTryOnce: false,
-      heartbeatFrequencyMS: 10000,
-      keepAlive: true,
-      keepAliveInitialDelayMS: 300000
-    };
+  maxPoolSize: 50,
+  minPoolSize: 5,
+  maxIdleTimeMS: 30000,
+  connectTimeoutMS: 15000,
+  socketTimeoutMS: 45000,
+  serverSelectionTimeoutMS: 10000,
+  retryWrites: true,
+  retryReads: true,
+  readPreference: 'primary',
+  writeConcern: {
+    w: 'majority',
+    wtimeout: 5000
+  },
+  heartbeatFrequencyMS: 10000,
+  authSource: 'admin',
+  authMechanism: 'SCRAM-SHA-1'
+};
 
     await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/qinkangzhijian', mongooseOptions);
     console.log('MongoDB连接成功');

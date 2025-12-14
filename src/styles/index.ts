@@ -74,6 +74,15 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
+    backgroundColor: '#E6F7F3',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 3,
   },
   homeSectionTitle: {
     fontSize: 18,
@@ -1382,7 +1391,6 @@ export const styles = StyleSheet.create({
     color: '#4B5563',
   },
   diagnosisHomeModeCardsSection: {
-    gap: 16,
     marginBottom: 24,
   },
   diagnosisHomeModeCard: {
@@ -1399,11 +1407,12 @@ export const styles = StyleSheet.create({
     elevation: 5,
     borderWidth: 2,
     borderColor: 'transparent',
+    marginBottom: 16,
   },
   diagnosisHomeModeCardContent: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 16,
+    padding: 0,
   },
   diagnosisHomeModeCardIcon: {
     width: 56,
@@ -1413,6 +1422,15 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexShrink: 0,
+    marginRight: 16,
+    shadowColor: '#2DBBA1',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 4.65,
+    elevation: 5,
   },
   diagnosisHomeModeCardInfo: {
     flex: 1,
@@ -1432,10 +1450,11 @@ export const styles = StyleSheet.create({
   diagnosisHomeModeCardBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    marginTop: 8,
   },
   diagnosisHomeModeCardBadgeIcon: {
     fontSize: 16,
+    marginRight: 6,
   },
   diagnosisHomeModeCardBadgeText: {
     fontSize: 12,
@@ -1454,12 +1473,13 @@ export const styles = StyleSheet.create({
   diagnosisHomeNotesContent: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 12,
+    padding: 0,
   },
   diagnosisHomeNotesIcon: {
     fontSize: 24,
     flexShrink: 0,
     marginTop: 2,
+    marginRight: 12,
   },
   diagnosisHomeNotesInfo: {
     flex: 1,
