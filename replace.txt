@@ -1,0 +1,4 @@
+# 替换敏感信息
+# 格式：<old_string>==><new_string>
+LTAI5tP3ReeDYFagX66XcCDj==>[配置在环境变量中]
+vLnZsTQcJ8kDYPkQwFo3NIiqMwoTnH==>[配置在环境变量中]
