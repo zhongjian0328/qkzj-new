@@ -19,12 +19,48 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // 连接MongoDB数据库
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/qinkangzhijian');
+    const mongooseOptions = {
+      maxPoolSize: 50,
+      minPoolSize: 5,
+      maxIdleTimeMS: 30000,
+      connectTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+      serverSelectionTimeoutMS: 5000,
+      retryWrites: true,
+      retryReads: true,
+      readPreference: 'primary',
+      writeConcern: {
+        w: 'majority',
+        wtimeout: 2000
+      },
+      serverSelectionTryOnce: false,
+      heartbeatFrequencyMS: 10000,
+      keepAlive: true,
+      keepAliveInitialDelayMS: 300000
+    };
+
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/qinkangzhijian', mongooseOptions);
     console.log('MongoDB连接成功');
+    
+    // 定期ping数据库，验证连接
+    setInterval(async () => {
+      try {
+        await mongoose.connection.db.admin().ping();
+        console.log('MongoDB连接保持活跃');
+      } catch (error) {
+        console.error('MongoDB连接检查失败:', error.message);
+        // 尝试重新连接
+        await mongoose.connection.close();
+        await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/qinkangzhijian', mongooseOptions);
+        console.log('MongoDB重新连接成功');
+      }
+    }, 60000); // 每分钟检查一次
   } catch (error) {
     console.error('MongoDB连接失败:', error.message);
     // 非阻塞，继续运行服务
     console.log('服务将继续运行，但无法连接数据库');
+    // 尝试重新连接
+    setTimeout(connectDB, 5000); // 5秒后重试
   }
 };
 
