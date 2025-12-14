@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // 主题类型
 export type Theme = 'light' | 'dark' | 'system';
@@ -17,7 +18,8 @@ interface ThemeState {
 type ThemeAction =
   | { type: 'SET_THEME'; payload: Theme }
   | { type: 'SET_LANGUAGE'; payload: Language }
-  | { type: 'SET_FONT_SIZE'; payload: 'small' | 'medium' | 'large' };
+  | { type: 'SET_FONT_SIZE'; payload: 'small' | 'medium' | 'large' }
+  | { type: 'LOAD_THEME_FROM_STORAGE'; payload: Partial<ThemeState> };
 
 // 初始状态
 const initialState: ThemeState = {
@@ -44,6 +46,11 @@ const themeReducer = (state: ThemeState, action: ThemeAction): ThemeState => {
         ...state,
         fontSize: action.payload,
       };
+    case 'LOAD_THEME_FROM_STORAGE':
+      return {
+        ...state,
+        ...action.payload,
+      };
     default:
       return state;
   }
@@ -68,25 +75,58 @@ interface ThemeProviderProps {
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(themeReducer, initialState);
 
+  // 从AsyncStorage加载主题设置
+  useEffect(() => {
+    const loadThemeFromStorage = async () => {
+      try {
+        const theme = await AsyncStorage.getItem('theme');
+        const language = await AsyncStorage.getItem('language');
+        const fontSize = await AsyncStorage.getItem('fontSize');
+        
+        const loadedSettings: Partial<ThemeState> = {};
+        if (theme) loadedSettings.theme = theme as Theme;
+        if (language) loadedSettings.language = language as Language;
+        if (fontSize) loadedSettings.fontSize = fontSize as 'small' | 'medium' | 'large';
+        
+        if (Object.keys(loadedSettings).length > 0) {
+          dispatch({ type: 'LOAD_THEME_FROM_STORAGE', payload: loadedSettings });
+        }
+      } catch (error) {
+        console.error('Failed to load theme settings:', error);
+      }
+    };
+    
+    loadThemeFromStorage();
+  }, []);
+
   // 设置主题
-  const setTheme = (theme: Theme) => {
+  const setTheme = async (theme: Theme) => {
     dispatch({ type: 'SET_THEME', payload: theme });
-    // 这里可以保存主题到本地存储
-    localStorage.setItem('theme', theme);
+    try {
+      await AsyncStorage.setItem('theme', theme);
+    } catch (error) {
+      console.error('Failed to save theme to storage:', error);
+    }
   };
 
   // 设置语言
-  const setLanguage = (language: Language) => {
+  const setLanguage = async (language: Language) => {
     dispatch({ type: 'SET_LANGUAGE', payload: language });
-    // 这里可以保存语言到本地存储
-    localStorage.setItem('language', language);
+    try {
+      await AsyncStorage.setItem('language', language);
+    } catch (error) {
+      console.error('Failed to save language to storage:', error);
+    }
   };
 
   // 设置字体大小
-  const setFontSize = (fontSize: 'small' | 'medium' | 'large') => {
+  const setFontSize = async (fontSize: 'small' | 'medium' | 'large') => {
     dispatch({ type: 'SET_FONT_SIZE', payload: fontSize });
-    // 这里可以保存字体大小到本地存储
-    localStorage.setItem('fontSize', fontSize);
+    try {
+      await AsyncStorage.setItem('fontSize', fontSize);
+    } catch (error) {
+      console.error('Failed to save fontSize to storage:', error);
+    }
   };
 
   const contextValue: ThemeContextType = {

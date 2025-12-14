@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // 用户角色类型
 export type UserRole = 'FARMER' | 'INSTITUTION' | 'STUDENT' | 'TEACHER';
@@ -106,7 +107,7 @@ interface AuthContextType {
   login: (phoneNumber: string, codeOrRoleType: string, subRole?: any) => Promise<void>;
   register: (phoneNumber: string, verificationCode: string, password: string) => Promise<void>;
   sendVerificationCode: (phoneNumber: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   updateUser: (userData: Partial<User>) => void;
   clearError: () => void;
 }
@@ -122,6 +123,29 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
   const [verificationCodes, setVerificationCodes] = React.useState<{ [key: string]: { code: string; expiresAt: number } }>({});
+  
+  // 初始化：从AsyncStorage加载token
+  useEffect(() => {
+    const loadToken = async () => {
+      try {
+        const storedToken = await AsyncStorage.getItem('token');
+        if (storedToken) {
+          // 这里可以添加验证token有效性的逻辑
+          dispatch({ 
+            type: 'LOGIN_SUCCESS', 
+            payload: {
+              user: null, // 实际应用中应该从token解码或调用API获取用户信息
+              token: storedToken 
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Failed to load token from AsyncStorage:', error);
+      }
+    };
+    
+    loadToken();
+  }, []);
 
   // 发送验证码函数
   const sendVerificationCode = async (phoneNumber: string) => {
@@ -188,8 +212,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // 模拟API延迟
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // 保存token到本地存储
-        localStorage.setItem('token', mockToken);
+        // 保存token到AsyncStorage
+        await AsyncStorage.setItem('token', mockToken);
         
         dispatch({ type: 'LOGIN_SUCCESS', payload: { user: mockUser, token: mockToken } });
       } else {
@@ -218,8 +242,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // 模拟API延迟
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // 保存token到本地存储
-        localStorage.setItem('token', mockToken);
+        // 保存token到AsyncStorage
+        await AsyncStorage.setItem('token', mockToken);
         
         dispatch({ type: 'LOGIN_SUCCESS', payload: { user: mockUser, token: mockToken } });
       }
@@ -270,8 +294,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // 模拟API延迟
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // 保存token到本地存储
-      localStorage.setItem('token', mockToken);
+      // 保存token到AsyncStorage
+      await AsyncStorage.setItem('token', mockToken);
       
       dispatch({ type: 'LOGIN_SUCCESS', payload: { user: mockUser, token: mockToken } });
     } catch (error) {
@@ -280,9 +304,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   // 登出函数
-  const logout = () => {
-    // 清除本地存储的token
-    localStorage.removeItem('token');
+  const logout = async () => {
+    // 清除AsyncStorage的token
+    try {
+      await AsyncStorage.removeItem('token');
+    } catch (error) {
+      console.error('Failed to remove token from AsyncStorage:', error);
+    }
     dispatch({ type: 'LOGOUT' });
   };
 

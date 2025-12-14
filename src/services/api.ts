@@ -1,4 +1,5 @@
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // 创建axios实例
 const api = axios.create({
@@ -11,9 +12,9 @@ const api = axios.create({
 
 // 请求拦截器
 api.interceptors.request.use(
-  (config) => {
-    // 从本地存储获取token
-    const token = localStorage.getItem('token');
+  async (config) => {
+    // 从AsyncStorage获取token
+    const token = await AsyncStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -27,11 +28,15 @@ api.interceptors.request.use(
 // 响应拦截器
 api.interceptors.response.use(
   (response) => response.data,
-  (error) => {
+  async (error) => {
     // 处理错误响应
     if (error.response?.status === 401) {
       // 处理未授权错误，例如跳转到登录页面
-      localStorage.removeItem('token');
+      try {
+        await AsyncStorage.removeItem('token');
+      } catch (storageError) {
+        console.error('Failed to remove token from AsyncStorage:', storageError);
+      }
       // 可以通过事件或状态管理通知应用处理登录过期
     }
     return Promise.reject(error);
