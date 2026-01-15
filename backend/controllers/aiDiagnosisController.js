@@ -537,7 +537,50 @@ exports.getDiagnosisHistory = async (req, res, next) => {
       }
     });
   } catch (error) {
-    next(error);
+    console.error('获取诊断历史失败:', error.message);
+    res.status(500).json({
+      status: 'error',
+      message: '获取诊断历史失败',
+      error: error.message
+    });
+  }
+};
+
+// AI服务健康检查
+exports.healthCheck = async (req, res, next) => {
+  try {
+    const healthStatus = await aiService.healthCheck();
+    
+    res.status(200).json({
+      status: healthStatus.status,
+      data: healthStatus
+    });
+  } catch (error) {
+    console.error('健康检查失败:', error.message);
+    res.status(500).json({
+      status: 'error',
+      message: '健康检查失败',
+      error: error.message
+    });
+  }
+};
+
+// 重置AI服务
+exports.resetService = async (req, res, next) => {
+  try {
+    aiService.resetService();
+    
+    res.status(200).json({
+      status: 'success',
+      message: 'AI服务重置成功'
+    });
+  } catch (error) {
+    console.error('重置服务失败:', error.message);
+    res.status(500).json({
+      status: 'error',
+      message: '重置服务失败',
+      error: error.message
+    });
   }
 };
 
