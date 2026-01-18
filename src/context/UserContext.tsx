@@ -207,7 +207,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // 体验角色登录
         const roleType = codeOrRoleType as 'FARMER' | 'INSTITUTION' | 'STUDENT';
         
-        // 模拟API调用
+        // 模拟API调用 - 仅在开发环境中允许
+        if (process.env.NODE_ENV !== 'development') {
+          throw new Error('体验角色功能仅在开发环境中可用');
+        }
+        
         const mockUser: User = {
           id: `experience-${Date.now()}`,
           phoneNumber: `experience-${phoneNumber}`,
@@ -237,7 +241,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           throw new Error('验证码无效或已过期');
         }
         
-        // 模拟API调用
+        // 模拟API调用 - 仅在开发环境中允许
+        if (process.env.NODE_ENV !== 'development') {
+          throw new Error('模拟登录功能仅在开发环境中可用');
+        }
+        
         const mockUser: User = {
           id: '1',
           phoneNumber,

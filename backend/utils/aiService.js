@@ -39,19 +39,25 @@ class EncryptionUtil {
  */
 class AIService {
   constructor() {
-    // 百度云API配置（默认值，后续会被加密文件覆盖）
-    this.baiduApiKey = process.env.BAIDU_API_KEY || 'your-default-baidu-api-key';
-    this.baiduSecretKey = process.env.BAIDU_SECRET_KEY || 'your-default-baidu-secret-key';
+    // 百度云API配置（从环境变量或加密文件获取）
+    this.baiduApiKey = process.env.BAIDU_API_KEY;
+    this.baiduSecretKey = process.env.BAIDU_SECRET_KEY;
     this.baiduAccessToken = null;
     this.baiduTokenExpiresAt = 0;
     
-    // 百度云组合API地址
+    // 百度云API地址配置
     this.baiduCombinationApiUrl = 'https://aip.baidubce.com/api/v1/solution/direct/imagerecognition/combination';
+    // 百度图像内容理解API地址
+    this.baiduImageUnderstandingRequestUrl = 'https://aip.baidubce.com/rest/2.0/image-classify/v1/image-understanding/request';
+    this.baiduImageUnderstandingResultUrl = 'https://aip.baidubce.com/rest/2.0/image-classify/v1/image-understanding/get-result';
     
-    // 缓存机制配置
+    // 缓存机制配置 - 使用常量命名替代魔法数字
     this.cache = new Map();
-    this.cacheTTL = 30 * 60 * 1000; // 缓存有效期30分钟
-    this.maxCacheSize = 100; // 最大缓存数量
+    this.CACHE_TTL = 30 * 60 * 1000; // 缓存有效期30分钟
+    this.MAX_CACHE_SIZE = 100; // 最大缓存数量
+    // 更新实例属性引用
+    this.cacheTTL = this.CACHE_TTL;
+    this.maxCacheSize = this.MAX_CACHE_SIZE;
     
     try {
       // 检查加密文件是否存在
@@ -61,15 +67,17 @@ class AIService {
         const apiKeys = EncryptionUtil.parseEncryptedFile(encryptionFilePath);
         
         // 使用加密文件中的API密钥
-        this.baiduApiKey = apiKeys.baiduApiKey || this.baiduApiKey;
-        this.baiduSecretKey = apiKeys.baiduSecretKey || this.baiduSecretKey;
+        if (apiKeys.baiduApiKey) {
+          this.baiduApiKey = apiKeys.baiduApiKey;
+        }
+        if (apiKeys.baiduSecretKey) {
+          this.baiduSecretKey = apiKeys.baiduSecretKey;
+        }
         
         console.log('✓ 加密文件解析成功，已加载API密钥');
-      } else {
-        console.warn('⚠️  加密文件不存在，使用默认API密钥');
       }
     } catch (error) {
-      console.warn('⚠️  加密文件解析失败，使用默认API密钥:', error.message);
+      console.warn('⚠️  加密文件解析失败，使用环境变量中的API密钥:', error.message);
     }
     
     // 验证API密钥
@@ -80,9 +88,13 @@ class AIService {
    * 验证API密钥有效性
    */
   validateApiKeys() {
-    if (this.baiduApiKey === 'your-default-baidu-api-key' || this.baiduSecretKey === 'your-default-baidu-secret-key') {
-      console.warn('⚠️  使用默认API密钥，可能导致API调用失败');
+    if (!this.baiduApiKey || !this.baiduSecretKey) {
+      console.warn('⚠️  API密钥未配置，可能导致API调用失败');
       console.warn('建议：设置环境变量 BAIDU_API_KEY 和 BAIDU_SECRET_KEY');
+      // 在开发环境中使用模拟实现
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('⚠️  开发环境中，将使用模拟API响应');
+      }
     }
   }
   
@@ -94,9 +106,21 @@ class AIService {
   setCache(key, value) {
     const now = Date.now();
     
-    // 检查缓存大小，超过限制时清除最旧的缓存
+    // 如果键已存在，先删除旧的，确保它会被移到最近使用的位置
+    if (this.cache.has(key)) {
+      this.cache.delete(key);
+    }
+    
+    // 检查缓存大小，超过限制时删除最旧的缓存
     if (this.cache.size >= this.maxCacheSize) {
-      this.cleanupCache();
+      // 使用 Map 的迭代器获取第一个元素（最旧的）并删除
+      const oldestKey = this.cache.keys().next().value;
+      this.cache.delete(oldestKey);
+      this.log('debug', '缓存已满，删除最旧的缓存项', {
+        deletedKey: oldestKey,
+        currentSize: this.cache.size,
+        maxSize: this.maxCacheSize
+      });
     }
     
     this.cache.set(key, {
@@ -104,39 +128,37 @@ class AIService {
       timestamp: now,
       expiresAt: now + this.cacheTTL
     });
+    
+    this.log('debug', '设置缓存项', {
+      key,
+      currentSize: this.cache.size,
+      maxSize: this.maxCacheSize,
+      ttl: this.cacheTTL
+    });
   }
   
   /**
-   * 缓存管理 - 清理缓存
-   * 清除过期缓存和最旧的缓存
+   * 缓存管理 - 清理过期缓存
    */
   cleanupCache() {
     const now = Date.now();
-    const keysToDelete = [];
-    const oldKeys = [];
+    let deletedCount = 0;
     
-    // 找出过期缓存和记录所有缓存键
+    // 遍历所有缓存项，删除过期的
     for (const [key, item] of this.cache.entries()) {
       if (now > item.expiresAt) {
-        keysToDelete.push(key);
-      } else {
-        oldKeys.push({ key, timestamp: item.timestamp });
+        this.cache.delete(key);
+        deletedCount++;
       }
     }
     
-    // 删除过期缓存
-    keysToDelete.forEach(key => this.cache.delete(key));
-    
-    // 如果仍然超过限制，删除最旧的缓存
-    if (this.cache.size >= this.maxCacheSize) {
-      oldKeys.sort((a, b) => a.timestamp - b.timestamp);
-      const deleteCount = this.cache.size - this.maxCacheSize + 10;
-      oldKeys.slice(0, deleteCount).forEach(item => {
-        this.cache.delete(item.key);
+    if (deletedCount > 0) {
+      this.log('info', '清理过期缓存完成', {
+        deletedCount,
+        currentSize: this.cache.size,
+        maxSize: this.maxCacheSize
       });
     }
-    
-    console.log(`✓ 缓存清理完成，当前缓存大小: ${this.cache.size}`);
   }
   
   /**
@@ -154,10 +176,25 @@ class AIService {
     if (now > cacheItem.expiresAt) {
       // 缓存已过期，移除缓存
       this.cache.delete(key);
+      this.log('debug', '缓存项已过期，删除', {
+        key
+      });
       return null;
     }
     
-    return cacheItem.value;
+    // 缓存命中，将其移到最近使用的位置（Map会保持插入顺序）
+    const value = cacheItem.value;
+    this.cache.delete(key);
+    this.cache.set(key, {
+      value: value,
+      timestamp: now,
+      expiresAt: cacheItem.expiresAt
+    });
+    
+    this.log('debug', '缓存命中', {
+      key
+    });
+    return value;
   }
   
   /**
@@ -181,11 +218,20 @@ class AIService {
   async getBaiduAccessToken(retryCount = 0, maxRetries = 3) {
     // 检查Token是否有效
     if (this.baiduAccessToken && Date.now() < this.baiduTokenExpiresAt) {
+      this.log('info', '使用缓存的百度云AccessToken', {
+        tokenExpiry: new Date(this.baiduTokenExpiresAt).toLocaleString()
+      });
       return this.baiduAccessToken;
     }
     
+    const startTime = Date.now();
+    const requestId = `token_req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
     try {
-      console.log('正在获取百度云AccessToken...');
+      this.log('info', '正在获取百度云AccessToken', {
+        requestId,
+        apiKeyMasked: this.baiduApiKey.substring(0, 6) + '****' + this.baiduApiKey.substring(this.baiduApiKey.length - 4)
+      });
       
       const response = await axios.get('https://aip.baidubce.com/oauth/2.0/token', {
         params: {
@@ -207,37 +253,364 @@ class AIService {
       // 设置过期时间，提前10分钟刷新
       this.baiduTokenExpiresAt = Date.now() + (response.data.expires_in - 600) * 1000;
       
-      console.log('✓ 百度云AccessToken获取成功');
-      console.log(`  - 过期时间: ${new Date(this.baiduTokenExpiresAt).toLocaleString()}`);
+      const endTime = Date.now();
+      const duration = endTime - startTime;
+      
+      this.log('info', '百度云AccessToken获取成功', {
+        requestId,
+        duration: `${duration}ms`,
+        expiresIn: response.data.expires_in,
+        expiryTime: new Date(this.baiduTokenExpiresAt).toLocaleString()
+      });
       
       return this.baiduAccessToken;
     } catch (error) {
-      console.error(`获取百度云AccessToken失败 (${retryCount + 1}/${maxRetries}):`, error.message);
+      const endTime = Date.now();
+      const duration = endTime - startTime;
+      
+      this.log('error', `获取百度云AccessToken失败 (${retryCount + 1}/${maxRetries})`, {
+        requestId,
+        duration: `${duration}ms`,
+        error: error.message
+      });
       
       // 详细错误信息
       if (error.response) {
-        console.error('  - 响应状态:', error.response.status);
-        console.error('  - 响应数据:', error.response.data);
+        this.log('error', 'API响应错误详情', {
+          requestId,
+          status: error.response.status,
+          data: error.response.data
+        });
+        // 分析具体错误类型
+        switch (error.response.status) {
+          case 401:
+            this.log('error', '认证失败，API密钥无效', {
+              requestId
+            });
+            break;
+          case 403:
+            this.log('error', '权限不足，API调用受限', {
+              requestId
+            });
+            break;
+          case 429:
+            this.log('error', '请求频率过高，API限流', {
+              requestId
+            });
+            break;
+          case 500:
+          case 502:
+          case 503:
+          case 504:
+            this.log('error', '百度云服务器错误', {
+              requestId,
+              status: error.response.status
+            });
+            break;
+          default:
+            this.log('error', '其他HTTP错误', {
+              requestId,
+              status: error.response.status
+            });
+        }
       } else if (error.request) {
-        console.error('  - 请求发送失败，未收到响应');
+        this.log('error', '网络连接失败，未收到响应', {
+          requestId,
+          possibleReasons: ['防火墙阻止', '网络断开', 'DNS解析失败', '超时']
+        });
+      } else {
+        this.log('error', '请求配置错误', {
+          requestId,
+          errorDetails: error.message
+        });
       }
       
       // 重试逻辑
       if (retryCount < maxRetries) {
         const delay = Math.pow(2, retryCount) * 1000; // 指数退避
-        console.log(`等待 ${delay}ms 后重试...`);
+        this.log('info', `等待 ${delay}ms 后重试`, {
+          requestId,
+          retryCount: retryCount + 1,
+          maxRetries
+        });
         await new Promise(resolve => setTimeout(resolve, delay));
         return this.getBaiduAccessToken(retryCount + 1, maxRetries);
       }
       
       // 降级策略：返回模拟Token
-      console.warn('⚠️  百度云API不可用，使用模拟Token');
+      this.log('warn', '百度云API不可用，使用模拟Token', {
+        requestId
+      });
       this.baiduAccessToken = 'mock-access-token';
       this.baiduTokenExpiresAt = Date.now() + 3600000; // 1小时过期
       return this.baiduAccessToken;
     }
   }
   
+  /**
+   * 记录详细日志
+   * @param {string} level - 日志级别
+   * @param {string} message - 日志消息
+   * @param {Object} data - 附加数据
+   */
+  log(level, message, data = {}) {
+    const timestamp = new Date().toISOString();
+    const logData = {
+      timestamp,
+      level,
+      message,
+      ...data
+    };
+    
+    switch (level) {
+      case 'info':
+        console.log(`[INFO] ${timestamp} - ${message}`, data);
+        break;
+      case 'warn':
+        console.warn(`[WARN] ${timestamp} - ${message}`, data);
+        break;
+      case 'error':
+        console.error(`[ERROR] ${timestamp} - ${message}`, data);
+        break;
+      case 'debug':
+        console.debug(`[DEBUG] ${timestamp} - ${message}`, data);
+        break;
+      default:
+        console.log(`[${level.toUpperCase()}] ${timestamp} - ${message}`, data);
+    }
+  }
+
+  /**
+   * 百度图像内容理解API调用 - 两步式图像识别接口
+   * @param {Buffer} imageBuffer - 图像Buffer
+   * @param {string} question - 提问信息
+   * @param {number} retryCount - 当前重试次数
+   * @param {number} maxRetries - 最大重试次数
+   * @returns {Promise<Object>} - 识别结果
+   */
+  async callBaiduImageUnderstandingAPI(imageBuffer, question = '这张图片里有什么？', retryCount = 0, maxRetries = 3) {
+    const startTime = Date.now();
+    const requestId = `img_understand_req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    try {
+      // 生成缓存键
+      const imageHash = this.generateImageHash(imageBuffer);
+      const cacheKey = `baidu_image_understanding_${imageHash}_${question}`;
+      
+      // 检查缓存
+      const cachedResult = this.getCache(cacheKey);
+      if (cachedResult) {
+        this.log('info', '使用缓存结果，避免重复API调用', {
+          requestId,
+          cacheKey,
+          question
+        });
+        return cachedResult;
+      }
+      
+      // 缓存未命中，调用API
+      const accessToken = await this.getBaiduAccessToken();
+      
+      // 检查是否使用模拟Token
+      if (accessToken === 'mock-access-token') {
+        this.log('warn', '使用模拟Token，返回模拟图像理解结果', {
+          requestId,
+          question
+        });
+        const mockResult = this.getMockImageUnderstandingResult(question);
+        this.setCache(cacheKey, mockResult);
+        return mockResult;
+      }
+      
+      const imageBase64 = imageBuffer.toString('base64');
+      
+      // Step 1: 提交图像理解请求
+      this.log('info', '正在提交百度图像内容理解请求', {
+        requestId,
+        apiUrl: this.baiduImageUnderstandingRequestUrl,
+        question,
+        imageSize: `${(imageBuffer.length / 1024).toFixed(2)}KB`
+      });
+      
+      const requestResponse = await axios.post(this.baiduImageUnderstandingRequestUrl, {
+        image: imageBase64,
+        question: question
+      }, {
+        params: {
+          access_token: accessToken
+        },
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8'
+        },
+        timeout: 60000, // 60秒超时
+      });
+      
+      if (!requestResponse.data || !requestResponse.data.result || !requestResponse.data.result.task_id) {
+        throw new Error('API调用失败：返回数据格式错误，缺少task_id');
+      }
+      
+      const taskId = requestResponse.data.result.task_id;
+      this.log('info', '图像内容理解请求提交成功，获取到task_id', {
+        requestId,
+        taskId,
+        logId: requestResponse.data.log_id
+      });
+      
+      // Step 2: 轮询获取结果
+      const pollingInterval = 2000; // 2秒轮询一次
+      const maxPollingTime = 60000; // 最大轮询时间60秒
+      const startTimePolling = Date.now();
+      
+      while (Date.now() - startTimePolling < maxPollingTime) {
+        this.log('debug', '正在轮询获取图像内容理解结果', {
+          requestId,
+          taskId,
+          elapsedTime: Date.now() - startTimePolling
+        });
+        
+        const resultResponse = await axios.post(this.baiduImageUnderstandingResultUrl, {
+          task_id: taskId
+        }, {
+          params: {
+            access_token: accessToken
+          },
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+          },
+          timeout: 60000, // 60秒超时
+        });
+        
+        if (!resultResponse.data || !resultResponse.data.result) {
+          throw new Error('API调用失败：返回数据格式错误');
+        }
+        
+        const result = resultResponse.data.result;
+        
+        if (result.ret_code === 0) {
+          // 处理成功
+          this.log('info', '图像内容理解结果获取成功', {
+            requestId,
+            taskId,
+            logId: resultResponse.data.log_id,
+            retCode: result.ret_code,
+            retMsg: result.ret_msg,
+            duration: `${Date.now() - startTime}ms`
+          });
+          
+          // 保存到缓存
+          const finalResult = {
+            description: result.description,
+            task_id: result.task_id
+          };
+          this.setCache(cacheKey, finalResult);
+          return finalResult;
+        } else if (result.ret_code === 1) {
+          // 处理中，继续轮询
+          this.log('debug', '图像内容理解结果处理中，继续轮询', {
+            requestId,
+            taskId,
+            retMsg: result.ret_msg
+          });
+          await new Promise(resolve => setTimeout(resolve, pollingInterval));
+        } else {
+          // 其他错误
+          throw new Error(`API调用失败：${result.ret_msg} (错误码：${result.ret_code})`);
+        }
+      }
+      
+      // 轮询超时
+      throw new Error('API调用失败：轮询获取结果超时');
+      
+    } catch (error) {
+      const endTime = Date.now();
+      const duration = endTime - startTime;
+      
+      this.log('error', `百度图像内容理解API调用失败 (${retryCount + 1}/${maxRetries})`, {
+        requestId,
+        duration: `${duration}ms`,
+        error: error.message,
+        question
+      });
+      
+      // 详细错误信息
+      if (error.response) {
+        this.log('error', 'API响应错误详情', {
+          requestId,
+          status: error.response.status,
+          data: error.response.data
+        });
+        // 分析具体错误类型
+        switch (error.response.status) {
+          case 400:
+            this.log('error', '请求参数错误', {
+              requestId,
+              possibleReasons: ['图像格式错误', '参数缺失或无效', '图像大小超限', '问题描述过长']
+            });
+            break;
+          case 401:
+            this.log('error', '认证失败，AccessToken无效', {
+              requestId
+            });
+            break;
+          case 403:
+            this.log('error', '权限不足，API调用受限', {
+              requestId
+            });
+            break;
+          case 429:
+            this.log('error', '请求频率过高，API限流', {
+              requestId
+            });
+            break;
+          case 500:
+          case 502:
+          case 503:
+          case 504:
+            this.log('error', '百度云服务器错误', {
+              requestId,
+              status: error.response.status
+            });
+            break;
+          default:
+            this.log('error', '其他HTTP错误', {
+              requestId,
+              status: error.response.status
+            });
+        }
+      } else if (error.request) {
+        this.log('error', '网络连接失败，未收到响应', {
+          requestId,
+          possibleReasons: ['防火墙阻止', '网络断开', 'DNS解析失败', '超时']
+        });
+      } else {
+        this.log('error', '请求配置错误', {
+          requestId,
+          errorDetails: error.message
+        });
+      }
+      
+      // 重试逻辑
+      if (retryCount < maxRetries) {
+        const delay = Math.pow(2, retryCount) * 1000; // 指数退避
+        this.log('info', `等待 ${delay}ms 后重试`, {
+          requestId,
+          retryCount: retryCount + 1,
+          maxRetries
+        });
+        await new Promise(resolve => setTimeout(resolve, delay));
+        return this.callBaiduImageUnderstandingAPI(imageBuffer, question, retryCount + 1, maxRetries);
+      }
+      
+      // 降级策略：返回模拟结果
+      this.log('warn', '百度图像内容理解API不可用，返回模拟结果', {
+        requestId,
+        question
+      });
+      const mockResult = this.getMockImageUnderstandingResult(question);
+      return mockResult;
+    }
+  }
+
   /**
    * 百度云组合API调用 - 统一图像识别接口
    * @param {Buffer} imageBuffer - 图像Buffer
@@ -248,6 +621,9 @@ class AIService {
    * @returns {Promise<Object>} - 识别结果
    */
   async callBaiduCombinationAPI(imageBuffer, scenes, sceneConf = {}, retryCount = 0, maxRetries = 3) {
+    const startTime = Date.now();
+    const requestId = `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
     try {
       // 生成缓存键
       const imageHash = this.generateImageHash(imageBuffer);
@@ -256,7 +632,11 @@ class AIService {
       // 检查缓存
       const cachedResult = this.getCache(cacheKey);
       if (cachedResult) {
-        console.log('✓ 使用缓存结果，避免重复API调用');
+        this.log('info', '使用缓存结果，避免重复API调用', {
+          requestId,
+          cacheKey,
+          scenes
+        });
         return cachedResult;
       }
       
@@ -265,7 +645,11 @@ class AIService {
       
       // 检查是否使用模拟Token
       if (accessToken === 'mock-access-token') {
-        console.warn('⚠️  使用模拟Token，返回模拟图像识别结果');
+        this.log('warn', '使用模拟Token，返回模拟图像识别结果', {
+          requestId,
+          scenes,
+          sceneConf
+        });
         const mockResult = this.getMockImageRecognitionResult(scenes);
         this.setCache(cacheKey, mockResult);
         return mockResult;
@@ -273,7 +657,13 @@ class AIService {
       
       const imageBase64 = imageBuffer.toString('base64');
       
-      console.log('正在调用百度云组合API...');
+      this.log('info', '正在调用百度云组合API', {
+        requestId,
+        apiUrl: this.baiduCombinationApiUrl,
+        scenes,
+        sceneConf,
+        imageSize: `${(imageBuffer.length / 1024).toFixed(2)}KB`
+      });
       
       const response = await axios.post(this.baiduCombinationApiUrl, {
         image: imageBase64,
@@ -293,32 +683,107 @@ class AIService {
         throw new Error('API调用失败：返回数据为空');
       }
       
+      const endTime = Date.now();
+      const duration = endTime - startTime;
+      
       // 保存到缓存
       this.setCache(cacheKey, response.data);
-      console.log('✓ API调用成功，结果已缓存');
+      
+      this.log('info', 'API调用成功，结果已缓存', {
+        requestId,
+        duration: `${duration}ms`,
+        scenes,
+        responseSize: `${JSON.stringify(response.data).length} bytes`
+      });
       
       return response.data;
     } catch (error) {
-      console.error(`百度云组合API调用失败 (${retryCount + 1}/${maxRetries}):`, error.message);
+      const endTime = Date.now();
+      const duration = endTime - startTime;
+      
+      this.log('error', `百度云组合API调用失败 (${retryCount + 1}/${maxRetries})`, {
+        requestId,
+        duration: `${duration}ms`,
+        error: error.message,
+        scenes,
+        sceneConf
+      });
       
       // 详细错误信息
       if (error.response) {
-        console.error('  - 响应状态:', error.response.status);
-        console.error('  - 响应数据:', error.response.data);
+        this.log('error', 'API响应错误详情', {
+          requestId,
+          status: error.response.status,
+          data: error.response.data,
+          headers: error.response.headers
+        });
+        // 分析具体错误类型
+        switch (error.response.status) {
+          case 400:
+            this.log('error', '请求参数错误', {
+              requestId,
+              possibleReasons: ['图像格式错误', '参数缺失或无效', '图像大小超限']
+            });
+            break;
+          case 401:
+            this.log('error', '认证失败，AccessToken无效', {
+              requestId
+            });
+            break;
+          case 403:
+            this.log('error', '权限不足，API调用受限', {
+              requestId
+            });
+            break;
+          case 429:
+            this.log('error', '请求频率过高，API限流', {
+              requestId
+            });
+            break;
+          case 500:
+          case 502:
+          case 503:
+          case 504:
+            this.log('error', '百度云服务器错误', {
+              requestId,
+              status: error.response.status
+            });
+            break;
+          default:
+            this.log('error', '其他HTTP错误', {
+              requestId,
+              status: error.response.status
+            });
+        }
       } else if (error.request) {
-        console.error('  - 请求发送失败，未收到响应');
+        this.log('error', '网络连接失败，未收到响应', {
+          requestId,
+          possibleReasons: ['防火墙阻止', '网络断开', 'DNS解析失败', '超时']
+        });
+      } else {
+        this.log('error', '请求配置错误', {
+          requestId,
+          errorDetails: error.message
+        });
       }
       
       // 重试逻辑
       if (retryCount < maxRetries) {
         const delay = Math.pow(2, retryCount) * 1000; // 指数退避
-        console.log(`等待 ${delay}ms 后重试...`);
+        this.log('info', `等待 ${delay}ms 后重试`, {
+          requestId,
+          retryCount: retryCount + 1,
+          maxRetries
+        });
         await new Promise(resolve => setTimeout(resolve, delay));
         return this.callBaiduCombinationAPI(imageBuffer, scenes, sceneConf, retryCount + 1, maxRetries);
       }
       
       // 降级策略：返回模拟结果
-      console.warn('⚠️  百度云API不可用，返回模拟图像识别结果');
+      this.log('warn', '百度云API不可用，返回模拟图像识别结果', {
+        requestId,
+        scenes
+      });
       const mockResult = this.getMockImageRecognitionResult(scenes);
       return mockResult;
     }
@@ -376,6 +841,31 @@ class AIService {
     
     return result;
   }
+
+  /**
+   * 获取模拟图像理解结果
+   * @param {string} question - 提问信息
+   * @returns {Object} - 模拟理解结果
+   */
+  getMockImageUnderstandingResult(question) {
+    // 基于不同的问题返回不同的模拟结果
+    let description = '';
+    
+    if (question.includes('什么')) {
+      description = '这张图片展示了一群健康的鸡，它们在干净的养殖场环境中活动。可以看到鸡的羽毛整齐，精神状态良好，周围环境整洁，有适当的通风和光照条件。';
+    } else if (question.includes('健康')) {
+      description = '从图片中可以观察到，这些鸡的健康状况良好。它们的羽毛光滑整洁，鸡冠红润，行动活泼，没有明显的疾病症状。养殖场的环境也比较卫生，有利于鸡的健康生长。';
+    } else if (question.includes('环境')) {
+      description = '图片中的养殖场环境看起来比较理想。地面干净，没有明显的粪便堆积，鸡舍有良好的通风设施，光照充足。这种环境有助于减少疾病传播，促进鸡的健康生长。';
+    } else {
+      description = '这是一张养殖场的图片，展示了一群鸡在鸡舍中活动。鸡的数量较多，看起来健康状况良好，环境也比较整洁。';
+    }
+    
+    return {
+      description: description,
+      task_id: `mock_task_${Date.now()}`
+    };
+  }
   
   /**
    * 百度云图像识别 - 动物识别
@@ -405,13 +895,21 @@ class AIService {
    */
   async analyzeImage(imageBuffer) {
     try {
-      const result = await this.callBaiduCombinationAPI(imageBuffer, ['advanced_general'], {
-        advanced_general: {
-          baike_num: 5
-        }
-      });
+      // 使用新的图像内容理解API进行图像分析
+      const result = await this.callBaiduImageUnderstandingAPI(imageBuffer, '请详细描述这张图片的内容，包括物体、场景、健康状况等信息');
       
-      return result.advanced_general || {};
+      // 转换结果格式，保持向后兼容性
+      // 旧格式: { result: [{ keyword: 'xxx', score: 0.xx }, ...] }
+      // 新格式: { description: 'xxx', task_id: 'xxx' }
+      
+      // 从描述中提取关键词作为模拟的旧格式结果
+      const keywords = this.extractKeywordsFromDescription(result.description);
+      
+      return {
+        result: keywords,
+        description: result.description,
+        task_id: result.task_id
+      };
     } catch (error) {
       console.error('百度云图像分析失败:', error.message);
       throw new Error('图像分析服务暂时不可用');
@@ -823,12 +1321,8 @@ class AIService {
         }
       };
       
-      // 根据调用方式返回不同格式
-      if (typeof diagnosisData === 'string') {
-        return diagnosisResult;
-      } else {
-        return structuredResult;
-      }
+      // 聊天诊断始终返回字符串格式响应
+  return diagnosisResult;
     } catch (error) {
       console.error('对话诊断失败:', error.message);
       // 返回友好的错误提示
@@ -858,6 +1352,63 @@ class AIService {
     });
     
     return keywords;
+  }
+
+  /**
+   * 从描述中提取关键词，用于保持向后兼容性
+   * @param {string} description - 图像描述文本
+   * @returns {Array} - 关键词数组，包含keyword和score字段
+   */
+  extractKeywordsFromDescription(description) {
+    if (!description) return [];
+    
+    // 定义可能的关键词列表及其权重
+    const keywordWeights = {
+      // 物体类
+      '鸡': 0.95,
+      '家禽': 0.90,
+      '养殖场': 0.85,
+      '鸡舍': 0.85,
+      '环境': 0.80,
+      // 健康状况类
+      '健康': 0.95,
+      '良好': 0.90,
+      '精神状态': 0.85,
+      '羽毛': 0.85,
+      '鸡冠': 0.80,
+      // 环境类
+      '干净': 0.90,
+      '整洁': 0.85,
+      '通风': 0.80,
+      '光照': 0.75,
+      '卫生': 0.85,
+      // 动作类
+      '活动': 0.75,
+      '生长': 0.70
+    };
+    
+    const result = [];
+    
+    // 遍历关键词列表，检查是否在描述中出现
+    for (const [keyword, weight] of Object.entries(keywordWeights)) {
+      if (description.includes(keyword)) {
+        result.push({
+          keyword: keyword,
+          score: weight
+        });
+      }
+    }
+    
+    // 如果没有匹配到任何关键词，添加一个默认关键词
+    if (result.length === 0) {
+      result.push({
+        keyword: '图像内容',
+        score: 0.80
+      });
+    }
+    
+    // 按分数降序排序
+    return result.sort((a, b) => b.score - a.score);
   }
   
   /**
@@ -897,9 +1448,19 @@ class AIService {
         const accessToken = await this.getBaiduAccessToken(0, 1);
         healthStatus.components.baiduApi.status = accessToken !== 'mock-access-token' ? 'healthy' : 'degraded';
         healthStatus.components.baiduApi.details.accessTokenValid = true;
+        healthStatus.components.baiduApi.details.apiEndpoints = {
+          combinationApi: this.baiduCombinationApiUrl,
+          imageUnderstandingRequestApi: this.baiduImageUnderstandingRequestUrl,
+          imageUnderstandingResultApi: this.baiduImageUnderstandingResultUrl
+        };
       } catch (error) {
         healthStatus.components.baiduApi.status = 'unhealthy';
         healthStatus.components.baiduApi.details.error = error.message;
+        healthStatus.components.baiduApi.details.apiEndpoints = {
+          combinationApi: this.baiduCombinationApiUrl,
+          imageUnderstandingRequestApi: this.baiduImageUnderstandingRequestUrl,
+          imageUnderstandingResultApi: this.baiduImageUnderstandingResultUrl
+        };
         healthStatus.status = 'degraded';
       }
       

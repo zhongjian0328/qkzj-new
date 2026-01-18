@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Text, View, Animated, StyleSheet } from 'react-native';
+import React, { useEffect, useRef, useState, lazy, Suspense } from 'react';
+import { Text, View, Animated, StyleSheet, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -10,29 +10,37 @@ import { useAuth } from './context/UserContext';
 import { styles } from './styles';
 import * as SplashScreen from 'expo-splash-screen';
 
-// 导入屏幕组件
-import LoginScreen from './screens/LoginScreen';
-import RegisterScreen from './screens/RegisterScreen';
-import RoleSelectScreen from './screens/RoleSelectScreen';
-import ExperienceRoleScreen from './screens/ExperienceRoleScreen';
-import AuthCertificationScreen from './screens/AuthCertificationScreen';
-import HomeScreen from './screens/HomeScreen';
-import DiagnosisHomeScreen from './screens/DiagnosisHomeScreen';
-import ChatDiagnosisScreen from './screens/ChatDiagnosisScreen';
-import VeterinaryDiagnosisScreen from './screens/VeterinaryDiagnosisScreen';
-import DiagnosisReportScreen from './screens/DiagnosisReportScreen';
-import ProductionManagementScreen from './screens/ProductionManagementScreen';
-import BatchManagementScreen from './screens/BatchManagementScreen';
-import DeathFeedRecordScreen from './screens/DeathFeedRecordScreen';
-import EmployeeManagementScreen from './screens/EmployeeManagementScreen';
-import DiagnosisHistoryScreen from './screens/DiagnosisHistoryScreen';
-import EpidemicHeatmapScreen from './screens/EpidemicHeatmapScreen';
-import KnowledgeGraphScreen from './screens/KnowledgeGraphScreen';
-import QuestionBankScreen from './screens/QuestionBankScreen';
-import InternLogScreen from './screens/InternLogScreen';
-import MentorManagementScreen from './screens/MentorManagementScreen';
-import ProfileScreen from './screens/ProfileScreen';
-import StatisticsScreen from './screens/StatisticsScreen';
+// 懒加载屏幕组件
+const LoginScreen = lazy(() => import('./screens/LoginScreen'));
+const RegisterScreen = lazy(() => import('./screens/RegisterScreen'));
+const RoleSelectScreen = lazy(() => import('./screens/RoleSelectScreen'));
+const ExperienceRoleScreen = lazy(() => import('./screens/ExperienceRoleScreen'));
+const AuthCertificationScreen = lazy(() => import('./screens/AuthCertificationScreen'));
+const HomeScreen = lazy(() => import('./screens/HomeScreen'));
+const DiagnosisHomeScreen = lazy(() => import('./screens/DiagnosisHomeScreen'));
+const ChatDiagnosisScreen = lazy(() => import('./screens/ChatDiagnosisScreen'));
+const VeterinaryDiagnosisScreen = lazy(() => import('./screens/VeterinaryDiagnosisScreen'));
+const DiagnosisReportScreen = lazy(() => import('./screens/DiagnosisReportScreen'));
+const ProductionManagementScreen = lazy(() => import('./screens/ProductionManagementScreen'));
+const BatchManagementScreen = lazy(() => import('./screens/BatchManagementScreen'));
+const DeathFeedRecordScreen = lazy(() => import('./screens/DeathFeedRecordScreen'));
+const EmployeeManagementScreen = lazy(() => import('./screens/EmployeeManagementScreen'));
+const DiagnosisHistoryScreen = lazy(() => import('./screens/DiagnosisHistoryScreen'));
+const EpidemicHeatmapScreen = lazy(() => import('./screens/EpidemicHeatmapScreen'));
+const KnowledgeGraphScreen = lazy(() => import('./screens/KnowledgeGraphScreen'));
+const QuestionBankScreen = lazy(() => import('./screens/QuestionBankScreen'));
+const InternLogScreen = lazy(() => import('./screens/InternLogScreen'));
+const MentorManagementScreen = lazy(() => import('./screens/MentorManagementScreen'));
+const ProfileScreen = lazy(() => import('./screens/ProfileScreen'));
+const StatisticsScreen = lazy(() => import('./screens/StatisticsScreen'));
+
+// 加载指示器组件
+const LoadingIndicator = () => (
+  <View style={styles.loadingContainer}>
+    <ActivityIndicator size="large" color="#2DBBA1" />
+    <Text style={styles.loadingText}>加载中...</Text>
+  </View>
+);
 
 // 定义导航类型
 export type RootStackParamList = {
@@ -212,28 +220,26 @@ const SplashScreenComponent: React.FC<{ onAnimationComplete: () => void }> = ({ 
   const translateYAnim = useRef(new Animated.Value(50)).current;
 
   useEffect(() => {
-    // 启动动画序列
+    // 启动动画序列，缩短动画时间并移除额外延迟
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 1000,
+        duration: 600,
         useNativeDriver: true,
       }),
       Animated.timing(scaleAnim, {
         toValue: 1,
-        duration: 1000,
+        duration: 600,
         useNativeDriver: true,
       }),
       Animated.timing(translateYAnim, {
         toValue: 0,
-        duration: 1000,
+        duration: 600,
         useNativeDriver: true,
       }),
     ]).start(() => {
-      // 动画完成后，延迟1秒再调用完成回调
-      setTimeout(() => {
-        onAnimationComplete();
-      }, 1000);
+      // 动画完成后立即调用完成回调，移除1秒延迟
+      onAnimationComplete();
     });
   }, [fadeAnim, scaleAnim, translateYAnim, onAnimationComplete]);
 
@@ -293,8 +299,8 @@ const App: React.FC = () => {
         // 保持原生启动屏幕可见
         await SplashScreen.preventAutoHideAsync();
         
-        // 模拟加载资源或初始化操作
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // 移除不必要的模拟延迟，直接标记应用为就绪
+        // 实际项目中，这里应该加载必要的资源或执行初始化操作
       } catch (e) {
         console.warn(e);
       } finally {
@@ -341,40 +347,42 @@ const App: React.FC = () => {
     <AppProvider>
       <NavigationContainer>
         <StatusBar style="auto" />
-        <Stack.Navigator
-          screenOptions={{
-            headerShown: false,
-            cardStyle: styles.container,
-            cardStyleInterpolator: forFade,
-            transitionSpec: {
-              open: { animation: 'timing', config: { duration: 300 } },
-              close: { animation: 'timing', config: { duration: 300 } },
-            },
-          }}
-        >
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Register" component={RegisterScreen} />
-          <Stack.Screen name="RoleSelect" component={RoleSelectScreen} />
-          <Stack.Screen name="ExperienceRole" component={ExperienceRoleScreen} />
-          <Stack.Screen name="AuthCertification" component={AuthCertificationScreen} />
-          <Stack.Screen name="Main" component={MainTabs} />
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="DiagnosisHome" component={DiagnosisHomeScreen} />
-          <Stack.Screen name="ChatDiagnosis" component={ChatDiagnosisScreen} />
-          <Stack.Screen name="VeterinaryDiagnosis" component={VeterinaryDiagnosisScreen} />
-          <Stack.Screen name="DiagnosisReport" component={DiagnosisReportScreen} />
-          <Stack.Screen name="ProductionManagement" component={ProductionManagementScreen} />
-          <Stack.Screen name="BatchManagement" component={BatchManagementScreen} />
-          <Stack.Screen name="DeathFeedRecord" component={DeathFeedRecordScreen} />
-          <Stack.Screen name="EmployeeManagement" component={EmployeeManagementScreen} />
-          <Stack.Screen name="DiagnosisHistory" component={DiagnosisHistoryScreen} />
-          <Stack.Screen name="EpidemicHeatmap" component={EpidemicHeatmapScreen} />
-          <Stack.Screen name="KnowledgeGraph" component={KnowledgeGraphScreen} />
-          <Stack.Screen name="QuestionBank" component={QuestionBankScreen} />
-          <Stack.Screen name="InternLog" component={InternLogScreen} />
-          <Stack.Screen name="MentorManagement" component={MentorManagementScreen} />
-          <Stack.Screen name="Statistics" component={StatisticsScreen} />
-        </Stack.Navigator>
+        <Suspense fallback={<LoadingIndicator />}>
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: false,
+              cardStyle: styles.container,
+              cardStyleInterpolator: forFade,
+              transitionSpec: {
+                open: { animation: 'timing', config: { duration: 300 } },
+                close: { animation: 'timing', config: { duration: 300 } },
+              },
+            }}
+          >
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+            <Stack.Screen name="RoleSelect" component={RoleSelectScreen} />
+            <Stack.Screen name="ExperienceRole" component={ExperienceRoleScreen} />
+            <Stack.Screen name="AuthCertification" component={AuthCertificationScreen} />
+            <Stack.Screen name="Main" component={MainTabs} />
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="DiagnosisHome" component={DiagnosisHomeScreen} />
+            <Stack.Screen name="ChatDiagnosis" component={ChatDiagnosisScreen} />
+            <Stack.Screen name="VeterinaryDiagnosis" component={VeterinaryDiagnosisScreen} />
+            <Stack.Screen name="DiagnosisReport" component={DiagnosisReportScreen} />
+            <Stack.Screen name="ProductionManagement" component={ProductionManagementScreen} />
+            <Stack.Screen name="BatchManagement" component={BatchManagementScreen} />
+            <Stack.Screen name="DeathFeedRecord" component={DeathFeedRecordScreen} />
+            <Stack.Screen name="EmployeeManagement" component={EmployeeManagementScreen} />
+            <Stack.Screen name="DiagnosisHistory" component={DiagnosisHistoryScreen} />
+            <Stack.Screen name="EpidemicHeatmap" component={EpidemicHeatmapScreen} />
+            <Stack.Screen name="KnowledgeGraph" component={KnowledgeGraphScreen} />
+            <Stack.Screen name="QuestionBank" component={QuestionBankScreen} />
+            <Stack.Screen name="InternLog" component={InternLogScreen} />
+            <Stack.Screen name="MentorManagement" component={MentorManagementScreen} />
+            <Stack.Screen name="Statistics" component={StatisticsScreen} />
+          </Stack.Navigator>
+        </Suspense>
       </NavigationContainer>
     </AppProvider>
   );

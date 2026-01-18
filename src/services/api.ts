@@ -4,11 +4,45 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // 创建axios实例
 const api = axios.create({
   baseURL: process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000/api',
-  timeout: 15000,
+  timeout: 65000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+// 网络状态检测函数
+export const checkNetworkStatus = async () => {
+  try {
+    await api.get('/health');
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+// 请求重试机制
+const retryInterceptor = (retryCount = 3) => {
+  return async (error: any) => {
+    const { config } = error;
+    // 如果没有配置或重试次数已用完，则直接返回错误
+    if (!config || config._retryCount >= retryCount) {
+      return Promise.reject(error);
+    }
+
+    // 增加重试计数
+    config._retryCount = config._retryCount || 0;
+    config._retryCount++;
+
+    // 指数退避重试
+    const delay = Math.pow(2, config._retryCount) * 1000;
+
+    console.log(`请求失败，正在重试... (${config._retryCount}/${retryCount})`);
+    await new Promise(resolve => setTimeout(resolve, delay));
+
+    // 重新发送请求
+    return api(config);
+  };
+};
 
 // 请求拦截器
 api.interceptors.request.use(
@@ -29,17 +63,33 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response.data,
   async (error) => {
-    // 处理错误响应
-    if (error.response?.status === 401) {
-      // 处理未授权错误，例如跳转到登录页面
-      try {
-        await AsyncStorage.removeItem('token');
-      } catch (storageError) {
-        console.error('Failed to remove token from AsyncStorage:', storageError);
+    // 应用重试机制
+    const retryError = await retryInterceptor(3)(error);
+    if (retryError === error) {
+      // 重试失败，处理错误响应
+      if (error.response?.status === 401) {
+        // 处理未授权错误，例如跳转到登录页面
+        try {
+          await AsyncStorage.removeItem('token');
+        } catch (storageError) {
+          console.error('Failed to remove token from AsyncStorage:', storageError);
+        }
+        // 可以通过事件或状态管理通知应用处理登录过期
+      } else if (error.code === 'ECONNABORTED') {
+        // 处理请求超时错误
+        console.error('请求超时，请检查网络连接或稍后重试');
+      } else if (error.response?.status === 400) {
+        // 处理客户端错误
+        console.error('请求参数错误:', error.response.data?.message || '无效的请求参数');
+      } else if (error.response?.status === 500) {
+        // 处理服务器错误
+        console.error('服务器内部错误，请稍后重试');
+      } else if (!error.response) {
+        // 处理网络连接错误
+        console.error('网络连接失败，请检查您的网络设置');
       }
-      // 可以通过事件或状态管理通知应用处理登录过期
     }
-    return Promise.reject(error);
+    return Promise.reject(retryError);
   }
 );
 
@@ -59,14 +109,14 @@ export const authApi = {
   
   // 获取验证码
   getVerificationCode: (phoneNumber: string) => 
-    api.post('/auth/verification-code', { phoneNumber }),
+    api.post('/auth/get-verification-code', { phoneNumber }),
   
   // 验证验证码
   verifyCode: (data: { phoneNumber: string; code: string }) => 
     api.post('/auth/verify-code', data),
   
   // 获取当前用户信息
-  getCurrentUser: () => api.get('/auth/me'),
+  getCurrentUser: () => api.get('/auth/current-user'),
   
   // 更新用户信息
   updateUser: (data: Partial<{
@@ -76,7 +126,7 @@ export const authApi = {
     schoolId: string;
     studentId: string;
     mentorId: string;
-  }>) => api.put('/auth/me', data),
+  }>) => api.put('/auth/update', data),
   
   // 用户认证
   certify: (data: {

@@ -43,7 +43,7 @@ const HomeScreen: React.FC = () => {
                   id: 'veterinary-diagnosis',
                   title: 'AI兽医诊断',
                   description: '标准化流程，分阶段诊断',
-                  icon: 'hospital-outline',
+                  icon: 'medical-outline',
                   navigation: 'VeterinaryDiagnosis'
                 }
               ]

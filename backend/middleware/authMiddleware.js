@@ -2,7 +2,12 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 // JWT配置
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+// 验证必要的环境变量
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required');
+}
 
 /**
  * 认证中间件 - 验证JWT令牌并将用户信息添加到请求对象中
@@ -18,12 +23,16 @@ exports.authenticate = async (req, res, next) => {
     // 提取令牌
     const token = authHeader.split(' ')[1];
     
-    // 允许在开发环境下使用模拟令牌
-    if (token === 'mock-jwt-token') {
+    // 开发环境下允许使用模拟令牌（仅用于测试）
+    if (token === 'mock-jwt-token' && process.env.NODE_ENV === 'development') {
+      // 使用Mongoose的ObjectId模拟一个有效的用户ID
+      const { ObjectId } = require('mongoose').Types;
+      const mockUserId = new ObjectId();
+      
       // 创建模拟用户对象
       req.user = {
-        _id: 'mock-user-id',
-        id: 'mock-user-id',
+        _id: mockUserId,
+        id: mockUserId,
         roleType: 'FARMER',
         subRole: 'SMALL',
         authStatus: 'APPROVED',
