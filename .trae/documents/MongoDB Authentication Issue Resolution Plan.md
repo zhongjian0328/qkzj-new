@@ -4,13 +4,13 @@
 
 ### Key Issues Identified:
 1. **Username Mismatch**: Connection string uses `root` instead of specified `power-application-user`
-2. **Password Encoding**: Password with special characters (`Gong0218!!`) not URL-encoded
+2. **Password Encoding**: Password with special characters (REDACTED) not URL-encoded
 3. **AuthSource Incorrect**: Mongoose configured with `authSource: 'qinkangzhijian'` instead of `admin`
 4. **Database Name**: Connection string targets `admin` database instead of `qinkangzhijian`
 
 ### Expected Correct Configuration:
 - Username: `power-application-user`
-- Password: URL-encoded `Gong0218!!` → `Gong0218%21%21`
+- Password: URL-encoded form of the actual password (REDACTED)
 - AuthSource: `admin` (Alibaba Cloud MongoDB users are in admin db)
 - Target Database: `qinkangzhijian`
 
@@ -19,7 +19,7 @@
 ### Step 1: Update Connection String in .env
 - Replace current connection string with:
   ```
-  MONGODB_URI=mongodb://power-application-user:Gong0218%21%21@dds-bp1ec5e3fc06e5341644-pub.mongodb.rds.aliyuncs.com:3717,dds-bp1ec5e3fc06e5342227-pub.mongodb.rds.aliyuncs.com:3717/qinkangzhijian?replicaSet=mgset-96808575&authSource=admin
+  MONGODB_URI=mongodb://<数据库用户名>:<数据库密码>@<主机1>:3717,<主机2>:3717/<数据库名>?replicaSet=<副本集名>&authSource=admin
   ```
 
 ### Step 2: Fix Mongoose Connection Options

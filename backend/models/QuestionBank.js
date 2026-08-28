@@ -63,14 +63,14 @@ const questionBankSchema = new mongoose.Schema({
     default: 0
   }
 }, {
-  timestamps: true,
-  indexes: [
-    { knowledgePoint: 1 }, // 按知识点索引，便于按知识点组卷
-    { difficulty: 1 }, // 按难度索引，便于按难度组卷
-    { tags: 1 }, // 按标签索引，便于分类查询
-    { questionType: 1 } // 按题型索引，便于按题型组卷
-  ]
+  timestamps: true
 });
+
+// 索引
+questionBankSchema.index({ knowledgePoint: 1 });
+questionBankSchema.index({ difficulty: 1 });
+questionBankSchema.index({ tags: 1 });
+questionBankSchema.index({ questionType: 1 });
 
 // 题库模型
 const QuestionBank = mongoose.model('QuestionBank', questionBankSchema);

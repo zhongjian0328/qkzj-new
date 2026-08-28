@@ -71,12 +71,13 @@ const internshipLogSchema = new mongoose.Schema({
     default: Date.now
   }
 }, {
-  timestamps: true,
-  indexes: [
-    { studentId: 1, logDate: 1 }, // 复合索引，提高按学生和日期查询的效率
-    { mentorId: 1, status: 1 } // 复合索引，便于导师查看待审批日志
-  ]
+  timestamps: true
 });
+
+// 复合索引
+internshipLogSchema.index({ studentId: 1, logDate: 1 });
+internshipLogSchema.index({ mentorId: 1, status: 1 });
+internshipLogSchema.index({ gpsLocation: '2dsphere' });
 
 // 实习日志模型
 const InternshipLog = mongoose.model('InternshipLog', internshipLogSchema);

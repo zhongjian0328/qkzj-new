@@ -2,7 +2,7 @@
   "expo": {
     "name": "禽康智检",
     "slug": "qinkangzhijian",
-    "version": "1.0.0",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon_downloaded.png",
     "userInterfaceStyle": "light",

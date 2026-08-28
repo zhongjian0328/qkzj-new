@@ -59,13 +59,13 @@ const knowledgeGraphSchema = new mongoose.Schema({
     default: 0
   }
 }, {
-  timestamps: true,
-  indexes: [
-    { diseaseName: 1 }, // 按疾病名称索引，提高查询效率
-    { tags: 1 }, // 按标签索引，便于分类查询
-    { difficultyLevel: 1 } // 按难度级别索引，便于学习路径规划
-  ]
+  timestamps: true
 });
+
+// 索引
+knowledgeGraphSchema.index({ diseaseName: 1 });
+knowledgeGraphSchema.index({ tags: 1 });
+knowledgeGraphSchema.index({ difficultyLevel: 1 });
 
 // 知识图谱模型
 const KnowledgeGraph = mongoose.model('KnowledgeGraph', knowledgeGraphSchema);

@@ -21,7 +21,12 @@ const tests = [
   {
     name: '测试API连接',
     test: async () => {
-      const apiKey = process.env.DASHSCOPE_API_KEY || 'sk-338377ca0e504b9ca10c9fab7fe9d773';
+      const apiKey = process.env.DASHSCOPE_API_KEY;
+      if (!apiKey) {
+        console.log('\nAPI连接测试: 跳过（缺少环境变量 DASHSCOPE_API_KEY）');
+        console.log('  说明: 请设置 DASHSCOPE_API_KEY 后重新运行本测试');
+        return;
+      }
       const baseURL = process.env.DASHSCOPE_BASE_URL || 'https://dashscope.aliyuncs.com/compatible-mode/v1';
       
       console.log('\nAPI连接测试:');

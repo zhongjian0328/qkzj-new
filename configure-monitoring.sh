@@ -192,6 +192,10 @@ echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stab
 sudo apt update
 sudo apt install -y grafana=${GRAFANA_VERSION}
 
+# 配置Grafana监听端口为3001（避免与后端API冲突）
+log "配置Grafana端口为3001..."
+sudo sed -i 's/;http_port = 3000/http_port = 3001/' /etc/grafana/grafana.ini
+
 # 6. 启动所有监控服务
 log "启动所有监控服务..."
 
@@ -243,7 +247,7 @@ fi
 
 log "Grafana初始管理员密码：${INITIAL_PASSWORD}"
 log "请登录Grafana后立即修改密码"
-log "Grafana访问地址：http://localhost:3000"
+log "Grafana访问地址：http://localhost:3001"
 
 # 9. 配置防火墙（如启用）
 log "配置防火墙规则..."
@@ -251,7 +255,7 @@ if command -v ufw &> /dev/null; then
     # 允许Prometheus端口
     sudo ufw allow 9090/tcp
     # 允许Grafana端口
-    sudo ufw allow 3000/tcp
+    sudo ufw allow 3001/tcp
     # 允许Node Exporter端口
     sudo ufw allow 9100/tcp
     # 允许MongoDB Exporter端口
@@ -267,7 +271,7 @@ rm -rf /tmp/prometheus node_exporter-${NODE_EXPORTER_VERSION}.linux-amd64 mongod
 log "======================================="
 log "监控系统配置完成！"
 log "Prometheus访问地址：http://localhost:9090"
-log "Grafana访问地址：http://localhost:3000"
+log "Grafana访问地址：http://localhost:3001"
 log "初始用户名：admin"
 log "初始密码：${INITIAL_PASSWORD}"
 log "======================================="

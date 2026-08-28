@@ -36,7 +36,7 @@
    PORT=3000
    
    # MongoDB数据库配置
-   MONGODB_URI=mongodb://power-application-user:Gong0218%21%21@dds-bp1ec5e3fc06e5341644-pub.mongodb.rds.aliyuncs.com:3717,dds-bp1ec5e3fc06e5342227-pub.mongodb.rds.aliyuncs.com:3717/qinkangzhijian?replicaSet=mgset-96808575&authSource=admin
+   MONGODB_URI=mongodb://<数据库用户名>:<数据库密码>@<主机1>:3717,<主机2>:3717/<数据库名>?replicaSet=<副本集名>&authSource=admin
    
    # JWT配置
    JWT_SECRET=your-secret-key

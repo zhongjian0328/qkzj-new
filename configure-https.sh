@@ -55,21 +55,21 @@ log "配置TLS 1.2+支持..."
 # 编辑Nginx SSL配置
 SSL_CONF="/etc/nginx/conf.d/ssl.conf"
 echo "# SSL配置
-global ssl_protocols TLSv1.2 TLSv1.3;
-global ssl_prefer_server_ciphers on;
-global ssl_ciphers 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256';
-global ssl_session_timeout 1d;
-global ssl_session_cache shared:SSL:50m;
-global ssl_session_tickets off;
+ssl_protocols TLSv1.2 TLSv1.3;
+ssl_prefer_server_ciphers on;
+ssl_ciphers 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256';
+ssl_session_timeout 1d;
+ssl_session_cache shared:SSL:50m;
+ssl_session_tickets off;
 
 # OCSP Stapling
-global ssl_stapling on;
-global ssl_stapling_verify on;
-global resolver 8.8.8.8 8.8.4.4 valid=300s;
-global resolver_timeout 5s;
+ssl_stapling on;
+ssl_stapling_verify on;
+resolver 8.8.8.8 8.8.4.4 valid=300s;
+resolver_timeout 5s;
 
 # HSTS
-global add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+add_header Strict-Transport-Security \"max-age=31536000; includeSubDomains\" always;
 " | sudo tee ${SSL_CONF}
 
 # 5. 配置后端API的Nginx反向代理

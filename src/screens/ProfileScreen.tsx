@@ -21,26 +21,35 @@ const ProfileScreen: React.FC = () => {
     {
       title: '我的认证',
       icon: '✅',
-      onPress: () => navigation.navigate('Profile'),
+      onPress: () => navigation.navigate('AuthCertification', { role: user?.roleType }),
       visible: true
     },
     {
       title: '设置',
       icon: '⚙️',
-      onPress: () => navigation.navigate('Profile'),
-      visible: true
+      onPress: () => {
+        // 设置页暂不存在，提示用户
+        console.log('设置页开发中');
+      },
+      visible: false
     },
     {
       title: '关于我们',
       icon: 'ℹ️',
-      onPress: () => navigation.navigate('Profile'),
-      visible: true
+      onPress: () => {
+        // 关于页暂不存在，提示用户
+        console.log('关于页开发中');
+      },
+      visible: false
     },
     {
       title: '帮助与反馈',
       icon: '❓',
-      onPress: () => navigation.navigate('Profile'),
-      visible: true
+      onPress: () => {
+        // 帮助页暂不存在，提示用户
+        console.log('帮助页开发中');
+      },
+      visible: false
     },
     {
       title: '退出登录',
@@ -62,16 +71,18 @@ const ProfileScreen: React.FC = () => {
         <View style={styles.profileUserCard}>
           <View style={styles.profileUserInfo}>
             <View style={styles.profileUserAvatar}>
-              <Text style={{ fontSize: 48 }}>{user?.roleType === 'FARMER' ? '🌾' : 
-               user?.roleType === 'INSTITUTION' ? '🏢' : 
-               user?.roleType === 'STUDENT' ? '🎓' : '👤'}</Text>
+              <Text style={{ fontSize: 48 }}>{user?.roleType === 'FARMER' ? '🌾' :
+               user?.roleType === 'INSTITUTION' ? '🏢' :
+               user?.roleType === 'STUDENT' ? '🎓' :
+               user?.roleType === 'TEACHER' ? '👨‍🏫' : '👤'}</Text>
             </View>
             <View style={styles.profileUserDetails}>
               <Text style={styles.profileUserName}>{user?.nickname || '未登录用户'}</Text>
               <Text style={styles.profileUserRole}>
-                {user?.roleType === 'FARMER' ? '养殖户' : 
-                 user?.roleType === 'INSTITUTION' ? '疫控机构' : 
-                 user?.roleType === 'STUDENT' ? '学生' : '未知角色'}
+                {user?.roleType === 'FARMER' ? '养殖户' :
+                 user?.roleType === 'INSTITUTION' ? '疫控机构' :
+                 user?.roleType === 'STUDENT' ? '学生' :
+                 user?.roleType === 'TEACHER' ? '教师' : '未知角色'}
               </Text>
             </View>
           </View>

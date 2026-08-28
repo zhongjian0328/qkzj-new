@@ -49,7 +49,7 @@ fi
 
 # 4. 构建前端应用
 log "构建前端应用..."
-npx expo export:web
+npx expo export --platform all
 
 # 5. 检查构建结果
 if [ ! -d "${BUIld_DIR}" ]; then

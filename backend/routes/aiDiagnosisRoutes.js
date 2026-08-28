@@ -47,10 +47,13 @@ router.post('/farming-advice', authenticate, aiDiagnosisController.farmingAdvice
 // 疾病风险预警（需要认证）
 router.post('/disease-warning', authenticate, aiDiagnosisController.diseaseWarning);
 
-// AI服务健康检查（无需认证，用于监控）
+// AI服务健康检查（公开，仅返回最小信息，用于监控）
 router.get('/health', aiDiagnosisController.healthCheck);
 
-// 重置AI服务（无需认证，用于管理）
-router.post('/reset', aiDiagnosisController.resetService);
+// AI服务详细配置状态（仅管理员）
+router.get('/health/detail', authenticate, authorize(['ADMIN']), aiDiagnosisController.healthCheckDetail);
+
+// 重置AI服务（仅管理员，防止任意用户清空AI缓存与token造成DoS）
+router.post('/reset', authenticate, authorize(['ADMIN']), aiDiagnosisController.resetService);
 
 module.exports = router;

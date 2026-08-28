@@ -85,30 +85,47 @@ exports.login = async (req, res, next) => {
   }
 };
 
+// 验证码存储（模块级内存Map，key=手机号，value={code, expiresAt, attempts}）
+// 单实例部署下可用；多实例部署时应迁移至Redis等共享存储
+const verificationCodes = new Map();
+const VERIFICATION_CODE_TTL_MS = 5 * 60 * 1000; // 验证码有效期5分钟
+const VERIFICATION_CODE_MAX_ATTEMPTS = 5; // 最大错误尝试次数
+
+// 生成6位数字验证码（加密安全随机数）
+const generateVerificationCode = () => {
+  return require('crypto').randomInt(100000, 1000000).toString();
+};
+
 // 获取验证码（模拟实现）
 exports.getVerificationCode = async (req, res, next) => {
   try {
     const { phoneNumber } = req.body;
-    
+
     // 检查手机号是否已注册
     const existingUser = await User.findOne({ phoneNumber });
     if (existingUser) {
       return res.status(400).json({ status: 'error', message: '手机号已注册' });
     }
-    
+
     // 模拟发送验证码（实际项目中应调用短信服务API）
-    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-    
-    // 这里应该将验证码存储到Redis或数据库中，设置过期时间
-    // 模拟存储验证码
-    console.log(`向手机号 ${phoneNumber} 发送验证码: ${verificationCode}`);
-    
+    const verificationCode = generateVerificationCode();
+
+    // 存储验证码到内存Map，设置5分钟过期，错误次数清零
+    verificationCodes.set(phoneNumber, {
+      code: verificationCode,
+      expiresAt: Date.now() + VERIFICATION_CODE_TTL_MS,
+      attempts: 0
+    });
+
+    // 开发环境打印到服务端日志便于联调
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`向手机号 ${phoneNumber} 发送验证码: ${verificationCode}`);
+    }
+
+    // 响应中不再返回验证码
     res.status(200).json({
       status: 'success',
-      message: '验证码已发送',
-      data: {
-        verificationCode // 实际项目中不应返回验证码，这里仅用于演示
-      }
+      message: '验证码已发送'
     });
   } catch (error) {
     next(error);
@@ -119,10 +136,34 @@ exports.getVerificationCode = async (req, res, next) => {
 exports.verifyCode = async (req, res, next) => {
   try {
     const { phoneNumber, code } = req.body;
-    
-    // 模拟验证验证码（实际项目中应从Redis或数据库中获取存储的验证码）
-    // 模拟验证码正确
-    
+
+    // 检查是否存在该手机号的验证码
+    const record = verificationCodes.get(phoneNumber);
+    if (!record) {
+      return res.status(400).json({ status: 'error', message: '验证码不存在或已失效，请重新获取' });
+    }
+
+    // 检查是否过期
+    if (Date.now() > record.expiresAt) {
+      verificationCodes.delete(phoneNumber);
+      return res.status(400).json({ status: 'error', message: '验证码已过期，请重新获取' });
+    }
+
+    // 检查错误尝试次数（上限5次，超过作废需重发）
+    if (record.attempts >= VERIFICATION_CODE_MAX_ATTEMPTS) {
+      verificationCodes.delete(phoneNumber);
+      return res.status(400).json({ status: 'error', message: '验证码错误次数过多，请重新获取' });
+    }
+
+    // 比对验证码
+    if (record.code !== code) {
+      record.attempts += 1;
+      return res.status(400).json({ status: 'error', message: '验证码错误' });
+    }
+
+    // 验证通过即删除作废（一次性使用）
+    verificationCodes.delete(phoneNumber);
+
     res.status(200).json({
       status: 'success',
       message: '验证码验证成功'
@@ -159,20 +200,32 @@ exports.updateUser = async (req, res, next) => {
   try {
     // 从请求对象中获取用户ID（由authMiddleware设置）
     const userId = req.user.id;
-    
-    const updateData = req.body;
-    
-    // 不允许更新敏感字段
-    if (updateData.password) {
-      return res.status(400).json({ status: 'error', message: '密码更新请使用专门的密码修改接口' });
+
+    // 显式字段白名单：仅允许普通资料字段
+    // 以User模型实际字段为准，明确排除角色/权限/认证状态/密码等敏感字段
+    const ALLOWED_UPDATE_FIELDS = ['nickname', 'avatar', 'schoolId', 'studentId'];
+    const FORBIDDEN_UPDATE_FIELDS = ['password', 'phoneNumber', 'roleType', 'subRole', 'authStatus', 'permissions', 'isAdmin', 'role'];
+
+    const requestBody = req.body || {};
+
+    // 显式拒绝敏感字段
+    const forbiddenFields = Object.keys(requestBody).filter(field => FORBIDDEN_UPDATE_FIELDS.includes(field));
+    if (forbiddenFields.length > 0) {
+      return res.status(400).json({ status: 'error', message: '不允许修改的字段: ' + forbiddenFields.join(', ') });
     }
-    if (updateData.phoneNumber) {
-      return res.status(400).json({ status: 'error', message: '手机号不允许修改' });
+
+    // 仅保留白名单字段
+    const updateData = {};
+    Object.keys(requestBody).forEach(field => {
+      if (ALLOWED_UPDATE_FIELDS.includes(field)) {
+        updateData[field] = requestBody[field];
+      }
+    });
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ status: 'error', message: '没有可更新的字段' });
     }
-    if (updateData.roleType || updateData.subRole) {
-      return res.status(400).json({ status: 'error', message: '角色信息不允许自行修改' });
-    }
-    
+
     const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
       new: true,
       runValidators: true
@@ -199,17 +252,36 @@ exports.certify = async (req, res, next) => {
   try {
     // 从请求对象中获取用户ID（由authMiddleware设置）
     const userId = req.user.id;
-    
+
     const { certificationType, documents, additionalInfo } = req.body;
-    
-    // 更新用户认证状态为待审核
+
+    // 显式字段白名单：仅允许资质认证需要的字段
+    // 以User模型实际字段为准，明确排除角色/权限/认证状态等敏感字段
+    const ALLOWED_CERTIFY_FIELDS = ['schoolId', 'studentId', 'organizationId'];
+    const FORBIDDEN_CERTIFY_FIELDS = ['password', 'phoneNumber', 'roleType', 'subRole', 'authStatus', 'permissions', 'isAdmin', 'role'];
+
+    const safeAdditionalInfo = additionalInfo || {};
+    const forbiddenFields = Object.keys(safeAdditionalInfo).filter(field => FORBIDDEN_CERTIFY_FIELDS.includes(field));
+    if (forbiddenFields.length > 0) {
+      return res.status(400).json({ status: 'error', message: '不允许提交的字段: ' + forbiddenFields.join(', ') });
+    }
+
+    // 仅保留白名单字段
+    const additionalUpdate = {};
+    Object.keys(safeAdditionalInfo).forEach(field => {
+      if (ALLOWED_CERTIFY_FIELDS.includes(field)) {
+        additionalUpdate[field] = safeAdditionalInfo[field];
+      }
+    });
+
+    // 更新用户认证状态为待审核（由代码显式赋值，不来自请求体）
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       {
         authStatus: 'PENDING',
         // 这里应该将认证材料存储到对象存储服务中，并保存URL
-        // 模拟存储认证材料
-        ...additionalInfo
+        // 模拟存储认证材料（仅白名单字段）
+        ...additionalUpdate
       },
       { new: true }
     );

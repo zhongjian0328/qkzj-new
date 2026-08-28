@@ -14,14 +14,14 @@
 ## 2. AI能力调用优化
 
 ### 2.1 百度云图像识别集成
-- **AppID**: 121236834
-- **API Key**: 2VZjQEtazEqJzymtkjpX8het
-- **Secret Key**: YDSdbq1BzCbPYozSvCSSL0PE8QTLrLjp
+- **AppID**: <百度云_APPID>
+- **API Key**: <百度云_API_KEY>
+- **Secret Key**: <百度云_SECRET_KEY>
 - **集成场景**: AI诊断模块中的图像上传与分析
 - **调用流程**: 用户上传图片 → 前端预处理 → 调用百度云图像识别API → 接收识别结果 → 前端展示
 
 ### 2.2 DeepSeek服务集成
-- **API Key**: sk-f1e68b6985d143be8ad72e821e1c3d2e
+- **API Key**: <REDACTED>
 - **集成场景**: 
   - 方案生成：基于AI诊断结果生成个性化治疗方案
   - 风险评估：评估混合感染风险和继发感染可能性

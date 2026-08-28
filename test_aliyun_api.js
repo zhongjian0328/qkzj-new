@@ -1,7 +1,11 @@
 const axios = require('axios');
 
 // 配置API参数
-const apiKey = 'sk-338377ca0e504b9ca10c9fab7fe9d773';
+const apiKey = process.env.DASHSCOPE_API_KEY;
+if (!apiKey) {
+  console.error('错误: 缺少环境变量 DASHSCOPE_API_KEY，请先设置后再运行（如 DASHSCOPE_API_KEY=sk-xxx node test_aliyun_api.js）');
+  process.exit(1);
+}
 const baseURL = 'https://dashscope.aliyuncs.com/compatible-mode/v1';
 const model = 'qwen-turbo';
 

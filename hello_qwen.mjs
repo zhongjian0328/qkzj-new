@@ -2,7 +2,11 @@ import OpenAI from "openai";
 
 try {
     // 直接使用环境变量值创建OpenAI实例
-    const apiKey = "sk-338377ca0e504b9ca10c9fab7fe9d773";
+    const apiKey = process.env.DASHSCOPE_API_KEY;
+    if (!apiKey) {
+        console.log("API调用失败：缺少环境变量 DASHSCOPE_API_KEY，请先设置后再运行");
+        process.exit(1);
+    }
     const baseURL = "https://dashscope.aliyuncs.com/compatible-mode/v1";
     
     const openai = new OpenAI({

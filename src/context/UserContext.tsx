@@ -1,12 +1,16 @@
 import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { authApi } from '../services/api';
 
 // 用户角色类型
-export type UserRole = 'FARMER' | 'INSTITUTION' | 'STUDENT' | 'TEACHER';
-export type UserSubRole = 
+export type UserRole = 'FARMER' | 'INSTITUTION' | 'STUDENT' | 'TEACHER' | 'VETERINARIAN' | 'RESEARCHER' | 'ADMIN';
+export type UserSubRole =
   | 'SMALL' | 'COOPERATIVE' | 'ENTERPRISE' // 养殖户子角色
   | 'CDC' | 'RESEARCH_INSTITUTE' | 'SERVICE_PROVIDER' // 机构子角色
-  | 'LEARNING_STUDENT' | 'COGNITIVE_INTERN' | 'ADVANCED_INTERN'; // 学生子角色
+  | 'LEARNING_STUDENT' | 'COGNITIVE_INTERN' | 'ADVANCED_INTERN' // 学生子角色
+  | 'GENERAL' | 'SPECIALIST' // 兽医子角色
+  | 'RESEARCHER_GENERAL' | 'LAB_RESEARCHER' // 科研人员子角色
+  | 'SYSTEM'; // 管理员子角色
 
 // 用户信息类型
 interface User {
@@ -198,74 +202,68 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (phoneNumber: string, codeOrRoleType: string, subRole?: any) => {
     dispatch({ type: 'LOGIN_REQUEST' });
     try {
-      // 检查是否是体验角色登录
-      const isExperienceLogin = codeOrRoleType === 'FARMER' || 
-                               codeOrRoleType === 'INSTITUTION' || 
-                               codeOrRoleType === 'STUDENT';
-      
+      // 体验角色登录：仍需走真实后端 API
+      const isExperienceLogin = codeOrRoleType === 'FARMER' ||
+                               codeOrRoleType === 'INSTITUTION' ||
+                               codeOrRoleType === 'STUDENT' ||
+                               codeOrRoleType === 'TEACHER';
+
       if (isExperienceLogin) {
-        // 体验角色登录
-        const roleType = codeOrRoleType as 'FARMER' | 'INSTITUTION' | 'STUDENT';
-        
-        // 模拟API调用 - 仅在开发环境中允许
-        if (process.env.NODE_ENV !== 'development') {
-          throw new Error('体验角色功能仅在开发环境中可用');
-        }
-        
-        const mockUser: User = {
-          id: `experience-${Date.now()}`,
-          phoneNumber: `experience-${phoneNumber}`,
-          nickname: getRoleNickname(roleType, subRole as UserSubRole),
-          avatar: 'https://s.coze.cn/image/rFqxc53MSiw/',
-          roleType,
-          subRole: subRole as UserSubRole,
-          authStatus: 'VERIFIED',
-          registrationDate: new Date().toISOString(),
-          lastLoginDate: new Date().toISOString(),
-        };
-        const mockToken = 'mock-jwt-token';
-        
-        // 模拟API延迟
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // 保存token到AsyncStorage
-        await AsyncStorage.setItem('token', mockToken);
-        
-        dispatch({ type: 'LOGIN_SUCCESS', payload: { user: mockUser, token: mockToken } });
-      } else {
-        // 普通验证码登录
-        // 验证验证码
-        const verificationCode = codeOrRoleType;
-        const storedCode = verificationCodes[phoneNumber];
-        if (!storedCode || storedCode.code !== verificationCode || storedCode.expiresAt < Date.now()) {
-          throw new Error('验证码无效或已过期');
-        }
-        
-        // 模拟API调用 - 仅在开发环境中允许
-        if (process.env.NODE_ENV !== 'development') {
-          throw new Error('模拟登录功能仅在开发环境中可用');
-        }
-        
-        const mockUser: User = {
-          id: '1',
+        // 体验角色使用默认密码走后端登录接口
+        const response: any = await authApi.login({
           phoneNumber,
-          nickname: '测试用户',
-          avatar: 'https://s.coze.cn/image/rFqxc53MSiw/',
-          roleType: 'FARMER',
-          subRole: 'SMALL',
-          authStatus: 'VERIFIED',
-          registrationDate: new Date().toISOString(),
-          lastLoginDate: new Date().toISOString(),
+          password: 'experience123',
+        });
+
+        const backendUser = response.data?.user;
+        const token = response.data?.token;
+
+        if (!token) {
+          throw new Error('登录失败：未获取到有效 token');
+        }
+
+        const user: User = {
+          id: backendUser?._id || backendUser?.id || `experience-${Date.now()}`,
+          phoneNumber: backendUser?.phoneNumber || phoneNumber,
+          nickname: backendUser?.nickname || getRoleNickname(codeOrRoleType as UserRole, subRole as UserSubRole),
+          avatar: backendUser?.avatar || 'https://s.coze.cn/image/rFqxc53MSiw/',
+          roleType: (backendUser?.roleType || codeOrRoleType) as UserRole,
+          subRole: (backendUser?.subRole || subRole) as UserSubRole,
+          authStatus: (backendUser?.authStatus || 'VERIFIED') as User['authStatus'],
+          registrationDate: backendUser?.createdAt || new Date().toISOString(),
+          lastLoginDate: backendUser?.lastLoginAt || new Date().toISOString(),
         };
-        const mockToken = 'mock-jwt-token';
-        
-        // 模拟API延迟
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // 保存token到AsyncStorage
-        await AsyncStorage.setItem('token', mockToken);
-        
-        dispatch({ type: 'LOGIN_SUCCESS', payload: { user: mockUser, token: mockToken } });
+
+        await AsyncStorage.setItem('token', token);
+        dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token } });
+      } else {
+        // 普通验证码登录：调用后端登录接口（手机号+密码模式）
+        const response: any = await authApi.login({
+          phoneNumber,
+          password: codeOrRoleType,
+        });
+
+        const backendUser = response.data?.user;
+        const token = response.data?.token;
+
+        if (!token) {
+          throw new Error('登录失败：未获取到有效 token');
+        }
+
+        const user: User = {
+          id: backendUser?._id || backendUser?.id || '1',
+          phoneNumber: backendUser?.phoneNumber || phoneNumber,
+          nickname: backendUser?.nickname || '用户',
+          avatar: backendUser?.avatar || 'https://s.coze.cn/image/rFqxc53MSiw/',
+          roleType: (backendUser?.roleType || 'FARMER') as UserRole,
+          subRole: (backendUser?.subRole || 'SMALL') as UserSubRole,
+          authStatus: (backendUser?.authStatus || 'UNVERIFIED') as User['authStatus'],
+          registrationDate: backendUser?.createdAt || new Date().toISOString(),
+          lastLoginDate: backendUser?.lastLoginAt || new Date().toISOString(),
+        };
+
+        await AsyncStorage.setItem('token', token);
+        dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token } });
       }
     } catch (error) {
       dispatch({ type: 'LOGIN_FAILURE', payload: error instanceof Error ? error.message : '登录失败，请稍后重试' });
@@ -281,6 +279,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return '疫控机构用户';
       case 'STUDENT':
         return '实习学生';
+      case 'TEACHER':
+        return '指导教师';
       default:
         return '体验用户';
     }
@@ -290,36 +290,37 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const register = async (phoneNumber: string, verificationCode: string, password: string) => {
     dispatch({ type: 'LOGIN_REQUEST' });
     try {
-      // 这里应该调用API进行注册
-      // 验证验证码
-      const storedCode = verificationCodes[phoneNumber];
-      if (!storedCode || storedCode.code !== verificationCode || storedCode.expiresAt < Date.now()) {
-        throw new Error('验证码无效或已过期');
-      }
-      
-      // 模拟API调用
-      const mockUser: User = {
-        id: '1',
+      // 调用后端注册接口
+      const response: any = await authApi.register({
         phoneNumber,
-        nickname: '测试用户',
-        avatar: 'https://s.coze.cn/image/rFqxc53MSiw/',
+        password,
         roleType: 'FARMER',
         subRole: 'SMALL',
-        authStatus: 'UNVERIFIED',
-        registrationDate: new Date().toISOString(),
-        lastLoginDate: new Date().toISOString(),
+      });
+
+      const backendUser = response.data?.user;
+      const token = response.data?.token;
+
+      if (!token) {
+        throw new Error('注册失败：未获取到有效 token');
+      }
+
+      const user: User = {
+        id: backendUser?._id || backendUser?.id || '1',
+        phoneNumber: backendUser?.phoneNumber || phoneNumber,
+        nickname: backendUser?.nickname || '用户',
+        avatar: backendUser?.avatar || 'https://s.coze.cn/image/rFqxc53MSiw/',
+        roleType: (backendUser?.roleType || 'FARMER') as UserRole,
+        subRole: (backendUser?.subRole || 'SMALL') as UserSubRole,
+        authStatus: (backendUser?.authStatus || 'UNVERIFIED') as User['authStatus'],
+        registrationDate: backendUser?.createdAt || new Date().toISOString(),
+        lastLoginDate: backendUser?.lastLoginAt || new Date().toISOString(),
       };
-      const mockToken = 'mock-jwt-token';
-      
-      // 模拟API延迟
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // 保存token到AsyncStorage
-      await AsyncStorage.setItem('token', mockToken);
-      
-      dispatch({ type: 'LOGIN_SUCCESS', payload: { user: mockUser, token: mockToken } });
+
+      await AsyncStorage.setItem('token', token);
+      dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token } });
     } catch (error) {
-      dispatch({ type: 'LOGIN_FAILURE', payload: '注册失败，验证码无效或已过期' });
+      dispatch({ type: 'LOGIN_FAILURE', payload: error instanceof Error ? error.message : '注册失败，请稍后重试' });
     }
   };
 

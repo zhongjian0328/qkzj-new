@@ -225,7 +225,7 @@ src/
 - API文档：待生成
 
 ### 10.3 账号配置
-- Expo账号：zhongjian475 / Gong0218@@
+- Expo账号：zhongjian475 / <REDACTED>
 - GitHub账号：zhongjian0328 / zhongjian0328@gmail.com
 
 ## 11. 开发规范

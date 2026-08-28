@@ -107,15 +107,15 @@ const orderSchema = new mongoose.Schema({
     default: Date.now
   }
 }, {
-  timestamps: true,
-  indexes: [
-    { userId: 1 }, // 按用户ID索引，便于用户查看自己的订单
-    { serviceProviderId: 1 }, // 按服务商ID索引，便于服务商管理订单
-    { orderStatus: 1 }, // 按订单状态索引，便于订单状态管理
-    { productType: 1 }, // 按产品类型索引，便于统计分析
-    { orderDate: -1 } // 按订单日期倒序索引，便于查看最新订单
-  ]
+  timestamps: true
 });
+
+// 索引
+orderSchema.index({ userId: 1 });
+orderSchema.index({ serviceProviderId: 1 });
+orderSchema.index({ orderStatus: 1 });
+orderSchema.index({ productType: 1 });
+orderSchema.index({ orderDate: -1 });
 
 // 订单模型
 const Order = mongoose.model('Order', orderSchema);

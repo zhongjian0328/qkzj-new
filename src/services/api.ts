@@ -1,9 +1,16 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Constants from 'expo-constants';
 
 // 创建axios实例
+// apiUrl 回退链：环境变量 EXPO_PUBLIC_API_URL -> app.json/app.config.js 的 extra.apiUrl -> localhost 开发默认值
+const apiUrl =
+  process.env.EXPO_PUBLIC_API_URL ||
+  (Constants.expoConfig && Constants.expoConfig.extra && Constants.expoConfig.extra.apiUrl) ||
+  'http://localhost:3000/api';
+
 const api = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000/api',
+  baseURL: apiUrl,
   timeout: 65000,
   headers: {
     'Content-Type': 'application/json',
@@ -20,12 +27,28 @@ export const checkNetworkStatus = async () => {
   }
 };
 
+// 网络错误检测函数
+const isNetworkError = (error: any): boolean => {
+  return !error.response || error.code === 'ECONNABORTED' || error.code === 'NETWORK_ERROR' || error.code === 'ERR_NETWORK';
+};
+
+// 判断是否应该重试：网络错误或 5xx 服务器错误
+const shouldRetry = (error: any): boolean => {
+  if (isNetworkError(error)) return true;
+  const status = error.response?.status;
+  return status >= 500 && status < 600;
+};
+
 // 请求重试机制
 const retryInterceptor = (retryCount = 3) => {
   return async (error: any) => {
     const { config } = error;
-    // 如果没有配置或重试次数已用完，则直接返回错误
-    if (!config || config._retryCount >= retryCount) {
+    // 如果不需要重试（非网络错误且非 5xx），直接拒绝
+    if (!config || !shouldRetry(error)) {
+      return Promise.reject(error);
+    }
+    // 如果重试次数已用完，直接拒绝
+    if (config._retryCount >= retryCount) {
       return Promise.reject(error);
     }
 
@@ -40,7 +63,12 @@ const retryInterceptor = (retryCount = 3) => {
     await new Promise(resolve => setTimeout(resolve, delay));
 
     // 重新发送请求
-    return api(config);
+    try {
+      return await api(config);
+    } catch (retryError) {
+      // 如果重试后仍然失败，继续传播错误
+      return Promise.reject(retryError);
+    }
   };
 };
 
@@ -65,9 +93,11 @@ api.interceptors.response.use(
   async (error) => {
     // 应用重试机制
     const retryError = await retryInterceptor(3)(error);
-    if (retryError === error) {
-      // 重试失败，处理错误响应
-      if (error.response?.status === 401) {
+    // 如果 retryInterceptor 返回了新响应（重试成功），直接返回
+    // 如果返回了错误对象（重试耗尽或不需重试），进行处理
+    if (retryError instanceof Error || retryError?.response || retryError?.code) {
+      // 处理错误响应
+      if (retryError.response?.status === 401) {
         // 处理未授权错误，例如跳转到登录页面
         try {
           await AsyncStorage.removeItem('token');
@@ -75,16 +105,16 @@ api.interceptors.response.use(
           console.error('Failed to remove token from AsyncStorage:', storageError);
         }
         // 可以通过事件或状态管理通知应用处理登录过期
-      } else if (error.code === 'ECONNABORTED') {
+      } else if (retryError.code === 'ECONNABORTED') {
         // 处理请求超时错误
         console.error('请求超时，请检查网络连接或稍后重试');
-      } else if (error.response?.status === 400) {
+      } else if (retryError.response?.status === 400) {
         // 处理客户端错误
-        console.error('请求参数错误:', error.response.data?.message || '无效的请求参数');
-      } else if (error.response?.status === 500) {
+        console.error('请求参数错误:', retryError.response.data?.message || '无效的请求参数');
+      } else if (retryError.response?.status >= 500) {
         // 处理服务器错误
         console.error('服务器内部错误，请稍后重试');
-      } else if (!error.response) {
+      } else if (isNetworkError(retryError)) {
         // 处理网络连接错误
         console.error('网络连接失败，请检查您的网络设置');
       }

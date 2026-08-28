@@ -190,6 +190,55 @@ const HomeScreen: React.FC = () => {
             }
           ]
         };
+      case 'TEACHER':
+        return {
+          title: '禽康智检',
+          welcomeText: `欢迎，${user.nickname}`,
+          sections: [
+            {
+              title: '教学管理',
+              icon: 'people-outline',
+              backgroundColor: '#FFF3E0',
+              items: [
+                {
+                  id: 'mentor-management',
+                  title: '导师管理',
+                  description: '查看学生和实习项目',
+                  icon: 'people-outline',
+                  navigation: 'MentorManagement'
+                },
+                {
+                  id: 'internship-logs',
+                  title: '实习日志批阅',
+                  description: '查看和批阅学生实习日志',
+                  icon: 'create-outline',
+                  navigation: 'InternLog'
+                }
+              ]
+            },
+            {
+              title: '学习资源',
+              icon: 'book-outline',
+              backgroundColor: '#F3E8FF',
+              items: [
+                {
+                  id: 'knowledge-quiz',
+                  title: '题库管理',
+                  description: '管理题库和知识测验',
+                  icon: 'school-outline',
+                  navigation: 'QuestionBank'
+                },
+                {
+                  id: 'pathology-atlas',
+                  title: '病理图谱',
+                  description: '浏览典型病理图片',
+                  icon: 'images-outline',
+                  navigation: 'KnowledgeGraph'
+                }
+              ]
+            }
+          ]
+        };
       default:
         return {
           title: '禽康智检',
@@ -216,17 +265,19 @@ const HomeScreen: React.FC = () => {
               <View style={styles.homeWelcomeText}>
                 <Text style={styles.homeWelcomeTitle}>{homeConfig.welcomeText}</Text>
                 <Text style={styles.homeWelcomeDescription}>
-                  {user?.roleType === 'FARMER' ? '开始您的AI诊断之旅' : 
-                   user?.roleType === 'INSTITUTION' ? '开始您的疫情监测工作' : 
-                   user?.roleType === 'STUDENT' ? '开始您的学习和实习' : 
+                  {user?.roleType === 'FARMER' ? '开始您的AI诊断之旅' :
+                   user?.roleType === 'INSTITUTION' ? '开始您的疫情监测工作' :
+                   user?.roleType === 'STUDENT' ? '开始您的学习和实习' :
+                   user?.roleType === 'TEACHER' ? '开始您的教学管理工作' :
                    '探索禽康智检的各项功能'}
                 </Text>
               </View>
               <View style={styles.homeWelcomeIcon}>
                 <Ionicons 
-                  name={user?.roleType === 'FARMER' ? 'leaf-outline' : 
-                   user?.roleType === 'INSTITUTION' ? 'business-outline' : 
-                   user?.roleType === 'STUDENT' ? 'school-outline' : 'medical-outline'} 
+                  name={user?.roleType === 'FARMER' ? 'leaf-outline' :
+                   user?.roleType === 'INSTITUTION' ? 'business-outline' :
+                   user?.roleType === 'STUDENT' ? 'school-outline' :
+                   user?.roleType === 'TEACHER' ? 'people-outline' : 'medical-outline'} 
                   size={48} 
                   color="#1F5E52" 
                 />

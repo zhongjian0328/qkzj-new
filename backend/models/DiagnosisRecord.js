@@ -219,6 +219,10 @@ const diagnosisRecordSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// 索引
+diagnosisRecordSchema.index({ userId: 1, diagnosisTime: -1 });
+diagnosisRecordSchema.index({ location: '2dsphere' });
+
 // 诊断记录模型
 const DiagnosisRecord = mongoose.model('DiagnosisRecord', diagnosisRecordSchema);
 

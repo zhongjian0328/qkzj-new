@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat > *)",
+      "Bash(rm \"C:\\\\Users\\\\龚钟见\\\\Documents\\\\qinkangzhijian-APP_GENERATION \\(V2\\)\\\\MEMORY.md\")",
+      "Bash(iconv -f UTF-16LE -t UTF-8 tsc.log)",
+      "Bash(xxd enckey_121236834)",
+      "Bash(git check-ignore *)",
+      "Bash(node -e \"require\\('./controllers/authController'\\); require\\('./controllers/aiDiagnosisController'\\); require\\('./routes/aiDiagnosisRoutes'\\); require\\('./routes/authRoutes'\\); console.log\\('syntax ok'\\);\")",
+      "Bash(node -e \"process.env.JWT_SECRET='x'; require\\('./controllers/authController'\\); require\\('./controllers/aiDiagnosisController'\\); require\\('./routes/aiDiagnosisRoutes'\\); require\\('./routes/authRoutes'\\); console.log\\('syntax ok'\\);\")",
+      "Bash(sed -i 's/sk-338377ca0e504b9ca10c9fab7fe9d773/your_dashscope_api_key/' \"C:\\\\Users\\\\龚钟见\\\\Documents\\\\qinkangzhijian-APP_GENERATION \\(V2\\)\\\\backend\\\\.env\")",
+      "Bash(node -c utils/aiService.js)",
+      "Bash(git rm *)",
+      "Bash(cd '/c/Users/龚钟见/Documents/qinkangzhijian-APP_GENERATION \\(V2\\)' && cat package.json | grep -E '\"version\"' )"
+    ]
+  }
+}

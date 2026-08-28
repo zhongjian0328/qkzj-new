@@ -546,11 +546,31 @@ exports.getDiagnosisHistory = async (req, res, next) => {
   }
 };
 
-// AI服务健康检查
+// AI服务健康检查（公开接口，仅返回最小信息，避免泄露密钥配置状态）
 exports.healthCheck = async (req, res, next) => {
   try {
     const healthStatus = await aiService.healthCheck();
-    
+
+    res.status(200).json({
+      status: healthStatus.status === 'healthy' ? 'ok' : healthStatus.status,
+      uptime: process.uptime(),
+      timestamp: healthStatus.timestamp
+    });
+  } catch (error) {
+    console.error('健康检查失败:', error.message);
+    res.status(500).json({
+      status: 'error',
+      message: '健康检查失败',
+      error: error.message
+    });
+  }
+};
+
+// AI服务详细健康检查（含各组件与密钥配置状态，仅限管理员）
+exports.healthCheckDetail = async (req, res, next) => {
+  try {
+    const healthStatus = await aiService.healthCheck();
+
     res.status(200).json({
       status: healthStatus.status,
       data: healthStatus

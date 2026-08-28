@@ -70,6 +70,9 @@ npm start
 ```
 
 ### 生产环境部署
+
+> **⚠️ 上线前必读**：必须先将 `eas.json` 中 `production.env.EXPO_PUBLIC_API_URL` 的 `https://API_DOMAIN_PLACEHOLDER/api` 替换为实际后端域名（例如 `https://api.your-domain.com/api`），否则生产包将无法连接后端服务。
+
 ```bash
 # 切换到生产分支
 git checkout master

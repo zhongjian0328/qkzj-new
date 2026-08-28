@@ -23,7 +23,7 @@
         "gradleCommand": ":app:assembleRelease"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "http://localhost:3000/api"
+        "EXPO_PUBLIC_API_URL": "https://API_DOMAIN_PLACEHOLDER/api"
       }
     }
   },
