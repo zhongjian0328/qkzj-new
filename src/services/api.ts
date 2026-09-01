@@ -440,6 +440,56 @@ export const productionApi = {
   }) => api.put(`/production/employees/${employeeId}/permission`, data),
 };
 
+// 环境数据相关API
+export const environmentApi = {
+  // 创建环境记录
+  createRecord: (data: {
+    farmName: string;
+    temperature?: number;
+    humidity?: number;
+    ammonia?: number;
+    co2?: number;
+    pm25?: number;
+    pm10?: number;
+    batchId?: string;
+    recordDate?: string;
+    recorder?: string;
+    notes?: string;
+  }) => api.post('/environment/records', data),
+
+  // 获取环境记录列表
+  getRecords: (params?: {
+    batchId?: string;
+    startDate?: string;
+    endDate?: string;
+    farmName?: string;
+    page?: number;
+    limit?: number;
+  }) => api.get('/environment/records', { params }),
+
+  // 获取单条环境记录详情
+  getRecordById: (id: string) => api.get(`/environment/records/${id}`),
+
+  // 更新环境记录
+  updateRecord: (id: string, data: any) => api.put(`/environment/records/${id}`, data),
+
+  // 删除环境记录
+  deleteRecord: (id: string) => api.delete(`/environment/records/${id}`),
+
+  // 获取环境统计数据
+  getStatistics: (params?: {
+    startDate?: string;
+    endDate?: string;
+  }) => api.get('/environment/statistics', { params }),
+
+  // 获取环境预警列表
+  getAlerts: (params?: {
+    alertType?: string;
+    startDate?: string;
+    endDate?: string;
+  }) => api.get('/environment/alerts', { params }),
+};
+
 // 疫情监测相关API
 export const epidemicApi = {
   // 获取疫情热力图数据
