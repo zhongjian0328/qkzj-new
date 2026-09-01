@@ -103,3 +103,62 @@ exports.verifyAuthStatus = (req, res, next) => {
     next(error);
   }
 };
+
+/**
+ * 认证或刷新中间件 - 尝试验证 access_token，若过期则允许用 refresh_token 换取新的
+ */
+exports.authenticateOrRefresh = async (req, res, next) => {
+  try {
+    // 从请求头获取 Authorization 令牌
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ status: 'error', message: '未提供有效的认证令牌' });
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    // 开发环境下允许使用模拟令牌
+    if (token === 'mock-jwt-token' && process.env.NODE_ENV === 'development') {
+      const { ObjectId } = require('mongoose').Types;
+      const mockUserId = new ObjectId();
+
+      req.user = {
+        _id: mockUserId,
+        id: mockUserId,
+        roleType: 'FARMER',
+        subRole: 'SMALL',
+        authStatus: 'APPROVED',
+        nickname: '模拟用户',
+        avatar: 'https://example.com/avatar.jpg'
+      };
+      return next();
+    }
+
+    // 尝试验证 access_token
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      const user = await User.findById(decoded.id);
+      if (!user) {
+        return res.status(401).json({ status: 'error', message: '用户不存在或令牌已过期' });
+      }
+      req.user = user;
+      return next();
+    } catch (verifyError) {
+      // 如果是 TokenExpiredError，允许前端用 refresh_token 自动重试
+      if (verifyError.name === 'TokenExpiredError') {
+        return res.status(401).json({
+          status: 'error',
+          message: '认证令牌已过期',
+          code: 'TOKEN_EXPIRED',
+          hint: '请使用 refresh_token 刷新 access_token'
+        });
+      }
+      if (verifyError.name === 'JsonWebTokenError') {
+        return res.status(401).json({ status: 'error', message: '无效的认证令牌' });
+      }
+      next(verifyError);
+    }
+  } catch (error) {
+    next(error);
+  }
+};

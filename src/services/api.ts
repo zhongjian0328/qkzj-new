@@ -2,6 +2,14 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 
+// 扩展 AxiosRequestConfig 以支持自定义标志
+declare module 'axios' {
+  interface InternalAxiosRequestConfig {
+    _retryCount?: number;
+    _retry?: boolean;
+  }
+}
+
 // 创建axios实例
 // apiUrl 回退链：环境变量 EXPO_PUBLIC_API_URL -> app.json/app.config.js 的 extra.apiUrl -> localhost 开发默认值
 const apiUrl =
@@ -72,11 +80,37 @@ const retryInterceptor = (retryCount = 3) => {
   };
 };
 
+// 事件发射器：用于在 token 过期时通知 UserContext
+type EventCallback = () => void;
+const eventListeners = new Map<string, Set<EventCallback>>();
+
+export const on = (event: string, callback: EventCallback) => {
+  if (!eventListeners.has(event)) {
+    eventListeners.set(event, new Set());
+  }
+  eventListeners.get(event)!.add(callback);
+};
+
+export const off = (event: string, callback: EventCallback) => {
+  eventListeners.get(event)?.delete(callback);
+};
+
+const emit = (event: string) => {
+  eventListeners.get(event)?.forEach((cb) => cb());
+};
+
+// 用于绕过拦截器执行刷新请求的原始 axios 实例
+const rawAxios = axios.create({
+  baseURL: api.defaults.baseURL,
+  timeout: api.defaults.timeout,
+  headers: { 'Content-Type': 'application/json' },
+});
+
 // 请求拦截器
 api.interceptors.request.use(
   async (config) => {
-    // 从AsyncStorage获取token
-    const token = await AsyncStorage.getItem('token');
+    // 从 AsyncStorage 获取 accessToken
+    const token = await AsyncStorage.getItem('accessToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -96,15 +130,55 @@ api.interceptors.response.use(
     // 如果 retryInterceptor 返回了新响应（重试成功），直接返回
     // 如果返回了错误对象（重试耗尽或不需重试），进行处理
     if (retryError instanceof Error || retryError?.response || retryError?.code) {
-      // 处理错误响应
+      // 处理 401 未授权错误 — 尝试刷新 token
       if (retryError.response?.status === 401) {
-        // 处理未授权错误，例如跳转到登录页面
-        try {
-          await AsyncStorage.removeItem('token');
-        } catch (storageError) {
-          console.error('Failed to remove token from AsyncStorage:', storageError);
+        const originalRequest = retryError.config;
+        // 如果已经重试过（防止无限循环），直接清除 token 并通知重新登录
+        if (originalRequest?._retry) {
+          try {
+            await AsyncStorage.multiRemove(['accessToken', 'refreshToken']);
+          } catch (e) {
+            console.error('Failed to clear tokens:', e);
+          }
+          emit('TOKEN_EXPIRED');
+          return Promise.reject(retryError);
         }
-        // 可以通过事件或状态管理通知应用处理登录过期
+
+        originalRequest._retry = true;
+
+        try {
+          const refreshToken = await AsyncStorage.getItem('refreshToken');
+          if (!refreshToken) {
+            throw new Error('No refresh token available');
+          }
+
+          const refreshResponse = await rawAxios.post('/auth/refresh-token', {
+            refreshToken,
+          });
+
+          const { accessToken, refreshToken: newRefreshToken } = refreshResponse.data?.data || {};
+          if (!accessToken) {
+            throw new Error('Refresh token returned invalid data');
+          }
+
+          await AsyncStorage.setItem('accessToken', accessToken);
+          if (newRefreshToken) {
+            await AsyncStorage.setItem('refreshToken', newRefreshToken);
+          }
+
+          // 用新 token 重试原请求
+          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+          return api(originalRequest);
+        } catch (refreshError) {
+          // 刷新失败：清除所有 token，通知重新登录
+          try {
+            await AsyncStorage.multiRemove(['accessToken', 'refreshToken']);
+          } catch (e) {
+            console.error('Failed to clear tokens:', e);
+          }
+          emit('TOKEN_EXPIRED');
+          return Promise.reject(refreshError);
+        }
       } else if (retryError.code === 'ECONNABORTED') {
         // 处理请求超时错误
         console.error('请求超时，请检查网络连接或稍后重试');
@@ -145,6 +219,10 @@ export const authApi = {
   verifyCode: (data: { phoneNumber: string; code: string }) => 
     api.post('/auth/verify-code', data),
   
+  // 刷新 access_token
+  refreshToken: (data: { refreshToken: string }) =>
+    api.post('/auth/refresh-token', data),
+
   // 获取当前用户信息
   getCurrentUser: () => api.get('/auth/current-user'),
   
@@ -158,6 +236,10 @@ export const authApi = {
     mentorId: string;
   }>) => api.put('/auth/update', data),
   
+  // 忘记密码
+  forgotPassword: (data: { phoneNumber: string; code: string; newPassword: string }) =>
+    api.post('/auth/forgot-password', data),
+
   // 用户认证
   certify: (data: {
     certificationType: string;

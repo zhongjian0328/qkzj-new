@@ -64,13 +64,13 @@ const RegisterScreen: React.FC = () => {
       setErrors({ phoneNumber: '请输入正确的手机号' });
       return;
     }
-    
+
     try {
       setLoading(true);
-      // 调用发送验证码API
-      // await api.sendVerificationCode(phoneNumber);
-      
-      // 模拟倒计时
+      // 调用真实 API 发送验证码
+      await authApi.getVerificationCode(phoneNumber);
+
+      // 发送成功，开始倒计时
       setCountdown(60);
       const timer = setInterval(() => {
         setCountdown(prev => {
@@ -81,10 +81,10 @@ const RegisterScreen: React.FC = () => {
           return prev - 1;
         });
       }, 1000);
-      
+
       setErrors({});
     } catch (error) {
-      setErrors({ general: '发送验证码失败，请稍后重试' });
+      setErrors({ general: error instanceof Error ? error.message : '发送验证码失败，请稍后重试' });
     } finally {
       setLoading(false);
     }
@@ -94,22 +94,25 @@ const RegisterScreen: React.FC = () => {
     if (!validateForm()) {
       return;
     }
-    
+
     try {
       setLoading(true);
-      
-      // 调用注册API
+
+      // 先验证验证码
+      await authApi.verifyCode({ phoneNumber, code: verificationCode });
+
+      // 验证通过，调用注册API
       const response = await authApi.register({
         phoneNumber,
         password,
         roleType,
         subRole: 'SMALL' // 默认子角色，根据实际情况调整
       });
-      
+
       // 注册成功，导航到登录页面
       navigation.navigate('Login');
     } catch (error) {
-      setErrors({ general: '注册失败，请稍后重试' });
+      setErrors({ general: error instanceof Error ? error.message : '注册失败，请稍后重试' });
     } finally {
       setLoading(false);
     }

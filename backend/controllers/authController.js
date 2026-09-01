@@ -3,21 +3,34 @@ const jwt = require('jsonwebtoken');
 
 // JWT配置
 const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
+const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || '7d';
+const REFRESH_TOKEN_EXPIRES_IN = process.env.REFRESH_TOKEN_EXPIRES_IN || '14d';
 
 // 验证必要的环境变量
 if (!JWT_SECRET) {
   throw new Error('JWT_SECRET environment variable is required');
 }
 
-// 生成JWT令牌
-const generateToken = (user) => {
+// 生成访问令牌（access_token）- 7天过期
+const generateAccessToken = (user) => {
   return jwt.sign(
     { id: user._id, phoneNumber: user.phoneNumber, roleType: user.roleType },
     JWT_SECRET,
-    { expiresIn: JWT_EXPIRES_IN }
+    { expiresIn: ACCESS_TOKEN_EXPIRES_IN }
   );
 };
+
+// 生成刷新令牌（refresh_token）- 14天过期，payload仅含userId
+const generateRefreshToken = (userId) => {
+  return jwt.sign(
+    { id: userId },
+    JWT_SECRET,
+    { expiresIn: REFRESH_TOKEN_EXPIRES_IN }
+  );
+};
+
+// 模块级内存Map存储refresh token，key=userId，value=refreshToken
+const refreshTokens = new Map();
 
 // 用户注册
 exports.register = async (req, res, next) => {
@@ -40,14 +53,17 @@ exports.register = async (req, res, next) => {
     });
     
     // 生成令牌
-    const token = generateToken(user);
-    
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user._id);
+    refreshTokens.set(user._id.toString(), refreshToken);
+
     res.status(201).json({
       status: 'success',
       message: '注册成功',
       data: {
         user,
-        token
+        accessToken,
+        refreshToken
       }
     });
   } catch (error) {
@@ -70,14 +86,17 @@ exports.login = async (req, res, next) => {
     await user.updateLastLogin();
     
     // 生成令牌
-    const token = generateToken(user);
-    
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user._id);
+    refreshTokens.set(user._id.toString(), refreshToken);
+
     res.status(200).json({
       status: 'success',
       message: '登录成功',
       data: {
         user,
-        token
+        accessToken,
+        refreshToken
       }
     });
   } catch (error) {
@@ -328,6 +347,116 @@ exports.changePassword = async (req, res, next) => {
     res.status(200).json({
       status: 'success',
       message: '密码修改成功'
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// 刷新令牌
+exports.refreshToken = async (req, res, next) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      return res.status(400).json({ status: 'error', message: '未提供刷新令牌' });
+    }
+
+    // 验证 refresh_token 格式和有效期
+    let decoded;
+    try {
+      decoded = jwt.verify(refreshToken, JWT_SECRET);
+    } catch (err) {
+      if (err.name === 'TokenExpiredError') {
+        return res.status(401).json({ status: 'error', message: '刷新令牌已过期，请重新登录' });
+      }
+      return res.status(401).json({ status: 'error', message: '无效的刷新令牌' });
+    }
+
+    const userId = decoded.id.toString();
+
+    // 查 Map 是否匹配该 userId
+    const storedToken = refreshTokens.get(userId);
+    if (!storedToken || storedToken !== refreshToken) {
+      return res.status(401).json({ status: 'error', message: '刷新令牌不匹配，请重新登录' });
+    }
+
+    // 旧 token 从 Map 删除，轮换签发新 token
+    refreshTokens.delete(userId);
+
+    // 查用户以获取完整信息
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(401).json({ status: 'error', message: '用户不存在' });
+    }
+
+    const newAccessToken = generateAccessToken(user);
+    const newRefreshToken = generateRefreshToken(user._id);
+    refreshTokens.set(userId, newRefreshToken);
+
+    res.status(200).json({
+      status: 'success',
+      message: '令牌刷新成功',
+      data: {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// 密码找回
+exports.forgotPassword = async (req, res, next) => {
+  try {
+    const { phoneNumber, code, newPassword } = req.body;
+
+    // 参数校验
+    if (!phoneNumber || !code || !newPassword) {
+      return res.status(400).json({ status: 'error', message: '缺少必要参数' });
+    }
+
+    // 查用户
+    const user = await User.findOne({ phoneNumber });
+    if (!user) {
+      return res.status(404).json({ status: 'error', message: '手机号未注册' });
+    }
+
+    // 验证码验证逻辑复用 verificationCodes Map
+    const record = verificationCodes.get(phoneNumber);
+    if (!record) {
+      return res.status(400).json({ status: 'error', message: '验证码不存在或已失效，请重新获取' });
+    }
+
+    if (Date.now() > record.expiresAt) {
+      verificationCodes.delete(phoneNumber);
+      return res.status(400).json({ status: 'error', message: '验证码已过期，请重新获取' });
+    }
+
+    if (record.attempts >= VERIFICATION_CODE_MAX_ATTEMPTS) {
+      verificationCodes.delete(phoneNumber);
+      return res.status(400).json({ status: 'error', message: '验证码错误次数过多，请重新获取' });
+    }
+
+    if (record.code !== code) {
+      record.attempts += 1;
+      return res.status(400).json({ status: 'error', message: '验证码错误' });
+    }
+
+    // 验证通过，删除验证码
+    verificationCodes.delete(phoneNumber);
+
+    // 更新密码
+    user.password = newPassword;
+    await user.save();
+
+    // 强制重新登录：清除该手机号对应的 refresh token
+    refreshTokens.delete(user._id.toString());
+
+    res.status(200).json({
+      status: 'success',
+      message: '密码重置成功，请重新登录'
     });
   } catch (error) {
     next(error);

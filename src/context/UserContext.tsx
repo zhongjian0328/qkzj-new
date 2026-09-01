@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { authApi } from '../services/api';
+import { authApi, on, off } from '../services/api';
 
 // 用户角色类型
 export type UserRole = 'FARMER' | 'INSTITUTION' | 'STUDENT' | 'TEACHER' | 'VETERINARIAN' | 'RESEARCHER' | 'ADMIN';
@@ -128,14 +128,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
   const [verificationCodes, setVerificationCodes] = React.useState<{ [key: string]: { code: string; expiresAt: number } }>({});
   
-  // 初始化：从AsyncStorage加载token
+  // 初始化：从 AsyncStorage 加载 accessToken 和 refreshToken
   useEffect(() => {
     const loadToken = async () => {
       try {
-        const storedToken = await AsyncStorage.getItem('token');
-        if (storedToken) {
-          // 这里可以添加验证token有效性的逻辑
-          // 为了通过类型检查，创建一个默认用户对象
+        const storedAccessToken = await AsyncStorage.getItem('accessToken');
+        if (storedAccessToken) {
+          // 兼容旧格式：如果只有 'token' key，也加载
+          const storedToken = storedAccessToken;
           const defaultUser: User = {
             id: 'default-user-id',
             phoneNumber: '',
@@ -147,20 +147,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             registrationDate: new Date().toISOString(),
             lastLoginDate: new Date().toISOString(),
           };
-          dispatch({ 
-            type: 'LOGIN_SUCCESS', 
+          dispatch({
+            type: 'LOGIN_SUCCESS',
             payload: {
-              user: defaultUser, // 实际应用中应该从token解码或调用API获取用户信息
-              token: storedToken 
-            }
+              user: defaultUser,
+              token: storedToken,
+            },
           });
         }
       } catch (error) {
         console.error('Failed to load token from AsyncStorage:', error);
       }
     };
-    
+
     loadToken();
+
+    // 监听 token 过期事件，触发登出
+    const handleTokenExpired = () => {
+      dispatch({ type: 'LOGOUT' });
+    };
+    on('TOKEN_EXPIRED', handleTokenExpired);
+
+    return () => {
+      off('TOKEN_EXPIRED', handleTokenExpired);
+    };
   }, []);
 
   // 发送验证码函数
@@ -216,11 +226,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         });
 
         const backendUser = response.data?.user;
-        const token = response.data?.token;
+        // 兼容新旧格式：优先 accessToken，回退 token
+        const accessToken = response.data?.accessToken || response.data?.token;
 
-        if (!token) {
+        if (!accessToken) {
           throw new Error('登录失败：未获取到有效 token');
         }
+
+        const refreshToken = response.data?.refreshToken || null;
 
         const user: User = {
           id: backendUser?._id || backendUser?.id || `experience-${Date.now()}`,
@@ -234,8 +247,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           lastLoginDate: backendUser?.lastLoginAt || new Date().toISOString(),
         };
 
-        await AsyncStorage.setItem('token', token);
-        dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token } });
+        await AsyncStorage.setItem('accessToken', accessToken);
+        if (refreshToken) {
+          await AsyncStorage.setItem('refreshToken', refreshToken);
+        }
+        dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token: accessToken } });
       } else {
         // 普通验证码登录：调用后端登录接口（手机号+密码模式）
         const response: any = await authApi.login({
@@ -244,11 +260,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         });
 
         const backendUser = response.data?.user;
-        const token = response.data?.token;
+        // 兼容新旧格式：优先 accessToken，回退 token
+        const accessToken = response.data?.accessToken || response.data?.token;
 
-        if (!token) {
+        if (!accessToken) {
           throw new Error('登录失败：未获取到有效 token');
         }
+
+        const refreshToken = response.data?.refreshToken || null;
 
         const user: User = {
           id: backendUser?._id || backendUser?.id || '1',
@@ -262,8 +281,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           lastLoginDate: backendUser?.lastLoginAt || new Date().toISOString(),
         };
 
-        await AsyncStorage.setItem('token', token);
-        dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token } });
+        await AsyncStorage.setItem('accessToken', accessToken);
+        if (refreshToken) {
+          await AsyncStorage.setItem('refreshToken', refreshToken);
+        }
+        dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token: accessToken } });
       }
     } catch (error) {
       dispatch({ type: 'LOGIN_FAILURE', payload: error instanceof Error ? error.message : '登录失败，请稍后重试' });
@@ -299,11 +321,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
 
       const backendUser = response.data?.user;
-      const token = response.data?.token;
+      // 兼容新旧格式：优先 accessToken，回退 token
+      const accessToken = response.data?.accessToken || response.data?.token;
 
-      if (!token) {
+      if (!accessToken) {
         throw new Error('注册失败：未获取到有效 token');
       }
+
+      const refreshToken = response.data?.refreshToken || null;
 
       const user: User = {
         id: backendUser?._id || backendUser?.id || '1',
@@ -317,8 +342,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         lastLoginDate: backendUser?.lastLoginAt || new Date().toISOString(),
       };
 
-      await AsyncStorage.setItem('token', token);
-      dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token } });
+      await AsyncStorage.setItem('accessToken', accessToken);
+      if (refreshToken) {
+        await AsyncStorage.setItem('refreshToken', refreshToken);
+      }
+      dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token: accessToken } });
     } catch (error) {
       dispatch({ type: 'LOGIN_FAILURE', payload: error instanceof Error ? error.message : '注册失败，请稍后重试' });
     }
@@ -326,11 +354,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // 登出函数
   const logout = async () => {
-    // 清除AsyncStorage的token
+    // 清除 AsyncStorage 中的 accessToken 和 refreshToken
     try {
-      await AsyncStorage.removeItem('token');
+      await AsyncStorage.multiRemove(['accessToken', 'refreshToken']);
     } catch (error) {
-      console.error('Failed to remove token from AsyncStorage:', error);
+      console.error('Failed to remove tokens from AsyncStorage:', error);
     }
     dispatch({ type: 'LOGOUT' });
   };

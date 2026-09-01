@@ -1,5 +1,6 @@
 {
   "expo": {
+    "_comment": "生产环境 API 地址请通过 EAS 环境变量 EXPO_PUBLIC_API_URL 配置（见 eas.json），此 apiUrl 仅作为开发回退值",
     "name": "禽康智检",
     "slug": "qinkangzhijian",
     "version": "1.2.0",
@@ -31,13 +32,19 @@
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE",
         "INTERNET",
-        "ACCESS_NETWORK_STATE"
+        "ACCESS_NETWORK_STATE",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "POST_NOTIFICATIONS",
+        "RECEIVE_BOOT_COMPLETED"
       ]
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "expo-location",
+      "expo-notifications",
       [
         "expo-image-picker",
         {
