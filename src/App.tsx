@@ -38,6 +38,14 @@ const ControlPlanDetailScreen = lazy(() => import('./screens/ControlPlanDetailSc
 const GeneratePlanScreen = lazy(() => import('./screens/GeneratePlanScreen'));
 const FollowUpListScreen = lazy(() => import('./screens/FollowUpListScreen'));
 const FollowUpDetailScreen = lazy(() => import('./screens/FollowUpDetailScreen'));
+const KnowledgeListScreen = lazy(() => import('./screens/KnowledgeListScreen'));
+const KnowledgeDetailScreen = lazy(() => import('./screens/KnowledgeDetailScreen'));
+const MyFavoritesScreen = lazy(() => import('./screens/MyFavoritesScreen'));
+const TicketListScreen = lazy(() => import('./screens/TicketListScreen'));
+const TicketDetailScreen = lazy(() => import('./screens/TicketDetailScreen'));
+const CreateTicketScreen = lazy(() => import('./screens/CreateTicketScreen'));
+const TeachingCaseListScreen = lazy(() => import('./screens/TeachingCaseListScreen'));
+const TeachingCaseDetailScreen = lazy(() => import('./screens/TeachingCaseDetailScreen'));
 
 // 加载指示器组件
 const LoadingIndicator = () => (
@@ -76,6 +84,14 @@ export type RootStackParamList = {
   GeneratePlan: undefined;
   FollowUpList: undefined;
   FollowUpDetail: { followUpId: string };
+  KnowledgeList: undefined;
+  KnowledgeDetail: { articleId: string };
+  MyFavorites: undefined;
+  TicketList: undefined;
+  TicketDetail: { ticketId: string };
+  CreateTicket: undefined;
+  TeachingCaseList: undefined;
+  TeachingCaseDetail: { caseId: string };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -396,6 +412,14 @@ const App: React.FC = () => {
             <Stack.Screen name="GeneratePlan" component={GeneratePlanScreen} />
             <Stack.Screen name="FollowUpList" component={FollowUpListScreen} />
             <Stack.Screen name="FollowUpDetail" component={FollowUpDetailScreen} />
+            <Stack.Screen name="KnowledgeList" component={KnowledgeListScreen} />
+            <Stack.Screen name="KnowledgeDetail" component={KnowledgeDetailScreen} />
+            <Stack.Screen name="MyFavorites" component={MyFavoritesScreen} />
+            <Stack.Screen name="TicketList" component={TicketListScreen} />
+            <Stack.Screen name="TicketDetail" component={TicketDetailScreen} />
+            <Stack.Screen name="CreateTicket" component={CreateTicketScreen} />
+            <Stack.Screen name="TeachingCaseList" component={TeachingCaseListScreen} />
+            <Stack.Screen name="TeachingCaseDetail" component={TeachingCaseDetailScreen} />
           </Stack.Navigator>
         </Suspense>
       </NavigationContainer>

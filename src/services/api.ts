@@ -588,6 +588,30 @@ export const knowledgeApi = {
   
   // 获取测验结果
   getQuizResult: (quizId: string) => api.get(`/knowledge/quiz/result/${quizId}`),
+
+  // 科普文章
+  getKnowledgeArticles: (params?: {
+    page?: number;
+    limit?: number;
+    category?: string;
+    tag?: string;
+    searchTerm?: string;
+    status?: string;
+  }) => api.get('/knowledge/articles', { params }),
+
+  getKnowledgeArticleById: (id: string) => api.get(`/knowledge/articles/${id}`),
+
+  toggleKnowledgeLike: (id: string) => api.post(`/knowledge/articles/${id}/like`),
+
+  toggleKnowledgeFavorite: (id: string) => api.post(`/knowledge/articles/${id}/favorite`),
+
+  createKnowledgeArticle: (data: any) => api.post('/knowledge/articles', data),
+
+  updateKnowledgeArticle: (id: string, data: any) => api.put(`/knowledge/articles/${id}`, data),
+
+  deleteKnowledgeArticle: (id: string) => api.delete(`/knowledge/articles/${id}`),
+
+  getMyKnowledgeFavorites: () => api.get('/knowledge/favorites'),
 };
 
 // 商业服务相关API
@@ -782,6 +806,73 @@ export const followUpApi = {
   cancelFollowUp: (id: string) => api.patch(`/follow-ups/${id}/cancel`),
 
   deleteFollowUp: (id: string) => api.delete(`/follow-ups/${id}`),
+};
+
+// 数据统计与看板相关API
+export const statisticsApi = {
+  getDashboard: () => api.get('/statistics/dashboard'),
+  getDiagnosisTrend: (params?: { startDate?: string; endDate?: string; groupBy?: string }) =>
+    api.get('/statistics/diagnosis-trend', { params }),
+  getEpidemicDistribution: (params?: { region?: string }) =>
+    api.get('/statistics/epidemic-distribution', { params }),
+  getMortalityTrend: (params?: { batchId?: string; startDate?: string; endDate?: string }) =>
+    api.get('/statistics/mortality-trend', { params }),
+  getEnvironmentTrend: (params?: { batchId?: string; startDate?: string; endDate?: string }) =>
+    api.get('/statistics/environment-trend', { params }),
+  getRegionalHeatmap: (params?: { diseaseType?: string; date?: string }) =>
+    api.get('/statistics/regional-heatmap', { params }),
+};
+
+// 服务工单相关API
+export const serviceTicketApi = {
+  createTicket: (data: {
+    title: string;
+    description: string;
+    category: string;
+    priority?: string;
+    location?: string;
+    scheduledDate?: string;
+    relatedBatchId?: string;
+    relatedDiagnosisId?: string;
+    images?: string[];
+  }) => api.post('/tickets', data),
+
+  getMyTickets: (params?: { status?: string; page?: number; limit?: number }) =>
+    api.get('/tickets/my', { params }),
+
+  getAssignedTickets: (params?: { status?: string; page?: number; limit?: number }) =>
+    api.get('/tickets/assigned', { params }),
+
+  getTicketById: (id: string) => api.get(`/tickets/${id}`),
+
+  acceptTicket: (id: string) => api.patch(`/tickets/${id}/accept`),
+
+  updateTicket: (id: string, data: any) => api.put(`/tickets/${id}`, data),
+
+  addMessage: (id: string, data: { content: string; imageUrls?: string[] }) =>
+    api.post(`/tickets/${id}/messages`, data),
+
+  completeTicket: (id: string) => api.patch(`/tickets/${id}/complete`),
+
+  rateTicket: (id: string, data: { score: number; comment?: string }) =>
+    api.post(`/tickets/${id}/rate`, data),
+
+  cancelTicket: (id: string) => api.patch(`/tickets/${id}/cancel`),
+};
+
+// 教学案例相关API
+export const teachingCaseApi = {
+  createCase: (data: any) => api.post('/teaching-cases', data),
+  getMyCases: (params?: { status?: string; page?: number; limit?: number }) =>
+    api.get('/teaching-cases/my', { params }),
+  getCaseById: (id: string) => api.get(`/teaching-cases/${id}`),
+  getAllCases: (params?: { diseaseType?: string; tag?: string; page?: number; limit?: number }) =>
+    api.get('/teaching-cases', { params }),
+  updateCase: (id: string, data: any) => api.put(`/teaching-cases/${id}`, data),
+  submitForReview: (id: string) => api.patch(`/teaching-cases/${id}/submit-review`),
+  reviewCase: (id: string, data: { status: 'approved' | 'rejected'; comment?: string }) =>
+    api.patch(`/teaching-cases/${id}/review`, data),
+  deleteCase: (id: string) => api.delete(`/teaching-cases/${id}`),
 };
 
 export default api;
