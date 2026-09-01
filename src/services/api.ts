@@ -698,4 +698,90 @@ export const researchApi = {
     }),
 };
 
+// 流行病学调查相关API
+export const surveyApi = {
+  createSurvey: (data: any) => api.post('/survey/surveys', data),
+  saveDraft: (data: any) => api.post('/survey/drafts', data),
+  getSurveys: (params?: any) => api.get('/survey/surveys', { params }),
+  getSurveyById: (id: string) => api.get(`/survey/surveys/${id}`),
+  updateSurvey: (id: string, data: any) => api.put(`/survey/surveys/${id}`, data),
+  deleteSurvey: (id: string) => api.delete(`/survey/surveys/${id}`),
+  getRegionalStats: (params?: any) => api.get('/survey/regional-stats', { params }),
+};
+
+// 防控预案相关API
+export const controlPlanApi = {
+  generatePlan: (data: {
+    diseaseName: string;
+    severity?: string;
+    batchId?: string;
+    triggerDiagnosisId?: string;
+    planName?: string;
+    planType?: string;
+    affectedCount?: number;
+    totalCount?: number;
+    environment?: string;
+    symptoms?: string;
+  }) => api.post('/control-plans/generate', data),
+
+  getPlans: (params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    batchId?: string;
+  }) => api.get('/control-plans', { params }),
+
+  getPlanById: (id: string) => api.get(`/control-plans/${id}`),
+
+  updatePlan: (id: string, data: Partial<{
+    planName: string;
+    planContent: any;
+    completionNotes: string;
+  }>) => api.patch(`/control-plans/${id}`, data),
+
+  completePlan: (id: string, data: { completionNotes?: string }) =>
+    api.patch(`/control-plans/${id}/complete`, data),
+
+  archivePlan: (id: string) => api.patch(`/control-plans/${id}/archive`),
+
+  deletePlan: (id: string) => api.delete(`/control-plans/${id}`),
+};
+
+// 回访管理相关API
+export const followUpApi = {
+  scheduleFollowUp: (data: {
+    planId: string;
+    followUpType: 'day3' | 'day7' | 'custom';
+    scheduledDate?: string;
+    batchId?: string;
+    questions?: any;
+  }) => api.post('/follow-ups/schedule', data),
+
+  getFollowUps: (params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    planId?: string;
+  }) => api.get('/follow-ups', { params }),
+
+  getFollowUpStats: () => api.get('/follow-ups/stats'),
+
+  getFollowUpById: (id: string) => api.get(`/follow-ups/${id}`),
+
+  completeFollowUp: (id: string, data: {
+    questions: any;
+    notes?: string;
+    completedBy?: string;
+  }) => api.post(`/follow-ups/${id}/complete`, data),
+
+  updateFollowUp: (id: string, data: Partial<{
+    notes: string;
+    scheduledDate: string;
+  }>) => api.patch(`/follow-ups/${id}`, data),
+
+  cancelFollowUp: (id: string) => api.patch(`/follow-ups/${id}/cancel`),
+
+  deleteFollowUp: (id: string) => api.delete(`/follow-ups/${id}`),
+};
+
 export default api;

@@ -103,6 +103,8 @@ const businessRoutes = require('./routes/businessRoutes');
 const researchRoutes = require('./routes/researchRoutes');
 const environmentRoutes = require('./routes/environmentRoutes');
 const surveyRoutes = require('./routes/surveyRoutes');
+const controlPlanRoutes = require('./routes/controlPlan');
+const followUpRoutes = require('./routes/followUp');
 
 // 注册路由
 app.use('/api/auth', authRoutes);
@@ -115,6 +117,8 @@ app.use('/api/business', businessRoutes);
 app.use('/api/research', researchRoutes);
 app.use('/api/environment', environmentRoutes);
 app.use('/api/survey', surveyRoutes);
+app.use('/api/control-plans', controlPlanRoutes);
+app.use('/api/follow-ups', followUpRoutes);
 
 // 健康检查路由
 app.get('/api/health', (req, res) => {

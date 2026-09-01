@@ -33,6 +33,11 @@ const InternLogScreen = lazy(() => import('./screens/InternLogScreen'));
 const MentorManagementScreen = lazy(() => import('./screens/MentorManagementScreen'));
 const ProfileScreen = lazy(() => import('./screens/ProfileScreen'));
 const StatisticsScreen = lazy(() => import('./screens/StatisticsScreen'));
+const ControlPlanListScreen = lazy(() => import('./screens/ControlPlanListScreen'));
+const ControlPlanDetailScreen = lazy(() => import('./screens/ControlPlanDetailScreen'));
+const GeneratePlanScreen = lazy(() => import('./screens/GeneratePlanScreen'));
+const FollowUpListScreen = lazy(() => import('./screens/FollowUpListScreen'));
+const FollowUpDetailScreen = lazy(() => import('./screens/FollowUpDetailScreen'));
 
 // 加载指示器组件
 const LoadingIndicator = () => (
@@ -66,6 +71,11 @@ export type RootStackParamList = {
   InternLog: undefined;
   MentorManagement: undefined;
   Statistics: undefined;
+  ControlPlanList: undefined;
+  ControlPlanDetail: { planId: string };
+  GeneratePlan: undefined;
+  FollowUpList: undefined;
+  FollowUpDetail: { followUpId: string };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -381,6 +391,11 @@ const App: React.FC = () => {
             <Stack.Screen name="InternLog" component={InternLogScreen} />
             <Stack.Screen name="MentorManagement" component={MentorManagementScreen} />
             <Stack.Screen name="Statistics" component={StatisticsScreen} />
+            <Stack.Screen name="ControlPlanList" component={ControlPlanListScreen} />
+            <Stack.Screen name="ControlPlanDetail" component={ControlPlanDetailScreen} />
+            <Stack.Screen name="GeneratePlan" component={GeneratePlanScreen} />
+            <Stack.Screen name="FollowUpList" component={FollowUpListScreen} />
+            <Stack.Screen name="FollowUpDetail" component={FollowUpDetailScreen} />
           </Stack.Navigator>
         </Suspense>
       </NavigationContainer>
