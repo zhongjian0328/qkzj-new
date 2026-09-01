@@ -6,9 +6,9 @@ import Header from '../components/Header';
 import { controlPlanApi } from '../services/api';
 import { styles } from '../styles';
 
-const SEVERITY_COLORS = { low: '#22C55E', medium: '#F59E0B', high: '#EF4444', critical: '#991B1B' };
-const SEVERITY_LABELS = { low: '低风险', medium: '中风险', high: '高风险', critical: '极高风险' };
-const STATUS_LABELS = { draft: '草稿', active: '进行中', completed: '已完成', archived: '已归档' };
+const SEVERITY_COLORS: Record<string, string> = { low: '#22C55E', medium: '#F59E0B', high: '#EF4444', critical: '#991B1B' };
+const SEVERITY_LABELS: Record<string, string> = { low: '低风险', medium: '中风险', high: '高风险', critical: '极高风险' };
+const STATUS_LABELS: Record<string, string> = { draft: '草稿', active: '进行中', completed: '已完成', archived: '已归档' };
 
 function SectionCard({ title, icon, children, defaultOpen = true }: any) {
   const [open, setOpen] = useState(defaultOpen);

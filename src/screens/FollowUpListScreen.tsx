@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/Header';
 import { followUpApi } from '../services/api';
 import { styles } from '../styles';
 
-const TYPE_LABELS = { day3: '第3日回访', day7: '第7日回访', custom: '自定义回访' };
-const STATUS_COLORS = { pending: '#F59E0B', completed: '#22C55E', overdue: '#EF4444', cancelled: '#9CA3AF' };
-const STATUS_LABELS = { pending: '待回访', completed: '已完成', overdue: '逾期', cancelled: '已取消' };
+const TYPE_LABELS: Record<string, string> = { day3: '第3日回访', day7: '第7日回访', custom: '自定义回访' };
+const STATUS_COLORS: Record<string, string> = { pending: '#F59E0B', completed: '#22C55E', overdue: '#EF4444', cancelled: '#9CA3AF' };
+const STATUS_LABELS: Record<string, string> = { pending: '待回访', completed: '已完成', overdue: '逾期', cancelled: '已取消' };
 
 export default function FollowUpListScreen() {
   const navigation = useNavigation<any>();
@@ -79,7 +78,7 @@ export default function FollowUpListScreen() {
           { label: '已完成', value: stats.completed, color: '#22C55E' },
           { label: '逾期', value: stats.overdue, color: '#EF4444' },
         ].map(s => (
-          <View key={s.label} style={{ flex: 1, backgroundColor: '#FFFFFF', borderRadius: 12, padding: 12, alignItems: 'center', ...styles.card }}>
+          <View key={s.label} style={{ flex: 1, backgroundColor: '#FFFFFF', borderRadius: 12, padding: 12, alignItems: 'center' }}>
             <Text style={{ fontSize: 24, fontWeight: '700', color: s.color }}>{s.value}</Text>
             <Text style={{ fontSize: 12, color: '#6B7280', marginTop: 4 }}>{s.label}</Text>
           </View>

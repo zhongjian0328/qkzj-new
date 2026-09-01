@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -6,10 +6,10 @@ import Header from '../components/Header';
 import { controlPlanApi } from '../services/api';
 import { styles } from '../styles';
 
-const SEVERITY_COLORS = { low: '#22C55E', medium: '#F59E0B', high: '#EF4444', critical: '#991B1B' };
-const SEVERITY_LABELS = { low: '低', medium: '中', high: '高', critical: '危急' };
-const STATUS_COLORS = { draft: '#9CA3AF', active: '#2DBBA1', completed: '#22C55E', archived: '#6B7280' };
-const STATUS_LABELS = { draft: '草稿', active: '进行中', completed: '已完成', archived: '已归档' };
+const SEVERITY_COLORS: Record<string, string> = { low: '#22C55E', medium: '#F59E0B', high: '#EF4444', critical: '#991B1B' };
+const SEVERITY_LABELS: Record<string, string> = { low: '低', medium: '中', high: '高', critical: '危急' };
+const STATUS_COLORS: Record<string, string> = { draft: '#9CA3AF', active: '#2DBBA1', completed: '#22C55E', archived: '#6B7280' };
+const STATUS_LABELS: Record<string, string> = { draft: '草稿', active: '进行中', completed: '已完成', archived: '已归档' };
 
 export default function ControlPlanListScreen() {
   const navigation = useNavigation<any>();

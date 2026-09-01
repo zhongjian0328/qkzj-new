@@ -6,8 +6,8 @@ import Header from '../components/Header';
 import { followUpApi } from '../services/api';
 import { styles } from '../styles';
 
-const TYPE_LABELS = { day3: '第3日回访', day7: '第7日回访', custom: '自定义回访' };
-const STATUS_LABELS = { pending: '待回访', completed: '已完成', overdue: '逾期', cancelled: '已取消' };
+const TYPE_LABELS: Record<string, string> = { day3: '第3日回访', day7: '第7日回访', custom: '自定义回访' };
+const STATUS_LABELS: Record<string, string> = { pending: '待回访', completed: '已完成', overdue: '逾期', cancelled: '已取消' };
 
 const QUESTIONS = [
   { key: 'mortalityChange', label: '死亡率变化', placeholder: '描述死亡率是否改善' },
