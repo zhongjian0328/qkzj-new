@@ -4,12 +4,39 @@ const morgan = require('morgan');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const http = require('http');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
 // 加载环境变量
 dotenv.config();
 
 // 创建Express应用
 const app = express();
+
+// 安全中间件：HTTP 安全响应头（生产环境关键防护）
+app.use(helmet({
+  contentSecurityPolicy: false, // API 服务无需 CSP
+  crossOriginEmbedderPolicy: false,
+}));
+
+// 全局请求限速：每个 IP 每分钟最多 120 次请求
+const globalLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 120,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { status: 'error', message: '请求过于频繁，请稍后再试' },
+});
+app.use('/api/', globalLimiter);
+
+// 认证端点严格限速：防止暴力破解，每 IP 每分钟最多 10 次登录/注册
+const authLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { status: 'error', message: '认证请求过于频繁，请稍后再试' },
+});
 
 // 配置中间件
 // CORS配置
@@ -111,8 +138,8 @@ const serviceTicketRoutes = require('./routes/serviceTicket');
 const teachingCaseRoutes = require('./routes/teachingCase');
 const notificationRoutes = require('./routes/notification');
 
-// 注册路由
-app.use('/api/auth', authRoutes);
+// 注册路由（认证端点使用严格限速）
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/ai-diagnosis', aiDiagnosisRoutes);
 app.use('/api/production', productionRoutes);
 app.use('/api/epidemic', epidemicRoutes);

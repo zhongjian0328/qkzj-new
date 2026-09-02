@@ -23,7 +23,8 @@
         "gradleCommand": ":app:assembleRelease"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://your-production-api-domain.com/api"
+        "NODE_ENV": "production",
+        "EXPO_PUBLIC_API_URL": "REPLACE_WITH_PRODUCTION_API_URL"
       }
     }
   },
