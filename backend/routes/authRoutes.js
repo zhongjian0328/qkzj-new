@@ -32,6 +32,9 @@ router.get('/current-user', authenticate, authController.getCurrentUser);
 // 更新用户信息（需要认证）
 router.put('/update', authenticate, authController.updateUser);
 
+// 角色选择（需要认证，允许修改 roleType/subRole）
+router.post('/select-role', authenticate, authController.selectRole);
+
 // 用户认证申请（需要认证）
 router.post('/certify', authenticate, authController.certify);
 

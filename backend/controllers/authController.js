@@ -385,6 +385,40 @@ exports.updateUser = async (req, res, next) => {
   }
 };
 
+// 角色选择（用户首次选择身份，允许修改 roleType/subRole）
+exports.selectRole = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { roleType, subRole } = req.body;
+
+    const VALID_ROLE_TYPES = ['FARMER', 'INSTITUTION', 'STUDENT', 'TEACHER'];
+    if (!VALID_ROLE_TYPES.includes(roleType)) {
+      return res.status(400).json({ status: 'error', message: '无效的角色类型' });
+    }
+    if (!subRole) {
+      return res.status(400).json({ status: 'error', message: '请选择具体身份' });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { roleType, subRole },
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    if (!updatedUser) {
+      return res.status(404).json({ status: 'error', message: '用户不存在' });
+    }
+
+    res.status(200).json({
+      status: 'success',
+      message: '角色选择成功',
+      data: { user: updatedUser }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // 用户认证
 exports.certify = async (req, res, next) => {
   try {

@@ -11,6 +11,56 @@ import { styles } from './styles';
 import * as SplashScreen from 'expo-splash-screen';
 import OfflineBanner from './components/OfflineBanner';
 
+// Web 端 deep linking 配置：将 URL 路径映射到 Stack Screen
+const linking = {
+  prefixes: ['http://localhost:8081', 'https://qinkangzhijian.app'],
+  config: {
+    screens: {
+      Login: 'login',
+      Register: 'register',
+      RoleSelect: 'role-select',
+      ExperienceRole: 'experience-role',
+      AuthCertification: 'auth-certification',
+      Main: 'main',
+      Home: 'home',
+      DiagnosisHome: 'diagnosis',
+      ChatDiagnosis: 'chat-diagnosis',
+      VeterinaryDiagnosis: 'veterinary-diagnosis',
+      DiagnosisReport: 'diagnosis-report',
+      DiagnosisHistory: 'diagnosis-history',
+      ProductionManagement: 'production',
+      BatchManagement: 'batch',
+      DeathFeedRecord: 'death-feed',
+      EmployeeManagement: 'employee',
+      EpidemicHeatmap: 'epidemic-heatmap',
+      KnowledgeGraph: 'knowledge-graph',
+      QuestionBank: 'question-bank',
+      InternLog: 'intern-log',
+      MentorManagement: 'mentor',
+      Statistics: 'statistics',
+      ControlPlanList: 'control-plans',
+      ControlPlanDetail: 'control-plans/:planId',
+      GeneratePlan: 'generate-plan',
+      FollowUpList: 'follow-ups',
+      FollowUpDetail: 'follow-ups/:followUpId',
+      KnowledgeList: 'knowledge',
+      KnowledgeDetail: 'knowledge/:articleId',
+      MyFavorites: 'favorites',
+      TicketList: 'tickets',
+      TicketDetail: 'tickets/:ticketId',
+      CreateTicket: 'tickets/create',
+      TeachingCaseList: 'teaching-cases',
+      TeachingCaseDetail: 'teaching-cases/:caseId',
+      Notifications: 'notifications',
+      ForgotPassword: 'forgot-password',
+      EnvironmentRecord: 'environment',
+      EnvironmentAlert: 'environment-alert',
+      SurveyForm: 'survey-form',
+      SurveyList: 'surveys',
+    },
+  },
+};
+
 // 懒加载屏幕组件
 const LoginScreen = lazy(() => import('./screens/LoginScreen'));
 const RegisterScreen = lazy(() => import('./screens/RegisterScreen'));
@@ -384,7 +434,7 @@ const App: React.FC = () => {
 
   return (
     <AppProvider>
-      <NavigationContainer>
+      <NavigationContainer linking={linking}>
         <StatusBar style="auto" />
         <OfflineBanner />
         <Suspense fallback={<LoadingIndicator />}>

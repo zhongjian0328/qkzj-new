@@ -76,3 +76,5 @@ backend/dist/
 # AI Service
 enckey_121236834
 
+e2e-shots/
+e2e-verify.cjs

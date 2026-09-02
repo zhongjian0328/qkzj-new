@@ -143,8 +143,8 @@ const RoleSelectScreen: React.FC = () => {
 
     setSubmitting(true);
     try {
-      // 持久化角色到后端
-      await authApi.updateUser({ roleType, subRole } as any);
+      // 使用专用角色选择端点持久化角色到后端
+      await authApi.selectRole({ roleType, subRole } as any);
       // 同步更新本地状态
       updateUser({ roleType: roleType as any, subRole: subRole as any });
 

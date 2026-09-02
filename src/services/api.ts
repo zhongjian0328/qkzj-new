@@ -244,6 +244,10 @@ export const authApi = {
     studentId: string;
     mentorId: string;
   }>) => api.put('/auth/update', data),
+
+  // 角色选择（首次选择身份，允许修改 roleType/subRole）
+  selectRole: (data: { roleType: string; subRole: string }) =>
+    api.post('/auth/select-role', data),
   
   // 忘记密码
   forgotPassword: (data: { phoneNumber: string; code: string; newPassword: string }) =>
