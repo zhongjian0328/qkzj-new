@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  StyleSheet,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Header from '../components/Header';
@@ -757,7 +758,7 @@ const SurveyFormScreen: React.FC = () => {
 
 // ======================== 局部样式 ========================
 
-const local = {
+const local = StyleSheet.create({
   scrollContent: {
     padding: 16,
     paddingBottom: 32,
@@ -1013,7 +1014,7 @@ const local = {
     marginTop: 8,
     borderColor: '#2DBBA1',
     borderWidth: 1.5,
-    borderStyle: 'dashed' as const,
+    borderStyle: 'dashed',
   },
 
   // 错误
@@ -1054,6 +1055,6 @@ const local = {
   navBtn: {
     flex: 1,
   },
-};
+});
 
 export default SurveyFormScreen;

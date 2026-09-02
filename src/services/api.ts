@@ -124,9 +124,9 @@ api.interceptors.request.use(
 // 响应拦截器
 api.interceptors.response.use(
   (response) => response.data,
-  async (error) => {
+  async (error: any) => {
     // 应用重试机制
-    const retryError = await retryInterceptor(3)(error);
+    const retryError: any = await retryInterceptor(3)(error);
     // 如果 retryInterceptor 返回了新响应（重试成功），直接返回
     // 如果返回了错误对象（重试耗尽或不需重试），进行处理
     if (retryError instanceof Error || retryError?.response || retryError?.code) {

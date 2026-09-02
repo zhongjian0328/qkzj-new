@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Alert,
   RefreshControl,
+  StyleSheet,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
@@ -290,7 +291,7 @@ const SurveyListScreen: React.FC = () => {
 
 // ======================== 局部样式 ========================
 
-const local = {
+const local = StyleSheet.create({
   tabContainer: {
     flexDirection: 'row',
     paddingHorizontal: 16,
@@ -481,6 +482,6 @@ const local = {
   actionBtnDeleteText: {
     color: '#DC2626',
   },
-};
+});
 
 export default SurveyListScreen;

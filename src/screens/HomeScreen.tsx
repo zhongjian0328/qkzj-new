@@ -88,6 +88,13 @@ const HomeScreen: React.FC = () => {
                   description: '生产数据统计与分析',
                   icon: 'trending-up-outline',
                   navigation: 'Statistics'
+                },
+                {
+                  id: 'environment-record',
+                  title: '环境监测',
+                  description: '环境数据记录与预警',
+                  icon: 'thermometer-outline',
+                  navigation: 'EnvironmentRecord'
                 }
               ]
             }
@@ -123,6 +130,13 @@ const HomeScreen: React.FC = () => {
                   description: '疫情数据分析报告',
                   icon: 'pie-chart-outline',
                   navigation: 'Statistics'
+                },
+                {
+                  id: 'survey-list',
+                  title: '流行病学调查',
+                  description: '流调记录管理与分析',
+                  icon: 'clipboard-outline',
+                  navigation: 'SurveyList'
                 }
               ]
             },

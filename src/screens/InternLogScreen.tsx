@@ -517,7 +517,7 @@ const InternLogScreen: React.FC = () => {
                         </Text>
                         <View style={{ flexDirection: 'row' }}>
                           {[...Array(5)].map((_, index) => (
-                            <Text key={index} style={{ fontSize: 16, color: index < selectedLog.rating ? '#FBBF24' : '#D1D5DB' }}>
+                            <Text key={index} style={{ fontSize: 16, color: index < (selectedLog.rating ?? 0) ? '#FBBF24' : '#D1D5DB' }}>
                               ⭐
                             </Text>
                           ))}

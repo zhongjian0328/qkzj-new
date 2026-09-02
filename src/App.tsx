@@ -48,6 +48,11 @@ const CreateTicketScreen = lazy(() => import('./screens/CreateTicketScreen'));
 const TeachingCaseListScreen = lazy(() => import('./screens/TeachingCaseListScreen'));
 const TeachingCaseDetailScreen = lazy(() => import('./screens/TeachingCaseDetailScreen'));
 const NotificationListScreen = lazy(() => import('./screens/NotificationListScreen'));
+const ForgotPasswordScreen = lazy(() => import('./screens/ForgotPasswordScreen'));
+const EnvironmentRecordScreen = lazy(() => import('./screens/EnvironmentRecordScreen'));
+const EnvironmentAlertScreen = lazy(() => import('./screens/EnvironmentAlertScreen'));
+const SurveyFormScreen = lazy(() => import('./screens/SurveyFormScreen'));
+const SurveyListScreen = lazy(() => import('./screens/SurveyListScreen'));
 
 // 加载指示器组件
 const LoadingIndicator = () => (
@@ -95,6 +100,11 @@ export type RootStackParamList = {
   TeachingCaseList: undefined;
   TeachingCaseDetail: { caseId: string };
   Notifications: undefined;
+  ForgotPassword: undefined;
+  EnvironmentRecord: undefined;
+  EnvironmentAlert: undefined;
+  SurveyForm: { mode?: 'create' | 'edit'; surveyId?: string };
+  SurveyList: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -425,6 +435,11 @@ const App: React.FC = () => {
             <Stack.Screen name="TeachingCaseList" component={TeachingCaseListScreen} />
             <Stack.Screen name="TeachingCaseDetail" component={TeachingCaseDetailScreen} />
             <Stack.Screen name="Notifications" component={NotificationListScreen} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+            <Stack.Screen name="EnvironmentRecord" component={EnvironmentRecordScreen} />
+            <Stack.Screen name="EnvironmentAlert" component={EnvironmentAlertScreen} />
+            <Stack.Screen name="SurveyForm" component={SurveyFormScreen} />
+            <Stack.Screen name="SurveyList" component={SurveyListScreen} />
           </Stack.Navigator>
         </Suspense>
       </NavigationContainer>

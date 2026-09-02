@@ -15,7 +15,7 @@ export interface NetworkStatus {
   /** 互联网是否可达（能访问外部服务器） */
   isInternetReachable: boolean | null;
   /** 网络类型 */
-  networkType: NetInfoStateType;
+  networkType: string;
 }
 
 /** 网络恢复回调签名 */
@@ -45,7 +45,7 @@ export type OnReconnectCallback = () => void;
 export function useNetworkStatus(onReconnect?: OnReconnectCallback): NetworkStatus {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isInternetReachable, setIsInternetReachable] = useState<boolean | null>(null);
-  const [networkType, setNetworkType] = useState<NetInfoStateType>('unknown');
+  const [networkType, setNetworkType] = useState<string>('unknown');
 
   // 用 ref 持有上一次的网络状态，用于检测 "断开 -> 连接" 的转换
   const wasConnectedRef = useRef<boolean>(false);
