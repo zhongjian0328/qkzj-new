@@ -4,37 +4,48 @@ const { authenticate, authorize } = require('../middleware/authMiddleware');
 const router = express.Router();
 
 /**
- * 科研管理相关路由
+ * 数据标注与科研协作相关路由
+ * 路径对齐前端 researchApi（/research/cases, /research/groups, /research/images, /research/data）
  */
 
-// 获取数据集列表（需要认证）
-router.get('/datasets', authenticate, (req, res) => {
-  res.status(200).json({ status: 'success', message: '获取数据集列表' });
+// 获取病例列表
+router.get('/cases', authenticate, (req, res) => {
+  res.status(200).json({ status: 'success', message: '获取病例列表' });
 });
 
-// 创建数据集（仅允许科研人员和管理员）
-router.post('/datasets', authenticate, authorize(['RESEARCHER', 'ADMIN']), (req, res) => {
-  res.status(201).json({ status: 'success', message: '创建数据集' });
+// 获取病例详情
+router.get('/cases/:caseId', authenticate, (req, res) => {
+  res.status(200).json({ status: 'success', message: '获取病例详情' });
 });
 
-// 获取数据集详情（需要认证）
-router.get('/datasets/:datasetId', authenticate, (req, res) => {
-  res.status(200).json({ status: 'success', message: '获取数据集详情' });
+// 标注病例
+router.post('/cases/:caseId/annotate', authenticate, (req, res) => {
+  res.status(201).json({ status: 'success', message: '标注病例' });
 });
 
-// 更新数据集（仅允许科研人员和管理员）
-router.put('/datasets/:datasetId', authenticate, authorize(['RESEARCHER', 'ADMIN']), (req, res) => {
-  res.status(200).json({ status: 'success', message: '更新数据集' });
+// 下载病例图片
+router.get('/images/download', authenticate, (req, res) => {
+  res.status(200).json({ status: 'success', message: '下载病例图片' });
 });
 
-// 删除数据集（仅允许科研人员和管理员）
-router.delete('/datasets/:datasetId', authenticate, authorize(['RESEARCHER', 'ADMIN']), (req, res) => {
-  res.status(200).json({ status: 'success', message: '删除数据集' });
+// 获取科研群组列表
+router.get('/groups', authenticate, (req, res) => {
+  res.status(200).json({ status: 'success', message: '获取科研群组列表' });
 });
 
-// 上传数据（仅允许科研人员和管理员）
-router.post('/upload', authenticate, authorize(['RESEARCHER', 'ADMIN']), (req, res) => {
-  res.status(201).json({ status: 'success', message: '上传数据' });
+// 创建科研群组
+router.post('/groups', authenticate, authorize(['RESEARCHER', 'ADMIN']), (req, res) => {
+  res.status(201).json({ status: 'success', message: '创建科研群组' });
+});
+
+// 获取科研群组详情
+router.get('/groups/:groupId', authenticate, (req, res) => {
+  res.status(200).json({ status: 'success', message: '获取科研群组详情' });
+});
+
+// 上传科研数据
+router.post('/data/upload', authenticate, authorize(['RESEARCHER', 'ADMIN']), (req, res) => {
+  res.status(201).json({ status: 'success', message: '上传科研数据' });
 });
 
 module.exports = router;

@@ -15,10 +15,12 @@ router.get('/', notificationController.getUserNotifications);
 // 获取未读数量
 router.get('/unread-count', notificationController.getUnreadCount);
 
-// 标记单条已读
+// 标记单条已读（同时支持 PUT 和 PATCH）
+router.put('/:id/read', notificationController.markAsRead);
 router.patch('/:id/read', notificationController.markAsRead);
 
-// 标记全部已读
+// 标记全部已读（同时支持 PUT 和 PATCH）
+router.put('/read-all', notificationController.markAllAsRead);
 router.patch('/read-all', notificationController.markAllAsRead);
 
 // 删除通知

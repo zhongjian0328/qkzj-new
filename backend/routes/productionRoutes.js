@@ -5,46 +5,57 @@ const router = express.Router();
 
 /**
  * 生产管理相关路由
+ * 路径对齐前端 productionApi（/production/batches, /production/death-feed-records, /production/employees）
  */
 
-// 获取养殖批次列表（需要认证）
-router.get('/breeding-batches', authenticate, (req, res) => {
-  res.status(200).json({ status: 'success', message: '获取养殖批次列表' });
+// 获取批次列表
+router.get('/batches', authenticate, (req, res) => {
+  res.status(200).json({ status: 'success', message: '获取批次列表' });
 });
 
-// 创建养殖批次（需要认证）
-router.post('/breeding-batches', authenticate, (req, res) => {
-  res.status(201).json({ status: 'success', message: '创建养殖批次' });
+// 创建批次
+router.post('/batches', authenticate, (req, res) => {
+  res.status(201).json({ status: 'success', message: '创建批次' });
 });
 
-// 获取养殖批次详情（需要认证）
-router.get('/breeding-batches/:batchId', authenticate, (req, res) => {
-  res.status(200).json({ status: 'success', message: '获取养殖批次详情' });
+// 获取批次详情
+router.get('/batches/:batchId', authenticate, (req, res) => {
+  res.status(200).json({ status: 'success', message: '获取批次详情' });
 });
 
-// 更新养殖批次（需要认证）
-router.put('/breeding-batches/:batchId', authenticate, (req, res) => {
-  res.status(200).json({ status: 'success', message: '更新养殖批次' });
+// 更新批次
+router.put('/batches/:batchId', authenticate, (req, res) => {
+  res.status(200).json({ status: 'success', message: '更新批次' });
 });
 
-// 获取生产数据列表（需要认证）
-router.get('/production-data', authenticate, (req, res) => {
-  res.status(200).json({ status: 'success', message: '获取生产数据列表' });
+// 删除批次
+router.delete('/batches/:batchId', authenticate, (req, res) => {
+  res.status(200).json({ status: 'success', message: '删除批次' });
 });
 
-// 创建生产数据（需要认证）
-router.post('/production-data', authenticate, (req, res) => {
-  res.status(201).json({ status: 'success', message: '创建生产数据' });
+// 获取死淘/耗料记录列表
+router.get('/death-feed-records', authenticate, (req, res) => {
+  res.status(200).json({ status: 'success', message: '获取死淘耗料记录列表' });
 });
 
-// 获取生产数据详情（需要认证）
-router.get('/production-data/:dataId', authenticate, (req, res) => {
-  res.status(200).json({ status: 'success', message: '获取生产数据详情' });
+// 创建死淘/耗料记录
+router.post('/death-feed-records', authenticate, (req, res) => {
+  res.status(201).json({ status: 'success', message: '创建死淘耗料记录' });
 });
 
-// 更新生产数据（需要认证）
-router.put('/production-data/:dataId', authenticate, (req, res) => {
-  res.status(200).json({ status: 'success', message: '更新生产数据' });
+// 获取员工列表
+router.get('/employees', authenticate, (req, res) => {
+  res.status(200).json({ status: 'success', message: '获取员工列表' });
+});
+
+// 创建员工
+router.post('/employees', authenticate, (req, res) => {
+  res.status(201).json({ status: 'success', message: '创建员工' });
+});
+
+// 更新员工权限
+router.put('/employees/:employeeId/permission', authenticate, (req, res) => {
+  res.status(200).json({ status: 'success', message: '更新员工权限' });
 });
 
 module.exports = router;
