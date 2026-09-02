@@ -53,6 +53,7 @@ const EnvironmentRecordScreen = lazy(() => import('./screens/EnvironmentRecordSc
 const EnvironmentAlertScreen = lazy(() => import('./screens/EnvironmentAlertScreen'));
 const SurveyFormScreen = lazy(() => import('./screens/SurveyFormScreen'));
 const SurveyListScreen = lazy(() => import('./screens/SurveyListScreen'));
+const ElectronicMonitoringScreen = lazy(() => import('./screens/ElectronicMonitoringScreen'));
 
 // 加载指示器组件
 const LoadingIndicator = () => (
@@ -105,6 +106,7 @@ export type RootStackParamList = {
   EnvironmentAlert: undefined;
   SurveyForm: { mode?: 'create' | 'edit'; surveyId?: string };
   SurveyList: undefined;
+  ElectronicMonitoring: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -440,6 +442,7 @@ const App: React.FC = () => {
             <Stack.Screen name="EnvironmentAlert" component={EnvironmentAlertScreen} />
             <Stack.Screen name="SurveyForm" component={SurveyFormScreen} />
             <Stack.Screen name="SurveyList" component={SurveyListScreen} />
+            <Stack.Screen name="ElectronicMonitoring" component={ElectronicMonitoringScreen} />
           </Stack.Navigator>
         </Suspense>
       </NavigationContainer>
