@@ -5,6 +5,8 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../App';
 import * as ImagePicker from 'expo-image-picker';
 import { styles } from '../styles';
+import { authApi } from '../services/api';
+import { useAuth } from '../context/UserContext';
 
 // 定义导航类型
 type AuthCertificationScreenNavigationProp = StackNavigationProp<RootStackParamList, 'AuthCertification'>;
@@ -161,24 +163,46 @@ const AuthCertificationScreen: React.FC = () => {
   };
   
   // 处理表单提交
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validateForm()) {
       return;
     }
-    
-    setIsSubmitting(true);
-    
-    // 准备提交数据
-    const submitData = {
-      formData,
-      licenseImage,
-      qualificationImage
-    };
 
-    // 模拟提交过程
-    setTimeout(() => {
-      setIsSubmitting(false);
-      
+    setIsSubmitting(true);
+
+    try {
+      // 根据角色类型构造认证数据
+      let certificationType = 'enterprise';
+      let documents: any[] = [];
+      let additionalInfo: any = {};
+
+      if (userRole.includes('farmer')) {
+        certificationType = 'enterprise';
+        documents = licenseImage ? [{ type: 'license', url: licenseImage }] : [];
+        additionalInfo = {
+          enterpriseName: formData.enterpriseName,
+          enterpriseType: formData.enterpriseType,
+          contactPerson: formData.contactPerson,
+          contactPhone: formData.contactPhone,
+        };
+      } else if (userRole.includes('student')) {
+        certificationType = 'student';
+        additionalInfo = {
+          schoolName: formData.schoolName,
+          studentId: formData.studentId,
+          mentorCode: formData.mentorCode,
+        };
+      } else if (userRole.includes('institution')) {
+        certificationType = 'institution';
+        documents = qualificationImage ? [{ type: 'qualification', url: qualificationImage }] : [];
+        additionalInfo = {
+          institutionName: formData.institutionName,
+          institutionType: formData.institutionType,
+        };
+      }
+
+      await authApi.certify({ certificationType, documents, additionalInfo });
+
       Alert.alert(
         '提交成功',
         '您的认证申请已提交，我们将在1-3个工作日内完成审核，请耐心等待',
@@ -189,7 +213,11 @@ const AuthCertificationScreen: React.FC = () => {
           }
         ]
       );
-    }, 2000);
+    } catch (error) {
+      Alert.alert('提交失败', error instanceof Error ? error.message : '认证提交失败，请稍后重试');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   // 获取认证类型信息

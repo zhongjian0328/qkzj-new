@@ -118,12 +118,15 @@ const generateVerificationCode = () => {
 // 获取验证码（模拟实现）
 exports.getVerificationCode = async (req, res, next) => {
   try {
-    const { phoneNumber } = req.body;
+    const { phoneNumber, type = 'register' } = req.body;
 
-    // 检查手机号是否已注册
+    // 根据用途校验手机号注册状态
     const existingUser = await User.findOne({ phoneNumber });
-    if (existingUser) {
+    if (type === 'register' && existingUser) {
       return res.status(400).json({ status: 'error', message: '手机号已注册' });
+    }
+    if ((type === 'login' || type === 'forgot') && !existingUser) {
+      return res.status(400).json({ status: 'error', message: '手机号未注册' });
     }
 
     // 模拟发送验证码（实际项目中应调用短信服务API）
@@ -186,6 +189,122 @@ exports.verifyCode = async (req, res, next) => {
     res.status(200).json({
       status: 'success',
       message: '验证码验证成功'
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// 验证码登录（已注册用户通过验证码登录）
+exports.loginWithCode = async (req, res, next) => {
+  try {
+    const { phoneNumber, code } = req.body;
+
+    if (!phoneNumber || !code) {
+      return res.status(400).json({ status: 'error', message: '缺少必要参数' });
+    }
+
+    // 验证码校验
+    const record = verificationCodes.get(phoneNumber);
+    if (!record) {
+      return res.status(400).json({ status: 'error', message: '验证码不存在或已失效，请重新获取' });
+    }
+    if (Date.now() > record.expiresAt) {
+      verificationCodes.delete(phoneNumber);
+      return res.status(400).json({ status: 'error', message: '验证码已过期，请重新获取' });
+    }
+    if (record.attempts >= VERIFICATION_CODE_MAX_ATTEMPTS) {
+      verificationCodes.delete(phoneNumber);
+      return res.status(400).json({ status: 'error', message: '验证码错误次数过多，请重新获取' });
+    }
+    if (record.code !== code) {
+      record.attempts += 1;
+      return res.status(400).json({ status: 'error', message: '验证码错误' });
+    }
+    verificationCodes.delete(phoneNumber);
+
+    // 查找用户
+    const user = await User.findOne({ phoneNumber });
+    if (!user) {
+      return res.status(404).json({ status: 'error', message: '手机号未注册' });
+    }
+
+    await user.updateLastLogin();
+
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user._id);
+    refreshTokens.set(user._id.toString(), refreshToken);
+
+    res.status(200).json({
+      status: 'success',
+      message: '登录成功',
+      data: {
+        user,
+        accessToken,
+        refreshToken
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// 体验登录（自动创建/查找体验账号）
+exports.experienceLogin = async (req, res, next) => {
+  try {
+    const { roleType, subRole } = req.body;
+
+    if (!roleType || !subRole) {
+      return res.status(400).json({ status: 'error', message: '缺少角色参数' });
+    }
+
+    // 使用固定手机号标识体验账号（符合手机号格式的保留号段）
+    const experiencePhones = {
+      'FARMER_SMALL': '19900000001',
+      'FARMER_ENTERPRISE': '19900000002',
+      'FARMER_COOPERATIVE': '19900000003',
+      'INSTITUTION_CDC': '19900000004',
+      'INSTITUTION_RESEARCH_INSTITUTE': '19900000005',
+      'INSTITUTION_SERVICE_PROVIDER': '19900000006',
+      'STUDENT_LEARNING_STUDENT': '19900000007',
+      'STUDENT_COGNITIVE_INTERN': '19900000008',
+      'STUDENT_ADVANCED_INTERN': '19900000009',
+      'TEACHER_GENERAL': '19900000010',
+    };
+    const experienceKey = `${roleType}_${subRole}`;
+    const experiencePhone = experiencePhones[experienceKey] || '19900000099';
+    const nickname = roleType === 'FARMER' ? '体验养殖户'
+      : roleType === 'INSTITUTION' ? '体验机构用户'
+      : roleType === 'STUDENT' ? '体验学生'
+      : roleType === 'TEACHER' ? '体验教师'
+      : '体验用户';
+
+    let user = await User.findOne({ phoneNumber: experiencePhone });
+    if (!user) {
+      user = await User.create({
+        phoneNumber: experiencePhone,
+        password: 'experience123',
+        nickname,
+        roleType,
+        subRole,
+        authStatus: 'VERIFIED'
+      });
+    }
+
+    await user.updateLastLogin();
+
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user._id);
+    refreshTokens.set(user._id.toString(), refreshToken);
+
+    res.status(200).json({
+      status: 'success',
+      message: '体验登录成功',
+      data: {
+        user,
+        accessToken,
+        refreshToken
+      }
     });
   } catch (error) {
     next(error);

@@ -108,9 +108,10 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
 // Context类型
 interface AuthContextType {
   state: AuthState;
-  login: (phoneNumber: string, codeOrRoleType: string, subRole?: any) => Promise<void>;
-  register: (phoneNumber: string, verificationCode: string, password: string) => Promise<void>;
-  sendVerificationCode: (phoneNumber: string) => Promise<void>;
+  login: (phoneNumber: string, codeOrPassword: string, mode?: 'verification' | 'password') => Promise<void>;
+  experienceLogin: (roleType: string, subRole: string) => Promise<void>;
+  register: (phoneNumber: string, verificationCode: string, password: string, nickname?: string) => Promise<void>;
+  sendVerificationCode: (phoneNumber: string, type?: 'register' | 'login' | 'forgot') => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (userData: Partial<User>) => void;
   clearError: () => void;
@@ -174,11 +175,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   // 发送验证码函数
-  const sendVerificationCode = async (phoneNumber: string) => {
+  const sendVerificationCode = async (phoneNumber: string, type: 'register' | 'login' | 'forgot' = 'register') => {
     dispatch({ type: 'LOGIN_REQUEST' });
     try {
       // 调用后端 API 发送验证码
-      await authApi.getVerificationCode(phoneNumber);
+      await authApi.getVerificationCode(phoneNumber, type);
       // 保存验证码状态标记（前端不再生成/存储验证码，由后端管理）
       setVerificationCodes(prev => ({
         ...prev,
@@ -197,113 +198,96 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   // 登录函数
-  const login = async (phoneNumber: string, codeOrRoleType: string, subRole?: any) => {
+  const login = async (phoneNumber: string, codeOrPassword: string, mode?: 'verification' | 'password') => {
     dispatch({ type: 'LOGIN_REQUEST' });
     try {
-      // 体验角色登录：仍需走真实后端 API
-      const isExperienceLogin = codeOrRoleType === 'FARMER' ||
-                               codeOrRoleType === 'INSTITUTION' ||
-                               codeOrRoleType === 'STUDENT' ||
-                               codeOrRoleType === 'TEACHER';
+      let response: any;
 
-      if (isExperienceLogin) {
-        // 体验角色使用默认密码走后端登录接口
-        const response: any = await authApi.login({
-          phoneNumber,
-          password: 'experience123',
-        });
-
-        const backendUser = response.data?.user;
-        // 兼容新旧格式：优先 accessToken，回退 token
-        const accessToken = response.data?.accessToken || response.data?.token;
-
-        if (!accessToken) {
-          throw new Error('登录失败：未获取到有效 token');
-        }
-
-        const refreshToken = response.data?.refreshToken || null;
-
-        const user: User = {
-          id: backendUser?._id || backendUser?.id || `experience-${Date.now()}`,
-          phoneNumber: backendUser?.phoneNumber || phoneNumber,
-          nickname: backendUser?.nickname || getRoleNickname(codeOrRoleType as UserRole, subRole as UserSubRole),
-          avatar: backendUser?.avatar || 'https://s.coze.cn/image/rFqxc53MSiw/',
-          roleType: (backendUser?.roleType || codeOrRoleType) as UserRole,
-          subRole: (backendUser?.subRole || subRole) as UserSubRole,
-          authStatus: (backendUser?.authStatus || 'VERIFIED') as User['authStatus'],
-          registrationDate: backendUser?.createdAt || new Date().toISOString(),
-          lastLoginDate: backendUser?.lastLoginAt || new Date().toISOString(),
-        };
-
-        await AsyncStorage.setItem('accessToken', accessToken);
-        if (refreshToken) {
-          await AsyncStorage.setItem('refreshToken', refreshToken);
-        }
-        dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token: accessToken } });
+      if (mode === 'verification') {
+        // 验证码登录
+        response = await authApi.loginWithCode({ phoneNumber, code: codeOrPassword });
       } else {
-        // 普通验证码登录：调用后端登录接口（手机号+密码模式）
-        const response: any = await authApi.login({
-          phoneNumber,
-          password: codeOrRoleType,
-        });
-
-        const backendUser = response.data?.user;
-        // 兼容新旧格式：优先 accessToken，回退 token
-        const accessToken = response.data?.accessToken || response.data?.token;
-
-        if (!accessToken) {
-          throw new Error('登录失败：未获取到有效 token');
-        }
-
-        const refreshToken = response.data?.refreshToken || null;
-
-        const user: User = {
-          id: backendUser?._id || backendUser?.id || '1',
-          phoneNumber: backendUser?.phoneNumber || phoneNumber,
-          nickname: backendUser?.nickname || '用户',
-          avatar: backendUser?.avatar || 'https://s.coze.cn/image/rFqxc53MSiw/',
-          roleType: (backendUser?.roleType || 'FARMER') as UserRole,
-          subRole: (backendUser?.subRole || 'SMALL') as UserSubRole,
-          authStatus: (backendUser?.authStatus || 'UNVERIFIED') as User['authStatus'],
-          registrationDate: backendUser?.createdAt || new Date().toISOString(),
-          lastLoginDate: backendUser?.lastLoginAt || new Date().toISOString(),
-        };
-
-        await AsyncStorage.setItem('accessToken', accessToken);
-        if (refreshToken) {
-          await AsyncStorage.setItem('refreshToken', refreshToken);
-        }
-        dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token: accessToken } });
+        // 密码登录
+        response = await authApi.login({ phoneNumber, password: codeOrPassword });
       }
+
+      const backendUser = response.data?.user;
+      const accessToken = response.data?.accessToken || response.data?.token;
+
+      if (!accessToken) {
+        throw new Error('登录失败：未获取到有效 token');
+      }
+
+      const refreshToken = response.data?.refreshToken || null;
+
+      const user: User = {
+        id: backendUser?._id || backendUser?.id || '1',
+        phoneNumber: backendUser?.phoneNumber || phoneNumber,
+        nickname: backendUser?.nickname || '用户',
+        avatar: backendUser?.avatar || 'https://s.coze.cn/image/rFqxc53MSiw/',
+        roleType: (backendUser?.roleType || 'FARMER') as UserRole,
+        subRole: (backendUser?.subRole || 'SMALL') as UserSubRole,
+        authStatus: (backendUser?.authStatus || 'UNVERIFIED') as User['authStatus'],
+        registrationDate: backendUser?.createdAt || new Date().toISOString(),
+        lastLoginDate: backendUser?.lastLoginAt || new Date().toISOString(),
+      };
+
+      await AsyncStorage.setItem('accessToken', accessToken);
+      if (refreshToken) {
+        await AsyncStorage.setItem('refreshToken', refreshToken);
+      }
+      dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token: accessToken } });
     } catch (error) {
       dispatch({ type: 'LOGIN_FAILURE', payload: error instanceof Error ? error.message : '登录失败，请稍后重试' });
     }
   };
-  
-  // 根据角色生成昵称
-  const getRoleNickname = (roleType: UserRole, subRole: UserSubRole): string => {
-    switch (roleType) {
-      case 'FARMER':
-        return subRole === 'SMALL' ? '小散户养殖户' : '企业养殖户';
-      case 'INSTITUTION':
-        return '疫控机构用户';
-      case 'STUDENT':
-        return '实习学生';
-      case 'TEACHER':
-        return '指导教师';
-      default:
-        return '体验用户';
+
+  // 体验登录函数
+  const experienceLogin = async (roleType: string, subRole: string) => {
+    dispatch({ type: 'LOGIN_REQUEST' });
+    try {
+      const response: any = await authApi.experienceLogin({ roleType, subRole });
+
+      const backendUser = response.data?.user;
+      const accessToken = response.data?.accessToken || response.data?.token;
+
+      if (!accessToken) {
+        throw new Error('体验登录失败：未获取到有效 token');
+      }
+
+      const refreshToken = response.data?.refreshToken || null;
+
+      const user: User = {
+        id: backendUser?._id || backendUser?.id || `experience-${Date.now()}`,
+        phoneNumber: backendUser?.phoneNumber || '',
+        nickname: backendUser?.nickname || '体验用户',
+        avatar: backendUser?.avatar || 'https://s.coze.cn/image/rFqxc53MSiw/',
+        roleType: (backendUser?.roleType || roleType) as UserRole,
+        subRole: (backendUser?.subRole || subRole) as UserSubRole,
+        authStatus: (backendUser?.authStatus || 'VERIFIED') as User['authStatus'],
+        registrationDate: backendUser?.createdAt || new Date().toISOString(),
+        lastLoginDate: backendUser?.lastLoginAt || new Date().toISOString(),
+      };
+
+      await AsyncStorage.setItem('accessToken', accessToken);
+      if (refreshToken) {
+        await AsyncStorage.setItem('refreshToken', refreshToken);
+      }
+      dispatch({ type: 'LOGIN_SUCCESS', payload: { user, token: accessToken } });
+    } catch (error) {
+      dispatch({ type: 'LOGIN_FAILURE', payload: error instanceof Error ? error.message : '体验登录失败，请稍后重试' });
     }
   };
 
   // 注册函数
-  const register = async (phoneNumber: string, verificationCode: string, password: string) => {
+  const register = async (phoneNumber: string, verificationCode: string, password: string, nickname?: string) => {
     dispatch({ type: 'LOGIN_REQUEST' });
     try {
       // 调用后端注册接口
       const response: any = await authApi.register({
         phoneNumber,
         password,
+        nickname: nickname || phoneNumber,
         roleType: 'FARMER',
         subRole: 'SMALL',
       });
@@ -364,6 +348,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const contextValue: AuthContextType = {
     state,
     login,
+    experienceLogin,
     register,
     sendVerificationCode,
     logout,

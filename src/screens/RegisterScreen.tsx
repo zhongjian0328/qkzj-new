@@ -68,7 +68,7 @@ const RegisterScreen: React.FC = () => {
     try {
       setLoading(true);
       // 调用真实 API 发送验证码
-      await authApi.getVerificationCode(phoneNumber);
+      await authApi.getVerificationCode(phoneNumber, 'register');
 
       // 发送成功，开始倒计时
       setCountdown(60);
@@ -102,11 +102,18 @@ const RegisterScreen: React.FC = () => {
       await authApi.verifyCode({ phoneNumber, code: verificationCode });
 
       // 验证通过，调用注册API
+      const subRoleMap: { [key: string]: string } = {
+        FARMER: 'SMALL',
+        STUDENT: 'LEARNING_STUDENT',
+        VETERINARIAN: 'GENERAL',
+      };
+
       const response = await authApi.register({
         phoneNumber,
         password,
+        nickname,
         roleType,
-        subRole: 'SMALL' // 默认子角色，根据实际情况调整
+        subRole: subRoleMap[roleType] || 'SMALL',
       });
 
       // 注册成功，导航到登录页面

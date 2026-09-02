@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, ActivityIndicator, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
 import { styles } from '../styles';
+import { knowledgeApi } from '../services/api';
 
 // 知识点数据结构
 interface KnowledgeNode {
@@ -22,76 +23,32 @@ const KnowledgeGraphScreen: React.FC = () => {
   const [knowledgeNodes, setKnowledgeNodes] = useState<KnowledgeNode[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // 模拟API请求延迟
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        // 模拟网络请求延迟
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // 模拟知识点数据
-        const mockNodes: KnowledgeNode[] = [
-          {
-            id: '1',
-            title: '禽流感',
-            category: 'disease',
-            description: '禽流感是由A型流感病毒引起的一种禽类传染病，可导致高死亡率。',
-            relatedNodes: ['2', '3', '4'],
-            icon: '🦠'
-          },
-          {
-            id: '2',
-            title: '新城疫',
-            category: 'disease',
-            description: '新城疫是由新城疫病毒引起的一种急性、高度接触性传染病。',
-            relatedNodes: ['1', '3', '5'],
-            icon: '🦠'
-          },
-          {
-            id: '3',
-            title: '免疫接种',
-            category: 'prevention',
-            description: '免疫接种是预防禽类传染病的重要措施。',
-            relatedNodes: ['1', '2', '6'],
-            icon: '💉'
-          },
-          {
-            id: '4',
-            title: '扑杀措施',
-            category: 'control',
-            description: '扑杀是控制高致病性禽流感的有效措施。',
-            relatedNodes: ['1', '5'],
-            icon: '🚫'
-          },
-          {
-            id: '5',
-            title: '消毒程序',
-            category: 'control',
-            description: '严格的消毒程序可以有效防止传染病的传播。',
-            relatedNodes: ['2', '4', '6'],
-            icon: '🧼'
-          },
-          {
-            id: '6',
-            title: '生物安全',
-            category: 'prevention',
-            description: '生物安全措施是预防禽类传染病的第一道防线。',
-            relatedNodes: ['3', '5'],
-            icon: '🔒'
-          }
-        ];
-        
-        setKnowledgeNodes(mockNodes);
-      } catch (error) {
-        console.error('获取知识点失败:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const [refreshing, setRefreshing] = useState(false);
 
+  const fetchData = useCallback(async (isRefresh = false) => {
+    try {
+      if (isRefresh) setRefreshing(true); else setLoading(true);
+      const response = await knowledgeApi.getKnowledgeGraphs({ searchTerm: searchQuery || undefined });
+      const graphs = response.data?.graphs || response.data || [];
+      setKnowledgeNodes(graphs.map((g: any) => ({
+        id: g._id || g.id,
+        title: g.diseaseName || g.title,
+        category: g.category || 'disease',
+        description: g.description || g.summary || '',
+        relatedNodes: g.relatedDiseases || g.relatedNodes || [],
+        icon: g.icon || '🦠'
+      })));
+    } catch (error) {
+      console.error('获取知识点失败:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [searchQuery]);
+
+  useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   // 分类列表
   const categories = [

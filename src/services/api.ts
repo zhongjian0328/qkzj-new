@@ -200,20 +200,29 @@ api.interceptors.response.use(
 // 用户认证相关API
 export const authApi = {
   // 登录
-  login: (data: { phoneNumber: string; password: string }) => 
+  login: (data: { phoneNumber: string; password: string }) =>
     api.post('/auth/login', data),
+
+  // 验证码登录（已注册用户）
+  loginWithCode: (data: { phoneNumber: string; code: string }) =>
+    api.post('/auth/login-with-code', data),
+
+  // 体验登录
+  experienceLogin: (data: { roleType: string; subRole: string }) =>
+    api.post('/auth/experience-login', data),
   
   // 注册
   register: (data: {
     phoneNumber: string;
     password: string;
+    nickname: string;
     roleType: string;
     subRole: string;
   }) => api.post('/auth/register', data),
   
-  // 获取验证码
-  getVerificationCode: (phoneNumber: string) => 
-    api.post('/auth/get-verification-code', { phoneNumber }),
+  // 获取验证码（type: register=注册, login=登录, forgot=找回密码）
+  getVerificationCode: (phoneNumber: string, type: 'register' | 'login' | 'forgot' = 'register') =>
+    api.post('/auth/get-verification-code', { phoneNumber, type }),
   
   // 验证验证码
   verifyCode: (data: { phoneNumber: string; code: string }) => 

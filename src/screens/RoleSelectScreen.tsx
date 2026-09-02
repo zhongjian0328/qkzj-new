@@ -4,16 +4,20 @@ import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { styles } from '../styles';
+import { authApi } from '../services/api';
+import { useAuth } from '../context/UserContext';
 
 // 定义导航类型
 type RoleSelectScreenNavigationProp = StackNavigationProp<RootStackParamList, 'RoleSelect'>;
 
 const RoleSelectScreen: React.FC = () => {
   const navigation = useNavigation<RoleSelectScreenNavigationProp>();
-  
+  const { state, updateUser } = useAuth();
+
   // 状态管理
   const [selectedMainRole, setSelectedMainRole] = useState<string | null>(null);
   const [selectedSubRole, setSelectedSubRole] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   
   // 主角色数据
   const mainRoles = [
@@ -110,21 +114,52 @@ const RoleSelectScreen: React.FC = () => {
   };
   
   // 处理下一步
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!selectedMainRole || !selectedSubRole) {
       Alert.alert('提示', '请选择完整的角色信息');
       return;
     }
-    
-    // 根据角色判断是否需要认证
-    const requiresAuth = checkIfRequiresAuth(selectedMainRole, selectedSubRole);
-    
-    if (requiresAuth) {
-      // 需要认证，跳转到认证页
-      navigation.navigate('AuthCertification', { role: `${selectedMainRole}_${selectedSubRole}` });
-    } else {
-      // 不需要认证，直接跳转到主页面
-      navigation.reset({ index: 0, routes: [{ name: 'Main' }] });
+
+    // 映射为后端角色类型
+    const roleTypeMap: { [key: string]: string } = {
+      farmer: 'FARMER',
+      institution: 'INSTITUTION',
+      student: 'STUDENT',
+    };
+    const subRoleMap: { [key: string]: string } = {
+      small: 'SMALL',
+      cooperative: 'COOPERATIVE',
+      enterprise: 'ENTERPRISE',
+      cdc: 'CDC',
+      research: 'RESEARCH_INSTITUTE',
+      service: 'SERVICE_PROVIDER',
+      learning: 'LEARNING_STUDENT',
+      cognitive: 'COGNITIVE_INTERN',
+      advanced: 'ADVANCED_INTERN',
+    };
+
+    const roleType = roleTypeMap[selectedMainRole];
+    const subRole = subRoleMap[selectedSubRole];
+
+    setSubmitting(true);
+    try {
+      // 持久化角色到后端
+      await authApi.updateUser({ roleType, subRole } as any);
+      // 同步更新本地状态
+      updateUser({ roleType: roleType as any, subRole: subRole as any });
+
+      // 根据角色判断是否需要认证
+      const requiresAuth = checkIfRequiresAuth(selectedMainRole, selectedSubRole);
+
+      if (requiresAuth) {
+        navigation.navigate('AuthCertification', { role: `${selectedMainRole}_${selectedSubRole}` });
+      } else {
+        navigation.reset({ index: 0, routes: [{ name: 'Main' }] });
+      }
+    } catch (error) {
+      Alert.alert('提示', '角色保存失败，请稍后重试');
+    } finally {
+      setSubmitting(false);
     }
   };
   

@@ -72,7 +72,7 @@ const ChatDiagnosisScreen: React.FC = () => {
       const aiResponse: ChatMessage = {
         id: (Date.now() + 1).toString(),
         sender: 'ai',
-        message: typeof response === 'string' ? response : response.data.result || JSON.stringify(response.data),
+        message: typeof response === 'string' ? response : (response as any)?.data?.response || (response as any)?.response || '诊断服务暂时无法返回结果',
         timestamp: new Date()
       };
       

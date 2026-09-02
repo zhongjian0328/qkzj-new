@@ -10,9 +10,9 @@ import { styles } from '../styles';
 const LoginScreen: React.FC = () => {
   const navigation = useNavigation<any>();
   const { login, register, sendVerificationCode } = useAuth();
-  
+
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
-  const [loginMode, setLoginMode] = useState<'verification' | 'password'>('verification');
+  const [loginMode, setLoginMode] = useState<'verification' | 'password'>('password');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
@@ -69,8 +69,9 @@ const LoginScreen: React.FC = () => {
     
     try {
       setLoading(true);
-      // 调用发送验证码API
-      await sendVerificationCode(phoneNumber);
+      // 登录模式用 login 类型，注册模式用 register 类型
+      const codeType = activeTab === 'login' ? 'login' : 'register';
+      await sendVerificationCode(phoneNumber, codeType as any);
       
       // 模拟倒计时
       setCountdown(60);

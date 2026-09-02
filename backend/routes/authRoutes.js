@@ -20,6 +20,12 @@ router.post('/register', authController.register);
 // 用户登录
 router.post('/login', authController.login);
 
+// 验证码登录（已注册用户）
+router.post('/login-with-code', authController.loginWithCode);
+
+// 体验登录（自动创建体验账号）
+router.post('/experience-login', authController.experienceLogin);
+
 // 获取当前用户信息（需要认证）
 router.get('/current-user', authenticate, authController.getCurrentUser);
 

@@ -1,17 +1,40 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
 import { styles } from '../styles';
+import { epidemicApi } from '../services/api';
 
 const EpidemicHeatmapScreen: React.FC = () => {
   const navigation = useNavigation<any>();
-  
-  // 模拟疫情热力图数据
+
   const [selectedDate, setSelectedDate] = useState('2024-06-01');
   const [diseaseType, setDiseaseType] = useState('all');
   const [region, setRegion] = useState('all');
-  
+  const [epidemicData, setEpidemicData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchHeatmap = useCallback(async (isRefresh = false) => {
+    try {
+      if (isRefresh) setRefreshing(true); else setLoading(true);
+      setError(null);
+      const params: any = { date: selectedDate };
+      if (diseaseType !== 'all') params.diseaseType = diseaseType;
+      if (region !== 'all') params.region = region;
+      const response = await epidemicApi.getEpidemicHeatmap(params);
+      setEpidemicData(response.data?.heatmapData || response.data || []);
+    } catch (err) {
+      setError('获取疫情数据失败');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [selectedDate, diseaseType, region]);
+
+  useEffect(() => { fetchHeatmap(); }, [fetchHeatmap]);
+
   const diseaseTypes = [
     { id: 'all', name: '全部疾病' },
     { id: 'aiv', name: '禽流感' },
@@ -20,7 +43,7 @@ const EpidemicHeatmapScreen: React.FC = () => {
     { id: 'ibdv', name: '传染性法氏囊病' },
     { id: 'colibacillosis', name: '大肠杆菌病' }
   ];
-  
+
   const regions = [
     { id: 'all', name: '全国' },
     { id: 'beijing', name: '北京' },
@@ -29,74 +52,6 @@ const EpidemicHeatmapScreen: React.FC = () => {
     { id: 'jiangsu', name: '江苏' },
     { id: 'zhejiang', name: '浙江' },
     { id: 'shandong', name: '山东' }
-  ];
-  
-  // 模拟疫情数据
-  const epidemicData = [
-    {
-      id: '1',
-      location: '北京市昌平区',
-      disease: '禽流感',
-      cases: 125,
-      riskLevel: 'high',
-      date: '2024-06-01'
-    },
-    {
-      id: '2',
-      location: '上海市浦东新区',
-      disease: '新城疫',
-      cases: 87,
-      riskLevel: 'medium',
-      date: '2024-06-01'
-    },
-    {
-      id: '3',
-      location: '广东省广州市',
-      disease: '大肠杆菌病',
-      cases: 45,
-      riskLevel: 'low',
-      date: '2024-06-01'
-    },
-    {
-      id: '4',
-      location: '江苏省南京市',
-      disease: '禽流感',
-      cases: 63,
-      riskLevel: 'medium',
-      date: '2024-06-01'
-    },
-    {
-      id: '5',
-      location: '浙江省杭州市',
-      disease: '传染性支气管炎',
-      cases: 28,
-      riskLevel: 'low',
-      date: '2024-06-01'
-    },
-    {
-      id: '6',
-      location: '山东省济南市',
-      disease: '新城疫',
-      cases: 92,
-      riskLevel: 'high',
-      date: '2024-06-01'
-    },
-    {
-      id: '7',
-      location: '山东省青岛市',
-      disease: '禽流感',
-      cases: 51,
-      riskLevel: 'medium',
-      date: '2024-06-01'
-    },
-    {
-      id: '8',
-      location: '江苏省苏州市',
-      disease: '大肠杆菌病',
-      cases: 33,
-      riskLevel: 'low',
-      date: '2024-06-01'
-    }
   ];
   
   const getRiskColor = (riskLevel: string) => {
@@ -120,7 +75,20 @@ const EpidemicHeatmapScreen: React.FC = () => {
         onBack={() => navigation.goBack()} 
       />
       
-      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
+      <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => fetchHeatmap(true)} colors={['#2DBBA1']} />}
+      >
+        {loading && epidemicData.length === 0 && (
+          <View style={{ paddingVertical: 40, alignItems: 'center' }}>
+            <ActivityIndicator size="large" color="#2DBBA1" />
+            <Text style={{ marginTop: 8, color: '#6B7280' }}>加载疫情数据...</Text>
+          </View>
+        )}
+        {error && (
+          <View style={{ padding: 16, backgroundColor: '#FEF2F2', borderRadius: 8, marginBottom: 12 }}>
+            <Text style={{ color: '#DC2626', textAlign: 'center' }}>{error}</Text>
+          </View>
+        )}
         {/* 筛选条件 */}
         <View style={styles.epidemicHeatmapFilters}>
           {/* 日期选择 */}

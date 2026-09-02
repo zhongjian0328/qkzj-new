@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert, ActivityIndicator, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
 import { styles } from '../styles';
+import { internshipApi } from '../services/api';
 
 // 日志数据结构
 interface InternLog {
@@ -26,37 +27,38 @@ const InternLogScreen: React.FC = () => {
   const [showAddLog, setShowAddLog] = useState(false);
   const [newLogTitle, setNewLogTitle] = useState('');
   const [newLogContent, setNewLogContent] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchLogs = useCallback(async (isRefresh = false) => {
+    try {
+      if (isRefresh) setRefreshing(true); else setLoading(true);
+      const params: any = {};
+      if (activeStatus !== 'all') params.status = activeStatus;
+      const response = await internshipApi.getInternLogs(params);
+      const data = response.data?.logs || response.data || [];
+      setLogs(data.map((log: any) => ({
+        id: log._id || log.id,
+        title: log.title || log.logDate ? `实习日志-${log.logDate}` : '实习日志',
+        content: log.content || '',
+        date: log.logDate || log.createdAt || '',
+        status: log.status || 'draft',
+        mentorComments: log.mentorComment?.comment || log.mentorComments,
+        mentorName: log.mentorComment?.mentorName || log.mentorName,
+        rating: log.rating,
+      })));
+    } catch (error) {
+      console.error('获取实习日志失败:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [activeStatus]);
+
+  useEffect(() => { fetchLogs(); }, [fetchLogs]);
 
   // 模拟日志数据
-  const [logs, setLogs] = useState<InternLog[]>([
-    {
-      id: '1',
-      title: '第一天实习记录',
-      content: '今天开始了在禽康智检的实习，主要了解了公司的业务流程和产品功能。上午参加了入职培训，下午跟随导师学习了AI诊断系统的基本操作。',
-      date: '2024-01-15',
-      status: 'approved',
-      mentorComments: '实习第一天表现良好，学习态度认真，建议加强对AI诊断原理的理解。',
-      mentorName: '张导师',
-      rating: 4.5
-    },
-    {
-      id: '2',
-      title: 'AI诊断系统实操',
-      content: '今天进行了AI诊断系统的实操练习，尝试上传病禽图片并获取诊断结果。遇到了一些问题，导师耐心指导后顺利完成。',
-      date: '2024-01-16',
-      status: 'submitted',
-      mentorComments: '实操过程中遇到问题能主动请教，进步很快，继续保持。',
-      mentorName: '张导师',
-      rating: 4.0
-    },
-    {
-      id: '3',
-      title: '生产管理模块学习',
-      content: '今天学习了生产管理模块，了解了批次管理、死淘率记录等功能。',
-      date: '2024-01-17',
-      status: 'draft'
-    }
-  ]);
+  const [logs, setLogs] = useState<InternLog[]>([]);
 
   // 状态筛选选项
   const statusOptions = [

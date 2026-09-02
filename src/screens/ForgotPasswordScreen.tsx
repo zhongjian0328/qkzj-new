@@ -80,7 +80,7 @@ const ForgotPasswordScreen: React.FC = () => {
 
     try {
       setLoading(true);
-      await authApi.getVerificationCode(phoneNumber);
+      await authApi.getVerificationCode(phoneNumber, 'forgot');
       setCountdown(60);
       setStep(2);
       setErrors({});
@@ -113,7 +113,7 @@ const ForgotPasswordScreen: React.FC = () => {
 
     try {
       setLoading(true);
-      await authApi.getVerificationCode(phoneNumber);
+      await authApi.getVerificationCode(phoneNumber, 'forgot');
       setCountdown(60);
       setErrors({});
     } catch (error) {

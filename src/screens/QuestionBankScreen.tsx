@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Alert, ActivityIndicator, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
 import { styles } from '../styles';
+import { knowledgeApi } from '../services/api';
 
 // 题目数据结构
 interface Question {
@@ -25,56 +26,38 @@ const QuestionBankScreen: React.FC = () => {
   const [quizScore, setQuizScore] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [quizQuestions, setQuizQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchQuestions = useCallback(async (isRefresh = false) => {
+    try {
+      if (isRefresh) setRefreshing(true); else setLoading(true);
+      const response = await knowledgeApi.getQuestionBank({
+        knowledgePoint: activeCategory !== 'all' ? activeCategory : undefined,
+        difficulty: activeDifficulty !== 'all' ? activeDifficulty : undefined,
+      });
+      const data = response.data?.questions || response.data || [];
+      setQuestions(data.map((q: any) => ({
+        id: q._id || q.id,
+        question: q.question || q.stem || '',
+        options: q.options || q.choices || [],
+        correctAnswers: q.correctAnswers || q.correctOptionIndices || [],
+        type: q.type || (q.correctAnswers?.length > 1 ? 'multiple' : 'single'),
+        category: q.category || q.knowledgePoint || 'general',
+        difficulty: q.difficulty || 'easy',
+      })));
+    } catch (error) {
+      console.error('获取题库失败:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [activeCategory, activeDifficulty]);
+
+  useEffect(() => { fetchQuestions(); }, [fetchQuestions]);
 
   // 模拟题目数据
-  const questions: Question[] = [
-    {
-      id: '1',
-      question: '以下哪种症状不是禽流感的典型表现？',
-      options: ['发热', '咳嗽', '腹泻', '羽毛鲜艳'],
-      correctAnswers: [3],
-      type: 'single',
-      category: 'disease',
-      difficulty: 'easy'
-    },
-    {
-      id: '2',
-      question: '新城疫的主要传播途径包括哪些？',
-      options: ['空气传播', '接触传播', '垂直传播', '饮食传播'],
-      correctAnswers: [0, 1, 2],
-      type: 'multiple',
-      category: 'disease',
-      difficulty: 'medium'
-    },
-    {
-      id: '3',
-      question: '以下哪些是预防禽类传染病的有效措施？',
-      options: ['免疫接种', '定期消毒', '随意引种', '隔离饲养'],
-      correctAnswers: [0, 1, 3],
-      type: 'multiple',
-      category: 'prevention',
-      difficulty: 'easy'
-    },
-    {
-      id: '4',
-      question: '高致病性禽流感的防控措施包括？',
-      options: ['扑杀', '消毒', '免疫接种', '自由放养'],
-      correctAnswers: [0, 1, 2],
-      type: 'multiple',
-      category: 'control',
-      difficulty: 'hard'
-    },
-    {
-      id: '5',
-      question: '以下哪种药物可以用于禽流感的治疗？',
-      options: ['抗生素', '抗病毒药物', '退烧药', '维生素'],
-      correctAnswers: [1],
-      type: 'single',
-      category: 'treatment',
-      difficulty: 'medium'
-    }
-  ];
-
   // 分类列表
   const categories = [
     { id: 'all', name: '全部' },

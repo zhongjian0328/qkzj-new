@@ -11,7 +11,7 @@ type ExperienceRoleScreenNavigationProp = StackNavigationProp<RootStackParamList
 
 const ExperienceRoleScreen: React.FC = () => {
   const navigation = useNavigation<ExperienceRoleScreenNavigationProp>();
-  const { login } = useAuth();
+  const { experienceLogin } = useAuth();
   
   // 状态管理
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
@@ -67,13 +67,16 @@ const ExperienceRoleScreen: React.FC = () => {
     try {
       // 角色映射：将体验角色ID映射为对应的UserRole和UserSubRole
       let roleType: 'FARMER' | 'INSTITUTION' | 'STUDENT';
-      let subRole: any;
-      
+      let subRole: string;
+
       switch (selectedRole) {
         case 'farmer-small':
+          roleType = 'FARMER';
+          subRole = 'SMALL';
+          break;
         case 'farmer-enterprise':
           roleType = 'FARMER';
-          subRole = selectedRole === 'farmer-small' ? 'SMALL' : 'ENTERPRISE';
+          subRole = 'ENTERPRISE';
           break;
         case 'institution-cdc':
           roleType = 'INSTITUTION';
@@ -87,10 +90,9 @@ const ExperienceRoleScreen: React.FC = () => {
           roleType = 'FARMER';
           subRole = 'SMALL';
       }
-      
-      // 使用体验账号和验证码登录
-      // 这里使用固定的体验账号和验证码，实际应用中应该有专门的体验账号管理
-      await login(selectedRole, roleType, subRole);
+
+      // 调用后端体验登录接口
+      await experienceLogin(roleType, subRole);
       
       // 登录成功，跳转到Main页面
       navigation.reset({

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Alert, ActivityIndicator, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
 import { styles } from '../styles';
+import { internshipApi } from '../services/api';
 
 // 导师数据结构
 interface Mentor {
@@ -36,48 +37,38 @@ const MentorManagementScreen: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'mentors' | 'programs'>('mentors');
   const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
   const [selectedProgram, setSelectedProgram] = useState<InternshipProgram | null>(null);
+  const [mentors, setMentors] = useState<Mentor[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  // 模拟导师数据
-  const mentors: Mentor[] = [
-    {
-      id: '1',
-      name: '张导师',
-      title: '高级兽医师',
-      department: '禽病诊断中心',
-      expertise: ['禽流感', '新城疫', '免疫接种'],
-      avatar: '👨‍⚕️',
-      rating: 4.8,
-      bio: '从事禽类疾病诊断工作15年，在禽流感和新城疫防控方面有丰富经验。',
-      contact: 'zh导师@qinkangzhijian.com',
-      internCount: 25
-    },
-    {
-      id: '2',
-      name: '李导师',
-      title: '资深研究员',
-      department: 'AI技术研发部',
-      expertise: ['AI诊断', '图像识别', '自然语言处理'],
-      avatar: '👩‍🔬',
-      rating: 4.9,
-      bio: '专注于AI在禽类健康诊断领域的应用研究，主持开发了禽康智检AI诊断系统。',
-      contact: '李导师@qinkangzhijian.com',
-      internCount: 20
-    },
-    {
-      id: '3',
-      name: '王导师',
-      title: '生产管理专家',
-      department: '生产技术部',
-      expertise: ['批次管理', '死淘率控制', '生产优化'],
-      avatar: '👨‍🌾',
-      rating: 4.7,
-      bio: '从事禽类生产管理工作20年，擅长优化生产流程和提高生产效率。',
-      contact: '王导师@qinkangzhijian.com',
-      internCount: 18
+  const fetchMentors = useCallback(async (isRefresh = false) => {
+    try {
+      if (isRefresh) setRefreshing(true); else setLoading(true);
+      const response = await internshipApi.getStudents({});
+      const data = response.data?.students || response.data || [];
+      setMentors(data.map((s: any) => ({
+        id: s._id || s.id,
+        name: s.nickname || s.name || '导师',
+        title: s.title || '指导教师',
+        department: s.department || '',
+        expertise: s.expertise || [],
+        avatar: s.avatar || '👨‍⚕️',
+        rating: s.rating || 0,
+        bio: s.bio || '',
+        contact: s.phoneNumber || s.contact || '',
+        internCount: s.internCount || 0,
+      })));
+    } catch (error) {
+      console.error('获取导师列表失败:', error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
     }
-  ];
+  }, []);
 
-  // 模拟实习项目数据
+  useEffect(() => { fetchMentors(); }, [fetchMentors]);
+
+  // 实习项目数据（静态展示，如需动态可后续接入 API）
   const internshipPrograms: InternshipProgram[] = [
     {
       id: '1',
