@@ -1,15 +1,30 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/Header';
 import { useAuth } from '../context/UserContext';
 import { styles } from '../styles';
+import { notificationApi } from '../services/api';
 
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation<any>();
   const { state } = useAuth();
   const user = state.user;
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const fetchUnreadCount = useCallback(async () => {
+    try {
+      const res = await notificationApi.getUnreadCount();
+      setUnreadCount(res?.data?.count ?? 0);
+    } catch (e) {
+      console.error('获取未读通知数量失败:', e);
+    }
+  }, []);
+
+  useFocusEffect(useCallback(() => {
+    fetchUnreadCount();
+  }, [fetchUnreadCount]));
 
   // 根据角色获取首页配置
   const getHomeConfig = () => {
@@ -252,9 +267,38 @@ const HomeScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Header 
-        title={homeConfig.title} 
-        showBackButton={false} 
+      <Header
+        title={homeConfig.title}
+        showBackButton={false}
+        rightComponent={
+          <TouchableOpacity
+            style={{ position: 'relative', padding: 8 }}
+            onPress={() => navigation.navigate('Notifications')}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="notifications-outline" size={24} color="#1F5E52" />
+            {unreadCount > 0 && (
+              <View
+                style={{
+                  position: 'absolute',
+                  top: 2,
+                  right: 2,
+                  minWidth: 16,
+                  height: 16,
+                  borderRadius: 8,
+                  backgroundColor: '#EF4444',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  paddingHorizontal: 3,
+                }}
+              >
+                <Text style={{ fontSize: 9, fontWeight: '700', color: '#FFFFFF' }}>
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        }
       />
       
       <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 }]}>

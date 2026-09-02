@@ -3,6 +3,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+const http = require('http');
 
 // 加载环境变量
 dotenv.config();
@@ -109,6 +110,7 @@ const knowledgeArticleRoutes = require('./routes/knowledgeArticle');
 const statisticsRoutes = require('./routes/statistics');
 const serviceTicketRoutes = require('./routes/serviceTicket');
 const teachingCaseRoutes = require('./routes/teachingCase');
+const notificationRoutes = require('./routes/notification');
 
 // 注册路由
 app.use('/api/auth', authRoutes);
@@ -127,6 +129,7 @@ app.use('/api/knowledge', knowledgeArticleRoutes);
 app.use('/api/statistics', statisticsRoutes);
 app.use('/api/tickets', serviceTicketRoutes);
 app.use('/api/teaching-cases', teachingCaseRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // 健康检查路由
 app.get('/api/health', (req, res) => {
@@ -146,8 +149,14 @@ app.use((err, req, res, next) => {
   res.status(statusCode).json({ status: 'error', message });
 });
 
-// 启动服务器
+// 启动服务器（包装为 HTTP server 以支持 Socket.IO）
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+const server = http.createServer(app);
+
+// 初始化 Socket.IO
+const { initSocketIO } = require('./services/socketService');
+initSocketIO(server);
+
+server.listen(PORT, () => {
   console.log(`服务器运行在 http://localhost:${PORT}`);
 });

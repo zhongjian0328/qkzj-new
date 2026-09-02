@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, lazy, Suspense } from 'react';
-import { Text, View, Animated, StyleSheet, ActivityIndicator } from 'react-native';
+import { Text, View, Animated, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -9,6 +9,7 @@ import AppProvider from './context/AppProvider';
 import { useAuth } from './context/UserContext';
 import { styles } from './styles';
 import * as SplashScreen from 'expo-splash-screen';
+import OfflineBanner from './components/OfflineBanner';
 
 // 懒加载屏幕组件
 const LoginScreen = lazy(() => import('./screens/LoginScreen'));
@@ -46,6 +47,7 @@ const TicketDetailScreen = lazy(() => import('./screens/TicketDetailScreen'));
 const CreateTicketScreen = lazy(() => import('./screens/CreateTicketScreen'));
 const TeachingCaseListScreen = lazy(() => import('./screens/TeachingCaseListScreen'));
 const TeachingCaseDetailScreen = lazy(() => import('./screens/TeachingCaseDetailScreen'));
+const NotificationListScreen = lazy(() => import('./screens/NotificationListScreen'));
 
 // 加载指示器组件
 const LoadingIndicator = () => (
@@ -92,6 +94,7 @@ export type RootStackParamList = {
   CreateTicket: undefined;
   TeachingCaseList: undefined;
   TeachingCaseDetail: { caseId: string };
+  Notifications: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -373,6 +376,7 @@ const App: React.FC = () => {
     <AppProvider>
       <NavigationContainer>
         <StatusBar style="auto" />
+        <OfflineBanner />
         <Suspense fallback={<LoadingIndicator />}>
           <Stack.Navigator
             screenOptions={{
@@ -420,6 +424,7 @@ const App: React.FC = () => {
             <Stack.Screen name="CreateTicket" component={CreateTicketScreen} />
             <Stack.Screen name="TeachingCaseList" component={TeachingCaseListScreen} />
             <Stack.Screen name="TeachingCaseDetail" component={TeachingCaseDetailScreen} />
+            <Stack.Screen name="Notifications" component={NotificationListScreen} />
           </Stack.Navigator>
         </Suspense>
       </NavigationContainer>

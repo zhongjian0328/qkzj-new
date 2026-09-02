@@ -860,6 +860,38 @@ export const serviceTicketApi = {
   cancelTicket: (id: string) => api.patch(`/tickets/${id}/cancel`),
 };
 
+// 通知管理相关API
+export const notificationApi = {
+  // 发送通知
+  sendNotification: (data: {
+    userId: string;
+    title: string;
+    message: string;
+    type: 'warning' | 'followup' | 'system' | 'diagnosis' | 'ticket';
+    relatedId?: string;
+  }) => api.post('/notifications', data),
+
+  // 获取用户通知列表
+  getUserNotifications: (params?: {
+    page?: number;
+    limit?: number;
+    type?: string;
+    status?: 'read' | 'unread';
+  }) => api.get('/notifications', { params }),
+
+  // 标记单条通知为已读
+  markAsRead: (id: string) => api.put(`/notifications/${id}/read`),
+
+  // 全部标记为已读
+  markAllAsRead: () => api.put('/notifications/read-all'),
+
+  // 获取未读数量
+  getUnreadCount: () => api.get('/notifications/unread-count'),
+
+  // 删除通知
+  deleteNotification: (id: string) => api.delete(`/notifications/${id}`),
+};
+
 // 教学案例相关API
 export const teachingCaseApi = {
   createCase: (data: any) => api.post('/teaching-cases', data),
