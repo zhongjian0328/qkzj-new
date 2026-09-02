@@ -3,6 +3,7 @@ const FormData = require('form-data');
 const fs = require('fs');
 const path = require('path');
 const OpenAI = require('openai');
+const ruleEngine = require('../services/ruleEngine');
 
 /**
  * 加密文件解析工具类
@@ -215,6 +216,97 @@ class AIService {
       return {};
     }
     return 'AI诊断服务暂时不可用（LLM未配置），请稍后重试。建议联系管理员配置 DASHSCOPE_API_KEY。';
+  }
+
+  // ======================== LLM + 规则引擎融合 ========================
+
+  /**
+   * LLM 文本调用包装器：先尝试 LLM，失败后降级到规则引擎
+   * @param {Function} llmFn    — 返回 Promise<string> 的 LLM 调用函数
+   * @param {Object}   ruleArgs — 传给 ruleBasedDiagnosis 的参数 { symptoms, images, environment }
+   * @returns {Promise<string>} — LLM 文本或规则引擎诊断摘要
+   */
+  async _callLLMWithFallback(llmFn, ruleArgs) {
+    try {
+      return await llmFn();
+    } catch (error) {
+      console.warn(`[AIService Fallback] LLM 调用失败，降级到规则引擎: ${error.message}`);
+      const results = ruleEngine.ruleBasedDiagnosis(
+        ruleArgs.symptoms,
+        ruleArgs.images || [],
+        ruleArgs.environment
+      );
+      if (results.length > 0) {
+        const top = results[0];
+        return `规则引擎诊断结果：最可能为 ${top.disease}（置信度 ${(top.confidence * 100).toFixed(1)}%）。` +
+          `匹配症状：${top.matchedSymptoms.join('、')}。` +
+          `防控建议：${top.recommendations.slice(0, 3).join('；')}。`;
+      }
+      return '规则引擎未能给出明确诊断，建议联系专业兽医进行排查。';
+    }
+  }
+
+  /**
+   * LLM JSON 调用包装器：先尝试 LLM，失败后降级到规则引擎并包装为 JSON
+   * @param {Function} llmJsonFn — 返回 Promise<Object> 的 LLM JSON 调用函数
+   * @param {Object}   ruleArgs  — 传给 ruleBasedDiagnosis 的参数 { symptoms, images, environment }
+   * @param {string}   targetFn  — 目标函数名（用于日志）
+   * @returns {Promise<Object>}  — LLM JSON 或规则引擎封装结果
+   */
+  async _callLLMJsonWithFallback(llmJsonFn, ruleArgs, targetFn) {
+    try {
+      const result = await llmJsonFn();
+      if (result && typeof result === 'object' && Object.keys(result).length === 0) {
+        throw new Error('LLM 返回空对象，触发规则引擎兜底');
+      }
+      return result;
+    } catch (error) {
+      console.warn(`[AIService Fallback] ${targetFn} LLM 调用失败，降级到规则引擎: ${error.message}`);
+      return this._buildRuleEngineJsonResponse(ruleArgs);
+    }
+  }
+
+  /**
+   * 将规则引擎诊断结果封装为 JSON 格式（与 LLM JSON 输出结构兼容）
+   * @param {Object} ruleArgs — { symptoms, images, environment }
+   * @returns {Object} 结构化 JSON 诊断结果
+   */
+  _buildRuleEngineJsonResponse(ruleArgs) {
+    const results = ruleEngine.ruleBasedDiagnosis(
+      ruleArgs.symptoms,
+      ruleArgs.images || [],
+      ruleArgs.environment
+    );
+
+    if (results.length === 0) {
+      return {
+        diagnosis: { diseaseName: '未知', confidence: 0, matchedSymptoms: [] },
+        treatmentAdvice: { medication: '建议联系专业兽医', dosage: '遵医嘱', treatmentPeriod: '遵医嘱' },
+        preventionMeasures: { isolation: '隔离可疑病禽', disinfection: '加强环境消毒', managementAdjustment: '改善饲养环境' },
+        notes: { reminder: '规则引擎未匹配到明确疾病，建议送实验室确诊', reexamination: '48 小时后复查' }
+      };
+    }
+
+    const top = results[0];
+    return {
+      diagnosis: { diseaseName: top.disease, confidence: top.confidence, matchedSymptoms: top.matchedSymptoms },
+      treatmentAdvice: {
+        medication: top.greenMedication ? top.greenMedication.join('；') : '对症支持治疗',
+        dosage: '按药品说明或遵医嘱',
+        treatmentPeriod: '5-7 天'
+      },
+      preventionMeasures: { isolation: '立即隔离可疑病禽', disinfection: '全场消毒，每日 1-2 次', managementAdjustment: '改善饲养环境，降低密度，加强通风' },
+      notes: { reminder: `规则引擎诊断：${top.disease}（置信度 ${(top.confidence * 100).toFixed(1)}%）`, reexamination: '3-5 天后复查，观察疗效' },
+      candidates: results.slice(1).map(r => ({ diseaseName: r.disease, confidence: r.confidence, matchedSymptoms: r.matchedSymptoms })),
+      greenMedication: top.greenMedication || []
+    };
+  }
+
+  /**
+   * 构建紧急控制方案规则引擎兜底
+   */
+  _buildEmergencyPlanFromRule(disease, environment) {
+    return ruleEngine.ruleBasedEmergencyPlan(disease, 'medium');
   }
 
   /**
@@ -1082,7 +1174,12 @@ ${imageAnalysis ? '- 图像识别结果：' + JSON.stringify(imageAnalysis) : ''
   "notes": { "reminder": "注意事项", "reexamination": "复诊建议" }
 }`;
 
-      const result = await this._callLLMJson(systemPrompt, userPrompt);
+      const ruleArgs = { symptoms, images: imageAnalysis, environment };
+      const result = await this._callLLMJsonWithFallback(
+        () => this._callLLMJson(systemPrompt, userPrompt),
+        ruleArgs,
+        'intelligentDiagnosis'
+      );
       return result;
     } catch (error) {
       console.error('智能诊断失败:', error.message);
@@ -1131,7 +1228,12 @@ ${imageAnalysis ? '- 图像识别结果：' + JSON.stringify(imageAnalysis) : ''
 
 请综合分析混合感染风险并返回JSON格式评估结果。`;
 
-      const result = await this._callLLMJson(systemPrompt, userPrompt);
+      const ruleArgs = { symptoms, images: [], environment };
+      const result = await this._callLLMJsonWithFallback(
+        () => this._callLLMJson(systemPrompt, userPrompt),
+        ruleArgs,
+        'mixedInfectionRiskAssessment'
+      );
       return result;
     } catch (error) {
       console.error('混合感染风险评估失败:', error.message);
@@ -1196,7 +1298,12 @@ ${imageAnalysis ? '- 图像识别结果：' + JSON.stringify(imageAnalysis) : ''
 
 请生成可操作的紧急控制方案，返回JSON格式。`;
 
-      const result = await this._callLLMJson(systemPrompt, userPrompt);
+      const ruleArgs = { symptoms, images: [], environment };
+      const result = await this._callLLMJsonWithFallback(
+        () => this._callLLMJson(systemPrompt, userPrompt),
+        ruleArgs,
+        'emergencyControlPlan'
+      );
       return result;
     } catch (error) {
       console.error('紧急控制方案生成失败:', error.message);
@@ -1250,7 +1357,12 @@ ${imageAnalysis ? '- 图像识别结果：' + JSON.stringify(imageAnalysis) : ''
 
 请返回JSON格式的疗效评估和调整建议。`;
 
-      const result = await this._callLLMJson(systemPrompt, userPrompt);
+      const ruleArgs = { symptoms: currentSymptoms, images: [], environment: {} };
+      const result = await this._callLLMJsonWithFallback(
+        () => this._callLLMJson(systemPrompt, userPrompt),
+        ruleArgs,
+        'treatmentAdjustment'
+      );
       return result;
     } catch (error) {
       console.error('治疗效果跟踪失败:', error.message);
@@ -1307,7 +1419,12 @@ ${imageAnalysis ? '- 图像识别结果：' + JSON.stringify(imageAnalysis) : ''
 
 请返回JSON格式的养殖建议。`;
 
-      const result = await this._callLLMJson(systemPrompt, userPrompt);
+      const ruleArgs = { symptoms: recentHealthStatus, images: [], environment };
+      const result = await this._callLLMJsonWithFallback(
+        () => this._callLLMJson(systemPrompt, userPrompt),
+        ruleArgs,
+        'farmingAdvice'
+      );
       return result;
     } catch (error) {
       console.error('养殖建议生成失败:', error.message);
@@ -1360,7 +1477,12 @@ ${imageAnalysis ? '- 图像识别结果：' + JSON.stringify(imageAnalysis) : ''
 
 请综合分析疾病风险并返回JSON格式预警结果。`;
 
-      const result = await this._callLLMJson(systemPrompt, userPrompt);
+      const ruleArgs = { symptoms: '', images: [], environment };
+      const result = await this._callLLMJsonWithFallback(
+        () => this._callLLMJson(systemPrompt, userPrompt),
+        ruleArgs,
+        'diseaseWarning'
+      );
       return result;
     } catch (error) {
       console.error('疾病风险预警失败:', error.message);
@@ -1388,7 +1510,11 @@ ${imageAnalysis && imageAnalysis.length > 0 ? '- 图像识别结果：' + JSON.s
 
 请给出初步诊断结论（包含疾病名称、置信度）、核心依据、紧急处理措施和后续建议。语言要通俗易懂，便于养殖户理解和执行。如果怀疑高致病性传染病，须强调立即隔离并上报当地动物防疫部门。`;
 
-      const result = await this._callLLM(systemPrompt, userPrompt);
+      const ruleArgs = { symptoms, images: imageAnalysis, environment };
+      const result = await this._callLLMWithFallback(
+        () => this._callLLM(systemPrompt, userPrompt),
+        ruleArgs
+      );
       return result;
     } catch (error) {
       console.error('对话诊断失败:', error.message);
