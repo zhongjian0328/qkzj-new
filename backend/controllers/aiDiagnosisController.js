@@ -79,7 +79,7 @@ exports.chatDiagnosis = async (req, res, next) => {
         if (imageAnalysis.result && imageAnalysis.result.length > 0) {
           imageAnalysis.result.forEach(item => {
             imageRecognitionResults.push({
-              pathogenName: item.name,
+              pathogenName: item.keyword,
               confidence: item.score,
               coreEvidence: item.baike_info?.description || '图像特征匹配'
             });
@@ -158,7 +158,7 @@ exports.vetDiagnosis = async (req, res, next) => {
         if (imageAnalysis.result && imageAnalysis.result.length > 0) {
           imageAnalysis.result.forEach(item => {
             imageRecognitionResults.push({
-              pathogenName: item.name,
+              pathogenName: item.keyword,
               confidence: item.score,
               coreEvidence: item.baike_info?.description || '图像特征匹配'
             });

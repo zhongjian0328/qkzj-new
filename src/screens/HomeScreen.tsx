@@ -178,7 +178,7 @@ const HomeScreen: React.FC = () => {
                   title: '异常高发报警',
                   description: '接收疫情异常报警',
                   icon: 'alert-circle-outline',
-                  navigation: 'DiagnosisHome'
+                  navigation: 'EpidemicHeatmap'
                 },
                 {
                   id: 'statistics',
@@ -213,7 +213,7 @@ const HomeScreen: React.FC = () => {
                   title: '报告审核',
                   description: '审核诊断报告',
                   icon: 'checkmark-circle-outline',
-                  navigation: 'DiagnosisHome'
+                  navigation: 'DiagnosisHistory'
                 }
               ]
             }

@@ -3001,6 +3001,62 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     color: '#9CA3AF',
   },
+
+  // 编辑个人信息页面样式
+  profileEditSection: {
+    marginBottom: 16,
+  },
+  profileEditLabel: {
+    fontSize: 14,
+    color: '#374151',
+    marginBottom: 6,
+    fontWeight: '600',
+  },
+  profileEditInput: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 16,
+    color: '#111827',
+  },
+  profileEditInfoCard: {
+    backgroundColor: '#F3F4F6',
+    borderRadius: 8,
+    padding: 16,
+    marginTop: 8,
+  },
+  profileEditInfoText: {
+    fontSize: 14,
+    color: '#6B7280',
+    marginBottom: 4,
+  },
+  profileEditBottomButtonContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 16,
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+  },
+  profileEditSaveButton: {
+    backgroundColor: '#2DBBA1',
+    borderRadius: 8,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  profileEditSaveButtonDisabled: {
+    opacity: 0.6,
+  },
+  profileEditSaveButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '700',
+  },
   
   // 统计页面样式
   statisticsScrollContent: {

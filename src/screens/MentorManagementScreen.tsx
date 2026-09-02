@@ -39,11 +39,13 @@ const MentorManagementScreen: React.FC = () => {
   const [selectedProgram, setSelectedProgram] = useState<InternshipProgram | null>(null);
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchMentors = useCallback(async (isRefresh = false) => {
     try {
       if (isRefresh) setRefreshing(true); else setLoading(true);
+      setError(null);
       const response = await internshipApi.getStudents({});
       const data = response.data?.students || response.data || [];
       setMentors(data.map((s: any) => ({
@@ -58,8 +60,9 @@ const MentorManagementScreen: React.FC = () => {
         contact: s.phoneNumber || s.contact || '',
         internCount: s.internCount || 0,
       })));
-    } catch (error) {
-      console.error('获取导师列表失败:', error);
+    } catch (err) {
+      console.error('获取导师列表失败:', err);
+      setError('加载导师列表失败，请稍后重试');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -178,6 +181,25 @@ const MentorManagementScreen: React.FC = () => {
         onBack={() => navigation.goBack()} 
       />
       
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#2DBBA1" />
+          <Text style={styles.loadingText}>正在加载导师列表...</Text>
+        </View>
+      ) : error ? (
+        <View style={styles.loadingContainer}>
+          <Text style={{ fontSize: 48, marginBottom: 12 }}>⚠️</Text>
+          <Text style={{ fontSize: 16, color: '#6B7280', marginBottom: 16 }}>{error}</Text>
+          <TouchableOpacity style={{ backgroundColor: '#2DBBA1', borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchMentors()}>
+            <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>重试</Text>
+          </TouchableOpacity>
+        </View>
+      ) : activeTab === 'mentors' && mentors.length === 0 ? (
+        <View style={styles.loadingContainer}>
+          <Text style={{ fontSize: 48, marginBottom: 12 }}>📭</Text>
+          <Text style={{ fontSize: 16, color: '#6B7280' }}>暂无导师数据</Text>
+        </View>
+      ) : (
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         {/* 标签切换 */}
         <View style={{
@@ -527,6 +549,7 @@ const MentorManagementScreen: React.FC = () => {
           </View>
         )}
       </ScrollView>
+      )}
     </View>
   );
 };

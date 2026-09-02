@@ -57,6 +57,7 @@ const linking = {
       EnvironmentAlert: 'environment-alert',
       SurveyForm: 'survey-form',
       SurveyList: 'surveys',
+      EditProfile: 'edit-profile',
     },
   },
 };
@@ -83,6 +84,7 @@ const QuestionBankScreen = lazy(() => import('./screens/QuestionBankScreen'));
 const InternLogScreen = lazy(() => import('./screens/InternLogScreen'));
 const MentorManagementScreen = lazy(() => import('./screens/MentorManagementScreen'));
 const ProfileScreen = lazy(() => import('./screens/ProfileScreen'));
+const EditProfileScreen = lazy(() => import('./screens/EditProfileScreen'));
 const StatisticsScreen = lazy(() => import('./screens/StatisticsScreen'));
 const ControlPlanListScreen = lazy(() => import('./screens/ControlPlanListScreen'));
 const ControlPlanDetailScreen = lazy(() => import('./screens/ControlPlanDetailScreen'));
@@ -155,6 +157,7 @@ export type RootStackParamList = {
   EnvironmentAlert: undefined;
   SurveyForm: { mode?: 'create' | 'edit'; surveyId?: string };
   SurveyList: undefined;
+  EditProfile: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -490,6 +493,7 @@ const App: React.FC = () => {
             <Stack.Screen name="EnvironmentAlert" component={EnvironmentAlertScreen} />
             <Stack.Screen name="SurveyForm" component={SurveyFormScreen} />
             <Stack.Screen name="SurveyList" component={SurveyListScreen} />
+            <Stack.Screen name="EditProfile" component={EditProfileScreen} />
           </Stack.Navigator>
         </Suspense>
       </NavigationContainer>

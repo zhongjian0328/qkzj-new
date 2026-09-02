@@ -22,12 +22,14 @@ const KnowledgeGraphScreen: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [knowledgeNodes, setKnowledgeNodes] = useState<KnowledgeNode[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchData = useCallback(async (isRefresh = false) => {
     try {
       if (isRefresh) setRefreshing(true); else setLoading(true);
+      setError(null);
       const response = await knowledgeApi.getKnowledgeGraphs({ searchTerm: searchQuery || undefined });
       const graphs = response.data?.graphs || response.data || [];
       setKnowledgeNodes(graphs.map((g: any) => ({
@@ -38,8 +40,9 @@ const KnowledgeGraphScreen: React.FC = () => {
         relatedNodes: g.relatedDiseases || g.relatedNodes || [],
         icon: g.icon || '🦠'
       })));
-    } catch (error) {
-      console.error('获取知识点失败:', error);
+    } catch (err) {
+      console.error('获取知识点失败:', err);
+      setError('加载知识点失败，请稍后重试');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -83,6 +86,19 @@ const KnowledgeGraphScreen: React.FC = () => {
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#2DBBA1" />
           <Text style={styles.loadingText}>正在加载知识点...</Text>
+        </View>
+      ) : error ? (
+        <View style={styles.loadingContainer}>
+          <Text style={{ fontSize: 48, marginBottom: 12 }}>⚠️</Text>
+          <Text style={{ fontSize: 16, color: '#6B7280', marginBottom: 16 }}>{error}</Text>
+          <TouchableOpacity style={{ backgroundColor: '#2DBBA1', borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchData()}>
+            <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>重试</Text>
+          </TouchableOpacity>
+        </View>
+      ) : knowledgeNodes.length === 0 ? (
+        <View style={styles.loadingContainer}>
+          <Text style={{ fontSize: 48, marginBottom: 12 }}>📭</Text>
+          <Text style={{ fontSize: 16, color: '#6B7280' }}>暂无知识点数据</Text>
         </View>
       ) : (
         <ScrollView contentContainerStyle={{ padding: 16 }}>

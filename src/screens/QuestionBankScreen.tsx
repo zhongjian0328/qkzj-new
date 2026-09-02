@@ -28,11 +28,13 @@ const QuestionBankScreen: React.FC = () => {
   const [quizQuestions, setQuizQuestions] = useState<Question[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchQuestions = useCallback(async (isRefresh = false) => {
     try {
       if (isRefresh) setRefreshing(true); else setLoading(true);
+      setError(null);
       const response = await knowledgeApi.getQuestionBank({
         knowledgePoint: activeCategory !== 'all' ? activeCategory : undefined,
         difficulty: activeDifficulty !== 'all' ? activeDifficulty : undefined,
@@ -47,8 +49,9 @@ const QuestionBankScreen: React.FC = () => {
         category: q.category || q.knowledgePoint || 'general',
         difficulty: q.difficulty || 'easy',
       })));
-    } catch (error) {
-      console.error('获取题库失败:', error);
+    } catch (err) {
+      console.error('获取题库失败:', err);
+      setError('加载题库失败，请稍后重试');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -168,6 +171,25 @@ const QuestionBankScreen: React.FC = () => {
       
       {!isQuizMode ? (
         // 题库模式
+        loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#2DBBA1" />
+            <Text style={styles.loadingText}>正在加载题库...</Text>
+          </View>
+        ) : error ? (
+          <View style={styles.loadingContainer}>
+            <Text style={{ fontSize: 48, marginBottom: 12 }}>⚠️</Text>
+            <Text style={{ fontSize: 16, color: '#6B7280', marginBottom: 16 }}>{error}</Text>
+            <TouchableOpacity style={{ backgroundColor: '#2DBBA1', borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchQuestions()}>
+              <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>重试</Text>
+            </TouchableOpacity>
+          </View>
+        ) : questions.length === 0 ? (
+          <View style={styles.loadingContainer}>
+            <Text style={{ fontSize: 48, marginBottom: 12 }}>📭</Text>
+            <Text style={{ fontSize: 16, color: '#6B7280' }}>暂无题目数据</Text>
+          </View>
+        ) : (
         <ScrollView contentContainerStyle={{ padding: 16 }}>
           {/* 筛选条件 */}
           <View style={{ marginBottom: 16 }}>
@@ -345,6 +367,7 @@ const QuestionBankScreen: React.FC = () => {
             ))}
           </View>
         </ScrollView>
+        )
       ) : quizCompleted ? (
         // 测验结果
         <ScrollView contentContainerStyle={{ padding: 16, alignItems: 'center' }}>

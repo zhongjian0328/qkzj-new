@@ -43,12 +43,36 @@ const ExperienceRoleScreen: React.FC = () => {
       textColor: '#3B82F6'
     },
     {
+      id: 'institution-research',
+      title: '科研院所',
+      description: '从事禽类疾病研究和技术开发',
+      icon: '🔬',
+      backgroundColor: '#EBF5FF',
+      textColor: '#3B82F6'
+    },
+    {
+      id: 'institution-service',
+      title: '服务商',
+      description: '提供兽药、饲料、技术服务等',
+      icon: '💼',
+      backgroundColor: '#EBF5FF',
+      textColor: '#3B82F6'
+    },
+    {
       id: 'student-internship',
       title: '学生（实习）',
       description: '顶岗实习，实践技能提升',
       icon: '🎓',
       backgroundColor: '#F3E8FF',
       textColor: '#8B5CF6'
+    },
+    {
+      id: 'teacher-mentor',
+      title: '指导教师',
+      description: '负责学生实习指导与批阅',
+      icon: '👨‍🏫',
+      backgroundColor: '#FFF3E0',
+      textColor: '#F59E0B'
     }
   ];
   
@@ -66,7 +90,7 @@ const ExperienceRoleScreen: React.FC = () => {
     
     try {
       // 角色映射：将体验角色ID映射为对应的UserRole和UserSubRole
-      let roleType: 'FARMER' | 'INSTITUTION' | 'STUDENT';
+      let roleType: 'FARMER' | 'INSTITUTION' | 'STUDENT' | 'TEACHER';
       let subRole: string;
 
       switch (selectedRole) {
@@ -82,9 +106,21 @@ const ExperienceRoleScreen: React.FC = () => {
           roleType = 'INSTITUTION';
           subRole = 'CDC';
           break;
+        case 'institution-research':
+          roleType = 'INSTITUTION';
+          subRole = 'RESEARCH_INSTITUTE';
+          break;
+        case 'institution-service':
+          roleType = 'INSTITUTION';
+          subRole = 'SERVICE_PROVIDER';
+          break;
         case 'student-internship':
           roleType = 'STUDENT';
           subRole = 'COGNITIVE_INTERN';
+          break;
+        case 'teacher-mentor':
+          roleType = 'TEACHER';
+          subRole = 'MENTOR';
           break;
         default:
           roleType = 'FARMER';

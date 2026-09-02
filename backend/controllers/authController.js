@@ -269,7 +269,9 @@ exports.experienceLogin = async (req, res, next) => {
       'STUDENT_LEARNING_STUDENT': '19900000007',
       'STUDENT_COGNITIVE_INTERN': '19900000008',
       'STUDENT_ADVANCED_INTERN': '19900000009',
-      'TEACHER_GENERAL': '19900000010',
+      'TEACHER_MENTOR': '19900000010',
+      'TEACHER_CLINICAL_TEACHER': '19900000011',
+      'TEACHER_RESEARCH_TEACHER': '19900000012',
     };
     const experienceKey = `${roleType}_${subRole}`;
     const experiencePhone = experiencePhones[experienceKey] || '19900000099';

@@ -44,6 +44,14 @@ const RoleSelectScreen: React.FC = () => {
       icon: '🎓',
       backgroundColor: '#F3E8FF',
       textColor: '#8B5CF6'
+    },
+    {
+      id: 'teacher',
+      title: '教师',
+      description: '教学指导与实习管理',
+      icon: '👨‍🏫',
+      backgroundColor: '#FFF3E0',
+      textColor: '#F59E0B'
     }
   ];
   
@@ -99,6 +107,23 @@ const RoleSelectScreen: React.FC = () => {
         title: '顶岗实习',
         description: '深入实践，技能提升'
       }
+    ],
+    teacher: [
+      {
+        id: 'mentor',
+        title: '指导教师',
+        description: '负责学生实习指导与批阅'
+      },
+      {
+        id: 'clinical',
+        title: '临床教师',
+        description: '负责临床诊疗教学'
+      },
+      {
+        id: 'research-teacher',
+        title: '科研导师',
+        description: '负责科研项目管理与指导'
+      }
     ]
   };
   
@@ -125,6 +150,7 @@ const RoleSelectScreen: React.FC = () => {
       farmer: 'FARMER',
       institution: 'INSTITUTION',
       student: 'STUDENT',
+      teacher: 'TEACHER',
     };
     const subRoleMap: { [key: string]: string } = {
       small: 'SMALL',
@@ -136,6 +162,9 @@ const RoleSelectScreen: React.FC = () => {
       learning: 'LEARNING_STUDENT',
       cognitive: 'COGNITIVE_INTERN',
       advanced: 'ADVANCED_INTERN',
+      mentor: 'MENTOR',
+      clinical: 'CLINICAL_TEACHER',
+      'research-teacher': 'RESEARCH_TEACHER',
     };
 
     const roleType = roleTypeMap[selectedMainRole];
@@ -170,7 +199,10 @@ const RoleSelectScreen: React.FC = () => {
       { main: 'institution', sub: 'cdc' },
       { main: 'institution', sub: 'research' },
       { main: 'institution', sub: 'service' },
-      { main: 'student', sub: 'advanced' }
+      { main: 'student', sub: 'advanced' },
+      { main: 'teacher', sub: 'mentor' },
+      { main: 'teacher', sub: 'clinical' },
+      { main: 'teacher', sub: 'research-teacher' }
     ];
     
     return authRequiredRoles.some(role => 

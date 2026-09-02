@@ -39,6 +39,11 @@ const authLimiter = rateLimit({
 });
 
 // 配置中间件
+// 生产环境信任代理（确保 rate-limit 使用真实客户端 IP）
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
 // CORS配置
 const allowedOrigins = process.env.CORS_ALLOWED_ORIGINS 
   ? process.env.CORS_ALLOWED_ORIGINS.split(',') 
@@ -156,9 +161,25 @@ app.use('/api/tickets', serviceTicketRoutes);
 app.use('/api/teaching-cases', teachingCaseRoutes);
 app.use('/api/notifications', notificationRoutes);
 
-// 健康检查路由
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok', message: '禽康智检API服务运行正常' });
+// 健康检查路由（含数据库连通性）
+app.get('/api/health', async (req, res) => {
+  const health = {
+    status: 'ok',
+    message: '禽康智检API服务运行正常',
+    mongodb: 'disconnected',
+    uptime: process.uptime()
+  };
+  try {
+    if (mongoose.connection.readyState === 1) {
+      await mongoose.connection.db.admin().ping();
+      health.mongodb = 'connected';
+    }
+  } catch {
+    health.status = 'degraded';
+    health.mongodb = 'error';
+  }
+  const statusCode = health.status === 'ok' ? 200 : 503;
+  res.status(statusCode).json(health);
 });
 
 // 404错误处理
@@ -170,7 +191,10 @@ app.use('/', (req, res) => {
 app.use((err, req, res, next) => {
   console.error('全局错误:', err);
   const statusCode = err.statusCode || 500;
-  const message = err.message || '服务器内部错误';
+  // 生产环境屏蔽详细错误信息，防止泄露内部实现
+  const message = process.env.NODE_ENV === 'production'
+    ? (statusCode < 500 ? err.message : '服务器内部错误')
+    : (err.message || '服务器内部错误');
   res.status(statusCode).json({ status: 'error', message });
 });
 
@@ -185,3 +209,21 @@ initSocketIO(server);
 server.listen(PORT, () => {
   console.log(`服务器运行在 http://localhost:${PORT}`);
 });
+
+// 优雅关闭：收到终止信号时停止接收新请求，关闭现有连接
+const shutdown = (signal) => {
+  console.log(`收到 ${signal} 信号，开始优雅关闭...`);
+  server.close(() => {
+    console.log('HTTP 服务器已关闭');
+    mongoose.connection.close(false).then(() => {
+      console.log('MongoDB 连接已关闭');
+      process.exit(0);
+    }).catch(() => {
+      process.exit(1);
+    });
+  });
+  // 10秒后强制退出
+  setTimeout(() => process.exit(1), 10000);
+};
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));

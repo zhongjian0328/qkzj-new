@@ -15,7 +15,7 @@ const ProfileScreen: React.FC = () => {
     {
       title: '个人信息',
       icon: '👤',
-      onPress: () => navigation.navigate('Profile'),
+      onPress: () => navigation.navigate('EditProfile'),
       visible: true
     },
     {

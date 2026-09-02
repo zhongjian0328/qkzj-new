@@ -45,10 +45,12 @@ export default function TicketListScreen() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [tickets, setTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchTickets = useCallback(async () => {
     try {
+      setError(null);
       const params: any = { page: 1, limit: 50 };
       if (statusFilter !== 'all') params.status = statusFilter;
 
@@ -58,6 +60,7 @@ export default function TicketListScreen() {
       setTickets(res?.data || []);
     } catch (e: any) {
       console.error('获取工单列表失败:', e.message);
+      setError('加载工单列表失败，请稍后重试');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -174,6 +177,20 @@ export default function TicketListScreen() {
         })}
       </View>
 
+      {loading ? (
+        <View style={styles.emptyContainer}>
+          <ActivityIndicator size="large" color={COLORS.primary} />
+          <Text style={styles.emptyDesc}>正在加载工单...</Text>
+        </View>
+      ) : error ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyIcon}>⚠️</Text>
+          <Text style={styles.emptyTitle}>{error}</Text>
+          <TouchableOpacity style={{ marginTop: 12, backgroundColor: COLORS.primary, borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchTickets()}>
+            <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>重试</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
       <FlatList
         data={tickets}
         renderItem={renderTicket}
@@ -190,6 +207,7 @@ export default function TicketListScreen() {
           </View>
         }
       />
+      )}
     </View>
   );
 }

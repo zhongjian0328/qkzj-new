@@ -28,11 +28,13 @@ const InternLogScreen: React.FC = () => {
   const [newLogTitle, setNewLogTitle] = useState('');
   const [newLogContent, setNewLogContent] = useState('');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchLogs = useCallback(async (isRefresh = false) => {
     try {
       if (isRefresh) setRefreshing(true); else setLoading(true);
+      setError(null);
       const params: any = {};
       if (activeStatus !== 'all') params.status = activeStatus;
       const response = await internshipApi.getInternLogs(params);
@@ -47,8 +49,9 @@ const InternLogScreen: React.FC = () => {
         mentorName: log.mentorComment?.mentorName || log.mentorName,
         rating: log.rating,
       })));
-    } catch (error) {
-      console.error('获取实习日志失败:', error);
+    } catch (err) {
+      console.error('获取实习日志失败:', err);
+      setError('加载实习日志失败，请稍后重试');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -211,6 +214,25 @@ const InternLogScreen: React.FC = () => {
         onBack={() => navigation.goBack()} 
       />
       
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#2DBBA1" />
+          <Text style={styles.loadingText}>正在加载实习日志...</Text>
+        </View>
+      ) : error ? (
+        <View style={styles.loadingContainer}>
+          <Text style={{ fontSize: 48, marginBottom: 12 }}>⚠️</Text>
+          <Text style={{ fontSize: 16, color: '#6B7280', marginBottom: 16 }}>{error}</Text>
+          <TouchableOpacity style={{ backgroundColor: '#2DBBA1', borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchLogs()}>
+            <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>重试</Text>
+          </TouchableOpacity>
+        </View>
+      ) : logs.length === 0 ? (
+        <View style={styles.loadingContainer}>
+          <Text style={{ fontSize: 48, marginBottom: 12 }}>📭</Text>
+          <Text style={{ fontSize: 16, color: '#6B7280' }}>暂无实习日志记录</Text>
+        </View>
+      ) : (
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         {/* 筛选条件 */}
         <View style={{ marginBottom: 16 }}>
@@ -683,6 +705,7 @@ const InternLogScreen: React.FC = () => {
           ))}
         </View>
       </ScrollView>
+      )}
     </View>
   );
 };
