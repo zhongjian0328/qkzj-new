@@ -128,33 +128,24 @@ class AIService {
    */
   async _callLLM(systemPrompt, userPrompt) {
     if (!this.llmClient) {
-      this.log('warn', 'LLM 客户端不可用，将使用降级响应');
-      return this._llmFallback(systemPrompt, userPrompt);
+      throw new Error('LLM 客户端不可用：缺少 DASHSCOPE_API_KEY');
     }
 
-    try {
-      const completion = await this.llmClient.chat.completions.create({
-        model: this.llmModel,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt },
-        ],
-        temperature: 0.7,
-        max_tokens: 2048,
-      });
+    const completion = await this.llmClient.chat.completions.create({
+      model: this.llmModel,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      temperature: 0.7,
+      max_tokens: 2048,
+    });
 
-      const content = completion.choices[0]?.message?.content;
-      if (!content) {
-        throw new Error('LLM 返回内容为空');
-      }
-      return content.trim();
-    } catch (error) {
-      this.log('error', '通义千问 LLM 调用失败', {
-        error: error.message,
-        model: this.llmModel,
-      });
-      return this._llmFallback(systemPrompt, userPrompt);
+    const content = completion.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error('LLM 返回内容为空');
     }
+    return content.trim();
   }
 
   /**
@@ -165,45 +156,35 @@ class AIService {
    */
   async _callLLMJson(systemPrompt, userPrompt) {
     if (!this.llmClient) {
-      this.log('warn', 'LLM 客户端不可用，将使用降级响应');
-      return this._llmFallback(systemPrompt, userPrompt);
+      throw new Error('LLM 客户端不可用：缺少 DASHSCOPE_API_KEY');
     }
 
+    const completion = await this.llmClient.chat.completions.create({
+      model: this.llmModel,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      temperature: 0.5,
+      max_tokens: 4096,
+      response_format: { type: 'json_object' },
+    });
+
+    const content = completion.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error('LLM 返回内容为空');
+    }
+
+    // 尝试解析 JSON，如果失败则提取 JSON 代码块
     try {
-      const completion = await this.llmClient.chat.completions.create({
-        model: this.llmModel,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt },
-        ],
-        temperature: 0.5,
-        max_tokens: 4096,
-        response_format: { type: 'json_object' },
-      });
-
-      const content = completion.choices[0]?.message?.content;
-      if (!content) {
-        throw new Error('LLM 返回内容为空');
+      return JSON.parse(content.trim());
+    } catch (parseError) {
+      // 尝试从 markdown 代码块中提取 JSON
+      const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+      if (jsonMatch) {
+        return JSON.parse(jsonMatch[1].trim());
       }
-
-      // 尝试解析 JSON，如果失败则提取 JSON 代码块
-      try {
-        return JSON.parse(content.trim());
-      } catch (parseError) {
-        // 尝试从 markdown 代码块中提取 JSON
-        const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
-        if (jsonMatch) {
-          return JSON.parse(jsonMatch[1].trim());
-        }
-        this.log('error', 'LLM JSON 解析失败', { content: content.substring(0, 200) });
-        throw new Error('LLM 返回的 JSON 格式无效');
-      }
-    } catch (error) {
-      this.log('error', '通义千问 LLM JSON 调用失败', {
-        error: error.message,
-        model: this.llmModel,
-      });
-      return this._llmFallback(systemPrompt, userPrompt);
+      throw new Error('LLM 返回的 JSON 格式无效');
     }
   }
 

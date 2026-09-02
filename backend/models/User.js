@@ -92,17 +92,12 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-// 密码加密中间件
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (error) {
-    next(error);
-  }
+// 密码加密中间件（Mongoose 7+ async pre-hook 不再传递 next）
+userSchema.pre('save', async function() {
+  if (!this.isModified('password')) return;
+
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
 });
 
 // 密码验证方法

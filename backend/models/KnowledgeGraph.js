@@ -63,7 +63,6 @@ const knowledgeGraphSchema = new mongoose.Schema({
 });
 
 // 索引
-knowledgeGraphSchema.index({ diseaseName: 1 });
 knowledgeGraphSchema.index({ tags: 1 });
 knowledgeGraphSchema.index({ difficultyLevel: 1 });
 

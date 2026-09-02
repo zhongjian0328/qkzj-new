@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const serviceTicketSchema = new mongoose.Schema({
-  ticketNo: { type: String, required: true, unique: true },
+  ticketNo: { type: String, required: true },
   requesterId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   assigneeId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   title: { type: String, required: true },
