@@ -95,13 +95,6 @@ const HomeScreen: React.FC = () => {
                   description: '环境数据记录与预警',
                   icon: 'thermometer-outline',
                   navigation: 'EnvironmentRecord'
-                },
-                {
-                  id: 'electronic-monitoring',
-                  title: '电子监控',
-                  description: '区舍用电量实时监控与分析',
-                  icon: 'eye-outline',
-                  navigation: 'ElectronicMonitoring'
                 }
               ]
             }
