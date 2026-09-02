@@ -60,6 +60,34 @@ const HomeScreen: React.FC = () => {
                   description: '标准化流程，分阶段诊断',
                   icon: 'medical-outline',
                   navigation: 'VeterinaryDiagnosis'
+                },
+                {
+                  id: 'diagnosis-history',
+                  title: '诊断历史',
+                  description: '查看历史诊断记录',
+                  icon: 'document-text-outline',
+                  navigation: 'DiagnosisHistory'
+                }
+              ]
+            },
+            {
+              title: '防控管理',
+              icon: 'shield-checkmark-outline',
+              backgroundColor: '#FEF3C7',
+              items: [
+                {
+                  id: 'control-plan-list',
+                  title: '防控预案',
+                  description: '生成和管理防控预案',
+                  icon: 'shield-outline',
+                  navigation: 'ControlPlanList'
+                },
+                {
+                  id: 'follow-up-list',
+                  title: '回访管理',
+                  description: '随访记录与效果评估',
+                  icon: 'time-outline',
+                  navigation: 'FollowUpList'
                 }
               ]
             },
@@ -95,6 +123,34 @@ const HomeScreen: React.FC = () => {
                   description: '环境数据记录与预警',
                   icon: 'thermometer-outline',
                   navigation: 'EnvironmentRecord'
+                }
+              ]
+            },
+            {
+              title: '知识与服务',
+              icon: 'book-outline',
+              backgroundColor: '#F3E8FF',
+              items: [
+                {
+                  id: 'knowledge-list',
+                  title: '知识库',
+                  description: '禽病防控知识文章',
+                  icon: 'book-outline',
+                  navigation: 'KnowledgeList'
+                },
+                {
+                  id: 'ticket-list',
+                  title: '服务工单',
+                  description: '提交和查看服务工单',
+                  icon: 'create-outline',
+                  navigation: 'TicketList'
+                },
+                {
+                  id: 'notifications',
+                  title: '消息通知',
+                  description: '系统通知与预警消息',
+                  icon: 'notifications-outline',
+                  navigation: 'Notifications'
                 }
               ]
             }
