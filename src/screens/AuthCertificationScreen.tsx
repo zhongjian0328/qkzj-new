@@ -174,9 +174,7 @@ const AuthCertificationScreen: React.FC = () => {
       licenseImage,
       qualificationImage
     };
-    
-    console.log('提交认证数据:', submitData);
-    
+
     // 模拟提交过程
     setTimeout(() => {
       setIsSubmitting(false);

@@ -1,0 +1,28 @@
+# EAS Build 排除文件
+# 减少上传体积，加快构建速度
+
+# 后端（EAS 仅构建前端）
+backend/
+
+# 开发工具配置
+.claude/
+.vscode/
+.idea/
+.github/
+
+# 依赖与构建缓存
+node_modules/.cache/
+*.log
+
+# 测试
+backend/tests/
+coverage/
+
+# 文档
+docs/
+*.md
+!README.md
+
+# 环境配置
+.env
+.env.*

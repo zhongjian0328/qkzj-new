@@ -172,7 +172,6 @@ const ChatDiagnosisScreen: React.FC = () => {
 
   const toggleVoiceInput = () => {
     // 实现语音输入逻辑
-    console.log('语音输入');
   };
 
   return (

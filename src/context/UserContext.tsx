@@ -177,34 +177,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const sendVerificationCode = async (phoneNumber: string) => {
     dispatch({ type: 'LOGIN_REQUEST' });
     try {
-      // 这里应该调用API发送验证码
-      // 模拟生成验证码
-      const code = Math.floor(100000 + Math.random() * 900000).toString();
-      
-      // 模拟API延迟
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // 保存验证码到状态中，有效期5分钟
+      // 调用后端 API 发送验证码
+      await authApi.getVerificationCode(phoneNumber);
+      // 保存验证码状态标记（前端不再生成/存储验证码，由后端管理）
       setVerificationCodes(prev => ({
         ...prev,
         [phoneNumber]: {
-          code,
+          code: '__sent_by_backend__',
           expiresAt: Date.now() + 5 * 60 * 1000,
         },
       }));
-      
-      // 清除之前的错误
       dispatch({ type: 'CLEAR_ERROR' });
-      
-      // 显示验证码到控制台，方便测试
-      console.log(`验证码已发送到 ${phoneNumber}，验证码：${code}`);
-      // 触发toast提示
-      throw new Error(`验证码已发送，验证码：${code}`);
     } catch (error) {
-      // 为了在测试环境中让用户看到验证码，我们将验证码作为错误消息返回
-      // 实际生产环境中应移除这个逻辑
-      const errorMessage = error instanceof Error ? error.message : '发送验证码失败，请稍后重试';
-      dispatch({ type: 'LOGIN_FAILURE', payload: errorMessage });
+      dispatch({
+        type: 'LOGIN_FAILURE',
+        payload: error instanceof Error ? error.message : '发送验证码失败，请稍后重试',
+      });
     }
   };
 
