@@ -5,13 +5,13 @@
     "slug": "qinkangzhijian",
     "version": "1.2.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon_downloaded.png",
+    "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "light",
     
     "splash": {
-      "image": "./assets/images/icon_downloaded.png",
+      "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff",
+      "backgroundColor": "#2DBBA1",
       "animation": {
         "fade": true
       }
@@ -22,8 +22,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon_downloaded.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#2DBBA1"
       },
       "package": "com.qinkangzhijian.app",
       "versionCode": 1,
