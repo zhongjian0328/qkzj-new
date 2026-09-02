@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
 import { styles } from '../styles';
@@ -196,7 +197,7 @@ const DiagnosisHistoryScreen: React.FC = () => {
           </>
         ) : (
           <View style={styles.emptyHistoryContainer}>
-            <Text style={styles.emptyHistoryIcon}>📋</Text>
+            <Ionicons name="clipboard-outline" size={48} color="#9CA3AF" />
             <Text style={styles.emptyHistoryTitle}>暂无诊断历史</Text>
             <Text style={styles.emptyHistoryText}>开始您的第一次AI诊断，记录将保存在这里</Text>
             <TouchableOpacity

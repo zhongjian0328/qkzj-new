@@ -135,17 +135,24 @@ const HomeScreen: React.FC = () => {
     );
   };
 
-  const renderInfoCard = (title: string, sub: string, time: string, badge?: { text: string; bg: string; color: string }) => (
+  const renderInfoCard = (title: string, sub: string, time: string, badge?: { text: string; bg: string; color: string }, confidenceBadge?: { text: string; bg: string; color: string }) => (
     <View style={[styles.homeInfoCard, { marginBottom: 12 }]}>
       <View style={styles.homeInfoCardRow}>
         <View style={{ flex: 1 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
             <Text style={styles.homeInfoTitle}>{title}</Text>
-            {badge && (
-              <View style={{ backgroundColor: badge.bg, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 12 }}>
-                <Text style={{ fontSize: 12, color: badge.color, fontWeight: '600' }}>{badge.text}</Text>
-              </View>
-            )}
+            <View style={{ flexDirection: 'row', gap: 4 }}>
+              {confidenceBadge && (
+                <View style={{ backgroundColor: confidenceBadge.bg, paddingHorizontal: 6, paddingVertical: 3, borderRadius: 8 }}>
+                  <Text style={{ fontSize: 11, color: confidenceBadge.color, fontWeight: '600' }}>{confidenceBadge.text}</Text>
+                </View>
+              )}
+              {badge && (
+                <View style={{ backgroundColor: badge.bg, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 12 }}>
+                  <Text style={{ fontSize: 12, color: badge.color, fontWeight: '600' }}>{badge.text}</Text>
+                </View>
+              )}
+            </View>
           </View>
           <Text style={styles.homeInfoSub}>{sub}</Text>
           <Text style={styles.homeInfoTime}>{time}</Text>
@@ -202,12 +209,21 @@ const HomeScreen: React.FC = () => {
       {recentDiagnoses.length > 0 && (
         <View style={{ marginTop: 24 }}>
           {renderSectionHeader('近期诊断', '查看全部', 'DiagnosisHistory')}
-          {recentDiagnoses.slice(0, 3).map((d: any, i: number) => renderInfoCard(
-            d.diseaseName || d.diagnosisResult || '诊断记录',
-            `置信度：${d.confidence || '--'}%`,
-            d.createdAt ? new Date(d.createdAt).toLocaleDateString('zh-CN') : '',
-            d.status === 'completed' ? { text: '已处理', bg: '#D1FAE5', color: '#065F46' } : { text: '治疗中', bg: '#DBEAFE', color: '#1D4ED8' }
-          ))}
+          {recentDiagnoses.slice(0, 3).map((d: any, _i: number) => {
+            const confNum = parseFloat(String(d.confidence || '0').replace('%', ''));
+            const confValid = !isNaN(confNum) && confNum > 0;
+            const confLevel = confValid ? (confNum >= 70 ? 'high' : confNum >= 40 ? 'medium' : 'low') : null;
+            const confColor = confLevel === 'high' ? '#22C55E' : confLevel === 'medium' ? '#F59E0B' : '#EF4444';
+            const confBg = confLevel === 'high' ? '#DCFCE7' : confLevel === 'medium' ? '#FEF3C7' : '#FEE2E2';
+            const confLabel = confLevel === 'high' ? '高' : confLevel === 'medium' ? '中' : '低';
+            return renderInfoCard(
+              d.diseaseName || d.diagnosisResult || '诊断记录',
+              confValid ? `${confNum}%` : '--%',
+              d.createdAt ? new Date(d.createdAt).toLocaleDateString('zh-CN') : '',
+              d.status === 'completed' ? { text: '已处理', bg: '#D1FAE5', color: '#065F46' } : { text: '治疗中', bg: '#DBEAFE', color: '#1D4ED8' },
+              confValid ? { text: confLabel, bg: confBg, color: confColor } : undefined
+            );
+          })}
         </View>
       )}
 

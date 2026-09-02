@@ -1,9 +1,11 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Image, Alert, ActivityIndicator } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../App';
 import * as ImagePicker from 'expo-image-picker';
+import PickerModal from '../components/PickerModal';
 import { styles } from '../styles';
 import { authApi } from '../services/api';
 import { useAuth } from '../context/UserContext';
@@ -22,6 +24,19 @@ const AuthCertificationScreen: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [licenseImage, setLicenseImage] = useState<string | null>(null);
   const [qualificationImage, setQualificationImage] = useState<string | null>(null);
+  const [pickerVisible, setPickerVisible] = useState(false);
+  const [pickerConfig, setPickerConfig] = useState<{title: string; field: keyof typeof formData; options: {label: string; value: string}[]}>({ title: '', field: 'enterpriseType', options: [] });
+
+  const ENTERPRISE_TYPE_OPTIONS = [
+    { label: '养殖合作社', value: '养殖合作社' },
+    { label: '养殖企业', value: '养殖企业' },
+    { label: '养殖场', value: '养殖场' },
+  ];
+  const INSTITUTION_TYPE_OPTIONS = [
+    { label: '疫控机构', value: '疫控机构' },
+    { label: '科研院所', value: '科研院所' },
+    { label: '服务商', value: '服务商' },
+  ];
   
   // 表单数据
   const [formData, setFormData] = useState({
@@ -285,7 +300,7 @@ const AuthCertificationScreen: React.FC = () => {
         <View style={styles.authTypeInfoCard}>
           <View style={styles.authTypeInfoContent}>
             <View style={styles.authTypeInfoIcon}>
-              <Text style={{ fontSize: 24 }}>🛡️</Text>
+              <Ionicons name="shield-checkmark" size={24} color="#2DBBA1" />
             </View>
             <View style={styles.authTypeInfoText}>
               <Text style={styles.authTypeInfoTitle}>{authTypeInfo.title}</Text>
@@ -297,7 +312,7 @@ const AuthCertificationScreen: React.FC = () => {
             <Text style={styles.authBenefitsTitle}>认证后可享受：</Text>
             {authTypeInfo.benefits.map((benefit, index) => (
               <View key={index} style={styles.authBenefitItem}>
-                <Text style={styles.authBenefitIcon}>✅</Text>
+                <Ionicons name="checkmark-circle" size={16} color="#2DBBA1" />
                 <Text style={styles.authBenefitText}>{benefit}</Text>
               </View>
             ))}
@@ -321,32 +336,18 @@ const AuthCertificationScreen: React.FC = () => {
             
             <View style={styles.authFormGroup}>
               <Text style={styles.authFormLabel}>企业类型 *</Text>
-              <View style={styles.authFormSelect}>
-                <TextInput
-                  style={styles.authFormInput}
-                  placeholder="请选择企业类型"
-                  value={formData.enterpriseType}
-                  onChangeText={(value) => handleInputChange('enterpriseType', value)}
-                  editable={false}
-                />
-                <TouchableOpacity 
-                  style={styles.authFormSelectButton}
-                  onPress={() => {
-                    Alert.alert(
-                      '选择企业类型',
-                      '',
-                      [
-                        { text: '养殖合作社', onPress: () => handleInputChange('enterpriseType', '养殖合作社') },
-                        { text: '养殖企业', onPress: () => handleInputChange('enterpriseType', '养殖企业') },
-                        { text: '养殖场', onPress: () => handleInputChange('enterpriseType', '养殖场') },
-                        { text: '取消', style: 'cancel' }
-                      ]
-                    );
-                  }}
-                >
-                  <Text style={styles.authFormSelectButtonText}>▼</Text>
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity
+                style={styles.pickerField}
+                onPress={() => {
+                  setPickerConfig({ title: '选择企业类型', field: 'enterpriseType', options: ENTERPRISE_TYPE_OPTIONS });
+                  setPickerVisible(true);
+                }}
+              >
+                <Text style={[styles.pickerFieldText, !formData.enterpriseType && { color: '#9CA3AF' }]}>
+                  {formData.enterpriseType || '请选择企业类型'}
+                </Text>
+                <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
+              </TouchableOpacity>
             </View>
             
             <View style={styles.authFormGroup}>
@@ -387,7 +388,7 @@ const AuthCertificationScreen: React.FC = () => {
                     );
                   }}
                 >
-                  <Text style={styles.authUploadIcon}>📁</Text>
+                  <Ionicons name="document-attach" size={32} color="#9CA3AF" />
                   <Text style={styles.authUploadText}>点击上传营业执照照片</Text>
                   <Text style={styles.authUploadSubtext}>支持 JPG、PNG 格式，文件不超过 5MB</Text>
                 </TouchableOpacity>
@@ -478,32 +479,18 @@ const AuthCertificationScreen: React.FC = () => {
             
             <View style={styles.authFormGroup}>
               <Text style={styles.authFormLabel}>机构类型 *</Text>
-              <View style={styles.authFormSelect}>
-                <TextInput
-                  style={styles.authFormInput}
-                  placeholder="请选择机构类型"
-                  value={formData.institutionType}
-                  onChangeText={(value) => handleInputChange('institutionType', value)}
-                  editable={false}
-                />
-                <TouchableOpacity 
-                  style={styles.authFormSelectButton}
-                  onPress={() => {
-                    Alert.alert(
-                      '选择机构类型',
-                      '',
-                      [
-                        { text: '疫控机构', onPress: () => handleInputChange('institutionType', '疫控机构') },
-                        { text: '科研院所', onPress: () => handleInputChange('institutionType', '科研院所') },
-                        { text: '服务商', onPress: () => handleInputChange('institutionType', '服务商') },
-                        { text: '取消', style: 'cancel' }
-                      ]
-                    );
-                  }}
-                >
-                  <Text style={styles.authFormSelectButtonText}>▼</Text>
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity
+                style={styles.pickerField}
+                onPress={() => {
+                  setPickerConfig({ title: '选择机构类型', field: 'institutionType', options: INSTITUTION_TYPE_OPTIONS });
+                  setPickerVisible(true);
+                }}
+              >
+                <Text style={[styles.pickerFieldText, !formData.institutionType && { color: '#9CA3AF' }]}>
+                  {formData.institutionType || '请选择机构类型'}
+                </Text>
+                <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
+              </TouchableOpacity>
             </View>
             
             <View style={styles.authFormGroup}>
@@ -523,7 +510,7 @@ const AuthCertificationScreen: React.FC = () => {
                     );
                   }}
                 >
-                  <Text style={styles.authUploadIcon}>📄</Text>
+                  <Ionicons name="document-text" size={32} color="#9CA3AF" />
                   <Text style={styles.authUploadText}>点击上传资质证书</Text>
                   <Text style={styles.authUploadSubtext}>兽医资格证、经营许可证等</Text>
                 </TouchableOpacity>
@@ -570,7 +557,7 @@ const AuthCertificationScreen: React.FC = () => {
             <ActivityIndicator color="#1F5E52" />
           ) : (
             <>
-              <Text style={{ marginRight: 8, color: '#1F5E52', fontSize: 16 }}>📤</Text>
+              <Ionicons name="cloud-upload" size={16} color="#1F5E52" style={{ marginRight: 8 }} />
               <Text style={{ color: '#1F5E52', fontSize: 16 }}>提交审核</Text>
             </>
           )}
@@ -580,6 +567,15 @@ const AuthCertificationScreen: React.FC = () => {
           提交后我们将在1-3个工作日内完成审核，请耐心等待
         </Text>
       </ScrollView>
+
+      <PickerModal
+        visible={pickerVisible}
+        title={pickerConfig.title}
+        options={pickerConfig.options}
+        selectedValue={formData[pickerConfig.field]}
+        onSelect={(value) => handleInputChange(pickerConfig.field, value)}
+        onClose={() => setPickerVisible(false)}
+      />
     </View>
   );
 };

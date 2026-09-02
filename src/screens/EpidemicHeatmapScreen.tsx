@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
 import { styles } from '../styles';
@@ -99,7 +100,7 @@ const EpidemicHeatmapScreen: React.FC = () => {
               onPress={() => {}}
             >
               <Text style={styles.filterValueText}>{selectedDate}</Text>
-              <Text style={styles.filterValueIcon}>📅</Text>
+              <Ionicons name="calendar-outline" size={18} color="#6B7280" />
             </TouchableOpacity>
           </View>
           
@@ -159,7 +160,7 @@ const EpidemicHeatmapScreen: React.FC = () => {
         {/* 热力图展示区域 */}
         <View style={styles.heatmapContainer}>
           <View style={styles.heatmapPlaceholder}>
-            <Text style={styles.heatmapPlaceholderIcon}>🗺️</Text>
+            <Ionicons name="map-outline" size={48} color="#9CA3AF" />
             <Text style={styles.heatmapPlaceholderText}>疫情热力图</Text>
             <Text style={styles.heatmapPlaceholderSubtext}>点击查看详细疫情分布</Text>
           </View>
@@ -187,7 +188,7 @@ const EpidemicHeatmapScreen: React.FC = () => {
         {/* 疫情数据列表 */}
         <View style={styles.epidemicDataSection}>
           <Text style={styles.sectionTitle}>
-            <Text style={styles.sectionIcon}>📊</Text>
+            <Ionicons name="stats-chart" size={16} color="#2DBBA1" style={{ marginRight: 4 }} />
             疫情数据统计
           </Text>
           
@@ -214,7 +215,7 @@ const EpidemicHeatmapScreen: React.FC = () => {
         {/* 疫情详情列表 */}
         <View style={styles.epidemicDetailSection}>
           <Text style={styles.sectionTitle}>
-            <Text style={styles.sectionIcon}>📍</Text>
+            <Ionicons name="location" size={16} color="#2DBBA1" style={{ marginRight: 4 }} />
             地区疫情详情
           </Text>
           
@@ -259,7 +260,7 @@ const EpidemicHeatmapScreen: React.FC = () => {
         <View style={styles.epidemicAlertsSection}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>
-              <Text style={styles.sectionIcon}>🚨</Text>
+              <Ionicons name="warning" size={16} color="#EF4444" style={{ marginRight: 4 }} />
               异常高发报警
             </Text>
             <TouchableOpacity onPress={() => {}}>
@@ -270,7 +271,7 @@ const EpidemicHeatmapScreen: React.FC = () => {
           <View style={styles.epidemicAlertItem}>
             <View style={styles.epidemicAlertContent}>
               <View style={styles.epidemicAlertIconContainer}>
-                <Text style={styles.epidemicAlertIcon}>⚠️</Text>
+                <Ionicons name="alert-circle" size={20} color="#F59E0B" />
               </View>
               <View style={styles.epidemicAlertInfo}>
                 <Text style={styles.epidemicAlertTitle}>北京市昌平区禽流感病例异常增多</Text>
@@ -286,7 +287,7 @@ const EpidemicHeatmapScreen: React.FC = () => {
           <View style={styles.epidemicAlertItem}>
             <View style={styles.epidemicAlertContent}>
               <View style={styles.epidemicAlertIconContainer}>
-                <Text style={styles.epidemicAlertIcon}>⚠️</Text>
+                <Ionicons name="alert-circle" size={20} color="#F59E0B" />
               </View>
               <View style={styles.epidemicAlertInfo}>
                 <Text style={styles.epidemicAlertTitle}>山东省济南市新城疫疫情扩散</Text>

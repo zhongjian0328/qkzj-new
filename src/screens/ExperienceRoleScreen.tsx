@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -22,7 +23,7 @@ const ExperienceRoleScreen: React.FC = () => {
       id: 'farmer-small',
       title: '养殖户（小散户）',
       description: '小规模养殖，个人或家庭经营',
-      icon: '🌾',
+      icon: 'leaf' as const,
       backgroundColor: '#E6F7F3',
       textColor: '#2DBBA1'
     },
@@ -30,7 +31,7 @@ const ExperienceRoleScreen: React.FC = () => {
       id: 'farmer-enterprise',
       title: '养殖户（企业）',
       description: '规模化养殖企业，专业管理团队',
-      icon: '🏭',
+      icon: 'business' as const,
       backgroundColor: '#E6F7F3',
       textColor: '#2DBBA1'
     },
@@ -38,7 +39,7 @@ const ExperienceRoleScreen: React.FC = () => {
       id: 'institution-cdc',
       title: '疫控机构',
       description: '负责疫情监测、预警和防控',
-      icon: '🛡️',
+      icon: 'shield-checkmark' as const,
       backgroundColor: '#EBF5FF',
       textColor: '#3B82F6'
     },
@@ -46,7 +47,7 @@ const ExperienceRoleScreen: React.FC = () => {
       id: 'institution-research',
       title: '科研院所',
       description: '从事禽类疾病研究和技术开发',
-      icon: '🔬',
+      icon: 'flask' as const,
       backgroundColor: '#EBF5FF',
       textColor: '#3B82F6'
     },
@@ -54,7 +55,7 @@ const ExperienceRoleScreen: React.FC = () => {
       id: 'institution-service',
       title: '服务商',
       description: '提供兽药、饲料、技术服务等',
-      icon: '💼',
+      icon: 'briefcase' as const,
       backgroundColor: '#EBF5FF',
       textColor: '#3B82F6'
     },
@@ -62,7 +63,7 @@ const ExperienceRoleScreen: React.FC = () => {
       id: 'student-internship',
       title: '学生（实习）',
       description: '顶岗实习，实践技能提升',
-      icon: '🎓',
+      icon: 'school' as const,
       backgroundColor: '#F3E8FF',
       textColor: '#8B5CF6'
     },
@@ -70,7 +71,7 @@ const ExperienceRoleScreen: React.FC = () => {
       id: 'teacher-mentor',
       title: '指导教师',
       description: '负责学生实习指导与批阅',
-      icon: '👨‍🏫',
+      icon: 'person' as const,
       backgroundColor: '#FFF3E0',
       textColor: '#F59E0B'
     }
@@ -160,7 +161,7 @@ const ExperienceRoleScreen: React.FC = () => {
         <View style={styles.experienceInfoCard}>
           <View style={styles.experienceInfoContent}>
             <View style={styles.experienceInfoIcon}>
-              <Text style={{ fontSize: 20 }}>ℹ️</Text>
+              <Ionicons name="information-circle-outline" size={20} color="#3B82F6" />
             </View>
             <View style={styles.experienceInfoText}>
               <Text style={styles.experienceInfoTitle}>体验说明</Text>
@@ -192,7 +193,7 @@ const ExperienceRoleScreen: React.FC = () => {
                       { backgroundColor: role.backgroundColor }
                     ]}
                   >
-                    <Text style={{ fontSize: 32 }}>{role.icon}</Text>
+                    <Ionicons name={role.icon} size={32} color={role.textColor} />
                   </View>
                   <View style={styles.experienceRoleInfo}>
                     <Text style={styles.experienceRoleTitle}>{role.title}</Text>

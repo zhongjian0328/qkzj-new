@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Header from '../components/Header';
 import { styles } from '../styles';
@@ -69,7 +70,7 @@ const DiagnosisReportScreen: React.FC = () => {
       <View style={styles.container}>
         <Header title="AI诊断报告" showBackButton onBack={() => navigation.goBack()} />
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}>
-          <Text style={{ fontSize: 48 }}>📋</Text>
+          <Ionicons name="clipboard-outline" size={48} color="#9CA3AF" />
           <Text style={{ fontSize: 18, fontWeight: '600', marginTop: 16, color: '#374151' }}>
             {error || '未找到诊断报告'}
           </Text>
@@ -92,7 +93,13 @@ const DiagnosisReportScreen: React.FC = () => {
   })() : aiResponse;
 
   const diagnosis = parsedResponse.diagnosis || parsedResponse.diseaseName || reportData.finalDiagnosis || '待确诊';
-  const confidence = parsedResponse.confidence || parsedResponse.confidenceLevel || '';
+  const confidenceRaw = parsedResponse.confidence || parsedResponse.confidenceLevel || '';
+  const confidenceNum = typeof confidenceRaw === 'number' ? confidenceRaw : parseFloat(String(confidenceRaw).replace('%', ''));
+  const hasValidConfidence = !isNaN(confidenceNum) && confidenceNum > 0;
+  const confidenceLevel = hasValidConfidence ? (confidenceNum >= 70 ? 'high' : confidenceNum >= 40 ? 'medium' : 'low') : null;
+  const confidenceColor = confidenceLevel === 'high' ? '#22C55E' : confidenceLevel === 'medium' ? '#F59E0B' : '#EF4444';
+  const confidenceBg = confidenceLevel === 'high' ? '#DCFCE7' : confidenceLevel === 'medium' ? '#FEF3C7' : '#FEE2E2';
+  const confidenceLabel = confidenceLevel === 'high' ? '高置信度' : confidenceLevel === 'medium' ? '中置信度' : '低置信度';
   const controlAdvice = parsedResponse.controlAdvice || parsedResponse.emergencyMeasures || [];
   const preventionPoints = parsedResponse.preventionPoints || parsedResponse.longTermPrevention || [];
 
@@ -171,8 +178,21 @@ const DiagnosisReportScreen: React.FC = () => {
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>AI诊断结论</Text>
           <View style={styles.conclusionCard}>
-            <Text style={styles.conclusionTitle}>{diagnosis}</Text>
-            {confidence && <Text style={{ color: '#6B7280', marginTop: 4 }}>置信度：{confidence}</Text>}
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+              <Text style={styles.conclusionTitle}>{diagnosis}</Text>
+              {hasValidConfidence && (
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <View style={{ backgroundColor: confidenceBg, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                    <Ionicons name="speedometer" size={12} color={confidenceColor} />
+                    <Text style={{ fontSize: 13, fontWeight: '600', color: confidenceColor }}>{confidenceLabel}</Text>
+                  </View>
+                  <Text style={{ fontSize: 15, fontWeight: '700', color: confidenceColor }}>{confidenceNum}%</Text>
+                </View>
+              )}
+            </View>
+            {!hasValidConfidence && confidenceRaw && (
+              <Text style={{ color: '#6B7280', marginTop: 4 }}>置信度：{confidenceRaw}</Text>
+            )}
           </View>
 
           {parsedResponse.diagnosticBasis && (
@@ -205,7 +225,7 @@ const DiagnosisReportScreen: React.FC = () => {
             <View style={styles.planContent}>
               {(Array.isArray(currentPlanItems) ? currentPlanItems : []).map((item: any, index: number) => (
                 <View key={index} style={styles.planItem}>
-                  <Text style={styles.planItemIcon}>✓</Text>
+                  <Ionicons name="checkmark-circle" size={18} color="#2DBBA1" />
                   <View>
                     <Text style={styles.planItemTitle}>{item.title || item.measure || `建议${index + 1}`}</Text>
                     <Text style={styles.planItemDescription}>{item.description || (typeof item === 'string' ? item : '')}</Text>

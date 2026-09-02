@@ -160,7 +160,7 @@ export default function TeachingCaseListScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.primary]} />}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyIcon}>📚</Text>
+            <Ionicons name="book-outline" size={48} color="#9CA3AF" />
             <Text style={styles.emptyTitle}>暂无教学案例</Text>
             <Text style={styles.emptyDesc}>创建案例，记录禽病诊断经验</Text>
           </View>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Alert, ActivityIndicator, RefreshControl } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
 import { styles } from '../styles';
@@ -193,7 +194,7 @@ const QuestionBankScreen: React.FC = () => {
           </View>
         ) : error ? (
           <View style={styles.loadingContainer}>
-            <Text style={{ fontSize: 48, marginBottom: 12 }}>⚠️</Text>
+            <Ionicons name="alert-circle-outline" size={48} color="#9CA3AF" />
             <Text style={{ fontSize: 16, color: '#6B7280', marginBottom: 16 }}>{error}</Text>
             <TouchableOpacity style={{ backgroundColor: '#2DBBA1', borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchQuestions()}>
               <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>重试</Text>
@@ -201,7 +202,7 @@ const QuestionBankScreen: React.FC = () => {
           </View>
         ) : questions.length === 0 ? (
           <View style={styles.loadingContainer}>
-            <Text style={{ fontSize: 48, marginBottom: 12 }}>📭</Text>
+            <Ionicons name="folder-open-outline" size={48} color="#9CA3AF" />
             <Text style={{ fontSize: 16, color: '#6B7280' }}>暂无题目数据</Text>
           </View>
         ) : (
@@ -398,7 +399,7 @@ const QuestionBankScreen: React.FC = () => {
             shadowRadius: 3.84,
             elevation: 2
           }}>
-            <Text style={{ fontSize: 48, marginBottom: 16 }}>🎉</Text>
+            <Ionicons name="checkmark-circle-outline" size={48} color="#2DBBA1" />
             <Text style={{ fontSize: 24, fontWeight: '600', color: '#111827', marginBottom: 8 }}>
               测验完成！
             </Text>
@@ -700,7 +701,7 @@ const QuestionBankScreen: React.FC = () => {
               }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
                   <Text style={{ fontSize: 20, marginRight: 8 }}>
-                    {lastAnswerCorrect ? '✅' : '❌'}
+                    {lastAnswerCorrect ? <Ionicons name="checkmark-circle" size={14} color="#22C55E" /> : <Ionicons name="close-circle" size={14} color="#EF4444" />}
                   </Text>
                   <Text style={{
                     fontSize: 16,

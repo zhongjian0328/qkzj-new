@@ -152,7 +152,7 @@ export default function MyFavoritesScreen() {
         }
         ListEmptyComponent={
           <View style={{ alignItems: 'center', paddingVertical: 80 }}>
-            <Text style={{ fontSize: 56, marginBottom: 16 }}>📑</Text>
+            <Ionicons name="bookmark-outline" size={56} color="#9CA3AF" />
             <Text style={{ fontSize: 16, fontWeight: '600', color: COLORS.text, marginBottom: 8 }}>
               暂无收藏
             </Text>

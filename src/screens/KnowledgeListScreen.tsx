@@ -243,7 +243,7 @@ export default function KnowledgeListScreen() {
         onEndReachedThreshold={0.2}
         ListEmptyComponent={
           <View style={{ alignItems: 'center', paddingVertical: 64 }}>
-            <Text style={{ fontSize: 48, marginBottom: 16 }}>📚</Text>
+            <Ionicons name="book-outline" size={48} color="#9CA3AF" />
             <Text style={{ fontSize: 16, fontWeight: '600', color: COLORS.text, marginBottom: 8 }}>
               暂无文章
             </Text>

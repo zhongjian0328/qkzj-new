@@ -2177,6 +2177,23 @@ export const styles = StyleSheet.create({
     color: '#111827',
     marginBottom: 8,
   },
+  pickerField: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#F9FAFB',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 14,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    marginBottom: 16,
+  },
+  pickerFieldText: {
+    fontSize: 15,
+    color: '#111827',
+    flex: 1,
+  },
   experimentItem: {
     marginBottom: 16,
   },

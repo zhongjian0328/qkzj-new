@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert, ActivityIndicator, RefreshControl } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
 import { styles } from '../styles';
@@ -221,7 +222,7 @@ const InternLogScreen: React.FC = () => {
         </View>
       ) : error ? (
         <View style={styles.loadingContainer}>
-          <Text style={{ fontSize: 48, marginBottom: 12 }}>⚠️</Text>
+          <Ionicons name="alert-circle-outline" size={48} color="#9CA3AF" />
           <Text style={{ fontSize: 16, color: '#6B7280', marginBottom: 16 }}>{error}</Text>
           <TouchableOpacity style={{ backgroundColor: '#2DBBA1', borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchLogs()}>
             <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>重试</Text>
@@ -229,7 +230,7 @@ const InternLogScreen: React.FC = () => {
         </View>
       ) : logs.length === 0 ? (
         <View style={styles.loadingContainer}>
-          <Text style={{ fontSize: 48, marginBottom: 12 }}>📭</Text>
+          <Ionicons name="folder-open-outline" size={48} color="#9CA3AF" />
           <Text style={{ fontSize: 16, color: '#6B7280' }}>暂无实习日志记录</Text>
         </View>
       ) : (
@@ -283,7 +284,7 @@ const InternLogScreen: React.FC = () => {
           }}
           onPress={() => setShowAddLog(true)}
         >
-          <Text style={{ fontSize: 18 }}>✍️</Text>
+          <Ionicons name="create" size={18} color="#2DBBA1" />
           <Text style={{ fontSize: 16, fontWeight: '600', color: '#FFFFFF' }}>
             撰写新日志
           </Text>
@@ -542,7 +543,7 @@ const InternLogScreen: React.FC = () => {
                         <View style={{ flexDirection: 'row' }}>
                           {[...Array(5)].map((_, index) => (
                             <Text key={index} style={{ fontSize: 16, color: index < (selectedLog.rating ?? 0) ? '#FBBF24' : '#D1D5DB' }}>
-                              ⭐
+                              <Ionicons name="star" size={14} color="#F59E0B" />
                             </Text>
                           ))}
                         </View>

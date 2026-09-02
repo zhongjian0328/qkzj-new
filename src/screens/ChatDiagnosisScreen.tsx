@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, Image, KeyboardAvoidingView, Platform, ActivityIndicator, ScrollView, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../context/UserContext';
 import Header from '../components/Header';
@@ -107,7 +108,7 @@ const ChatDiagnosisScreen: React.FC = () => {
       <View style={[styles.chatMessageRow, isUser ? styles.chatUserMessageRow : styles.chatAiMessageRow]}>
         {!isUser && (
           <View style={styles.chatAiAvatar}>
-            <Text style={{ fontSize: 24 }}>🤖</Text>
+            <Ionicons name="hardware-chip" size={24} color="#2DBBA1" />
           </View>
         )}
         <View style={[styles.chatMessageBubble, isUser ? styles.chatUserMessageBubble : styles.chatAiMessageBubble]}>
@@ -137,7 +138,7 @@ const ChatDiagnosisScreen: React.FC = () => {
         </View>
         {isUser && (
           <View style={styles.chatUserAvatar}>
-            <Text style={{ fontSize: 24 }}>👤</Text>
+            <Ionicons name="person" size={24} color="#6B7280" />
           </View>
         )}
       </View>
@@ -226,7 +227,7 @@ const ChatDiagnosisScreen: React.FC = () => {
             style={styles.chatFunctionButton} 
             onPress={pickImage}
           >
-            <Text style={styles.chatFunctionButtonIcon}>📷</Text>
+            <Ionicons name="camera" size={20} color="#6B7280" />
           </TouchableOpacity>
           
           {/* 语音输入按钮 */}
@@ -234,7 +235,7 @@ const ChatDiagnosisScreen: React.FC = () => {
             style={styles.chatFunctionButton} 
             onPress={toggleVoiceInput}
           >
-            <Text style={styles.chatFunctionButtonIcon}>🎤</Text>
+            <Ionicons name="mic" size={20} color="#6B7280" />
           </TouchableOpacity>
         </View>
         
@@ -258,7 +259,7 @@ const ChatDiagnosisScreen: React.FC = () => {
           {loading ? (
             <ActivityIndicator size="small" color="#FFFFFF" />
           ) : (
-            <Text style={styles.chatSendButtonIcon}>➤</Text>
+            <Ionicons name="send" size={20} color="#FFFFFF" />
           )}
         </TouchableOpacity>
       </View>

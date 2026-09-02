@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Image, ActivityIndicator, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../context/UserContext';
 import Button from '../components/Button';
 import Header from '../components/Header';
 import Input from '../components/Input';
+import PickerModal from '../components/PickerModal';
 import { styles } from '../styles';
 import { aiDiagnosisApi } from '../services/api';
 import * as ImagePicker from 'expo-image-picker';
@@ -92,6 +94,58 @@ const VeterinaryDiagnosisScreen: React.FC = () => {
   
   // 导师点评
   const [mentorComments, setMentorComments] = useState<string>('');
+
+  // Picker 状态
+  const [pickerVisible, setPickerVisible] = useState(false);
+  const [pickerTitle, setPickerTitle] = useState('');
+  const [pickerOptions, setPickerOptions] = useState<{label: string; value: string}[]>([]);
+  const [pickerField, setPickerField] = useState<{section: string; field: string; subField?: string} | null>(null);
+
+  // 枚举选项
+  const BREED_OPTIONS = [
+    { label: '白羽肉鸡', value: '白羽肉鸡' },
+    { label: '黄羽肉鸡', value: '黄羽肉鸡' },
+    { label: '蛋鸡（海兰）', value: '蛋鸡（海兰）' },
+    { label: '蛋鸡（罗曼）', value: '蛋鸡（罗曼）' },
+    { label: '土鸡/散养鸡', value: '土鸡/散养鸡' },
+    { label: '乌鸡', value: '乌鸡' },
+    { label: '其他', value: '其他' },
+  ];
+  const TEST_RESULT_OPTIONS = [
+    { label: '阳性', value: 'positive' },
+    { label: '阴性', value: 'negative' },
+    { label: '疑似', value: 'suspected' },
+    { label: '未检测', value: 'not_tested' },
+  ];
+  const PRESERVATION_OPTIONS = [
+    { label: '冷藏（2-8°C）', value: '冷藏（2-8°C）' },
+    { label: '冷冻（-20°C）', value: '冷冻（-20°C）' },
+    { label: '常温', value: '常温' },
+  ];
+
+  const openPicker = (title: string, options: {label: string; value: string}[], section: string, field: string, subField?: string) => {
+    setPickerTitle(title);
+    setPickerOptions(options);
+    setPickerField({ section, field, subField });
+    setPickerVisible(true);
+  };
+
+  const handlePickerSelect = (value: string) => {
+    if (pickerField) {
+      handleInputChange(pickerField.section, pickerField.field, value, pickerField.subField);
+    }
+  };
+
+  const getPickerSelectedValue = (): string => {
+    if (!pickerField) return '';
+    const { section, field, subField } = pickerField;
+    switch (section) {
+      case 'basicInfo': return (basicInfo as any)[field] || '';
+      case 'rapidTestResults': return (rapidTestResults as any)[field] || '';
+      case 'samplingInfo': return (samplingInfo as any)[field] || '';
+      default: return '';
+    }
+  };
 
   const handleInputChange = (section: string, field: string, value: string, subField?: string) => {
     switch (section) {
@@ -433,12 +487,16 @@ const VeterinaryDiagnosisScreen: React.FC = () => {
               placeholder="请输入养殖场地址"
             />
             
-            <Input
-              label="鸡只品种"
-              value={basicInfo.chickenBreed}
-              onChangeText={(value) => handleInputChange('basicInfo', 'chickenBreed', value)}
-              placeholder="请选择品种"
-            />
+            <Text style={styles.formLabel}>鸡只品种</Text>
+            <TouchableOpacity
+              style={styles.pickerField}
+              onPress={() => openPicker('选择品种', BREED_OPTIONS, 'basicInfo', 'chickenBreed')}
+            >
+              <Text style={[styles.pickerFieldText, !basicInfo.chickenBreed && { color: '#9CA3AF' }]}>
+                {basicInfo.chickenBreed || '请选择品种'}
+              </Text>
+              <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
+            </TouchableOpacity>
             
             <View style={styles.formGrid}>
               <Input
@@ -577,29 +635,41 @@ const VeterinaryDiagnosisScreen: React.FC = () => {
             
             <View style={styles.testResultItem}>
               <Text style={styles.testResultLabel}>禽流感病毒 (AIV)</Text>
-              <Input
-                value={rapidTestResults.aivTest}
-                onChangeText={(value) => handleInputChange('rapidTestResults', 'aivTest', value)}
-                placeholder="请选择检测结果"
-              />
+              <TouchableOpacity
+                style={styles.pickerField}
+                onPress={() => openPicker('AIV检测结果', TEST_RESULT_OPTIONS, 'rapidTestResults', 'aivTest')}
+              >
+                <Text style={[styles.pickerFieldText, !rapidTestResults.aivTest && { color: '#9CA3AF' }]}>
+                  {TEST_RESULT_OPTIONS.find(o => o.value === rapidTestResults.aivTest)?.label || '请选择检测结果'}
+                </Text>
+                <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
+              </TouchableOpacity>
             </View>
-            
+
             <View style={styles.testResultItem}>
               <Text style={styles.testResultLabel}>新城疫病毒 (NDV)</Text>
-              <Input
-                value={rapidTestResults.ndvTest}
-                onChangeText={(value) => handleInputChange('rapidTestResults', 'ndvTest', value)}
-                placeholder="请选择检测结果"
-              />
+              <TouchableOpacity
+                style={styles.pickerField}
+                onPress={() => openPicker('NDV检测结果', TEST_RESULT_OPTIONS, 'rapidTestResults', 'ndvTest')}
+              >
+                <Text style={[styles.pickerFieldText, !rapidTestResults.ndvTest && { color: '#9CA3AF' }]}>
+                  {TEST_RESULT_OPTIONS.find(o => o.value === rapidTestResults.ndvTest)?.label || '请选择检测结果'}
+                </Text>
+                <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
+              </TouchableOpacity>
             </View>
-            
+
             <View style={styles.testResultItem}>
               <Text style={styles.testResultLabel}>传染性支气管炎 (IBV)</Text>
-              <Input
-                value={rapidTestResults.ibvTest}
-                onChangeText={(value) => handleInputChange('rapidTestResults', 'ibvTest', value)}
-                placeholder="请选择检测结果"
-              />
+              <TouchableOpacity
+                style={styles.pickerField}
+                onPress={() => openPicker('IBV检测结果', TEST_RESULT_OPTIONS, 'rapidTestResults', 'ibvTest')}
+              >
+                <Text style={[styles.pickerFieldText, !rapidTestResults.ibvTest && { color: '#9CA3AF' }]}>
+                  {TEST_RESULT_OPTIONS.find(o => o.value === rapidTestResults.ibvTest)?.label || '请选择检测结果'}
+                </Text>
+                <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
+              </TouchableOpacity>
             </View>
           </View>
         )}
@@ -617,13 +687,15 @@ const VeterinaryDiagnosisScreen: React.FC = () => {
                 style={styles.gridItem}
               />
               
-              <Input
-                label="保存条件"
-                value={samplingInfo.preservationCondition}
-                onChangeText={(value) => handleInputChange('samplingInfo', 'preservationCondition', value)}
-                placeholder="请选择"
-                style={styles.gridItem}
-              />
+              <TouchableOpacity
+                style={[styles.pickerField, styles.gridItem]}
+                onPress={() => openPicker('保存条件', PRESERVATION_OPTIONS, 'samplingInfo', 'preservationCondition')}
+              >
+                <Text style={[styles.pickerFieldText, !samplingInfo.preservationCondition && { color: '#9CA3AF' }]}>
+                  {samplingInfo.preservationCondition || '请选择'}
+                </Text>
+                <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
+              </TouchableOpacity>
             </View>
             
             <Text style={styles.sectionTitle}>采样部位（可多选）</Text>
@@ -741,7 +813,7 @@ const VeterinaryDiagnosisScreen: React.FC = () => {
               style={styles.uploadButton}
               onPress={pickImage}
             >
-              <Text style={styles.uploadButtonIcon}>📷</Text>
+              <Ionicons name="camera" size={24} color="#9CA3AF" />
               <Text style={styles.uploadButtonText}>拍照上传</Text>
             </TouchableOpacity>
             
@@ -750,7 +822,7 @@ const VeterinaryDiagnosisScreen: React.FC = () => {
               style={styles.uploadButton}
               onPress={pickImage}
             >
-              <Text style={styles.uploadButtonIcon}>📁</Text>
+              <Ionicons name="folder-open" size={24} color="#9CA3AF" />
               <Text style={styles.uploadButtonText}>选择图片</Text>
             </TouchableOpacity>
           </View>
@@ -818,6 +890,15 @@ const VeterinaryDiagnosisScreen: React.FC = () => {
           </View>
         )}
       </ScrollView>
+
+      <PickerModal
+        visible={pickerVisible}
+        title={pickerTitle}
+        options={pickerOptions}
+        selectedValue={getPickerSelectedValue()}
+        onSelect={handlePickerSelect}
+        onClose={() => setPickerVisible(false)}
+      />
     </View>
   );
 };

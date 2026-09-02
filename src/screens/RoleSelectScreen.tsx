@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -25,7 +26,7 @@ const RoleSelectScreen: React.FC = () => {
       id: 'farmer',
       title: '养殖户',
       description: '从事禽类养殖生产',
-      icon: '🌾',
+      icon: 'leaf' as const,
       backgroundColor: '#E6F7F3',
       textColor: '#2DBBA1'
     },
@@ -33,7 +34,7 @@ const RoleSelectScreen: React.FC = () => {
       id: 'institution',
       title: '机构',
       description: '疫控、科研、服务机构',
-      icon: '🏢',
+      icon: 'business' as const,
       backgroundColor: '#EBF5FF',
       textColor: '#3B82F6'
     },
@@ -41,7 +42,7 @@ const RoleSelectScreen: React.FC = () => {
       id: 'student',
       title: '学生',
       description: '学习禽类养殖相关专业',
-      icon: '🎓',
+      icon: 'school' as const,
       backgroundColor: '#F3E8FF',
       textColor: '#8B5CF6'
     },
@@ -49,7 +50,7 @@ const RoleSelectScreen: React.FC = () => {
       id: 'teacher',
       title: '教师',
       description: '教学指导与实习管理',
-      icon: '👨‍🏫',
+      icon: 'person' as const,
       backgroundColor: '#FFF3E0',
       textColor: '#F59E0B'
     }
@@ -246,7 +247,7 @@ const RoleSelectScreen: React.FC = () => {
                       { backgroundColor: role.backgroundColor }
                     ]}
                   >
-                    <Text style={{ fontSize: 32 }}>{role.icon}</Text>
+                    <Ionicons name={role.icon} size={32} color={role.textColor} />
                   </View>
                   <View style={styles.roleSelectMainRoleInfo}>
                     <Text style={styles.roleSelectMainRoleTitle}>{role.title}</Text>
@@ -288,7 +289,7 @@ const RoleSelectScreen: React.FC = () => {
         <View style={styles.roleSelectDescriptionCard}>
           <View style={styles.roleSelectDescriptionContent}>
             <View style={styles.roleSelectDescriptionIcon}>
-              <Text style={{ fontSize: 20 }}>ℹ️</Text>
+              <Ionicons name="information-circle-outline" size={20} color="#2DBBA1" />
             </View>
             <View style={styles.roleSelectDescriptionInfo}>
               <Text style={styles.roleSelectDescriptionTitle}>温馨提示</Text>

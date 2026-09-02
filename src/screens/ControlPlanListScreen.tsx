@@ -115,7 +115,7 @@ export default function ControlPlanListScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#2DBBA1']} />}
         ListEmptyComponent={
           <View style={{ alignItems: 'center', paddingVertical: 64 }}>
-            <Text style={{ fontSize: 48, marginBottom: 16 }}>📋</Text>
+            <Ionicons name="clipboard-outline" size={48} color="#9CA3AF" />
             <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827', marginBottom: 8 }}>暂无预案</Text>
             <Text style={{ fontSize: 14, color: '#6B7280', textAlign: 'center', paddingHorizontal: 32 }}>
               完成 AI 诊断后可一键生成防控预案

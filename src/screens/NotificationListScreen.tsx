@@ -323,7 +323,7 @@ export default function NotificationListScreen() {
         }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyIcon}>🔔</Text>
+            <Ionicons name="notifications-outline" size={56} color="#9CA3AF" />
             <Text style={styles.emptyTitle}>暂无通知</Text>
             <Text style={styles.emptyDesc}>
               新的预警、随访、系统消息将在这里显示

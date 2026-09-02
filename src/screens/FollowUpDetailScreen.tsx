@@ -122,7 +122,10 @@ export default function FollowUpDetailScreen() {
         {/* AI 评估结果 */}
         {isCompleted && followUp.aiAssessment && (
           <View style={[styles.card, { backgroundColor: '#F0FFF4', borderWidth: 1, borderColor: '#C6F6D5' }]}>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: '#22543D', marginBottom: 12 }}>🤖 AI 回访评估</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 12 }}>
+              <Ionicons name="hardware-chip" size={18} color="#2DBBA1" />
+              <Text style={{ fontSize: 16, fontWeight: '600', color: '#22543D' }}>AI 回访评估</Text>
+            </View>
             <View style={{ gap: 8 }}>
               <View>
                 <Text style={{ fontSize: 13, fontWeight: '600', color: '#22543D' }}>效果评估</Text>

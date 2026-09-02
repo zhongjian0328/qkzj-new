@@ -184,7 +184,7 @@ export default function TicketListScreen() {
         </View>
       ) : error ? (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyIcon}>⚠️</Text>
+          <Ionicons name="alert-circle-outline" size={48} color="#9CA3AF" />
           <Text style={styles.emptyTitle}>{error}</Text>
           <TouchableOpacity style={{ marginTop: 12, backgroundColor: COLORS.primary, borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchTickets()}>
             <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>重试</Text>
@@ -199,7 +199,7 @@ export default function TicketListScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.primary]} />}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyIcon}>📋</Text>
+            <Ionicons name="clipboard-outline" size={48} color="#9CA3AF" />
             <Text style={styles.emptyTitle}>{emptyText}</Text>
             <Text style={styles.emptyDesc}>
               {activeTab === 'my' ? '发起工单请求技术支持' : '承接工单后开始处理'}

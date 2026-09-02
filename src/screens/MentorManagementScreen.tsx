@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Alert, ActivityIndicator, RefreshControl } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
 import { styles } from '../styles';
@@ -54,7 +55,7 @@ const MentorManagementScreen: React.FC = () => {
         title: s.title || '指导教师',
         department: s.department || '',
         expertise: s.expertise || [],
-        avatar: s.avatar || '👨‍⚕️',
+        avatar: s.avatar || 'person',
         rating: s.rating || 0,
         bio: s.bio || '',
         contact: s.phoneNumber || s.contact || '',
@@ -188,7 +189,7 @@ const MentorManagementScreen: React.FC = () => {
         </View>
       ) : error ? (
         <View style={styles.loadingContainer}>
-          <Text style={{ fontSize: 48, marginBottom: 12 }}>⚠️</Text>
+          <Ionicons name="alert-circle-outline" size={48} color="#9CA3AF" />
           <Text style={{ fontSize: 16, color: '#6B7280', marginBottom: 16 }}>{error}</Text>
           <TouchableOpacity style={{ backgroundColor: '#2DBBA1', borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchMentors()}>
             <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>重试</Text>
@@ -196,7 +197,7 @@ const MentorManagementScreen: React.FC = () => {
         </View>
       ) : activeTab === 'mentors' && mentors.length === 0 ? (
         <View style={styles.loadingContainer}>
-          <Text style={{ fontSize: 48, marginBottom: 12 }}>📭</Text>
+          <Ionicons name="folder-open-outline" size={48} color="#9CA3AF" />
           <Text style={{ fontSize: 16, color: '#6B7280' }}>暂无导师数据</Text>
         </View>
       ) : (
@@ -350,7 +351,7 @@ const MentorManagementScreen: React.FC = () => {
                     }}>
                       {[...Array(5)].map((_, index) => (
                         <Text key={index} style={{ fontSize: 16, color: index < mentor.rating ? '#FBBF24' : '#D1D5DB' }}>
-                          ⭐
+                          <Ionicons name="star" size={14} color="#F59E0B" />
                         </Text>
                       ))}
                       <Text style={{ fontSize: 14, fontWeight: '500', color: '#6B7280', marginLeft: 8 }}>
