@@ -199,7 +199,16 @@ const DeathFeedRecordScreen: React.FC = () => {
             </View>
             <View style={styles.statItem}>
               <Text style={styles.statItemLabel}>死淘率</Text>
-              <Text style={styles.statItemValue}>{((item.deathCount / 1000) * 100).toFixed(2)}%</Text>
+              <Text style={styles.statItemValue}>
+                {(() => {
+                  const batch = batches.find(b => b.id === item.batchId);
+                  const initialQty = batch?.initialQuantity || 0;
+                  if (initialQty > 0) {
+                    return ((item.deathCount / initialQty) * 100).toFixed(2) + '%';
+                  }
+                  return '0.00%';
+                })()}
+              </Text>
             </View>
           </View>
         </View>

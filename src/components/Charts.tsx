@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
 
 const screenWidth = Dimensions.get('window').width;
@@ -177,14 +178,16 @@ interface DataCardProps {
   unit?: string;
   color?: string;
   icon?: string;
+  iconName?: string;
 }
 
-export const DataCard: React.FC<DataCardProps> = ({ 
-  title, 
-  value, 
+export const DataCard: React.FC<DataCardProps> = ({
+  title,
+  value,
   unit = '',
   color = '#2DBBA1',
-  icon = ''
+  icon = '',
+  iconName
 }) => {
   return (
     <View style={styles.dataCard}>
@@ -195,7 +198,13 @@ export const DataCard: React.FC<DataCardProps> = ({
           {unit && <Text style={styles.dataCardUnit}>{unit}</Text>}
         </View>
       </View>
-      {icon && <Text style={styles.dataCardIcon}>{icon}</Text>}
+      {iconName ? (
+        <View style={[styles.dataCardIconContainer, { backgroundColor: color + '20' }]}>
+          <Ionicons name={iconName as any} size={24} color={color} />
+        </View>
+      ) : icon ? (
+        <Text style={styles.dataCardIcon}>{icon}</Text>
+      ) : null}
     </View>
   );
 };
@@ -256,6 +265,13 @@ const styles = StyleSheet.create({
   },
   dataCardIcon: {
     fontSize: 32,
+  },
+  dataCardIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   legendContainer: {
     marginTop: 16,

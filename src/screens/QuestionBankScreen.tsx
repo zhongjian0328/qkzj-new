@@ -30,6 +30,9 @@ const QuestionBankScreen: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [lastAnswerCorrect, setLastAnswerCorrect] = useState(false);
+  const [wrongQuestions, setWrongQuestions] = useState<{ question: Question; userAnswers: number[] }[]>([]);
 
   const fetchQuestions = useCallback(async (isRefresh = false) => {
     try {
@@ -97,30 +100,40 @@ const QuestionBankScreen: React.FC = () => {
     setSelectedAnswers([]);
     setQuizScore(0);
     setQuizCompleted(false);
+    setShowFeedback(false);
+    setWrongQuestions([]);
   };
 
   // 提交答案
   const submitAnswer = () => {
     const currentQuestion = quizQuestions[currentQuestionIndex];
     let isCorrect = false;
-    
+
     if (currentQuestion.type === 'single') {
       isCorrect = selectedAnswers.length === 1 && selectedAnswers[0] === currentQuestion.correctAnswers[0];
     } else {
-      // 多选题比较答案是否完全一致
       isCorrect = selectedAnswers.length === currentQuestion.correctAnswers.length &&
                  selectedAnswers.every(answer => currentQuestion.correctAnswers.includes(answer)) &&
                  currentQuestion.correctAnswers.every(answer => selectedAnswers.includes(answer));
     }
-    
+
     if (isCorrect) {
       setQuizScore(prev => prev + 1);
+    } else {
+      setWrongQuestions(prev => [...prev, { question: currentQuestion, userAnswers: [...selectedAnswers] }]);
     }
-    
-    // 下一题或结束测验
+
+    setLastAnswerCorrect(isCorrect);
+    setShowFeedback(true);
+  };
+
+  // 下一题
+  const nextQuestion = () => {
+    setShowFeedback(false);
+    setSelectedAnswers([]);
+
     if (currentQuestionIndex < quizQuestions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
-      setSelectedAnswers([]);
     } else {
       setQuizCompleted(true);
     }
@@ -133,6 +146,8 @@ const QuestionBankScreen: React.FC = () => {
     setCurrentQuestionIndex(0);
     setSelectedAnswers([]);
     setQuizScore(0);
+    setShowFeedback(false);
+    setWrongQuestions([]);
   };
 
   // 切换答案选择
@@ -449,7 +464,71 @@ const QuestionBankScreen: React.FC = () => {
               <Text style={{ fontSize: 12, color: '#6B7280', textAlign: 'center' }}>
                 {quizScore}/{quizQuestions.length} 道题正确
               </Text>
+
+              {/* 等级标签 */}
+              {(() => {
+                const rate = Math.round((quizScore / quizQuestions.length) * 100);
+                let label = '不及格';
+                let labelColor = '#EF4444';
+                let labelBg = '#FEE2E2';
+                if (rate >= 90) { label = '优秀'; labelColor = '#1F5E52'; labelBg = '#D1FAE5'; }
+                else if (rate >= 70) { label = '良好'; labelColor = '#92400E'; labelBg = '#FEF3C7'; }
+                else if (rate >= 60) { label = '及格'; labelColor = '#1F5E52'; labelBg = '#D1FAE5'; }
+                return (
+                  <View style={{
+                    marginTop: 12,
+                    paddingHorizontal: 16,
+                    paddingVertical: 6,
+                    borderRadius: 20,
+                    backgroundColor: labelBg,
+                    alignSelf: 'center'
+                  }}>
+                    <Text style={{ fontSize: 14, fontWeight: '600', color: labelColor }}>{label}</Text>
+                  </View>
+                );
+              })()}
             </View>
+
+            {/* 错题回顾 */}
+            {wrongQuestions.length > 0 && (
+              <View style={{
+                backgroundColor: '#FFFFFF',
+                borderRadius: 16,
+                padding: 16,
+                marginBottom: 16,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.06,
+                shadowRadius: 3.84,
+                elevation: 2
+              }}>
+                <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827', marginBottom: 12 }}>
+                  错题回顾 ({wrongQuestions.length} 题)
+                </Text>
+                {wrongQuestions.map((item, index) => (
+                  <View key={index} style={{
+                    backgroundColor: '#FEF2F2',
+                    borderRadius: 8,
+                    padding: 12,
+                    marginBottom: 8,
+                    borderLeftWidth: 3,
+                    borderLeftColor: '#EF4444'
+                  }}>
+                    <Text style={{ fontSize: 14, fontWeight: '500', color: '#111827', marginBottom: 8 }}>
+                      {item.question.question}
+                    </Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                      <Text style={{ fontSize: 12, color: '#EF4444' }}>
+                        你的答案：{item.userAnswers.map(a => String.fromCharCode(65 + a)).join('、')}
+                      </Text>
+                      <Text style={{ fontSize: 12, color: '#10B981' }}>
+                        正确答案：{item.question.correctAnswers.map(a => String.fromCharCode(65 + a)).join('、')}
+                      </Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            )}
             
             <TouchableOpacity
               style={{
@@ -531,7 +610,34 @@ const QuestionBankScreen: React.FC = () => {
             </Text>
             
             <View style={{ gap: 12, marginBottom: 24 }}>
-              {quizQuestions[currentQuestionIndex].options.map((option, optionIndex) => (
+              {quizQuestions[currentQuestionIndex].options.map((option, optionIndex) => {
+                const isSelected = selectedAnswers.includes(optionIndex);
+                const isCorrectAnswer = quizQuestions[currentQuestionIndex].correctAnswers.includes(optionIndex);
+                let optionStyle: any = {
+                  backgroundColor: '#F3F4F6',
+                  borderColor: '#E5E7EB'
+                };
+                let indicatorStyle: any = {
+                  borderWidth: 2,
+                  borderColor: '#D1D5DB',
+                  backgroundColor: 'transparent'
+                };
+
+                if (showFeedback) {
+                  // 反馈阶段：正确答案绿色，错误选择红色
+                  if (isCorrectAnswer) {
+                    optionStyle = { backgroundColor: '#D1FAE5', borderColor: '#10B981' };
+                    indicatorStyle = { backgroundColor: '#10B981', borderColor: '#10B981' };
+                  } else if (isSelected && !isCorrectAnswer) {
+                    optionStyle = { backgroundColor: '#FEE2E2', borderColor: '#EF4444' };
+                    indicatorStyle = { backgroundColor: '#EF4444', borderColor: '#EF4444' };
+                  }
+                } else if (isSelected) {
+                  optionStyle = { backgroundColor: '#E6F7F3', borderColor: '#2DBBA1' };
+                  indicatorStyle = { backgroundColor: '#2DBBA1', borderColor: '#2DBBA1' };
+                }
+
+                return (
                 <TouchableOpacity
                   key={optionIndex}
                   style={[
@@ -542,15 +648,10 @@ const QuestionBankScreen: React.FC = () => {
                       borderRadius: 8,
                       borderWidth: 2
                     },
-                    selectedAnswers.includes(optionIndex) ? {
-                      backgroundColor: '#E6F7F3',
-                      borderColor: '#2DBBA1'
-                    } : {
-                      backgroundColor: '#F3F4F6',
-                      borderColor: '#E5E7EB'
-                    }
+                    optionStyle
                   ]}
-                  onPress={() => toggleAnswer(optionIndex)}
+                  onPress={() => !showFeedback && toggleAnswer(optionIndex)}
+                  disabled={showFeedback}
                 >
                   <View style={[
                     {
@@ -558,20 +659,15 @@ const QuestionBankScreen: React.FC = () => {
                       height: 28,
                       marginRight: 16,
                       justifyContent: 'center',
-                      alignItems: 'center'
+                      alignItems: 'center',
+                      borderRadius: quizQuestions[currentQuestionIndex].type === 'single' ? 14 : 8
                     },
-                    selectedAnswers.includes(optionIndex) ? {
-                      backgroundColor: '#2DBBA1',
-                      borderRadius: quizQuestions[currentQuestionIndex].type === 'single' ? 14 : 8
-                    } : {
-                      borderWidth: 2,
-                      borderColor: '#D1D5DB',
-                      borderRadius: quizQuestions[currentQuestionIndex].type === 'single' ? 14 : 8
-                    }
+                    indicatorStyle
                   ]}>
-                    {selectedAnswers.includes(optionIndex) && (
+                    {(isSelected || (showFeedback && isCorrectAnswer)) && (
                       <Text style={{ fontSize: 16, color: '#FFFFFF', fontWeight: '600' }}>
-                        {quizQuestions[currentQuestionIndex].type === 'single' ? '✓' : '✓'}
+                        {showFeedback && isCorrectAnswer && !isSelected ? '✓' :
+                         showFeedback && isSelected && !isCorrectAnswer ? '✗' : '✓'}
                       </Text>
                     )}
                   </View>
@@ -581,29 +677,66 @@ const QuestionBankScreen: React.FC = () => {
                       color: '#111827',
                       flex: 1
                     },
-                    selectedAnswers.includes(optionIndex) && {
+                    (isSelected || (showFeedback && isCorrectAnswer)) && {
                       fontWeight: '600'
                     }
                   ]}>
-                    {option}
+                    {String.fromCharCode(65 + optionIndex)}. {option}
                   </Text>
                 </TouchableOpacity>
-              ))}
+                );
+              })}
             </View>
+
+            {/* 答题反馈区 */}
+            {showFeedback && (
+              <View style={{
+                backgroundColor: lastAnswerCorrect ? '#D1FAE5' : '#FEE2E2',
+                borderRadius: 12,
+                padding: 16,
+                marginBottom: 16,
+                borderWidth: 1,
+                borderColor: lastAnswerCorrect ? '#10B981' : '#EF4444'
+              }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                  <Text style={{ fontSize: 20, marginRight: 8 }}>
+                    {lastAnswerCorrect ? '✅' : '❌'}
+                  </Text>
+                  <Text style={{
+                    fontSize: 16,
+                    fontWeight: '600',
+                    color: lastAnswerCorrect ? '#1F5E52' : '#991B1B'
+                  }}>
+                    {lastAnswerCorrect ? '回答正确！' : '回答错误'}
+                  </Text>
+                </View>
+                {!lastAnswerCorrect && (
+                  <Text style={{ fontSize: 14, color: '#4B5563', lineHeight: 20 }}>
+                    正确答案：{quizQuestions[currentQuestionIndex].correctAnswers
+                      .map(idx => String.fromCharCode(65 + idx))
+                      .join('、')}
+                  </Text>
+                )}
+              </View>
+            )}
             
             <TouchableOpacity
               style={{
-                backgroundColor: selectedAnswers.length === 0 ? '#D1D5DB' : '#2DBBA1',
+                backgroundColor: showFeedback
+                  ? '#2DBBA1'
+                  : (selectedAnswers.length === 0 ? '#D1D5DB' : '#2DBBA1'),
                 borderRadius: 12,
                 padding: 16,
                 alignItems: 'center',
                 justifyContent: 'center'
               }}
-              onPress={submitAnswer}
-              disabled={selectedAnswers.length === 0}
+              onPress={showFeedback ? nextQuestion : submitAnswer}
+              disabled={!showFeedback && selectedAnswers.length === 0}
             >
               <Text style={{ fontSize: 16, fontWeight: '600', color: '#FFFFFF' }}>
-                {currentQuestionIndex < quizQuestions.length - 1 ? '下一题' : '提交答案'}
+                {showFeedback
+                  ? (currentQuestionIndex < quizQuestions.length - 1 ? '下一题' : '查看结果')
+                  : (currentQuestionIndex < quizQuestions.length - 1 ? '提交答案' : '提交答案')}
               </Text>
             </TouchableOpacity>
           </View>

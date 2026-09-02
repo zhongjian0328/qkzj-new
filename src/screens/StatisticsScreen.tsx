@@ -6,6 +6,12 @@ import { CustomLineChart, CustomBarChart, CustomPieChart, DataCard } from '../co
 import { statisticsApi } from '../services/api';
 import { styles } from '../styles';
 
+// 饼图颜色调色板
+const PIE_COLORS = [
+  '#2DBBA1', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6',
+  '#EC4899', '#06B6D4', '#84CC16', '#F97316', '#6366F1',
+];
+
 const StatisticsScreen: React.FC = () => {
   const navigation = useNavigation<any>();
 
@@ -55,24 +61,28 @@ const StatisticsScreen: React.FC = () => {
             title="总批次"
             value={production.totalBatches ?? 0}
             unit="个"
-            icon="📋"
+            iconName="layers-outline"
+            color="#2DBBA1"
           />
           <DataCard
             title="总存栏"
             value={production.totalBirds ?? 0}
             unit="羽"
-            icon="🐔"
+            iconName="egg-outline"
+            color="#F59E0B"
           />
           <DataCard
             title="死淘率"
             value={production.mortalityRate ?? 0}
             unit="%"
-            icon="📉"
+            iconName="trending-down-outline"
+            color="#EF4444"
           />
           <DataCard
             title="料肉比"
             value={production.feedConversionRate ?? 0}
-            icon="⚖️"
+            iconName="scale-outline"
+            color="#3B82F6"
           />
         </View>
 
@@ -138,10 +148,10 @@ const StatisticsScreen: React.FC = () => {
     const trendData = diagnosis.monthlyDiagnosisTrend || [];
 
     // 转换饼图数据
-    const pieData = diseaseDist.map((item: any) => ({
+    const pieData = diseaseDist.map((item: any, index: number) => ({
       name: item.disease,
       population: item.count,
-      color: '#2DBBA1',
+      color: PIE_COLORS[index % PIE_COLORS.length],
       legendFontColor: '#6B7280',
       legendFontSize: 12
     }));
@@ -154,13 +164,15 @@ const StatisticsScreen: React.FC = () => {
             title="总诊断次数"
             value={diagnosis.totalDiagnoses ?? 0}
             unit="次"
-            icon="🏥"
+            iconName="medkit-outline"
+            color="#2DBBA1"
           />
           <DataCard
             title="诊断准确率"
             value={diagnosis.correctRate ?? 0}
             unit="%"
-            icon="✅"
+            iconName="checkmark-circle-outline"
+            color="#10B981"
           />
         </View>
 
@@ -223,25 +235,29 @@ const StatisticsScreen: React.FC = () => {
             title="累计病例"
             value={epidemic.totalCases ?? 0}
             unit="例"
-            icon="⚠️"
+            iconName="warning-outline"
+            color="#F59E0B"
           />
           <DataCard
             title="高风险区域"
             value={epidemic.highRiskRegions ?? 0}
             unit="个"
-            icon="🔴"
+            iconName="alert-circle-outline"
+            color="#EF4444"
           />
           <DataCard
             title="中风险区域"
             value={epidemic.mediumRiskRegions ?? 0}
             unit="个"
-            icon="🟡"
+            iconName="shield-outline"
+            color="#F59E0B"
           />
           <DataCard
             title="今日新增"
             value={epidemic.newCasesToday ?? 0}
             unit="例"
-            icon="📈"
+            iconName="trending-up-outline"
+            color="#EF4444"
           />
         </View>
 
@@ -338,7 +354,8 @@ const StatisticsScreen: React.FC = () => {
     <View style={styles.container}>
       <Header
         title="数据统计"
-        showBackButton={false}
+        showBackButton
+        onBack={() => navigation.goBack()}
       />
 
       {renderTabs()}

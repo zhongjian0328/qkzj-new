@@ -1736,7 +1736,7 @@ export const styles = StyleSheet.create({
     borderRadius: 16,
   },
   chatAiMessageBubble: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F0F2F5',
     borderBottomLeftRadius: 4,
   },
   chatUserMessageBubble: {
