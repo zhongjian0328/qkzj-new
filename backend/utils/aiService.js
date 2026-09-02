@@ -37,7 +37,7 @@ class EncryptionUtil {
 }
 
 /**
- * AI服务类，封装百度云图像识别API和通义千问LLM调用
+ * AI服务类，封装百度云图像识别API和豆包2.0 LLM调用
  */
 class AIService {
   constructor() {
@@ -61,21 +61,21 @@ class AIService {
     this.cacheTTL = this.CACHE_TTL;
     this.maxCacheSize = this.MAX_CACHE_SIZE;
 
-    // 通义千问 DashScope LLM 客户端（OpenAI-compatible 接口）
-    const dashscopeApiKey = process.env.DASHSCOPE_API_KEY;
-    const dashscopeBaseUrl = process.env.DASHSCOPE_BASE_URL || 'https://dashscope.aliyuncs.com/compatible-mode/v1';
-    this.llmModel = process.env.DASHSCOPE_MODEL || 'qwen-plus';
-    if (dashscopeApiKey) {
+    // 豆包2.0 火山引擎 Ark LLM 客户端（OpenAI-compatible 接口）
+    const doubaoApiKey = process.env.DOUBAO_API_KEY || process.env.DASHSCOPE_API_KEY;
+    const doubaoBaseUrl = process.env.DOUBAO_BASE_URL || process.env.DASHSCOPE_BASE_URL || 'https://ark.cn-beijing.volces.com/api/v3';
+    this.llmModel = process.env.DOUBAO_MODEL || process.env.DASHSCOPE_MODEL || 'doubao-seed-2-1-pro-260628';
+    if (doubaoApiKey) {
       this.llmClient = new OpenAI({
-        apiKey: dashscopeApiKey,
-        baseURL: dashscopeBaseUrl,
+        apiKey: doubaoApiKey,
+        baseURL: doubaoBaseUrl,
       });
-      this.log('info', '通义千问 LLM 客户端初始化成功', {
+      this.log('info', '豆包2.0 LLM 客户端初始化成功', {
         model: this.llmModel,
-        baseURL: dashscopeBaseUrl
+        baseURL: doubaoBaseUrl
       });
     } else {
-      this.log('warn', '通义千问 LLM 客户端未初始化：缺少 DASHSCOPE_API_KEY 环境变量');
+      this.log('warn', '豆包2.0 LLM 客户端未初始化：缺少 DOUBAO_API_KEY 环境变量');
       this.llmClient = null;
     }
 
@@ -118,17 +118,17 @@ class AIService {
     }
   }
 
-  // ======================== 通义千问 LLM 调用核心方法 ========================
+  // ======================== 豆包2.0 LLM 调用核心方法 ========================
 
   /**
-   * 调用通义千问 LLM，返回文本
+   * 调用豆包2.0 LLM，返回文本
    * @param {string} systemPrompt - 系统提示词
    * @param {string} userPrompt - 用户提示词
    * @returns {Promise<string>} LLM 回答文本
    */
   async _callLLM(systemPrompt, userPrompt) {
     if (!this.llmClient) {
-      throw new Error('LLM 客户端不可用：缺少 DASHSCOPE_API_KEY');
+      throw new Error('LLM 客户端不可用：缺少 DOUBAO_API_KEY');
     }
 
     const completion = await this.llmClient.chat.completions.create({
@@ -149,14 +149,14 @@ class AIService {
   }
 
   /**
-   * 调用通义千问 LLM，要求返回 JSON 并自动解析
+   * 调用豆包2.0 LLM，要求返回 JSON 并自动解析
    * @param {string} systemPrompt - 系统提示词
    * @param {string} userPrompt - 用户提示词
    * @returns {Promise<Object>} 解析后的 JSON 对象
    */
   async _callLLMJson(systemPrompt, userPrompt) {
     if (!this.llmClient) {
-      throw new Error('LLM 客户端不可用：缺少 DASHSCOPE_API_KEY');
+      throw new Error('LLM 客户端不可用：缺少 DOUBAO_API_KEY');
     }
 
     const completion = await this.llmClient.chat.completions.create({
@@ -196,7 +196,7 @@ class AIService {
     if (systemPrompt.includes('JSON')) {
       return {};
     }
-    return 'AI诊断服务暂时不可用（LLM未配置），请稍后重试。建议联系管理员配置 DASHSCOPE_API_KEY。';
+    return 'AI诊断服务暂时不可用（LLM未配置），请稍后重试。建议联系管理员配置 DOUBAO_API_KEY。';
   }
 
   // ======================== LLM + 规则引擎融合 ========================
@@ -1130,7 +1130,7 @@ class AIService {
   }
 
   /**
-   * 基于通义千问 LLM 的智能诊断服务
+   * 基于豆包2.0 LLM 的智能诊断服务
    * @param {Object} diagnosisData - 诊断数据
    * @returns {Promise<Object>} - 智能诊断结果
    */
@@ -1169,7 +1169,7 @@ ${imageAnalysis ? '- 图像识别结果：' + JSON.stringify(imageAnalysis) : ''
   }
 
   /**
-   * 基于通义千问 LLM 的混合感染风险评估
+   * 基于豆包2.0 LLM 的混合感染风险评估
    * @param {Object} riskData - 风险评估数据
    * @returns {Promise<Object>} - 风险评估结果
    */
@@ -1223,7 +1223,7 @@ ${imageAnalysis ? '- 图像识别结果：' + JSON.stringify(imageAnalysis) : ''
   }
 
   /**
-   * 基于通义千问 LLM 的紧急控制方案生成
+   * 基于豆包2.0 LLM 的紧急控制方案生成
    * @param {Object} emergencyData - 紧急情况数据
    * @returns {Promise<Object>} - 紧急控制方案
    */
@@ -1232,41 +1232,27 @@ ${imageAnalysis ? '- 图像识别结果：' + JSON.stringify(imageAnalysis) : ''
       const { disease, affectedCount, totalCount, environment, symptoms } = emergencyData;
 
       const systemPrompt = `你是一位禽病应急防控专家，擅长制定紧急控制方案。
-请根据疫情信息制定包含隔离、消毒、治疗、无害化处理在内的综合防控方案。
-方案要具有可操作性，考虑实际养殖场景的可行性。
+请根据疫情信息制定包含隔离、消毒、用药、疫苗、监测、应急在内的综合防控方案。
+方案要具有可操作性，考虑实际养殖场景的可行性，优先推荐绿色用药。
 
 请严格返回以下JSON结构：
 {
-  "emergencyPlan": {
-    "planLevel": "一级/二级/三级",
-    "implementationTime": "启动时间（ISO格式）",
-    "responsibilityDivision": "责任分工"
+  "overview": "疫情概述与总体处置策略（200字以内）",
+  "isolation": "隔离措施：隔离区划分、病禽处置、人员管控（200字以内）",
+  "disinfection": "消毒方案：消毒范围、消毒剂选择与浓度、消毒频率（200字以内）",
+  "medication": {
+    "recommendations": [
+      {"drugName": "药物名称", "dosage": "用法用量", "duration": "疗程", "note": "注意事项"}
+    ],
+    "greenDrugs": ["推荐的绿色/中兽药替代方案"]
   },
-  "isolationMeasures": {
-    "isolationAreaSetup": "隔离区设置",
-    "isolationProcedure": "隔离操作流程",
-    "personnelProtection": "人员防护"
-  },
-  "disinfectionPlan": {
-    "disinfectionScope": "消毒范围",
-    "disinfectionDrugs": "消毒剂选择",
-    "disinfectionFrequency": "消毒频率"
-  },
-  "treatmentPlan": {
-    "drugSelection": "药物选择",
-    "administrationMethod": "给药方式",
-    "treatmentPeriod": "疗程"
-  },
-  "harmlessTreatment": {
-    "treatmentObjects": "处理对象",
-    "treatmentMethod": "处理方法",
-    "notes": "注意事项"
-  },
-  "monitoringPlan": {
-    "monitoringIndicators": ["指标1", "指标2"],
-    "monitoringFrequency": "监测频率",
-    "abnormalReportingProcess": "异常报告流程"
-  }
+  "vaccination": "紧急免疫方案：疫苗选择、接种时机、注意事项（200字以内）",
+  "monitoring": "监测方案：关键指标、监测频率、异常报告流程（200字以内）",
+  "emergency": "应急处置：病死禽无害化处理、疫情上报、人员防护（200字以内）",
+  "timeline": [
+    {"day": 1, "action": "第1天操作内容", "responsible": "责任人"},
+    {"day": 3, "action": "第3天操作内容", "responsible": "责任人"}
+  ]
 }`;
 
       const userPrompt = `请根据以下疫情信息制定紧急控制方案：
@@ -1277,7 +1263,7 @@ ${imageAnalysis ? '- 图像识别结果：' + JSON.stringify(imageAnalysis) : ''
 - 临床症状：${symptoms}
 - 环境条件：${environment}
 
-请生成可操作的紧急控制方案，返回JSON格式。`;
+请按指定的JSON结构生成可操作的紧急控制方案，特别注意medication中优先推荐绿色/中兽药方案。`;
 
       const ruleArgs = { symptoms, images: [], environment };
       const result = await this._callLLMJsonWithFallback(
@@ -1293,7 +1279,7 @@ ${imageAnalysis ? '- 图像识别结果：' + JSON.stringify(imageAnalysis) : ''
   }
 
   /**
-   * 基于通义千问 LLM 的治疗效果跟踪与调整建议
+   * 基于豆包2.0 LLM 的治疗效果跟踪与调整建议
    * @param {Object} treatmentData - 治疗数据
    * @returns {Promise<Object>} - 调整建议
    */
@@ -1352,7 +1338,7 @@ ${imageAnalysis ? '- 图像识别结果：' + JSON.stringify(imageAnalysis) : ''
   }
 
   /**
-   * 基于通义千问 LLM 的养殖建议生成
+   * 基于豆包2.0 LLM 的养殖建议生成
    * @param {Object} farmData - 养殖数据
    * @returns {Promise<Object>} - 养殖建议
    */
@@ -1414,7 +1400,7 @@ ${imageAnalysis ? '- 图像识别结果：' + JSON.stringify(imageAnalysis) : ''
   }
 
   /**
-   * 基于通义千问 LLM 的疾病风险预警
+   * 基于豆包2.0 LLM 的疾病风险预警
    * @param {Object} warningData - 预警数据
    * @returns {Promise<Object>} - 风险预警结果
    */
@@ -1472,7 +1458,7 @@ ${imageAnalysis ? '- 图像识别结果：' + JSON.stringify(imageAnalysis) : ''
   }
 
   /**
-   * 基于通义千问 LLM 的对话诊断
+   * 基于豆包2.0 LLM 的对话诊断
    * @param {Object} diagnosisData - 诊断数据
    * @returns {Promise<string|Object>} - 对话诊断结果
    */

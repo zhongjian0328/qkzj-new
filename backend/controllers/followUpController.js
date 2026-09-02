@@ -120,11 +120,16 @@ exports.completeFollowUp = async (req, res) => {
       improvement: questions.overallAssessment || questions.symptomImprovement || ''
     });
 
+    // LLM 可能返回中文日期（如"7天后"），new Date() 无法解析 → 校验有效性
+    const rawDate = assessment?.followUpMonitoring?.reexaminationTime;
+    const parsedDate = rawDate ? new Date(rawDate) : null;
+    const nextFollowUpDate = (parsedDate && !isNaN(parsedDate.getTime())) ? parsedDate : null;
+
     followUp.aiAssessment = {
       effectiveness: assessment?.treatmentEffect?.overallEffect || '待评估',
       recommendation: assessment?.adjustmentSuggestions?.drugAdjustment || '',
       needAdjustment: assessment?.treatmentEffect?.treatmentPlanReasonableness === '需要调整',
-      nextFollowUpDate: assessment?.followUpMonitoring?.reexaminationTime ? new Date(assessment.followUpMonitoring.reexaminationTime) : undefined
+      nextFollowUpDate
     };
 
     // 如果需要调整，自动创建下次回访
