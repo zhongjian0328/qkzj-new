@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Header from '../components/Header';
 import { useAuth } from '../context/UserContext';
 import { styles } from '../styles';
-import { notificationApi, aiDiagnosisApi, productionApi, internshipApi } from '../services/api';
+import { notificationApi, aiDiagnosisApi, internshipApi } from '../services/api';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_GAP = 12;
@@ -203,6 +203,7 @@ const HomeScreen: React.FC = () => {
         {renderGridCard('知识百科', '学习养殖知识', <Ionicons name="book-outline" size={22} color="#2DBBA1" />, 'KnowledgeList')}
         {renderGridCard('疫情监测', '实时疫情信息', <Ionicons name="map-outline" size={22} color="#2DBBA1" />, 'EpidemicHeatmap')}
         {renderGridCard('在线咨询', '专业兽医咨询', <Ionicons name="chatbubbles-outline" size={22} color="#2DBBA1" />, 'ChatDiagnosis')}
+        {renderGridCard('服务闭环', '全流程追踪', <Ionicons name="repeat-outline" size={22} color="#2DBBA1" />, 'ServiceCycle')}
       </View>
 
       {/* 近期诊断 */}
@@ -303,6 +304,7 @@ const HomeScreen: React.FC = () => {
           {renderGridCard('员工权限', '管理员工权限', <Ionicons name="people-outline" size={22} color="#3B82F6" />, 'EmployeeManagement')}
           {renderGridCard('数据统计', '查看生产数据', <Ionicons name="pie-chart-outline" size={22} color="#8B5CF6" />, 'Statistics')}
           {renderGridCard('AI诊断', '快速诊断禽病', <Ionicons name="medical-outline" size={22} color="#F59E0B" />, 'VeterinaryDiagnosis')}
+        {renderGridCard('服务闭环', '全流程追踪', <Ionicons name="repeat-outline" size={22} color="#2DBBA1" />, 'ServiceCycle')}
         </View>
       </View>
 
@@ -1023,7 +1025,7 @@ const HomeScreen: React.FC = () => {
             </View>
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 14, fontWeight: '600', color: '#1F5E52', marginBottom: 2 }}>最新公告</Text>
-              <Text style={{ fontSize: 13, color: '#666' }}>禽康智检V1.0正式上线，欢迎使用！</Text>
+              <Text style={{ fontSize: 14, color: '#666' }}>禽康智检V2.0正式上线，欢迎使用！</Text>
             </View>
           </View>
         </View>

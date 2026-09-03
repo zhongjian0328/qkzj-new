@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, TouchableOpacityProps, Platform } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, TouchableOpacityProps } from 'react-native';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'text';
 export type ButtonSize = 'small' | 'medium' | 'large';
@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
   large: {
     paddingHorizontal: 24,
     paddingVertical: 16,
+    minHeight: 48,
   },
   // Text styles
   buttonText: {

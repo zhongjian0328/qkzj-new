@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Modal, Alert } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Modal } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/UserContext';
 import Header from '../components/Header';
+import { statisticsApi } from '../services/api';
 import { styles } from '../styles';
 
 interface MenuItem {
@@ -19,7 +21,26 @@ const ProfileScreen: React.FC = () => {
   const navigation = useNavigation<any>();
   const { state, logout } = useAuth();
   const user = state.user;
+  const [stats, setStats] = useState({ diagnosisCount: 0, successRate: '0%', usageDays: 1 });
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+
+  // 获取用户统计数据
+  useFocusEffect(useCallback(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await statisticsApi.getDashboard();
+        const d = (res as any)?.data;
+        if (d) {
+          setStats({
+            diagnosisCount: d.totalDiagnoses ?? d.diagnosisCount ?? 0,
+            successRate: d.successRate != null ? `${d.successRate}%` : '0%',
+            usageDays: d.usageDays ?? 1,
+          });
+        }
+      } catch { /* ignore */ }
+    };
+    fetchStats();
+  }, []));
 
   // 角色标签映射
   const roleLabel: Record<string, string> = {
@@ -257,7 +278,7 @@ const ProfileScreen: React.FC = () => {
           subtitle: '查看系统通知',
           iconName: 'notifications-outline',
           iconColor: '#F59E0B',
-          onPress: () => navigation.navigate('NotificationList'),
+          onPress: () => navigation.navigate('Notifications'),
         },
       ],
     };
@@ -333,9 +354,9 @@ const ProfileScreen: React.FC = () => {
           elevation: 2,
         }}>
           {[
-            { label: '诊断次数', value: '0', icon: 'medkit-outline', color: '#2DBBA1' },
-            { label: '成功率', value: '0%', icon: 'checkmark-circle-outline', color: '#10B981' },
-            { label: '使用天数', value: '1', icon: 'calendar-outline', color: '#3B82F6' },
+            { label: '诊断次数', value: String(stats.diagnosisCount), icon: 'medkit-outline', color: '#2DBBA1' },
+            { label: '成功率', value: stats.successRate, icon: 'checkmark-circle-outline', color: '#10B981' },
+            { label: '使用天数', value: String(stats.usageDays), icon: 'calendar-outline', color: '#3B82F6' },
           ].map((stat, index) => (
             <View key={index} style={{ flex: 1, alignItems: 'center' }}>
               <Ionicons name={stat.icon as any} size={20} color={stat.color} style={{ marginBottom: 4 }} />
@@ -417,8 +438,8 @@ const ProfileScreen: React.FC = () => {
 
         {/* 版本信息 */}
         <View style={styles.profileVersionInfo}>
-          <Text style={styles.profileVersionText}>禽康智检 v1.2.0</Text>
-          <Text style={styles.profileCopyrightText}>© 2024 禽康智检 版权所有</Text>
+          <Text style={styles.profileVersionText}>禽康智检 v2.0.0</Text>
+          <Text style={styles.profileCopyrightText}>© 2026 禽康智检 版权所有</Text>
         </View>
       </ScrollView>
 

@@ -62,6 +62,7 @@ const linking = {
       PolicyPublish: 'policy-publish',
       ProductList: 'products',
       OrderList: 'orders',
+      ServiceCycle: 'service-cycle',
     },
   },
 };
@@ -113,6 +114,7 @@ const ReportAuditScreen = lazy(() => import('./screens/ReportAuditScreen'));
 const PolicyPublishScreen = lazy(() => import('./screens/PolicyPublishScreen'));
 const ProductListScreen = lazy(() => import('./screens/ProductListScreen'));
 const OrderListScreen = lazy(() => import('./screens/OrderListScreen'));
+const ServiceCycleScreen = lazy(() => import('./screens/ServiceCycleScreen'));
 
 // 加载指示器组件
 const LoadingIndicator = () => (
@@ -170,54 +172,44 @@ export type RootStackParamList = {
   PolicyPublish: undefined;
   ProductList: undefined;
   OrderList: undefined;
+  ServiceCycle: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
 
-// 主标签导航
+// 主标签导航（对齐开发文档8.4.4 Tab规范）
+// 养殖户：首页 → AI诊断 → 预警中心 → 科普 → 我的
+// 机构：首页 → 疫情地图 → AI诊断 → 科普 → 我的
+// 学生：首页 → 实习日志 → AI诊断 → 科普 → 我的
+// 教师：首页 → 导师管理 → AI诊断 → 工单 → 我的
 const MainTabs: React.FC = () => {
   const { state: { user } } = useAuth();
 
-  // 获取当前角色的中间功能
-  const getMiddleTabConfig = () => {
+  // 获取当前角色第2个Tab配置（角色专属功能）
+  const getSecondTabConfig = () => {
     if (!user) return null;
-
     switch (user.roleType) {
       case 'FARMER':
-        return {
-          name: 'ProductionManagement',
-          component: ProductionManagementScreen,
-          label: '生产管理',
-          icon: 'business-outline',
-        };
+        // 养殖户第2位无额外Tab，预警中心是独立Tab
+        return null;
       case 'INSTITUTION':
-        return {
-          name: 'EpidemicHeatmap',
-          component: EpidemicHeatmapScreen,
-          label: '疫情地图',
-          icon: 'map-outline',
-        };
+        return { name: 'EpidemicHeatmap', component: EpidemicHeatmapScreen, label: '疫情地图', icon: 'map-outline' };
       case 'STUDENT':
-        return {
-          name: 'InternLog',
-          component: InternLogScreen,
-          label: '实习日志',
-          icon: 'book-outline',
-        };
+        return { name: 'InternLog', component: InternLogScreen, label: '实习日志', icon: 'book-outline' };
       case 'TEACHER':
-        return {
-          name: 'MentorManagement',
-          component: MentorManagementScreen,
-          label: '导师管理',
-          icon: 'people-outline',
-        };
+        return { name: 'MentorManagement', component: MentorManagementScreen, label: '导师管理', icon: 'people-outline' };
       default:
         return null;
     }
   };
 
-  const middleTab = getMiddleTabConfig();
+  // 是否显示预警中心Tab（养殖户专属）
+  const showAlertTab = user?.roleType === 'FARMER';
+  // 是否显示工单Tab（教师专属）
+  const showTicketTab = user?.roleType === 'TEACHER';
+
+  const secondTab = getSecondTabConfig();
 
   return (
     <Tab.Navigator
@@ -244,69 +236,97 @@ const MainTabs: React.FC = () => {
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: '500',
+          marginTop: -4,
         },
         tabBarIconStyle: {
           fontSize: 24,
+          marginTop: 4,
         },
       }}
     >
-      <Tab.Screen 
-        name="Home" 
-        component={HomeScreen} 
-        options={{ 
+      {/* Tab1: 首页 */}
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
           tabBarLabel: '首页',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home-outline" size={size} color={color} />
           ),
         }}
       />
-      
-      {/* 中间角色特定功能 */}
-      {middleTab && (
-        <Tab.Screen 
-          name={middleTab.name as any} 
-          component={middleTab.component} 
-          options={{ 
-            tabBarLabel: middleTab.label,
+
+      {/* Tab2: 角色专属功能（机构/学生/教师），养殖户跳过此位 */}
+      {secondTab && (
+        <Tab.Screen
+          name={secondTab.name as any}
+          component={secondTab.component}
+          options={{
+            tabBarLabel: secondTab.label,
             tabBarIcon: ({ color, size }) => (
-              <View style={{
-                width: 56,
-                height: 56,
-                borderRadius: 28,
-                backgroundColor: '#2DBBA1',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginBottom: 8,
-                shadowColor: '#2DBBA1',
-                shadowOffset: {
-                  width: 0,
-                  height: 4,
-                },
-                shadowOpacity: 0.3,
-                shadowRadius: 4.65,
-                elevation: 8,
-              }}>
-                <Ionicons name={middleTab.icon as any} size={28} color="#FFFFFF" />
-              </View>
+              <Ionicons name={secondTab.icon as any} size={size} color={color} />
             ),
           }}
         />
       )}
-      
-      <Tab.Screen 
-        name="DiagnosisHome" 
-        component={DiagnosisHomeScreen} 
-        options={{ 
+
+      {/* Tab3: AI诊断 */}
+      <Tab.Screen
+        name="DiagnosisHome"
+        component={DiagnosisHomeScreen}
+        options={{
           tabBarLabel: 'AI诊断',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="medical-outline" size={size} color={color} />
           ),
         }}
       />
-      <Tab.Screen 
-        name="Profile" 
-        component={ProfileScreen} 
-        options={{ 
+
+      {/* Tab4: 预警中心（养殖户专属）/ 工单（教师专属） */}
+      {showAlertTab && (
+        <Tab.Screen
+          name="Notifications"
+          component={NotificationListScreen}
+          options={{
+            tabBarLabel: '预警中心',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="alert-circle-outline" size={size} color={color} />
+            ),
+          }}
+        />
+      )}
+      {showTicketTab && (
+        <Tab.Screen
+          name="TicketList"
+          component={TicketListScreen}
+          options={{
+            tabBarLabel: '工单',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="document-text-outline" size={size} color={color} />
+            ),
+          }}
+        />
+      )}
+
+      {/* Tab5: 科普（非教师角色显示） */}
+      {!showTicketTab && (
+        <Tab.Screen
+          name="KnowledgeList"
+          component={KnowledgeListScreen}
+          options={{
+            tabBarLabel: '科普',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="book-outline" size={size} color={color} />
+            ),
+          }}
+        />
+      )}
+
+      {/* 最后Tab: 我的 */}
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
           tabBarLabel: '我的',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person-outline" size={size} color={color} />
@@ -510,6 +530,7 @@ const App: React.FC = () => {
             <Stack.Screen name="PolicyPublish" component={PolicyPublishScreen} />
             <Stack.Screen name="ProductList" component={ProductListScreen} />
             <Stack.Screen name="OrderList" component={OrderListScreen} />
+            <Stack.Screen name="ServiceCycle" component={ServiceCycleScreen} />
           </Stack.Navigator>
         </Suspense>
       </NavigationContainer>

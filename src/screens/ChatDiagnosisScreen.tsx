@@ -17,9 +17,7 @@ interface ChatMessage {
 }
 
 const ChatDiagnosisScreen: React.FC = () => {
-  const navigation = useNavigation<any>();
   const { state } = useAuth();
-  const { user } = state;
   
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -171,8 +169,47 @@ const ChatDiagnosisScreen: React.FC = () => {
     setImageUrls(prev => prev.filter((_, i) => i !== index));
   };
 
+  const [isListening, setIsListening] = useState(false);
+
+  // 语音输入（Web Speech API）
   const toggleVoiceInput = () => {
-    // 实现语音输入逻辑
+    // Web环境使用浏览器原生SpeechRecognition
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      Alert.alert('不支持', '当前浏览器不支持语音输入，请使用Chrome浏览器');
+      return;
+    }
+
+    if (isListening) {
+      // 停止监听
+      setIsListening(false);
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'zh-CN';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
+
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setInputText(prev => prev ? `${prev} ${transcript}` : transcript);
+      setIsListening(false);
+    };
+
+    recognition.onerror = () => {
+      setIsListening(false);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
   };
 
   return (
@@ -231,11 +268,11 @@ const ChatDiagnosisScreen: React.FC = () => {
           </TouchableOpacity>
           
           {/* 语音输入按钮 */}
-          <TouchableOpacity 
-            style={styles.chatFunctionButton} 
+          <TouchableOpacity
+            style={[styles.chatFunctionButton, isListening && { backgroundColor: '#EF4444' }]}
             onPress={toggleVoiceInput}
           >
-            <Ionicons name="mic" size={20} color="#6B7280" />
+            <Ionicons name={isListening ? 'mic' : 'mic-outline'} size={20} color={isListening ? '#FFFFFF' : '#6B7280'} />
           </TouchableOpacity>
         </View>
         

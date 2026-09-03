@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Dimensions, ActivityIndicator, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
@@ -13,6 +13,8 @@ const EpidemicHeatmapScreen: React.FC = () => {
   const [diseaseType, setDiseaseType] = useState('all');
   const [region, setRegion] = useState('all');
   const [epidemicData, setEpidemicData] = useState<any[]>([]);
+  const [alerts, setAlerts] = useState<any[]>([]);
+  const [alertsPagination, setAlertsPagination] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,11 +23,20 @@ const EpidemicHeatmapScreen: React.FC = () => {
     try {
       if (isRefresh) setRefreshing(true); else setLoading(true);
       setError(null);
-      const params: any = { date: selectedDate };
+      const params: any = {};
+      if (selectedDate) params.date = selectedDate;
       if (diseaseType !== 'all') params.diseaseType = diseaseType;
       if (region !== 'all') params.region = region;
-      const response = await epidemicApi.getEpidemicHeatmap(params);
-      setEpidemicData(response.data?.heatmapData || response.data || []);
+
+      // 并行获取热力图和报警数据
+      const [heatmapResp, alertsResp] = await Promise.all([
+        epidemicApi.getEpidemicHeatmap(params),
+        epidemicApi.getAbnormalAlerts({ page: 1, limit: 10 }),
+      ]);
+
+      setEpidemicData(heatmapResp.data?.heatmap || heatmapResp.data || []);
+      setAlerts(alertsResp.data?.alerts || []);
+      setAlertsPagination(alertsResp.data?.pagination || null);
     } catch (err) {
       setError('获取疫情数据失败');
     } finally {
@@ -191,22 +202,22 @@ const EpidemicHeatmapScreen: React.FC = () => {
             <Ionicons name="stats-chart" size={16} color="#2DBBA1" style={{ marginRight: 4 }} />
             疫情数据统计
           </Text>
-          
+
           <View style={styles.epidemicStats}>
             <View style={styles.epidemicStatItem}>
-              <Text style={styles.epidemicStatValue}>246</Text>
-              <Text style={styles.epidemicStatLabel}>累计病例</Text>
+              <Text style={styles.epidemicStatValue}>{epidemicData.reduce((s, h) => s + (h.count || 0), 0)}</Text>
+              <Text style={styles.epidemicStatLabel}>累计诊断</Text>
             </View>
             <View style={styles.epidemicStatItem}>
-              <Text style={styles.epidemicStatValue}>32</Text>
-              <Text style={styles.epidemicStatLabel}>新增病例</Text>
+              <Text style={styles.epidemicStatValue}>{epidemicData.filter(h => h.riskLevel === 'HIGH' || h.riskLevel === 'MEDIUM').reduce((s, h) => s + (h.count || 0), 0)}</Text>
+              <Text style={styles.epidemicStatLabel}>风险病例</Text>
             </View>
             <View style={styles.epidemicStatItem}>
-              <Text style={styles.epidemicStatValue}>8</Text>
+              <Text style={styles.epidemicStatValue}>{epidemicData.filter(h => h.riskLevel === 'HIGH' || h.highRiskCount > 0).length}</Text>
               <Text style={styles.epidemicStatLabel}>高风险区域</Text>
             </View>
             <View style={styles.epidemicStatItem}>
-              <Text style={styles.epidemicStatValue}>15</Text>
+              <Text style={styles.epidemicStatValue}>{epidemicData.filter(h => h.riskLevel === 'MEDIUM').length}</Text>
               <Text style={styles.epidemicStatLabel}>中风险区域</Text>
             </View>
           </View>
@@ -218,41 +229,58 @@ const EpidemicHeatmapScreen: React.FC = () => {
             <Ionicons name="location" size={16} color="#2DBBA1" style={{ marginRight: 4 }} />
             地区疫情详情
           </Text>
-          
+
+          {epidemicData.length === 0 && !loading && (
+            <View style={{ paddingVertical: 24, alignItems: 'center' }}>
+              <Ionicons name="checkmark-circle-outline" size={40} color="#10B981" />
+              <Text style={{ marginTop: 8, fontSize: 14, color: '#6B7280' }}>暂无疫情数据</Text>
+              <Text style={{ fontSize: 12, color: '#9CA3AF', marginTop: 4 }}>当前筛选条件下无诊断记录</Text>
+            </View>
+          )}
+
           <View style={styles.epidemicDetailList}>
-            {epidemicData.map((item, index) => (
-              <View key={index} style={styles.epidemicDetailItem}>
-                <View style={styles.epidemicDetailHeader}>
-                  <Text style={styles.epidemicDetailLocation}>{item.location}</Text>
-                  <View style={[
-                    styles.epidemicDetailRiskLevel,
-                    { backgroundColor: getRiskColor(item.riskLevel) + '20', borderColor: getRiskColor(item.riskLevel) }
-                  ]}>
-                    <Text style={[
-                      styles.epidemicDetailRiskText,
-                      { color: getRiskColor(item.riskLevel) }
-                    ]}>
-                      {item.riskLevel === 'high' ? '高风险' : 
-                       item.riskLevel === 'medium' ? '中风险' : '低风险'}
+            {epidemicData.map((item, index) => {
+              const riskLevel = (item.riskLevel || 'LOW').toLowerCase();
+              const riskLabel = riskLevel === 'high' ? '高风险' : riskLevel === 'medium' ? '中风险' : '低风险';
+              return (
+                <View key={index} style={styles.epidemicDetailItem}>
+                  <View style={styles.epidemicDetailHeader}>
+                    <Text style={styles.epidemicDetailLocation}>
+                      区域 {index + 1}
+                      {item.coordinates && item.coordinates.length === 2
+                        ? ` (${item.coordinates[1]?.toFixed?.(1) || '?'}°, ${item.coordinates[0]?.toFixed?.(1) || '?'}°)`
+                        : ''}
                     </Text>
+                    <View style={[
+                      styles.epidemicDetailRiskLevel,
+                      { backgroundColor: getRiskColor(riskLevel) + '20', borderColor: getRiskColor(riskLevel) }
+                    ]}>
+                      <Text style={[
+                        styles.epidemicDetailRiskText,
+                        { color: getRiskColor(riskLevel) }
+                      ]}>
+                        {riskLabel}
+                      </Text>
+                    </View>
                   </View>
+
+                  <View style={styles.epidemicDetailInfo}>
+                    <Text style={styles.epidemicDetailDisease}>
+                      {item.diseases && item.diseases.length > 0
+                        ? item.diseases.filter(Boolean).join('、')
+                        : '未分类'}
+                    </Text>
+                    <Text style={styles.epidemicDetailCases}>{item.count || 0}例</Text>
+                  </View>
+
+                  {item.highRiskCount > 0 && (
+                    <Text style={{ fontSize: 12, color: '#EF4444', marginTop: 4 }}>
+                      含 {item.highRiskCount} 例高风险混合感染
+                    </Text>
+                  )}
                 </View>
-                
-                <View style={styles.epidemicDetailInfo}>
-                  <Text style={styles.epidemicDetailDisease}>{item.disease}</Text>
-                  <Text style={styles.epidemicDetailCases}>{item.cases}例</Text>
-                </View>
-                
-                <View style={styles.epidemicDetailActions}>
-                  <TouchableOpacity 
-                    style={styles.epidemicDetailActionButton}
-                    onPress={() => {}}
-                  >
-                    <Text style={styles.epidemicDetailActionText}>查看详情</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            ))}
+              );
+            })}
           </View>
         </View>
         
@@ -260,45 +288,52 @@ const EpidemicHeatmapScreen: React.FC = () => {
         <View style={styles.epidemicAlertsSection}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>
-              <Ionicons name="warning" size={16} color="#EF4444" style={{ marginRight: 4 }} />
+              <Ionicons name="alert-circle-outline" size={16} color="#EF4444" style={{ marginRight: 4 }} />
               异常高发报警
             </Text>
-            <TouchableOpacity onPress={() => {}}>
-              <Text style={styles.sectionMoreText}>查看全部</Text>
-            </TouchableOpacity>
+            {alertsPagination && alertsPagination.total > 0 && (
+              <Text style={styles.sectionMoreText}>共 {alertsPagination.total} 条</Text>
+            )}
           </View>
-          
-          <View style={styles.epidemicAlertItem}>
-            <View style={styles.epidemicAlertContent}>
-              <View style={styles.epidemicAlertIconContainer}>
-                <Ionicons name="alert-circle" size={20} color="#F59E0B" />
-              </View>
-              <View style={styles.epidemicAlertInfo}>
-                <Text style={styles.epidemicAlertTitle}>北京市昌平区禽流感病例异常增多</Text>
-                <Text style={styles.epidemicAlertTime}>2024-06-01 14:30</Text>
-                <Text style={styles.epidemicAlertDescription}>近3天内，北京市昌平区禽流感病例从25例上升至125例，需加强防控措施。</Text>
-              </View>
+
+          {alerts.length === 0 && !loading && (
+            <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+              <Ionicons name="shield-checkmark-outline" size={36} color="#10B981" />
+              <Text style={{ marginTop: 8, fontSize: 14, color: '#6B7280' }}>暂无异常报警</Text>
+              <Text style={{ fontSize: 12, color: '#9CA3AF', marginTop: 4 }}>当前无高风险诊断记录</Text>
             </View>
-            <TouchableOpacity style={styles.epidemicAlertAction} onPress={() => {}}>
-              <Text style={styles.epidemicAlertActionText}>处理</Text>
-            </TouchableOpacity>
-          </View>
-          
-          <View style={styles.epidemicAlertItem}>
-            <View style={styles.epidemicAlertContent}>
-              <View style={styles.epidemicAlertIconContainer}>
-                <Ionicons name="alert-circle" size={20} color="#F59E0B" />
+          )}
+
+          {alerts.map((alert, index) => {
+            const riskInfo = alert.mixedInfectionRisk || {};
+            const riskLevel = (riskInfo.riskLevel || 'LOW').toLowerCase();
+            const pathogenName = alert.singleDiagnosis?.pathogenName || '未知疾病';
+            const basicInfo = alert.basicInfo || {};
+            const userName = alert.userId?.nickname || '未知用户';
+            const time = alert.diagnosisTime ? new Date(alert.diagnosisTime).toLocaleString('zh-CN') : '';
+            return (
+              <View key={index} style={styles.epidemicAlertItem}>
+                <View style={styles.epidemicAlertContent}>
+                  <View style={styles.epidemicAlertIconContainer}>
+                    <Ionicons name="alert-circle-outline" size={20} color={getRiskColor(riskLevel)} />
+                  </View>
+                  <View style={styles.epidemicAlertInfo}>
+                    <Text style={styles.epidemicAlertTitle}>
+                      {pathogenName} - {basicInfo.breed || '未知品种'} ({userName})
+                    </Text>
+                    <Text style={styles.epidemicAlertTime}>{time}</Text>
+                    <Text style={styles.epidemicAlertDescription}>
+                      混合感染风险: {riskLevel === 'high' ? '极高' : riskLevel === 'extreme' ? '极端' : '高'}，
+                      置信度: {alert.singleDiagnosis?.confidence || '--'}%
+                    </Text>
+                  </View>
+                </View>
+                <TouchableOpacity style={styles.epidemicAlertAction} onPress={() => navigation.navigate('DiagnosisHistory')}>
+                  <Text style={styles.epidemicAlertActionText}>查看</Text>
+                </TouchableOpacity>
               </View>
-              <View style={styles.epidemicAlertInfo}>
-                <Text style={styles.epidemicAlertTitle}>山东省济南市新城疫疫情扩散</Text>
-                <Text style={styles.epidemicAlertTime}>2024-06-01 09:15</Text>
-                <Text style={styles.epidemicAlertDescription}>山东省济南市新城疫疫情已扩散至周边3个区县，建议启动应急响应。</Text>
-              </View>
-            </View>
-            <TouchableOpacity style={styles.epidemicAlertAction} onPress={() => {}}>
-              <Text style={styles.epidemicAlertActionText}>处理</Text>
-            </TouchableOpacity>
-          </View>
+            );
+          })}
         </View>
       </ScrollView>
     </View>
