@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Text, StyleSheet, Animated } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
 import { getIsSyncing, onSyncingChange } from '../services/syncManager';
 
@@ -114,7 +115,7 @@ const OfflineBanner: React.FC = () => {
         },
       ]}
     >
-      <Text style={styles.icon}>{isOffline ? '⚠️' : '🔄'}</Text>
+      <Ionicons name={isOffline ? 'alert-circle' : 'sync'} size={16} color="#FFFFFF" style={{ marginRight: 8 }} />
       <Text style={styles.text}>
         {isOffline
           ? '网络连接中断，当前显示离线缓存数据'
@@ -141,10 +142,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 4,
-  },
-  icon: {
-    fontSize: 16,
-    marginRight: 8,
   },
   text: {
     fontSize: 13,

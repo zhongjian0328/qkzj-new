@@ -361,7 +361,7 @@ const SplashScreenComponent: React.FC<{ onAnimationComplete: () => void }> = ({ 
           },
         ]}
       >
-        <Text style={styles.splashLogoIcon}>🏥</Text>
+        <Ionicons name="medical" size={64} color="#2DBBA1" />
       </Animated.View>
       <Animated.Text
         style={[

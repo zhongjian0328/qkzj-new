@@ -368,8 +368,8 @@ const HomeScreen: React.FC = () => {
       <View style={{ marginTop: 12 }}>
         {renderSectionHeader('快捷功能')}
         <View style={styles.homeGrid2x2}>
-          {renderGridCard('政策下发', '发布防疫通知', <Ionicons name="megaphone-outline" size={22} color="#3B82F6" />, 'Notifications')}
-          {renderGridCard('疫情报告', '生成统计报告', <Ionicons name="document-text-outline" size={22} color="#8B5CF6" />, 'Statistics')}
+          {renderGridCard('报告审核', '审核诊断报告', <Ionicons name="document-text-outline" size={22} color="#EF4444" />, 'ReportAudit')}
+          {renderGridCard('政策下发', '发布防疫通知', <Ionicons name="megaphone-outline" size={22} color="#3B82F6" />, 'PolicyPublish')}
           {renderGridCard('流行病学调查', '流调记录管理', <Ionicons name="clipboard-outline" size={22} color="#10B981" />, 'SurveyList')}
           {renderGridCard('数据分析', '深度疫情分析', <Ionicons name="analytics-outline" size={22} color="#6366F1" />, 'Statistics')}
         </View>
@@ -504,15 +504,15 @@ const HomeScreen: React.FC = () => {
     </>
   );
 
-  const renderTeacher = () => (
+  // TEACHER/MENTOR - 实习指导为核心
+  const renderTeacherMentor = () => (
     <>
       {renderStats3Col([
         { label: '待批改报告', value: '12', icon: <Ionicons name="document-text-outline" size={22} color="#2DBBA1" />, color: '#2DBBA1' },
-        { label: '活跃学生', value: '45', icon: <Ionicons name="people-outline" size={22} color="#2DBBA1" />, color: '#2DBBA1' },
+        { label: '指导学生', value: '45', icon: <Ionicons name="people-outline" size={22} color="#2DBBA1" />, color: '#2DBBA1' },
         { label: '实习组数', value: '5', icon: <Ionicons name="git-branch-outline" size={22} color="#2DBBA1" />, color: '#2DBBA1' },
       ])}
 
-      {/* 核心功能CTA */}
       <View style={{ flexDirection: 'row', gap: 12, marginBottom: 12 }}>
         {[
           { title: '实习管理', desc: '管理实习任务', icon: 'calendar-outline', nav: 'MentorManagement' },
@@ -529,15 +529,8 @@ const HomeScreen: React.FC = () => {
           </TouchableOpacity>
         ))}
       </View>
-      <TouchableOpacity
-        activeOpacity={0.95}
-        onPress={() => navigation.navigate('InternLog')}
-        style={{
-          borderRadius: 16, padding: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-          marginBottom: 24, backgroundColor: '#2DBBA1',
-          shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 4,
-        }}
-      >
+      <TouchableOpacity activeOpacity={0.95} onPress={() => navigation.navigate('InternLog')}
+        style={{ borderRadius: 16, padding: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, backgroundColor: '#2DBBA1', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 4 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: 'rgba(255,255,255,0.3)', justifyContent: 'center', alignItems: 'center', marginRight: 12 }}>
             <Ionicons name="create-outline" size={24} color="#1F5E52" />
@@ -549,7 +542,6 @@ const HomeScreen: React.FC = () => {
         </View>
       </TouchableOpacity>
 
-      {/* 待办事项 */}
       {renderSectionHeader('待办事项')}
       <View style={{ backgroundColor: '#FFF', borderRadius: 12, padding: 16, marginBottom: 24, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 3 }}>
         {[
@@ -567,12 +559,110 @@ const HomeScreen: React.FC = () => {
         ))}
       </View>
 
-      {/* 最近活动 */}
       {renderSectionHeader('最近活动')}
       {[
         { text: '王五提交了实习日志', icon: 'school-outline', time: '2小时前' },
         { text: '赵六提交了实习报告', icon: 'document-text-outline', time: '5小时前' },
-        { text: '第七小组完成了实习任务', icon: 'people-outline', time: '昨天' },
+      ].map((a, _i) => (
+        <View key={_i} style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 12 }}>
+          <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: '#E6F7F3', justifyContent: 'center', alignItems: 'center', marginRight: 12, marginTop: 2 }}>
+            <Ionicons name={a.icon as any} size={16} color="#2DBBA1" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: 14, color: '#1F5E52' }}>{a.text}</Text>
+            <Text style={{ fontSize: 12, color: '#999', marginTop: 2 }}>{a.time}</Text>
+          </View>
+        </View>
+      ))}
+    </>
+  );
+
+  // TEACHER/CLINICAL_TEACHER - 临床带教为核心
+  const renderTeacherClinical = () => (
+    <>
+      {renderStats3Col([
+        { label: '待批改报告', value: '8', icon: <Ionicons name="document-text-outline" size={22} color="#2DBBA1" />, color: '#2DBBA1' },
+        { label: '临床带教', value: '23', icon: <Ionicons name="medkit-outline" size={22} color="#2DBBA1" />, color: '#2DBBA1' },
+        { label: '病例讨论', value: '6', icon: <Ionicons name="chatbubbles-outline" size={22} color="#2DBBA1" />, color: '#2DBBA1' },
+      ])}
+
+      <View style={{ flexDirection: 'row', gap: 12, marginBottom: 12 }}>
+        {[
+          { title: '临床带教', desc: '病例诊疗指导', icon: 'medkit-outline', nav: 'MentorManagement' },
+          { title: '教学案例', desc: '临床教学资源', icon: 'book-outline', nav: 'TeachingCaseList' },
+        ].map((item, i) => (
+          <TouchableOpacity key={i} activeOpacity={0.95} style={{ flex: 1, borderRadius: 16, padding: 20, backgroundColor: '#2DBBA1', flexDirection: 'row', alignItems: 'center' }} onPress={() => navigation.navigate(item.nav)}>
+            <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: 'rgba(255,255,255,0.3)', justifyContent: 'center', alignItems: 'center', marginRight: 12 }}>
+              <Ionicons name={item.icon as any} size={24} color="#1F5E52" />
+            </View>
+            <View>
+              <Text style={{ fontSize: 16, fontWeight: '600', color: '#FFF' }}>{item.title}</Text>
+              <Text style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)' }}>{item.desc}</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+      <TouchableOpacity activeOpacity={0.95} onPress={() => navigation.navigate('VeterinaryDiagnosis')}
+        style={{ borderRadius: 16, padding: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, backgroundColor: '#2DBBA1', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 4 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: 'rgba(255,255,255,0.3)', justifyContent: 'center', alignItems: 'center', marginRight: 12 }}>
+            <Ionicons name="fitness-outline" size={24} color="#1F5E52" />
+          </View>
+          <View>
+            <Text style={{ fontSize: 16, fontWeight: '600', color: '#FFF' }}>AI诊断演示</Text>
+            <Text style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)' }}>临床教学诊断演示</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+
+      {renderSectionHeader('今日临床任务')}
+      {renderTaskCard('带教查房', '3号鸡舍 - 新城疫病例', 'in_progress')}
+      {renderTaskCard('病例讨论', '禽流感诊断要点', 'pending')}
+    </>
+  );
+
+  // TEACHER/RESEARCH_TEACHER - 科研指导为核心
+  const renderTeacherResearch = () => (
+    <>
+      {renderStats3Col([
+        { label: '科研课题', value: '3', icon: <Ionicons name="flask-outline" size={22} color="#2DBBA1" />, color: '#2DBBA1' },
+        { label: '论文审阅', value: '5', icon: <Ionicons name="document-text-outline" size={22} color="#2DBBA1" />, color: '#2DBBA1' },
+        { label: '数据标注', value: '128', icon: <Ionicons name="create-outline" size={22} color="#2DBBA1" />, color: '#2DBBA1' },
+      ])}
+
+      <View style={{ flexDirection: 'row', gap: 12, marginBottom: 12 }}>
+        {[
+          { title: '科研管理', desc: '课题组与项目', icon: 'flask-outline', nav: 'MentorManagement' },
+          { title: '数据标注', desc: '病例标注分析', icon: 'create-outline', nav: 'DiagnosisHistory' },
+        ].map((item, i) => (
+          <TouchableOpacity key={i} activeOpacity={0.95} style={{ flex: 1, borderRadius: 16, padding: 20, backgroundColor: '#2DBBA1', flexDirection: 'row', alignItems: 'center' }} onPress={() => navigation.navigate(item.nav)}>
+            <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: 'rgba(255,255,255,0.3)', justifyContent: 'center', alignItems: 'center', marginRight: 12 }}>
+              <Ionicons name={item.icon as any} size={24} color="#1F5E52" />
+            </View>
+            <View>
+              <Text style={{ fontSize: 16, fontWeight: '600', color: '#FFF' }}>{item.title}</Text>
+              <Text style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)' }}>{item.desc}</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+      <TouchableOpacity activeOpacity={0.95} onPress={() => navigation.navigate('EpidemicHeatmap')}
+        style={{ borderRadius: 16, padding: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, backgroundColor: '#2DBBA1', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 4 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: 'rgba(255,255,255,0.3)', justifyContent: 'center', alignItems: 'center', marginRight: 12 }}>
+            <Ionicons name="analytics-outline" size={24} color="#1F5E52" />
+          </View>
+          <View>
+            <Text style={{ fontSize: 16, fontWeight: '600', color: '#FFF' }}>疫情数据分析</Text>
+            <Text style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)' }}>区域流行病学统计</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+
+      {renderSectionHeader('科研动态')}
+      {[
+        { text: '学生提交论文初稿', icon: 'document-text-outline', time: '3小时前' },
+        { text: '数据标注任务完成80%', icon: 'checkmark-circle-outline', time: '昨天' },
       ].map((a, _i) => (
         <View key={_i} style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 12 }}>
           <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: '#E6F7F3', justifyContent: 'center', alignItems: 'center', marginRight: 12, marginTop: 2 }}>
@@ -631,7 +721,7 @@ const HomeScreen: React.FC = () => {
       {/* 近期日志 */}
       {renderSectionHeader('近期日志', '查看全部', 'InternLog')}
       {recentLogs.length > 0
-        ? recentLogs.slice(0, 3).map((log: any, i: number) => renderInfoCard(
+        ? recentLogs.slice(0, 3).map((log: any, _i: number) => renderInfoCard(
             log.title || '实习日志',
             log.content?.substring(0, 50) || '实习记录',
             log.date || log.createdAt || '',
@@ -656,6 +746,86 @@ const HomeScreen: React.FC = () => {
             <View key={_i} style={{ width: GRID_ITEM_WIDTH, backgroundColor: '#FFF', borderRadius: 12, padding: 16, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 3 }}>
               <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: '#E6F7F3', justifyContent: 'center', alignItems: 'center', marginBottom: 8 }}>
                 <Ionicons name={s.icon as any} size={22} color="#2DBBA1" />
+              </View>
+              <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#1F5E52' }}>{s.value}</Text>
+              <Text style={{ fontSize: 13, color: '#666' }}>{s.label}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+    </>
+  );
+
+  // STUDENT/ADVANCED_INTERN - 顶岗实习，独立操作为核心
+  const renderStudentAdvanced = () => (
+    <>
+      {/* 导师批注提醒 */}
+      <TouchableOpacity activeOpacity={0.95} onPress={() => navigation.navigate('InternLog')} style={{ backgroundColor: '#FFF', borderRadius: 12, padding: 16, borderLeftWidth: 4, borderLeftColor: '#F59E0B', marginBottom: 24, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 3 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#FEF3C7', justifyContent: 'center', alignItems: 'center', marginRight: 12 }}>
+            <Ionicons name="chatbubble-outline" size={20} color="#F59E0B" />
+          </View>
+          <View>
+            <Text style={{ fontSize: 15, fontWeight: '600', color: '#1F5E52' }}>导师有新批注</Text>
+            <Text style={{ fontSize: 13, color: '#666' }}>教授已批改您的实习日志</Text>
+          </View>
+        </View>
+        <Ionicons name="chevron-forward-outline" size={18} color="#9CA3AF" />
+      </TouchableOpacity>
+
+      {/* 独立操作CTA */}
+      {renderSectionHeader('顶岗实习')}
+      <TouchableOpacity
+        activeOpacity={0.95}
+        onPress={() => navigation.navigate('VeterinaryDiagnosis')}
+        style={{
+          borderRadius: 16, padding: 24, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+          marginBottom: 16, backgroundColor: '#F59E0B',
+          shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 4,
+        }}
+      >
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFF', marginBottom: 6 }}>独立诊断</Text>
+          <Text style={{ fontSize: 14, color: 'rgba(255,255,255,0.85)' }}>运用所学知识进行独立诊断</Text>
+        </View>
+        <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(255,255,255,0.3)', justifyContent: 'center', alignItems: 'center' }}>
+          <Ionicons name="fitness-outline" size={28} color="#1F5E52" />
+        </View>
+      </TouchableOpacity>
+
+      <View style={{ flexDirection: 'row', gap: 12, marginBottom: 24 }}>
+        {renderGridCard('日志列表', '查看所有记录', <Ionicons name="list-outline" size={22} color="#2DBBA1" />, 'InternLog')}
+        {renderGridCard('防控预案', '查看推荐方案', <Ionicons name="shield-outline" size={22} color="#2DBBA1" />, 'ControlPlanList')}
+      </View>
+
+      {/* 近期日志 */}
+      {renderSectionHeader('近期日志', '查看全部', 'InternLog')}
+      {recentLogs.length > 0
+        ? recentLogs.slice(0, 3).map((log: any, _i: number) => renderInfoCard(
+            log.title || '实习日志',
+            log.content?.substring(0, 50) || '实习记录',
+            log.date || log.createdAt || '',
+            log.status === 'reviewed' ? { text: '已批改', bg: '#D1FAE5', color: '#065F46' } : { text: '待批改', bg: '#DBEAFE', color: '#1D4ED8' }
+          ))
+        : <>
+            {renderInfoCard('独立诊断禽流感', '独立完成了禽流感病例的采样和诊断...', '2024-01-15', { text: '已批改', bg: '#D1FAE5', color: '#065F46' })}
+            {renderInfoCard('新城疫防控方案', '根据诊断结果制定防控方案...', '2024-01-14', { text: '待批改', bg: '#DBEAFE', color: '#1D4ED8' })}
+          </>
+      }
+
+      {/* 顶岗统计 */}
+      <View style={{ marginTop: 24 }}>
+        {renderSectionHeader('顶岗统计')}
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+          {[
+            { label: '顶岗天数', value: '78', icon: 'calendar-outline' },
+            { label: '独立诊断', value: '15', icon: 'medical-outline' },
+            { label: '完成日志', value: '42', icon: 'document-text-outline' },
+            { label: '平均评分', value: '92', icon: 'star-outline' },
+          ].map((s, _i) => (
+            <View key={_i} style={{ width: GRID_ITEM_WIDTH, backgroundColor: '#FFF', borderRadius: 12, padding: 16, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 3 }}>
+              <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: '#FEF3C7', justifyContent: 'center', alignItems: 'center', marginBottom: 8 }}>
+                <Ionicons name={s.icon as any} size={22} color="#F59E0B" />
               </View>
               <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#1F5E52' }}>{s.value}</Text>
               <Text style={{ fontSize: 13, color: '#666' }}>{s.label}</Text>
@@ -777,9 +947,15 @@ const HomeScreen: React.FC = () => {
       if (sr === 'SERVICE_PROVIDER') return 'institution-service';
       return 'institution-cdc'; // default
     }
-    if (roleType === 'TEACHER') return 'teacher';
+    if (roleType === 'TEACHER') {
+      if (sr === 'CLINICAL_TEACHER') return 'teacher-clinical';
+      if (sr === 'RESEARCH_TEACHER') return 'teacher-research';
+      return 'teacher-mentor';
+    }
     if (roleType === 'STUDENT') {
-      return sr === 'LEARNING_STUDENT' ? 'student-learning' : 'student-internship';
+      if (sr === 'LEARNING_STUDENT') return 'student-learning';
+      if (sr === 'ADVANCED_INTERN') return 'student-advanced';
+      return 'student-internship';
     }
     return 'default';
   };
@@ -790,8 +966,11 @@ const HomeScreen: React.FC = () => {
     'institution-cdc': '疫控机构',
     'institution-research': '科研院所',
     'institution-service': '服务商',
-    'teacher': '教师',
-    'student-internship': '顶岗实习',
+    'teacher-mentor': '导师',
+    'teacher-clinical': '临床教师',
+    'teacher-research': '科研教师',
+    'student-internship': '认知实习',
+    'student-advanced': '顶岗实习',
     'student-learning': '学习阶段',
   };
 
@@ -821,8 +1000,11 @@ const HomeScreen: React.FC = () => {
         {layout === 'institution-cdc' && renderInstitutionCDC()}
         {layout === 'institution-research' && renderInstitutionResearch()}
         {layout === 'institution-service' && renderInstitutionService()}
-        {layout === 'teacher' && renderTeacher()}
+        {layout === 'teacher-mentor' && renderTeacherMentor()}
+        {layout === 'teacher-clinical' && renderTeacherClinical()}
+        {layout === 'teacher-research' && renderTeacherResearch()}
         {layout === 'student-internship' && renderStudentInternship()}
+        {layout === 'student-advanced' && renderStudentAdvanced()}
         {layout === 'student-learning' && renderStudentLearning()}
 
         {/* 默认布局（未匹配角色时） */}

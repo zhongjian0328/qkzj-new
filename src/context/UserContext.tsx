@@ -8,6 +8,7 @@ export type UserSubRole =
   | 'SMALL' | 'COOPERATIVE' | 'ENTERPRISE' // 养殖户子角色
   | 'CDC' | 'RESEARCH_INSTITUTE' | 'SERVICE_PROVIDER' // 机构子角色
   | 'LEARNING_STUDENT' | 'COGNITIVE_INTERN' | 'ADVANCED_INTERN' // 学生子角色
+  | 'MENTOR' | 'CLINICAL_TEACHER' | 'RESEARCH_TEACHER' // 教师子角色
   | 'GENERAL' | 'SPECIALIST' // 兽医子角色
   | 'RESEARCHER_GENERAL' | 'LAB_RESEARCHER' // 科研人员子角色
   | 'SYSTEM'; // 管理员子角色

@@ -226,7 +226,7 @@ const ExperienceRoleScreen: React.FC = () => {
             <View style={styles.experienceInfoText}>
               <Text style={styles.experienceInfoTitle}>体验说明</Text>
               <Text style={styles.experienceInfoDescription}>
-                您可以选择以下角色体验APP功能，每个设备最多可体验3次不同角色，每次体验时长不超过24小时。
+                您可以选择以下角色体验APP功能。体验数据为模拟数据，各功能页面均可正常浏览和操作。
               </Text>
             </View>
           </View>

@@ -198,15 +198,15 @@ const validateCreateEnvironmentRecord = [
   handleValidationErrors
 ];
 
-// 死淘记录查询验证（batchId必须为有效ObjectId）
+// 死淘记录查询验证（batchId可选，传入时必须为有效ObjectId）
 const validateGetDeathFeedRecords = [
-  query('batchId').isMongoId().withMessage('无效的批次ID'),
+  query('batchId').optional().isMongoId().withMessage('无效的批次ID'),
   handleValidationErrors
 ];
 
-// 生产数据导出验证（batchId必须为有效ObjectId）
+// 生产数据导出验证（batchId可选，传入时必须为有效ObjectId）
 const validateExportProductionData = [
-  query('batchId').isMongoId().withMessage('无效的批次ID'),
+  query('batchId').optional().isMongoId().withMessage('无效的批次ID'),
   handleValidationErrors
 ];
 
