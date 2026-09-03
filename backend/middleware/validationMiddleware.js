@@ -198,6 +198,30 @@ const validateCreateEnvironmentRecord = [
   handleValidationErrors
 ];
 
+// 死淘记录查询验证（batchId必须为有效ObjectId）
+const validateGetDeathFeedRecords = [
+  query('batchId').isMongoId().withMessage('无效的批次ID'),
+  handleValidationErrors
+];
+
+// 生产数据导出验证（batchId必须为有效ObjectId）
+const validateExportProductionData = [
+  query('batchId').isMongoId().withMessage('无效的批次ID'),
+  handleValidationErrors
+];
+
+// 批次详情路由参数验证
+const validateBatchIdParam = [
+  param('batchId').isMongoId().withMessage('无效的批次ID'),
+  handleValidationErrors
+];
+
+// 员工权限路由参数验证
+const validateEmployeeIdParam = [
+  param('employeeId').isMongoId().withMessage('无效的员工ID'),
+  handleValidationErrors
+];
+
 module.exports = {
   handleValidationErrors,
   validateRegister,
@@ -213,6 +237,10 @@ module.exports = {
   validateUpdateBatch,
   validateCreateDeathFeedRecord,
   validateCreateEmployee,
+  validateGetDeathFeedRecords,
+  validateExportProductionData,
+  validateBatchIdParam,
+  validateEmployeeIdParam,
   // 工单
   validateCreateTicket,
   validateAddMessage,

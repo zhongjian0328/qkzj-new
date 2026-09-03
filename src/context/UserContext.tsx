@@ -129,16 +129,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
   const [verificationCodes, setVerificationCodes] = React.useState<{ [key: string]: { code: string; expiresAt: number } }>({});
   
-  // 初始化：从 AsyncStorage 加载 accessToken 和 refreshToken
+  // 初始化：从 AsyncStorage 加载 token，并从后端获取真实用户数据
   useEffect(() => {
-    const loadToken = async () => {
+    const loadTokenAndUser = async () => {
       try {
         const storedAccessToken = await AsyncStorage.getItem('accessToken');
         if (storedAccessToken) {
-          // 兼容旧格式：如果只有 'token' key，也加载
-          const storedToken = storedAccessToken;
-          const defaultUser: User = {
-            id: 'default-user-id',
+          // 先用占位用户标记已登录（让界面不跳回登录页）
+          const placeholderUser: User = {
+            id: 'pending',
             phoneNumber: '',
             nickname: '',
             avatar: '',
@@ -150,18 +149,44 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           };
           dispatch({
             type: 'LOGIN_SUCCESS',
-            payload: {
-              user: defaultUser,
-              token: storedToken,
-            },
+            payload: { user: placeholderUser, token: storedAccessToken },
           });
+
+          // 然后调用后端获取真实用户数据
+          try {
+            const response: any = await authApi.getCurrentUser();
+            const backendUser = response.data?.user || response.data;
+            if (backendUser) {
+              const realUser: User = {
+                id: backendUser._id || backendUser.id || '1',
+                phoneNumber: backendUser.phoneNumber || '',
+                nickname: backendUser.nickname || '用户',
+                avatar: backendUser.avatar || 'https://s.coze.cn/image/rFqxc53MSiw/',
+                roleType: (backendUser.roleType || 'FARMER') as UserRole,
+                subRole: (backendUser.subRole || 'SMALL') as UserSubRole,
+                authStatus: (backendUser.authStatus || 'UNVERIFIED') as User['authStatus'],
+                organizationId: backendUser.organizationId,
+                schoolId: backendUser.schoolId,
+                studentId: backendUser.studentId,
+                mentorId: backendUser.mentorId,
+                registrationDate: backendUser.createdAt || new Date().toISOString(),
+                lastLoginDate: backendUser.lastLoginDate || new Date().toISOString(),
+              };
+              dispatch({ type: 'UPDATE_USER', payload: realUser });
+            }
+          } catch (fetchError) {
+            // 获取用户数据失败（token过期等），清除token并登出
+            console.warn('Failed to fetch current user, clearing token:', fetchError);
+            await AsyncStorage.multiRemove(['accessToken', 'refreshToken']);
+            dispatch({ type: 'LOGOUT' });
+          }
         }
       } catch (error) {
         console.error('Failed to load token from AsyncStorage:', error);
       }
     };
 
-    loadToken();
+    loadTokenAndUser();
 
     // 监听 token 过期事件，触发登出
     const handleTokenExpired = () => {

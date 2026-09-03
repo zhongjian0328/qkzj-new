@@ -36,6 +36,14 @@ const ExperienceRoleScreen: React.FC = () => {
       textColor: '#2DBBA1'
     },
     {
+      id: 'farmer-cooperative',
+      title: '养殖户（合作社）',
+      description: '养殖合作社，统购统销模式',
+      icon: 'people' as const,
+      backgroundColor: '#E6F7F3',
+      textColor: '#2DBBA1'
+    },
+    {
       id: 'institution-cdc',
       title: '疫控机构',
       description: '负责疫情监测、预警和防控',
@@ -60,6 +68,14 @@ const ExperienceRoleScreen: React.FC = () => {
       textColor: '#3B82F6'
     },
     {
+      id: 'student-learning',
+      title: '学生（学习）',
+      description: '理论学习阶段，知识储备',
+      icon: 'book' as const,
+      backgroundColor: '#F3E8FF',
+      textColor: '#8B5CF6'
+    },
+    {
       id: 'student-internship',
       title: '学生（实习）',
       description: '顶岗实习，实践技能提升',
@@ -68,10 +84,34 @@ const ExperienceRoleScreen: React.FC = () => {
       textColor: '#8B5CF6'
     },
     {
+      id: 'student-advanced',
+      title: '学生（顶岗）',
+      description: '高级顶岗实习，独立操作',
+      icon: 'ribbon' as const,
+      backgroundColor: '#F3E8FF',
+      textColor: '#8B5CF6'
+    },
+    {
       id: 'teacher-mentor',
-      title: '指导教师',
+      title: '指导教师（导师）',
       description: '负责学生实习指导与批阅',
       icon: 'person' as const,
+      backgroundColor: '#FFF3E0',
+      textColor: '#F59E0B'
+    },
+    {
+      id: 'teacher-clinical',
+      title: '指导教师（临床）',
+      description: '临床带教，病例诊疗指导',
+      icon: 'medkit' as const,
+      backgroundColor: '#FFF3E0',
+      textColor: '#F59E0B'
+    },
+    {
+      id: 'teacher-research',
+      title: '指导教师（科研）',
+      description: '科研指导，论文与项目指导',
+      icon: 'beaker' as const,
       backgroundColor: '#FFF3E0',
       textColor: '#F59E0B'
     }
@@ -103,6 +143,10 @@ const ExperienceRoleScreen: React.FC = () => {
           roleType = 'FARMER';
           subRole = 'ENTERPRISE';
           break;
+        case 'farmer-cooperative':
+          roleType = 'FARMER';
+          subRole = 'COOPERATIVE';
+          break;
         case 'institution-cdc':
           roleType = 'INSTITUTION';
           subRole = 'CDC';
@@ -115,13 +159,29 @@ const ExperienceRoleScreen: React.FC = () => {
           roleType = 'INSTITUTION';
           subRole = 'SERVICE_PROVIDER';
           break;
+        case 'student-learning':
+          roleType = 'STUDENT';
+          subRole = 'LEARNING_STUDENT';
+          break;
         case 'student-internship':
           roleType = 'STUDENT';
           subRole = 'COGNITIVE_INTERN';
           break;
+        case 'student-advanced':
+          roleType = 'STUDENT';
+          subRole = 'ADVANCED_INTERN';
+          break;
         case 'teacher-mentor':
           roleType = 'TEACHER';
           subRole = 'MENTOR';
+          break;
+        case 'teacher-clinical':
+          roleType = 'TEACHER';
+          subRole = 'CLINICAL_TEACHER';
+          break;
+        case 'teacher-research':
+          roleType = 'TEACHER';
+          subRole = 'RESEARCH_TEACHER';
           break;
         default:
           roleType = 'FARMER';

@@ -143,8 +143,22 @@ const serviceTicketRoutes = require('./routes/serviceTicket');
 const teachingCaseRoutes = require('./routes/teachingCase');
 const notificationRoutes = require('./routes/notification');
 
-// 注册路由（认证端点使用严格限速）
-app.use('/api/auth', authLimiter, authRoutes);
+// 注册路由（体验登录使用宽松限速，其他认证端点使用严格限速）
+const experienceLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { status: 'error', message: '体验登录请求过于频繁，请稍后再试' },
+});
+// 体验登录端点单独注册，不经过 authLimiter
+app.use('/api/auth/experience-login', experienceLimiter, (req, res, next) => { next(); }, authRoutes);
+// 其他认证端点（排除 experience-login）使用严格限速
+const authLimiterExceptExperience = (req, res, next) => {
+  if (req.path === '/experience-login') return next();
+  return authLimiter(req, res, next);
+};
+app.use('/api/auth', authLimiterExceptExperience, authRoutes);
 app.use('/api/ai-diagnosis', aiDiagnosisRoutes);
 app.use('/api/production', productionRoutes);
 app.use('/api/epidemic', epidemicRoutes);

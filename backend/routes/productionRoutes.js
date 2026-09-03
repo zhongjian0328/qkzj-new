@@ -1,6 +1,6 @@
 const express = require('express');
 const { authenticate } = require('../middleware/authMiddleware');
-const { validateCreateBatch, validateUpdateBatch, validateCreateDeathFeedRecord, validateCreateEmployee } = require('../middleware/validationMiddleware');
+const { validateCreateBatch, validateUpdateBatch, validateCreateDeathFeedRecord, validateCreateEmployee, validateGetDeathFeedRecords, validateExportProductionData, validateBatchIdParam, validateEmployeeIdParam } = require('../middleware/validationMiddleware');
 const productionController = require('../controllers/productionController');
 
 const router = express.Router();
@@ -8,20 +8,20 @@ const router = express.Router();
 // 批次管理
 router.get('/batches', authenticate, productionController.getBatches);
 router.post('/batches', authenticate, validateCreateBatch, productionController.createBatch);
-router.get('/batches/:batchId', authenticate, productionController.getBatchById);
+router.get('/batches/:batchId', authenticate, validateBatchIdParam, productionController.getBatchById);
 router.put('/batches/:batchId', authenticate, validateUpdateBatch, productionController.updateBatch);
-router.delete('/batches/:batchId', authenticate, productionController.deleteBatch);
+router.delete('/batches/:batchId', authenticate, validateBatchIdParam, productionController.deleteBatch);
 
 // 死淘/耗料记录
-router.get('/death-feed-records', authenticate, productionController.getDeathFeedRecords);
+router.get('/death-feed-records', authenticate, validateGetDeathFeedRecords, productionController.getDeathFeedRecords);
 router.post('/death-feed-records', authenticate, validateCreateDeathFeedRecord, productionController.createDeathFeedRecord);
 
 // 生产数据导出（CSV）
-router.get('/export', authenticate, productionController.exportProductionData);
+router.get('/export', authenticate, validateExportProductionData, productionController.exportProductionData);
 
 // 员工权限管理
 router.get('/employees', authenticate, productionController.getEmployees);
 router.post('/employees', authenticate, validateCreateEmployee, productionController.createEmployee);
-router.put('/employees/:employeeId/permission', authenticate, productionController.updateEmployeePermission);
+router.put('/employees/:employeeId/permission', authenticate, validateEmployeeIdParam, productionController.updateEmployeePermission);
 
 module.exports = router;
