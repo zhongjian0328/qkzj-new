@@ -1,5 +1,6 @@
 const express = require('express');
 const { authenticate, authorize } = require('../middleware/authMiddleware');
+const { validateChatDiagnosis, validateVetDiagnosis, validateAuditReport } = require('../middleware/validationMiddleware');
 const aiDiagnosisController = require('../controllers/aiDiagnosisController');
 
 const router = express.Router();
@@ -9,10 +10,10 @@ const router = express.Router();
  */
 
 // 聊天诊断（需要认证）
-router.post('/chat-diagnosis', authenticate, aiDiagnosisController.chatDiagnosis);
+router.post('/chat-diagnosis', authenticate, validateChatDiagnosis, aiDiagnosisController.chatDiagnosis);
 
 // 兽医模式诊断（需要认证）
-router.post('/veterinary-diagnosis', authenticate, aiDiagnosisController.vetDiagnosis);
+router.post('/veterinary-diagnosis', authenticate, validateVetDiagnosis, aiDiagnosisController.vetDiagnosis);
 
 // 获取初诊报告（需要认证）
 router.get('/pre-report/:diagnosisId', authenticate, aiDiagnosisController.getPreDiagnosisReport);
@@ -27,7 +28,7 @@ router.get('/history', authenticate, aiDiagnosisController.getDiagnosisHistory);
 router.get('/detail/:diagnosisId', authenticate, aiDiagnosisController.getDiagnosisDetail);
 
 // 审核诊断报告（仅允许兽医和管理员）
-router.post('/audit-report/:diagnosisId', authenticate, authorize(['VETERINARIAN', 'ADMIN']), aiDiagnosisController.auditReport);
+router.post('/audit-report/:diagnosisId', authenticate, authorize(['VETERINARIAN', 'ADMIN']), validateAuditReport, aiDiagnosisController.auditReport);
 
 // 保存诊断记录（需要认证）
 router.post('/save/:diagnosisId', authenticate, aiDiagnosisController.saveDiagnosis);

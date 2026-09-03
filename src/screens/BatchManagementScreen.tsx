@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, Modal, TextInput, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, Modal, TextInput, ActivityIndicator, Alert, Platform } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../components/Header';
 import { styles } from '../styles';
@@ -136,6 +137,48 @@ const BatchManagementScreen: React.FC = () => {
     setEditingBatch(null);
   };
 
+  const [exporting, setExporting] = useState(false);
+
+  const handleExportData = async () => {
+    if (batches.length === 0) {
+      Alert.alert('提示', '当前无批次数据可导出');
+      return;
+    }
+    setExporting(true);
+    try {
+      // 生成CSV数据
+      const headers = ['批次名称', '品种', '初始数量', '当前数量', '入场日期', '状态'];
+      const rows = batches.map(b => [b.batchName, b.species, b.initialQuantity, b.currentQuantity, b.entryDate, b.status === 'ACTIVE' ? '进行中' : '已结束']);
+      const csv = '﻿' + [headers, ...rows].map(r => r.join(',')).join('\n');
+
+      if (Platform.OS === 'web') {
+        // Web端：触发浏览器下载
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `生产数据_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        Alert.alert('成功', '数据已导出');
+      } else {
+        // 移动端：调用后端API导出
+        try {
+          const firstBatch = batches[0];
+          const response = await productionApi.exportProductionData({ batchId: firstBatch.id });
+          Alert.alert('成功', '数据导出请求已提交');
+        } catch (err) {
+          Alert.alert('错误', '数据导出失败');
+        }
+      }
+    } catch (err) {
+      console.error('导出失败:', err);
+      Alert.alert('错误', '数据导出失败');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const renderBatchItem = ({ item }: { item: Batch }) => {
     return (
       <View style={styles.batchItem}>
@@ -185,9 +228,15 @@ const BatchManagementScreen: React.FC = () => {
         showBackButton 
         onBack={() => navigation.goBack()} 
         rightComponent={
-          <TouchableOpacity onPress={() => setModalVisible(true)}>
-            <Text style={{ color: '#2DBBA1', fontSize: 16 }}>新增</Text>
-          </TouchableOpacity>
+          <View style={{ flexDirection: 'row', gap: 16 }}>
+            <TouchableOpacity onPress={handleExportData} disabled={exporting} style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              <Ionicons name="download-outline" size={18} color="#2DBBA1" />
+              <Text style={{ color: '#2DBBA1', fontSize: 14 }}>{exporting ? '导出中...' : '导出'}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setModalVisible(true)}>
+              <Text style={{ color: '#2DBBA1', fontSize: 16 }}>新增</Text>
+            </TouchableOpacity>
+          </View>
         }
       />
       

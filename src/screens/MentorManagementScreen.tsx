@@ -6,42 +6,17 @@ import Header from '../components/Header';
 import { styles } from '../styles';
 import { internshipApi } from '../services/api';
 
-// 导师数据结构
-interface Mentor {
-  id: string;
-  name: string;
-  title: string;
-  department: string;
-  expertise: string[];
-  avatar: string;
-  rating: number;
-  bio: string;
-  contact: string;
-  internCount: number;
-}
-
-// 实习项目数据结构
-interface InternshipProgram {
-  id: string;
-  title: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  mentorId: string;
-  mentorName: string;
-  internCount: number;
-  status: 'recruiting' | 'ongoing' | 'completed';
-}
-
 const MentorManagementScreen: React.FC = () => {
   const navigation = useNavigation<any>();
   const [activeTab, setActiveTab] = useState<'mentors' | 'programs'>('mentors');
-  const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
-  const [selectedProgram, setSelectedProgram] = useState<InternshipProgram | null>(null);
-  const [mentors, setMentors] = useState<Mentor[]>([]);
+  const [selectedMentor, setSelectedMentor] = useState<any | null>(null);
+  const [mentors, setMentors] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [programs, setPrograms] = useState<any[]>([]);
+  const [programsLoading, setProgramsLoading] = useState(true);
+  const [programsError, setProgramsError] = useState<string | null>(null);
 
   const fetchMentors = useCallback(async (isRefresh = false) => {
     try {
@@ -70,107 +45,63 @@ const MentorManagementScreen: React.FC = () => {
     }
   }, []);
 
-  useEffect(() => { fetchMentors(); }, [fetchMentors]);
-
-  // 实习项目数据（静态展示，如需动态可后续接入 API）
-  const internshipPrograms: InternshipProgram[] = [
-    {
-      id: '1',
-      title: 'AI诊断系统实习项目',
-      description: '参与AI诊断系统的开发和优化，学习图像识别和自然语言处理技术在禽类健康诊断中的应用。',
-      startDate: '2024-01-01',
-      endDate: '2024-06-30',
-      mentorId: '2',
-      mentorName: '李导师',
-      internCount: 8,
-      status: 'ongoing'
-    },
-    {
-      id: '2',
-      title: '禽类疾病诊断实习',
-      description: '跟随资深兽医师学习禽类疾病的诊断和治疗，参与实际病例分析。',
-      startDate: '2024-03-01',
-      endDate: '2024-08-31',
-      mentorId: '1',
-      mentorName: '张导师',
-      internCount: 10,
-      status: 'recruiting'
-    },
-    {
-      id: '3',
-      title: '生产管理优化项目',
-      description: '学习现代化禽类生产管理技术，参与生产流程优化和数据分析。',
-      startDate: '2024-02-01',
-      endDate: '2024-07-31',
-      mentorId: '3',
-      mentorName: '王导师',
-      internCount: 6,
-      status: 'ongoing'
+  // 实习项目数据：基于日志聚合生成
+  const fetchPrograms = useCallback(async () => {
+    try {
+      setProgramsLoading(true);
+      setProgramsError(null);
+      const response = await internshipApi.getInternLogs({ limit: 50 });
+      const logs = response.data?.logs || [];
+      // 按导师分组，构建"实习项目"视图
+      const mentorMap = new Map<string, any>();
+      logs.forEach((log: any) => {
+        const mentorId = log.mentorId?._id || log.mentorId || 'unknown';
+        const mentorName = log.mentorId?.nickname || '未知导师';
+        if (!mentorMap.has(mentorId)) {
+          mentorMap.set(mentorId, {
+            id: mentorId,
+            title: `${mentorName}指导项目`,
+            mentorName,
+            logCount: 0,
+            pendingCount: 0,
+            latestDate: log.logDate,
+            status: 'ongoing' as const,
+          });
+        }
+        const proj = mentorMap.get(mentorId);
+        proj.logCount++;
+        if (log.status === 'PENDING') proj.pendingCount++;
+        if (new Date(log.logDate) > new Date(proj.latestDate)) proj.latestDate = log.logDate;
+      });
+      setPrograms(Array.from(mentorMap.values()));
+    } catch (err) {
+      console.error('获取实习项目失败:', err);
+      setProgramsError('加载实习项目失败');
+    } finally {
+      setProgramsLoading(false);
     }
-  ];
+  }, []);
 
-  // 获取项目状态文本
-  const getProgramStatusText = (status: string) => {
-    switch (status) {
-      case 'recruiting': return '招募中';
-      case 'ongoing': return '进行中';
-      case 'completed': return '已完成';
-      default: return '未知';
-    }
-  };
-
-  // 获取项目状态样式
-  const getProgramStatusStyle = (status: string) => {
-    switch (status) {
-      case 'recruiting': return { backgroundColor: '#D1FAE5', color: '#1F5E52' };
-      case 'ongoing': return { backgroundColor: '#FEF3C7', color: '#92400E' };
-      case 'completed': return { backgroundColor: '#E5E7EB', color: '#6B7280' };
-      default: return { backgroundColor: '#E5E7EB', color: '#6B7280' };
-    }
-  };
+  useEffect(() => { fetchMentors(); fetchPrograms(); }, [fetchMentors, fetchPrograms]);
 
   // 选择导师
-  const handleSelectMentor = (mentor: Mentor) => {
+  const handleSelectMentor = (mentor: any) => {
     setSelectedMentor(mentor);
-    setSelectedProgram(null);
-  };
-
-  // 选择实习项目
-  const handleSelectProgram = (program: InternshipProgram) => {
-    setSelectedProgram(program);
-    setSelectedMentor(null);
   };
 
   // 查看导师详情
-  const handleViewMentorDetails = (mentor: Mentor) => {
+  const handleViewMentorDetails = (mentor: any) => {
     Alert.alert(
       mentor.name,
       `职称：${mentor.title}\n部门：${mentor.department}\n联系方式：${mentor.contact}\n\n${mentor.bio}`
     );
   };
 
-  // 查看项目详情
-  const handleViewProgramDetails = (program: InternshipProgram) => {
+  // 查看项目详情（跳转到日志列表）
+  const handleViewProgramDetails = (program: any) => {
     Alert.alert(
       program.title,
-      `导师：${program.mentorName}\n时间：${program.startDate} 至 ${program.endDate}\n状态：${getProgramStatusText(program.status)}\n\n${program.description}`
-    );
-  };
-
-  // 申请实习
-  const handleApplyInternship = (program: InternshipProgram) => {
-    Alert.alert(
-      '申请实习',
-      `确定要申请"${program.title}"实习项目吗？`,
-      [
-        { text: '取消', style: 'cancel' },
-        {
-          text: '申请',
-          onPress: () => {
-            Alert.alert('成功', '实习申请已提交，等待导师审核');
-          }
-        }
-      ]
+      `导师：${program.mentorName}\n日志数：${program.logCount} 篇\n待批注：${program.pendingCount} 篇\n最近活动：${new Date(program.latestDate).toLocaleDateString('zh-CN')}`
     );
   };
 
@@ -369,7 +300,7 @@ const MentorManagementScreen: React.FC = () => {
                     flexWrap: 'wrap',
                     marginBottom: 12
                   }}>
-                    {mentor.expertise.map((skill, index) => (
+                    {mentor.expertise.map((skill: string, index: number) => (
                       <View key={index} style={{
                         backgroundColor: '#E6F7F3',
                         paddingHorizontal: 12,
@@ -421,132 +352,68 @@ const MentorManagementScreen: React.FC = () => {
         {activeTab === 'programs' && (
           <View>
             <Text style={{ fontSize: 18, fontWeight: '600', color: '#111827', marginBottom: 12 }}>
-              实习项目 ({internshipPrograms.length} 个)
+              实习项目 ({programs.length} 个)
             </Text>
-            
-            {internshipPrograms.map(program => (
+
+            {programsLoading ? (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#2DBBA1" />
+                <Text style={styles.loadingText}>正在加载实习项目...</Text>
+              </View>
+            ) : programsError ? (
+              <View style={styles.loadingContainer}>
+                <Ionicons name="alert-circle-outline" size={48} color="#9CA3AF" />
+                <Text style={{ fontSize: 16, color: '#6B7280', marginBottom: 16 }}>{programsError}</Text>
+                <TouchableOpacity style={{ backgroundColor: '#2DBBA1', borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchPrograms()}>
+                  <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>重试</Text>
+                </TouchableOpacity>
+              </View>
+            ) : programs.length === 0 ? (
+              <View style={styles.loadingContainer}>
+                <Ionicons name="folder-open-outline" size={48} color="#9CA3AF" />
+                <Text style={{ fontSize: 16, color: '#6B7280' }}>暂无实习项目数据</Text>
+              </View>
+            ) : (
+            programs.map(program => (
               <TouchableOpacity
                 key={program.id}
-                style={[
-                  {
-                    backgroundColor: '#FFFFFF',
-                    borderRadius: 12,
-                    padding: 16,
-                    marginBottom: 12,
-                    shadowColor: '#000',
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.06,
-                    shadowRadius: 3.84,
-                    elevation: 2
-                  },
-                  selectedProgram?.id === program.id && {
-                    borderWidth: 2,
-                    borderColor: '#2DBBA1',
-                    backgroundColor: '#E6F7F3'
-                  }
-                ]}
-                onPress={() => handleSelectProgram(program)}
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: 12,
+                  padding: 16,
+                  marginBottom: 12,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.06,
+                  shadowRadius: 3.84,
+                  elevation: 2,
+                  borderLeftWidth: 4,
+                  borderLeftColor: program.pendingCount > 0 ? '#F59E0B' : '#10B981',
+                }}
+                onPress={() => handleViewProgramDetails(program)}
               >
-                <View style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'flex-start',
-                  marginBottom: 8
-                }}>
-                  <Text style={[
-                    {
-                      fontSize: 18,
-                      fontWeight: '600',
-                      color: '#111827',
-                      flex: 1
-                    },
-                    selectedProgram?.id === program.id && {
-                      color: '#1F5E52'
-                    }
-                  ]}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827', flex: 1 }}>
                     {program.title}
                   </Text>
-                  <View style={[
-                    {
-                      paddingHorizontal: 12,
-                      paddingVertical: 6,
-                      borderRadius: 16,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      marginLeft: 8
-                    },
-                    getProgramStatusStyle(program.status)
-                  ]}>
-                    <Text style={[
-                      {
-                        fontSize: 12,
-                        fontWeight: '500'
-                      },
-                      { color: getProgramStatusStyle(program.status).color }
-                    ]}>
-                      {getProgramStatusText(program.status)}
-                    </Text>
-                  </View>
-                </View>
-                
-                <Text style={{ fontSize: 14, color: '#6B7280', marginBottom: 8 }}>
-                  导师：{program.mentorName} | 已有 {program.internCount} 人参与
-                </Text>
-                
-                <Text style={{ fontSize: 14, color: '#4B5563', lineHeight: 22, marginBottom: 12 }}>
-                  {program.description}
-                </Text>
-                
-                <View style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}>
-                  <Text style={{ fontSize: 14, color: '#6B7280' }}>
-                    {program.startDate} 至 {program.endDate}
-                  </Text>
-                  
-                  <View style={{
-                    flexDirection: 'row',
-                    gap: 8
-                  }}>
-                    <TouchableOpacity
-                      style={{
-                        backgroundColor: '#F3F4F6',
-                        borderRadius: 8,
-                        paddingHorizontal: 16,
-                        paddingVertical: 8,
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                      onPress={() => handleViewProgramDetails(program)}
-                    >
-                      <Text style={{ fontSize: 14, fontWeight: '500', color: '#6B7280' }}>
-                        查看详情
+                  {program.pendingCount > 0 && (
+                    <View style={{ backgroundColor: '#FEF3C7', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 }}>
+                      <Text style={{ fontSize: 12, fontWeight: '600', color: '#92400E' }}>
+                        {program.pendingCount}篇待批注
                       </Text>
-                    </TouchableOpacity>
-                    
-                    {program.status === 'recruiting' && (
-                      <TouchableOpacity
-                        style={{
-                          backgroundColor: '#2DBBA1',
-                          borderRadius: 8,
-                          paddingHorizontal: 16,
-                          paddingVertical: 8,
-                          alignItems: 'center',
-                          justifyContent: 'center'
-                        }}
-                        onPress={() => handleApplyInternship(program)}
-                      >
-                        <Text style={{ fontSize: 14, fontWeight: '500', color: '#FFFFFF' }}>
-                          申请实习
-                        </Text>
-                      </TouchableOpacity>
-                    )}
-                  </View>
+                    </View>
+                  )}
                 </View>
+
+                <Text style={{ fontSize: 14, color: '#6B7280', marginBottom: 4 }}>
+                  导师：{program.mentorName} | 日志：{program.logCount} 篇
+                </Text>
+                <Text style={{ fontSize: 12, color: '#9CA3AF' }}>
+                  最近活动：{new Date(program.latestDate).toLocaleDateString('zh-CN')}
+                </Text>
               </TouchableOpacity>
-            ))}
+            ))
+            )}
           </View>
         )}
       </ScrollView>

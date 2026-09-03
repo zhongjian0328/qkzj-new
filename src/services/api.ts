@@ -451,6 +451,13 @@ export const productionApi = {
     role: string;
     permissions: string[];
   }) => api.put(`/production/employees/${employeeId}/permission`, data),
+
+  // 导出生产数据（CSV）
+  exportProductionData: (params: {
+    batchId: string;
+    startDate?: string;
+    endDate?: string;
+  }) => api.get('/production/export', { params, responseType: 'blob' }),
 };
 
 // 环境数据相关API
@@ -531,8 +538,6 @@ export const epidemicApi = {
   getPolicies: (params?: {
     page?: number;
     limit?: number;
-    region?: string;
-    role?: string;
   }) => api.get('/epidemic/policies', { params }),
 };
 
@@ -657,6 +662,12 @@ export const businessApi = {
     status?: string;
     orderType?: string;
   }) => api.get('/business/orders', { params }),
+
+  // 取消订单
+  cancelOrder: (orderId: string) => api.post(`/business/orders/${orderId}/cancel`),
+
+  // 确认收货
+  confirmOrder: (orderId: string) => api.post(`/business/orders/${orderId}/confirm`),
   
   // 获取客户列表
   getCustomers: (params?: {

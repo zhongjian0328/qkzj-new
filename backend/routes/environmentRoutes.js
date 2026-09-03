@@ -1,5 +1,6 @@
 const express = require('express');
 const { authenticate } = require('../middleware/authMiddleware');
+const { validateCreateEnvironmentRecord } = require('../middleware/validationMiddleware');
 const environmentController = require('../controllers/environmentController');
 
 const router = express.Router();
@@ -9,7 +10,7 @@ const router = express.Router();
  */
 
 // 创建环境数据记录（需要认证）
-router.post('/records', authenticate, environmentController.createRecord);
+router.post('/records', authenticate, validateCreateEnvironmentRecord, environmentController.createRecord);
 
 // 获取环境数据记录列表（需要认证）
 router.get('/records', authenticate, environmentController.getRecords);

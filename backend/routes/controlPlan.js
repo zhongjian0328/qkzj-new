@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { authenticate } = require('../middleware/authMiddleware');
+const { validateGeneratePlan } = require('../middleware/validationMiddleware');
 const controlPlanController = require('../controllers/controlPlanController');
 
 router.use(authenticate);
 
-router.post('/generate', controlPlanController.generatePlan);
+router.post('/generate', validateGeneratePlan, controlPlanController.generatePlan);
 router.get('/', controlPlanController.getPlans);
 router.get('/:id', controlPlanController.getPlanById);
 router.patch('/:id', controlPlanController.updatePlan);

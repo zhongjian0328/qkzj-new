@@ -58,6 +58,10 @@ const linking = {
       SurveyForm: 'survey-form',
       SurveyList: 'surveys',
       EditProfile: 'edit-profile',
+      ReportAudit: 'report-audit',
+      PolicyPublish: 'policy-publish',
+      ProductList: 'products',
+      OrderList: 'orders',
     },
   },
 };
@@ -105,6 +109,10 @@ const EnvironmentRecordScreen = lazy(() => import('./screens/EnvironmentRecordSc
 const EnvironmentAlertScreen = lazy(() => import('./screens/EnvironmentAlertScreen'));
 const SurveyFormScreen = lazy(() => import('./screens/SurveyFormScreen'));
 const SurveyListScreen = lazy(() => import('./screens/SurveyListScreen'));
+const ReportAuditScreen = lazy(() => import('./screens/ReportAuditScreen'));
+const PolicyPublishScreen = lazy(() => import('./screens/PolicyPublishScreen'));
+const ProductListScreen = lazy(() => import('./screens/ProductListScreen'));
+const OrderListScreen = lazy(() => import('./screens/OrderListScreen'));
 
 // 加载指示器组件
 const LoadingIndicator = () => (
@@ -158,6 +166,10 @@ export type RootStackParamList = {
   SurveyForm: { mode?: 'create' | 'edit'; surveyId?: string };
   SurveyList: undefined;
   EditProfile: undefined;
+  ReportAudit: undefined;
+  PolicyPublish: undefined;
+  ProductList: undefined;
+  OrderList: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -494,6 +506,10 @@ const App: React.FC = () => {
             <Stack.Screen name="SurveyForm" component={SurveyFormScreen} />
             <Stack.Screen name="SurveyList" component={SurveyListScreen} />
             <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+            <Stack.Screen name="ReportAudit" component={ReportAuditScreen} />
+            <Stack.Screen name="PolicyPublish" component={PolicyPublishScreen} />
+            <Stack.Screen name="ProductList" component={ProductListScreen} />
+            <Stack.Screen name="OrderList" component={OrderListScreen} />
           </Stack.Navigator>
         </Suspense>
       </NavigationContainer>
