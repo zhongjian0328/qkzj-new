@@ -29,7 +29,7 @@
       },
       "env": {
         "NODE_ENV": "production",
-        "EXPO_PUBLIC_API_URL": "REPLACE_WITH_PRODUCTION_API_URL"
+        "EXPO_PUBLIC_API_URL": "http://10.2.149.153:3000/api"
       }
     }
   },
