@@ -30,21 +30,21 @@ const COLORS = {
 
 const CATEGORIES = [
   { key: 'all', label: '全部' },
-  { key: 'disease', label: '疾病防控' },
-  { key: 'farming', label: '养殖技术' },
-  { key: 'nutrition', label: '营养饲喂' },
-  { key: 'management', label: '场区管理' },
-  { key: 'policy', label: '政策法规' },
-  { key: 'case', label: '案例分享' },
+  { key: 'disease_prevention', label: '疾病防控' },
+  { key: 'breeding_technology', label: '养殖技术' },
+  { key: 'nutrition_feeding', label: '营养饲喂' },
+  { key: 'farm_management', label: '场区管理' },
+  { key: 'policy_regulation', label: '政策法规' },
+  { key: 'case_study', label: '案例分享' },
 ];
 
 const CATEGORY_LABELS: Record<string, string> = {
-  disease: '疾病防控',
-  farming: '养殖技术',
-  nutrition: '营养饲喂',
-  management: '场区管理',
-  policy: '政策法规',
-  case: '案例分享',
+  disease_prevention: '疾病防控',
+  breeding_technology: '养殖技术',
+  nutrition_feeding: '营养饲喂',
+  farm_management: '场区管理',
+  policy_regulation: '政策法规',
+  case_study: '案例分享',
 };
 
 interface Article {

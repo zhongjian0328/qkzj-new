@@ -6,15 +6,17 @@ import Header from '../components/Header';
 import { styles } from '../styles';
 import { knowledgeApi } from '../services/api';
 
-// 题目数据结构
+// 题目数据结构——对齐后端 QuestionBank 模型
 interface Question {
-  id: string;
-  question: string;
+  _id: string;
+  questionText: string;
+  questionType: string; // SINGLE_CHOICE | MULTIPLE_CHOICE | TRUE_FALSE | SHORT_ANSWER
   options: string[];
-  correctAnswers: number[];
-  type: 'single' | 'multiple';
-  category: string;
-  difficulty: 'easy' | 'medium' | 'hard';
+  correctAnswer: number | number[]; // 单选/判断为Number，多选为Number[]
+  explanation: string;
+  knowledgePoint: string;
+  difficulty: string; // EASY | MEDIUM | HARD
+  tags: string[];
 }
 
 const QuestionBankScreen: React.FC = () => {
@@ -41,17 +43,19 @@ const QuestionBankScreen: React.FC = () => {
       setError(null);
       const response = await knowledgeApi.getQuestionBank({
         knowledgePoint: activeCategory !== 'all' ? activeCategory : undefined,
-        difficulty: activeDifficulty !== 'all' ? activeDifficulty : undefined,
+        difficulty: activeDifficulty !== 'all' ? activeDifficulty.toUpperCase() : undefined,
       });
       const data = response.data?.questions || response.data || [];
       setQuestions(data.map((q: any) => ({
-        id: q._id || q.id,
-        question: q.question || q.stem || '',
-        options: q.options || q.choices || [],
-        correctAnswers: q.correctAnswers || q.correctOptionIndices || [],
-        type: q.type || (q.correctAnswers?.length > 1 ? 'multiple' : 'single'),
-        category: q.category || q.knowledgePoint || 'general',
-        difficulty: q.difficulty || 'easy',
+        _id: q._id || q.id,
+        questionText: q.questionText || q.question || '',
+        questionType: q.questionType || 'SINGLE_CHOICE',
+        options: q.options || [],
+        correctAnswer: q.correctAnswer ?? (q.correctAnswers?.length > 1 ? q.correctAnswers : q.correctAnswers?.[0]),
+        explanation: q.explanation || '',
+        knowledgePoint: q.knowledgePoint || q.category || 'general',
+        difficulty: q.difficulty || 'MEDIUM',
+        tags: q.tags || [],
       })));
     } catch (err) {
       console.error('获取题库失败:', err);
@@ -64,17 +68,22 @@ const QuestionBankScreen: React.FC = () => {
 
   useEffect(() => { fetchQuestions(); }, [fetchQuestions]);
 
-  // 模拟题目数据
-  // 分类列表
+  // 分类列表——按知识点筛选
   const categories = [
     { id: 'all', name: '全部' },
-    { id: 'disease', name: '疾病知识' },
-    { id: 'prevention', name: '预防措施' },
-    { id: 'control', name: '防控策略' },
-    { id: 'treatment', name: '治疗方法' }
+    { id: '禽流感', name: '禽流感' },
+    { id: '新城疫', name: '新城疫' },
+    { id: '传支', name: '传支' },
+    { id: '马立克氏病', name: '马立克' },
+    { id: '法氏囊病', name: '法氏囊' },
+    { id: '用药', name: '用药' },
+    { id: '免疫', name: '免疫' },
+    { id: '消毒', name: '消毒' },
+    { id: '球虫', name: '球虫' },
+    { id: '鸭瘟', name: '鸭瘟' },
   ];
 
-  // 难度列表
+  // 难度列表——对齐后端枚举
   const difficulties = [
     { id: 'all', name: '全部' },
     { id: 'easy', name: '简单' },
@@ -84,8 +93,8 @@ const QuestionBankScreen: React.FC = () => {
 
   // 过滤题目
   const filteredQuestions = questions.filter(question => {
-    const matchesCategory = activeCategory === 'all' || question.category === activeCategory;
-    const matchesDifficulty = activeDifficulty === 'all' || question.difficulty === activeDifficulty;
+    const matchesCategory = activeCategory === 'all' || question.knowledgePoint?.includes(activeCategory);
+    const matchesDifficulty = activeDifficulty === 'all' || question.difficulty === activeDifficulty.toUpperCase();
     return matchesCategory && matchesDifficulty;
   });
 
@@ -110,12 +119,13 @@ const QuestionBankScreen: React.FC = () => {
     const currentQuestion = quizQuestions[currentQuestionIndex];
     let isCorrect = false;
 
-    if (currentQuestion.type === 'single') {
-      isCorrect = selectedAnswers.length === 1 && selectedAnswers[0] === currentQuestion.correctAnswers[0];
-    } else {
-      isCorrect = selectedAnswers.length === currentQuestion.correctAnswers.length &&
-                 selectedAnswers.every(answer => currentQuestion.correctAnswers.includes(answer)) &&
-                 currentQuestion.correctAnswers.every(answer => selectedAnswers.includes(answer));
+    if (currentQuestion.questionType === 'SINGLE_CHOICE' || currentQuestion.questionType === 'TRUE_FALSE') {
+      isCorrect = selectedAnswers.length === 1 && selectedAnswers[0] === currentQuestion.correctAnswer;
+    } else if (currentQuestion.questionType === 'MULTIPLE_CHOICE') {
+      const correctArr = Array.isArray(currentQuestion.correctAnswer) ? currentQuestion.correctAnswer : [currentQuestion.correctAnswer];
+      const userSorted = [...selectedAnswers].sort().join(',');
+      const correctSorted = [...correctArr].sort().join(',');
+      isCorrect = userSorted === correctSorted;
     }
 
     if (isCorrect) {
@@ -154,7 +164,7 @@ const QuestionBankScreen: React.FC = () => {
   // 切换答案选择
   const toggleAnswer = (index: number) => {
     const currentQuestion = quizQuestions[currentQuestionIndex];
-    if (currentQuestion.type === 'single') {
+    if (currentQuestion.questionType === 'SINGLE_CHOICE' || currentQuestion.questionType === 'TRUE_FALSE') {
       setSelectedAnswers([index]);
     } else {
       setSelectedAnswers(prev => {
@@ -170,12 +180,36 @@ const QuestionBankScreen: React.FC = () => {
   // 获取难度文字
   const getDifficultyText = (difficulty: string) => {
     switch (difficulty) {
-      case 'easy': return '简单';
-      case 'medium': return '中等';
-      case 'hard': return '困难';
+      case 'EASY': case 'easy': return '简单';
+      case 'MEDIUM': case 'medium': return '中等';
+      case 'HARD': case 'hard': return '困难';
       default: return '全部';
     }
   };
+
+  // 获取难度颜色
+  const getDifficultyColor = (difficulty: string) => {
+    switch (difficulty) {
+      case 'EASY': case 'easy': return { bg: '#D1FAE5', text: '#1F5E52' };
+      case 'MEDIUM': case 'medium': return { bg: '#FEF3C7', text: '#92400E' };
+      case 'HARD': case 'hard': return { bg: '#FEE2E2', text: '#991B1B' };
+      default: return { bg: '#F3F4F6', text: '#6B7280' };
+    }
+  };
+
+  // 获取题型标签
+  const getQuestionTypeLabel = (type: string) => {
+    switch (type) {
+      case 'SINGLE_CHOICE': return '单选题';
+      case 'MULTIPLE_CHOICE': return '多选题';
+      case 'TRUE_FALSE': return '判断题';
+      case 'SHORT_ANSWER': return '简答题';
+      default: return '单选题';
+    }
+  };
+
+  // 判断是否为多选题
+  const isMultipleChoice = (type: string) => type === 'MULTIPLE_CHOICE';
 
   return (
     <View style={styles.container}>
@@ -298,7 +332,7 @@ const QuestionBankScreen: React.FC = () => {
             </View>
 
             {filteredQuestions.map((question, index) => (
-              <View key={question.id} style={{
+              <View key={question._id} style={{
                 backgroundColor: '#FFFFFF',
                 borderRadius: 12,
                 padding: 16,
@@ -311,44 +345,29 @@ const QuestionBankScreen: React.FC = () => {
               }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                   <Text style={{ fontSize: 14, fontWeight: '500', color: '#6B7280' }}>
-                    {index + 1}. {question.type === 'single' ? '单选题' : '多选题'}
+                    {index + 1}. {getQuestionTypeLabel(question.questionType)}
                   </Text>
-                  <View style={{
-                    flexDirection: 'row',
-                    gap: 8
-                  }}>
+                  <View style={{ flexDirection: 'row', gap: 8 }}>
                     <View style={{
-                      paddingHorizontal: 8,
-                      paddingVertical: 4,
-                      borderRadius: 12,
+                      paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12,
                       backgroundColor: '#E6F7F3',
-                      alignItems: 'center',
-                      justifyContent: 'center'
                     }}>
                       <Text style={{ fontSize: 12, fontWeight: '500', color: '#1F5E52' }}>
-                        {question.category === 'disease' ? '疾病' :
-                         question.category === 'prevention' ? '预防' :
-                         question.category === 'control' ? '防控' : '治疗'}
+                        {question.knowledgePoint}
                       </Text>
                     </View>
                     <View style={{
-                      paddingHorizontal: 8,
-                      paddingVertical: 4,
-                      borderRadius: 12,
-                      backgroundColor: question.difficulty === 'easy' ? '#D1FAE5' :
-                                       question.difficulty === 'medium' ? '#FEF3C7' : '#FEE2E2',
-                      alignItems: 'center',
-                      justifyContent: 'center'
+                      paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12,
+                      backgroundColor: getDifficultyColor(question.difficulty).bg,
                     }}>
-                      <Text style={{ fontSize: 12, fontWeight: '500', color: question.difficulty === 'easy' ? '#1F5E52' :
-                                       question.difficulty === 'medium' ? '#92400E' : '#991B1B' }}>
+                      <Text style={{ fontSize: 12, fontWeight: '500', color: getDifficultyColor(question.difficulty).text }}>
                         {getDifficultyText(question.difficulty)}
                       </Text>
                     </View>
                   </View>
                 </View>
                 <Text style={{ fontSize: 16, color: '#111827', marginBottom: 12 }}>
-                  {question.question}
+                  {question.questionText}
                 </Text>
                 <View style={{ gap: 8 }}>
                   {question.options.map((option, optionIndex) => (
@@ -362,7 +381,7 @@ const QuestionBankScreen: React.FC = () => {
                       <View style={{
                         width: 24,
                         height: 24,
-                        borderRadius: question.type === 'single' ? 12 : 8,
+                        borderRadius: isMultipleChoice(question.questionType) ? 8 : 12,
                         borderWidth: 2,
                         borderColor: '#2DBBA1',
                         justifyContent: 'center',
@@ -516,14 +535,17 @@ const QuestionBankScreen: React.FC = () => {
                     borderLeftColor: '#EF4444'
                   }}>
                     <Text style={{ fontSize: 14, fontWeight: '500', color: '#111827', marginBottom: 8 }}>
-                      {item.question.question}
+                      {item.question.questionText}
                     </Text>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                       <Text style={{ fontSize: 12, color: '#EF4444' }}>
                         你的答案：{item.userAnswers.map(a => String.fromCharCode(65 + a)).join('、')}
                       </Text>
                       <Text style={{ fontSize: 12, color: '#10B981' }}>
-                        正确答案：{item.question.correctAnswers.map(a => String.fromCharCode(65 + a)).join('、')}
+                        正确答案：{(Array.isArray(item.question.correctAnswer)
+                          ? item.question.correctAnswer
+                          : [item.question.correctAnswer])
+                          .map(a => String.fromCharCode(65 + a)).join('、')}
                       </Text>
                     </View>
                   </View>
@@ -607,13 +629,16 @@ const QuestionBankScreen: React.FC = () => {
             </View>
             
             <Text style={{ fontSize: 18, fontWeight: '600', color: '#111827', marginBottom: 20 }}>
-              {quizQuestions[currentQuestionIndex].question}
+              {quizQuestions[currentQuestionIndex].questionText}
             </Text>
             
             <View style={{ gap: 12, marginBottom: 24 }}>
               {quizQuestions[currentQuestionIndex].options.map((option, optionIndex) => {
                 const isSelected = selectedAnswers.includes(optionIndex);
-                const isCorrectAnswer = quizQuestions[currentQuestionIndex].correctAnswers.includes(optionIndex);
+                const correctArr = Array.isArray(quizQuestions[currentQuestionIndex].correctAnswer)
+                  ? quizQuestions[currentQuestionIndex].correctAnswer
+                  : [quizQuestions[currentQuestionIndex].correctAnswer];
+                const isCorrectAnswer = correctArr.includes(optionIndex);
                 let optionStyle: any = {
                   backgroundColor: '#F3F4F6',
                   borderColor: '#E5E7EB'
@@ -661,7 +686,7 @@ const QuestionBankScreen: React.FC = () => {
                       marginRight: 16,
                       justifyContent: 'center',
                       alignItems: 'center',
-                      borderRadius: quizQuestions[currentQuestionIndex].type === 'single' ? 14 : 8
+                      borderRadius: isMultipleChoice(quizQuestions[currentQuestionIndex].questionType) ? 8 : 14
                     },
                     indicatorStyle
                   ]}>
@@ -713,7 +738,9 @@ const QuestionBankScreen: React.FC = () => {
                 </View>
                 {!lastAnswerCorrect && (
                   <Text style={{ fontSize: 14, color: '#4B5563', lineHeight: 20 }}>
-                    正确答案：{quizQuestions[currentQuestionIndex].correctAnswers
+                    正确答案：{(Array.isArray(quizQuestions[currentQuestionIndex].correctAnswer)
+                      ? quizQuestions[currentQuestionIndex].correctAnswer
+                      : [quizQuestions[currentQuestionIndex].correctAnswer])
                       .map(idx => String.fromCharCode(65 + idx))
                       .join('、')}
                   </Text>

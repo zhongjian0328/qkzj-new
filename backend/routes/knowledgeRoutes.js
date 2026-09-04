@@ -1,52 +1,39 @@
 const express = require('express');
 const { authenticate, authorize } = require('../middleware/authMiddleware');
 const knowledgeArticleController = require('../controllers/knowledgeArticleController');
+const knowledgeController = require('../controllers/knowledgeController');
 
 const router = express.Router();
 
 /**
- * 知识学习相关路由（合并知识图谱 + 科普文章）
- * 路径对齐前端 knowledgeApi（/knowledge/graphs, /knowledge/questions, /knowledge/quiz, /knowledge/articles, /knowledge/favorites）
+ * 知识学习相关路由（合并知识图谱 + 科普文章 + 题库测验）
+ * 路径对齐前端 knowledgeApi
  */
 
 // ========== 知识图谱 ==========
 
 // 获取知识图谱列表
-router.get('/graphs', authenticate, (req, res) => {
-  res.status(200).json({ status: 'success', message: '获取知识图谱列表' });
-});
+router.get('/graphs', authenticate, knowledgeController.listGraphs);
 
 // 获取知识图谱详情
-router.get('/graphs/:graphId', authenticate, (req, res) => {
-  res.status(200).json({ status: 'success', message: '获取知识图谱详情' });
-});
+router.get('/graphs/:graphId', authenticate, knowledgeController.getGraphDetail);
 
 // 搜索知识点
-router.get('/search', authenticate, (req, res) => {
-  res.status(200).json({ status: 'success', message: '搜索知识点' });
-});
+router.get('/search', authenticate, knowledgeController.searchKnowledge);
 
 // ========== 题库与测验 ==========
 
 // 获取题库列表
-router.get('/questions', authenticate, (req, res) => {
-  res.status(200).json({ status: 'success', message: '获取题库列表' });
-});
+router.get('/questions', authenticate, knowledgeController.listQuestions);
 
 // 获取题目详情
-router.get('/questions/:questionId', authenticate, (req, res) => {
-  res.status(200).json({ status: 'success', message: '获取题目详情' });
-});
+router.get('/questions/:questionId', authenticate, knowledgeController.getQuestionDetail);
 
 // 提交答题结果
-router.post('/quiz/submit', authenticate, (req, res) => {
-  res.status(201).json({ status: 'success', message: '提交答题结果' });
-});
+router.post('/quiz/submit', authenticate, knowledgeController.submitQuiz);
 
 // 获取测验结果
-router.get('/quiz/result/:quizId', authenticate, (req, res) => {
-  res.status(200).json({ status: 'success', message: '获取测验结果' });
-});
+router.get('/quiz/result/:quizId', authenticate, knowledgeController.getQuizResult);
 
 // ========== 科普文章（公开 + 鉴权） ==========
 
