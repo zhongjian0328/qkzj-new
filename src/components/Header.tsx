@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { colors, typography, spacing, component } from '../theme';
 
 interface HeaderProps {
   title: string;
@@ -17,9 +19,9 @@ const Header: React.FC<HeaderProps> = ({
   onBack,
   rightComponent,
   showBackButton = false,
-  backgroundColor = '#FFFFFF',
-  titleColor = '#111827',
-  elevation = 4,
+  backgroundColor = colors.surface,
+  titleColor = colors.textPrimary,
+  elevation = 0,
   statusBarStyle = 'dark',
 }) => {
   return (
@@ -35,17 +37,18 @@ const Header: React.FC<HeaderProps> = ({
               style={styles.backButton}
               onPress={onBack}
               activeOpacity={0.7}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
-              <Text style={styles.backIcon}>←</Text>
+              <Ionicons name="chevron-back" size={26} color={colors.primary} />
             </TouchableOpacity>
           )}
         </View>
         <View style={styles.centerContainer}>
-          <Text style={[styles.title, { color: titleColor }]}>{title}</Text>
+          <Text style={[styles.title, { color: titleColor }]} numberOfLines={1}>
+            {title}
+          </Text>
         </View>
-        <View style={styles.rightContainer}>
-          {rightComponent}
-        </View>
+        <View style={styles.rightContainer}>{rightComponent}</View>
       </View>
     </>
   );
@@ -56,11 +59,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: 56,
-    paddingHorizontal: 16,
+    height: component.headerHeight,
+    paddingHorizontal: spacing.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderLight,
   },
   leftContainer: {
-    width: 56,
+    width: 48,
     alignItems: 'flex-start',
   },
   centerContainer: {
@@ -69,20 +74,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   rightContainer: {
-    width: 56,
+    width: 48,
     alignItems: 'flex-end',
   },
   backButton: {
-    padding: 8,
-  },
-  backIcon: {
-    fontSize: 24,
-    color: '#2DBBA1',
-    fontWeight: 'bold',
+    padding: spacing.xs,
   },
   title: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: typography.size.subtitle,
+    fontWeight: typography.weight.semibold,
+    color: colors.textPrimary,
   },
 });
 

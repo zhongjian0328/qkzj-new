@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -35,7 +36,7 @@ const DiagnosisHomeScreen: React.FC = () => {
         title={getDiagnosisTitle()} 
         showBackButton={true} 
         onBack={() => navigation.goBack()} 
-        backgroundColor="#FFFFFF"
+        backgroundColor={colors.surface}
         elevation={2}
       />
       
@@ -68,7 +69,7 @@ const DiagnosisHomeScreen: React.FC = () => {
           >
             <View style={styles.diagnosisHomeModeCardContent}>
               <View style={styles.diagnosisHomeModeCardIcon}>
-                <Ionicons name="chatbubbles-outline" size={28} color="#2DBBA1" />
+                <Ionicons name="chatbubbles-outline" size={28} color={colors.primary} />
               </View>
               <View style={styles.diagnosisHomeModeCardInfo}>
                 <Text style={styles.diagnosisHomeModeCardTitle}>
@@ -81,7 +82,7 @@ const DiagnosisHomeScreen: React.FC = () => {
                   }
                 </Text>
                 <View style={styles.diagnosisHomeModeCardBadge}>
-                  <Ionicons name="checkmark-circle-outline" size={16} color="#2DBBA1" />
+                  <Ionicons name="checkmark-circle-outline" size={16} color={colors.primary} />
                   <Text style={styles.diagnosisHomeModeCardBadgeText}>
                     {user?.roleType === 'STUDENT' 
                       ? '适合实习初期，学习如何描述症状' 
@@ -101,7 +102,7 @@ const DiagnosisHomeScreen: React.FC = () => {
           >
             <View style={styles.diagnosisHomeModeCardContent}>
               <View style={styles.diagnosisHomeModeCardIcon}>
-                <Ionicons name="medical-outline" size={28} color="#2DBBA1" />
+                <Ionicons name="medical-outline" size={28} color={colors.primary} />
               </View>
               <View style={styles.diagnosisHomeModeCardInfo}>
                 <Text style={styles.diagnosisHomeModeCardTitle}>
@@ -114,7 +115,7 @@ const DiagnosisHomeScreen: React.FC = () => {
                   }
                 </Text>
                 <View style={styles.diagnosisHomeModeCardBadge}>
-                  <Ionicons name="checkmark-circle-outline" size={16} color="#2DBBA1" />
+                  <Ionicons name="checkmark-circle-outline" size={16} color={colors.primary} />
                   <Text style={styles.diagnosisHomeModeCardBadgeText}>
                     {user?.roleType === 'STUDENT' 
                       ? '适合实习进阶，学习标准化诊断流程' 
@@ -135,7 +136,7 @@ const DiagnosisHomeScreen: React.FC = () => {
             >
               <View style={styles.diagnosisHomeModeCardContent}>
                 <View style={styles.diagnosisHomeModeCardIcon}>
-                  <Ionicons name="book-outline" size={28} color="#2DBBA1" />
+                  <Ionicons name="book-outline" size={28} color={colors.primary} />
                 </View>
                 <View style={styles.diagnosisHomeModeCardInfo}>
                   <Text style={styles.diagnosisHomeModeCardTitle}>实习诊断练习</Text>
@@ -143,7 +144,7 @@ const DiagnosisHomeScreen: React.FC = () => {
                     基于真实病例的模拟诊断练习，系统提供病例信息，您可以进行诊断并获得评分和反馈，帮助您提升诊断能力。
                   </Text>
                   <View style={styles.diagnosisHomeModeCardBadge}>
-                    <Ionicons name="checkmark-circle-outline" size={16} color="#2DBBA1" />
+                    <Ionicons name="checkmark-circle-outline" size={16} color={colors.primary} />
                     <Text style={styles.diagnosisHomeModeCardBadgeText}>适合实习练习，提升诊断能力</Text>
                   </View>
                 </View>
@@ -156,7 +157,7 @@ const DiagnosisHomeScreen: React.FC = () => {
         <View style={styles.diagnosisHomeNotesSection}>
           <View style={styles.diagnosisHomeNotesCard}>
             <View style={styles.diagnosisHomeNotesContent}>
-              <Ionicons name="information-circle-outline" size={24} color="#3182CE" style={styles.diagnosisHomeNotesIcon} />
+              <Ionicons name="information-circle-outline" size={24} color={colors.info} style={styles.diagnosisHomeNotesIcon} />
               <View style={styles.diagnosisHomeNotesInfo}>
                 <Text style={styles.diagnosisHomeNotesTitle}>
                   {user?.roleType === 'STUDENT' ? '实习提示' : '温馨提示'}

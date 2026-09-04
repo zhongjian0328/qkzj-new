@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -148,7 +149,7 @@ const LoginScreen: React.FC = () => {
         {/* Logo和产品名称 */}
         <View style={styles.loginLogoSection}>
           <View style={styles.loginLogoContainer}>
-            <Ionicons name="medical-outline" size={48} color="#2DBBA1" />
+            <Ionicons name="medical-outline" size={48} color={colors.primary} />
           </View>
           <Text style={styles.loginAppTitle}>禽康智检</Text>
           <Text style={styles.loginAppSubtitle}>AI赋能禽类健康诊断</Text>
@@ -406,8 +407,8 @@ const LoginScreen: React.FC = () => {
             size="large"
             fullWidth
           >
-            <Ionicons name="play-outline" size={16} color="#2DBBA1" style={{ marginRight: 8 }} />
-            <Text style={{ color: '#2DBBA1', fontSize: 16 }}>体验APP</Text>
+            <Ionicons name="play-outline" size={16} color={colors.primary} style={{ marginRight: 8 }} />
+            <Text style={{ color: colors.primary, fontSize: 16 }}>体验APP</Text>
           </Button>
         </View>
       </ScrollView>

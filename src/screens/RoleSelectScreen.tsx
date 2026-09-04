@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -27,32 +28,32 @@ const RoleSelectScreen: React.FC = () => {
       title: '养殖户',
       description: '从事禽类养殖生产',
       icon: 'leaf' as const,
-      backgroundColor: '#E6F7F3',
-      textColor: '#2DBBA1'
+      backgroundColor: colors.primaryLight,
+      textColor: colors.primary
     },
     {
       id: 'institution',
       title: '机构',
       description: '疫控、科研、服务机构',
       icon: 'business' as const,
-      backgroundColor: '#EBF5FF',
-      textColor: '#3B82F6'
+      backgroundColor: colors.infoLight,
+      textColor: colors.info
     },
     {
       id: 'student',
       title: '学生',
       description: '学习禽类养殖相关专业',
       icon: 'school' as const,
-      backgroundColor: '#F3E8FF',
-      textColor: '#8B5CF6'
+      backgroundColor: colors.accent.purpleLight,
+      textColor: colors.accent.purple
     },
     {
       id: 'teacher',
       title: '教师',
       description: '教学指导与实习管理',
       icon: 'person' as const,
-      backgroundColor: '#FFF3E0',
-      textColor: '#F59E0B'
+      backgroundColor: colors.accent.orangeLight,
+      textColor: colors.warning
     }
   ];
   
@@ -289,7 +290,7 @@ const RoleSelectScreen: React.FC = () => {
         <View style={styles.roleSelectDescriptionCard}>
           <View style={styles.roleSelectDescriptionContent}>
             <View style={styles.roleSelectDescriptionIcon}>
-              <Ionicons name="information-circle-outline" size={20} color="#2DBBA1" />
+              <Ionicons name="information-circle-outline" size={20} color={colors.primary} />
             </View>
             <View style={styles.roleSelectDescriptionInfo}>
               <Text style={styles.roleSelectDescriptionTitle}>温馨提示</Text>

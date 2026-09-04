@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Dimensions, ActivityIndicator, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -69,13 +70,13 @@ const EpidemicHeatmapScreen: React.FC = () => {
   const getRiskColor = (riskLevel: string) => {
     switch (riskLevel) {
       case 'high':
-        return '#EF4444';
+        return colors.error;
       case 'medium':
-        return '#F59E0B';
+        return colors.warning;
       case 'low':
-        return '#10B981';
+        return colors.success;
       default:
-        return '#6B7280';
+        return colors.textTertiary;
     }
   };
   
@@ -88,17 +89,17 @@ const EpidemicHeatmapScreen: React.FC = () => {
       />
       
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => fetchHeatmap(true)} colors={['#2DBBA1']} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => fetchHeatmap(true)} colors={[colors.primary]} />}
       >
         {loading && epidemicData.length === 0 && (
           <View style={{ paddingVertical: 40, alignItems: 'center' }}>
-            <ActivityIndicator size="large" color="#2DBBA1" />
-            <Text style={{ marginTop: 8, color: '#6B7280' }}>加载疫情数据...</Text>
+            <ActivityIndicator size="large" color={colors.primary} />
+            <Text style={{ marginTop: 8, color: colors.textTertiary }}>加载疫情数据...</Text>
           </View>
         )}
         {error && (
-          <View style={{ padding: 16, backgroundColor: '#FEF2F2', borderRadius: 8, marginBottom: 12 }}>
-            <Text style={{ color: '#DC2626', textAlign: 'center' }}>{error}</Text>
+          <View style={{ padding: 16, backgroundColor: colors.errorLight, borderRadius: 8, marginBottom: 12 }}>
+            <Text style={{ color: colors.error, textAlign: 'center' }}>{error}</Text>
           </View>
         )}
         {/* 筛选条件 */}
@@ -111,7 +112,7 @@ const EpidemicHeatmapScreen: React.FC = () => {
               onPress={() => {}}
             >
               <Text style={styles.filterValueText}>{selectedDate}</Text>
-              <Ionicons name="calendar-outline" size={18} color="#6B7280" />
+              <Ionicons name="calendar-outline" size={18} color={colors.textTertiary} />
             </TouchableOpacity>
           </View>
           
@@ -171,7 +172,7 @@ const EpidemicHeatmapScreen: React.FC = () => {
         {/* 热力图展示区域 */}
         <View style={styles.heatmapContainer}>
           <View style={styles.heatmapPlaceholder}>
-            <Ionicons name="map-outline" size={48} color="#9CA3AF" />
+            <Ionicons name="map-outline" size={48} color={colors.textDisabled} />
             <Text style={styles.heatmapPlaceholderText}>疫情热力图</Text>
             <Text style={styles.heatmapPlaceholderSubtext}>点击查看详细疫情分布</Text>
           </View>
@@ -181,15 +182,15 @@ const EpidemicHeatmapScreen: React.FC = () => {
             <Text style={styles.heatmapLegendTitle}>疫情风险等级</Text>
             <View style={styles.heatmapLegendItems}>
               <View style={styles.heatmapLegendItem}>
-                <View style={[styles.heatmapLegendColor, { backgroundColor: '#EF4444' }]}></View>
+                <View style={[styles.heatmapLegendColor, { backgroundColor: colors.error }]}></View>
                 <Text style={styles.heatmapLegendText}>高风险</Text>
               </View>
               <View style={styles.heatmapLegendItem}>
-                <View style={[styles.heatmapLegendColor, { backgroundColor: '#F59E0B' }]}></View>
+                <View style={[styles.heatmapLegendColor, { backgroundColor: colors.warning }]}></View>
                 <Text style={styles.heatmapLegendText}>中风险</Text>
               </View>
               <View style={styles.heatmapLegendItem}>
-                <View style={[styles.heatmapLegendColor, { backgroundColor: '#10B981' }]}></View>
+                <View style={[styles.heatmapLegendColor, { backgroundColor: colors.success }]}></View>
                 <Text style={styles.heatmapLegendText}>低风险</Text>
               </View>
             </View>
@@ -199,7 +200,7 @@ const EpidemicHeatmapScreen: React.FC = () => {
         {/* 疫情数据列表 */}
         <View style={styles.epidemicDataSection}>
           <Text style={styles.sectionTitle}>
-            <Ionicons name="stats-chart" size={16} color="#2DBBA1" style={{ marginRight: 4 }} />
+            <Ionicons name="stats-chart" size={16} color={colors.primary} style={{ marginRight: 4 }} />
             疫情数据统计
           </Text>
 
@@ -226,15 +227,15 @@ const EpidemicHeatmapScreen: React.FC = () => {
         {/* 疫情详情列表 */}
         <View style={styles.epidemicDetailSection}>
           <Text style={styles.sectionTitle}>
-            <Ionicons name="location" size={16} color="#2DBBA1" style={{ marginRight: 4 }} />
+            <Ionicons name="location" size={16} color={colors.primary} style={{ marginRight: 4 }} />
             地区疫情详情
           </Text>
 
           {epidemicData.length === 0 && !loading && (
             <View style={{ paddingVertical: 24, alignItems: 'center' }}>
-              <Ionicons name="checkmark-circle-outline" size={40} color="#10B981" />
-              <Text style={{ marginTop: 8, fontSize: 14, color: '#6B7280' }}>暂无疫情数据</Text>
-              <Text style={{ fontSize: 12, color: '#9CA3AF', marginTop: 4 }}>当前筛选条件下无诊断记录</Text>
+              <Ionicons name="checkmark-circle-outline" size={40} color={colors.success} />
+              <Text style={{ marginTop: 8, fontSize: 14, color: colors.textTertiary }}>暂无疫情数据</Text>
+              <Text style={{ fontSize: 12, color: colors.textDisabled, marginTop: 4 }}>当前筛选条件下无诊断记录</Text>
             </View>
           )}
 
@@ -274,7 +275,7 @@ const EpidemicHeatmapScreen: React.FC = () => {
                   </View>
 
                   {item.highRiskCount > 0 && (
-                    <Text style={{ fontSize: 12, color: '#EF4444', marginTop: 4 }}>
+                    <Text style={{ fontSize: 12, color: colors.error, marginTop: 4 }}>
                       含 {item.highRiskCount} 例高风险混合感染
                     </Text>
                   )}
@@ -288,7 +289,7 @@ const EpidemicHeatmapScreen: React.FC = () => {
         <View style={styles.epidemicAlertsSection}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>
-              <Ionicons name="alert-circle-outline" size={16} color="#EF4444" style={{ marginRight: 4 }} />
+              <Ionicons name="alert-circle-outline" size={16} color={colors.error} style={{ marginRight: 4 }} />
               异常高发报警
             </Text>
             {alertsPagination && alertsPagination.total > 0 && (
@@ -298,9 +299,9 @@ const EpidemicHeatmapScreen: React.FC = () => {
 
           {alerts.length === 0 && !loading && (
             <View style={{ paddingVertical: 20, alignItems: 'center' }}>
-              <Ionicons name="shield-checkmark-outline" size={36} color="#10B981" />
-              <Text style={{ marginTop: 8, fontSize: 14, color: '#6B7280' }}>暂无异常报警</Text>
-              <Text style={{ fontSize: 12, color: '#9CA3AF', marginTop: 4 }}>当前无高风险诊断记录</Text>
+              <Ionicons name="shield-checkmark-outline" size={36} color={colors.success} />
+              <Text style={{ marginTop: 8, fontSize: 14, color: colors.textTertiary }}>暂无异常报警</Text>
+              <Text style={{ fontSize: 12, color: colors.textDisabled, marginTop: 4 }}>当前无高风险诊断记录</Text>
             </View>
           )}
 

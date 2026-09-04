@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TextInput, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -7,10 +8,10 @@ import { controlPlanApi } from '../services/api';
 import { styles } from '../styles';
 
 const SEVERITY_OPTIONS = [
-  { key: 'low', label: '低风险', color: '#22C55E' },
-  { key: 'medium', label: '中风险', color: '#F59E0B' },
-  { key: 'high', label: '高风险', color: '#EF4444' },
-  { key: 'critical', label: '极高风险', color: '#991B1B' },
+  { key: 'low', label: '低风险', color: colors.success },
+  { key: 'medium', label: '中风险', color: colors.warning },
+  { key: 'high', label: '高风险', color: colors.error },
+  { key: 'critical', label: '极高风险', color: colors.errorText },
 ];
 
 export default function GeneratePlanScreen() {
@@ -70,13 +71,13 @@ export default function GeneratePlanScreen() {
                 key={opt.key}
                 style={{
                   paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
-                  backgroundColor: severity === opt.key ? opt.color + '20' : '#F3F4F6',
+                  backgroundColor: severity === opt.key ? opt.color + '20' : colors.surfaceMuted,
                   borderWidth: 1,
-                  borderColor: severity === opt.key ? opt.color : '#E5E7EB',
+                  borderColor: severity === opt.key ? opt.color : colors.border,
                 }}
                 onPress={() => setSeverity(opt.key)}
               >
-                <Text style={{ fontSize: 14, fontWeight: '500', color: severity === opt.key ? opt.color : '#6B7280' }}>
+                <Text style={{ fontSize: 14, fontWeight: '500', color: severity === opt.key ? opt.color : colors.textTertiary }}>
                   {opt.label}
                 </Text>
               </TouchableOpacity>
@@ -110,7 +111,7 @@ export default function GeneratePlanScreen() {
       </ScrollView>
 
       {/* 生成按钮 */}
-      <View style={{ padding: 16, backgroundColor: '#FFFFFF', borderTopWidth: 1, borderTopColor: '#E5E7EB' }}>
+      <View style={{ padding: 16, backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.border }}>
         <TouchableOpacity
           style={[styles.primaryButton, generating && { opacity: 0.6 }]}
           onPress={handleGenerate}
@@ -118,12 +119,12 @@ export default function GeneratePlanScreen() {
         >
           {generating ? (
             <>
-              <ActivityIndicator size="small" color="#FFFFFF" />
+              <ActivityIndicator size="small" color={colors.surface} />
               <Text style={[styles.primaryButtonText, { marginLeft: 8 }]}>AI生成中...</Text>
             </>
           ) : (
             <>
-              <Ionicons name="sparkles" size={20} color="#FFFFFF" />
+              <Ionicons name="sparkles" size={20} color={colors.surface} />
               <Text style={[styles.primaryButtonText, { marginLeft: 8 }]}>AI生成预案</Text>
             </>
           )}

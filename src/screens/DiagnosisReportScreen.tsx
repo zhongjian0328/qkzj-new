@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -58,8 +59,8 @@ const DiagnosisReportScreen: React.FC = () => {
       <View style={styles.container}>
         <Header title="AI诊断报告" showBackButton onBack={() => navigation.goBack()} />
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" color="#2DBBA1" />
-          <Text style={{ marginTop: 12, color: '#6B7280' }}>加载报告...</Text>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={{ marginTop: 12, color: colors.textTertiary }}>加载报告...</Text>
         </View>
       </View>
     );
@@ -70,12 +71,12 @@ const DiagnosisReportScreen: React.FC = () => {
       <View style={styles.container}>
         <Header title="AI诊断报告" showBackButton onBack={() => navigation.goBack()} />
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}>
-          <Ionicons name="clipboard-outline" size={48} color="#9CA3AF" />
-          <Text style={{ fontSize: 18, fontWeight: '600', marginTop: 16, color: '#374151' }}>
+          <Ionicons name="clipboard-outline" size={48} color={colors.textDisabled} />
+          <Text style={{ fontSize: 18, fontWeight: '600', marginTop: 16, color: colors.textSecondary }}>
             {error || '未找到诊断报告'}
           </Text>
           <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginTop: 16 }}>
-            <Text style={{ color: '#2DBBA1' }}>返回</Text>
+            <Text style={{ color: colors.primary }}>返回</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -97,8 +98,8 @@ const DiagnosisReportScreen: React.FC = () => {
   const confidenceNum = typeof confidenceRaw === 'number' ? confidenceRaw : parseFloat(String(confidenceRaw).replace('%', ''));
   const hasValidConfidence = !isNaN(confidenceNum) && confidenceNum > 0;
   const confidenceLevel = hasValidConfidence ? (confidenceNum >= 70 ? 'high' : confidenceNum >= 40 ? 'medium' : 'low') : null;
-  const confidenceColor = confidenceLevel === 'high' ? '#22C55E' : confidenceLevel === 'medium' ? '#F59E0B' : '#EF4444';
-  const confidenceBg = confidenceLevel === 'high' ? '#DCFCE7' : confidenceLevel === 'medium' ? '#FEF3C7' : '#FEE2E2';
+  const confidenceColor = confidenceLevel === 'high' ? colors.success : confidenceLevel === 'medium' ? colors.warning : colors.error;
+  const confidenceBg = confidenceLevel === 'high' ? colors.successLight : confidenceLevel === 'medium' ? colors.warningLight : colors.errorLight;
   const confidenceLabel = confidenceLevel === 'high' ? '高置信度' : confidenceLevel === 'medium' ? '中置信度' : '低置信度';
   const controlAdvice = parsedResponse.controlAdvice || parsedResponse.emergencyMeasures || [];
   const preventionPoints = parsedResponse.preventionPoints || parsedResponse.longTermPrevention || [];
@@ -191,7 +192,7 @@ const DiagnosisReportScreen: React.FC = () => {
               )}
             </View>
             {!hasValidConfidence && confidenceRaw && (
-              <Text style={{ color: '#6B7280', marginTop: 4 }}>置信度：{confidenceRaw}</Text>
+              <Text style={{ color: colors.textTertiary, marginTop: 4 }}>置信度：{confidenceRaw}</Text>
             )}
           </View>
 
@@ -225,7 +226,7 @@ const DiagnosisReportScreen: React.FC = () => {
             <View style={styles.planContent}>
               {(Array.isArray(currentPlanItems) ? currentPlanItems : []).map((item: any, index: number) => (
                 <View key={index} style={styles.planItem}>
-                  <Ionicons name="checkmark-circle" size={18} color="#2DBBA1" />
+                  <Ionicons name="checkmark-circle" size={18} color={colors.primary} />
                   <View>
                     <Text style={styles.planItemTitle}>{item.title || item.measure || `建议${index + 1}`}</Text>
                     <Text style={styles.planItemDescription}>{item.description || (typeof item === 'string' ? item : '')}</Text>
@@ -233,7 +234,7 @@ const DiagnosisReportScreen: React.FC = () => {
                 </View>
               ))}
               {(!Array.isArray(currentPlanItems) || currentPlanItems.length === 0) && (
-                <Text style={{ color: '#6B7280', textAlign: 'center', padding: 16 }}>暂无{activePlanTab}阶段建议</Text>
+                <Text style={{ color: colors.textTertiary, textAlign: 'center', padding: 16 }}>暂无{activePlanTab}阶段建议</Text>
               )}
             </View>
           </View>

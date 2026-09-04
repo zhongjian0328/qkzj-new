@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, FlatList, TextInput, ActivityIndicator, RefreshControl } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -7,20 +8,20 @@ import { teachingCaseApi } from '../services/api';
 import { StyleSheet } from 'react-native';
 
 const COLORS = {
-  primary: '#2DBBA1',
-  primaryDark: '#1F5E52',
-  bgLight: '#E6F7F3',
-  text: '#1F2937',
-  textSecondary: '#6B7280',
-  border: '#E5E7EB',
-  danger: '#EF4444',
-  warning: '#F59E0B',
+  primary: colors.primary,
+  primaryDark: colors.primaryDark,
+  bgLight: colors.primaryLight,
+  text: colors.textPrimary,
+  textSecondary: colors.textTertiary,
+  border: colors.border,
+  danger: colors.error,
+  warning: colors.warning,
 };
 
 const STATUS_CONFIG: Record<string, { color: string; label: string }> = {
-  draft: { color: '#9CA3AF', label: '草稿' },
+  draft: { color: colors.textDisabled, label: '草稿' },
   pending_review: { color: COLORS.warning, label: '待审核' },
-  approved: { color: '#22C55E', label: '已通过' },
+  approved: { color: colors.success, label: '已通过' },
   rejected: { color: COLORS.danger, label: '已驳回' },
 };
 
@@ -83,7 +84,7 @@ export default function TeachingCaseListScreen() {
             {item.authorName || item.author || '匿名'}
           </Text>
           <Text style={cardStyles.views}>
-            <Ionicons name="eye-outline" size={14} color="#9CA3AF" /> {item.viewCount || 0}
+            <Ionicons name="eye-outline" size={14} color={colors.textDisabled} /> {item.viewCount || 0}
           </Text>
         </View>
       </TouchableOpacity>
@@ -117,7 +118,7 @@ export default function TeachingCaseListScreen() {
       {/* 搜索栏 */}
       <View style={styles.searchContainer}>
         <View style={styles.searchInputWrapper}>
-          <Ionicons name="search-outline" size={18} color="#9CA3AF" />
+          <Ionicons name="search-outline" size={18} color={colors.textDisabled} />
           <TextInput
             style={styles.searchInput}
             placeholder="搜索案例标题..."
@@ -127,7 +128,7 @@ export default function TeachingCaseListScreen() {
           />
           {searchText.length > 0 && (
             <TouchableOpacity onPress={() => { setSearchText(''); fetchCases(); }}>
-              <Ionicons name="close-circle" size={18} color="#9CA3AF" />
+              <Ionicons name="close-circle" size={18} color={colors.textDisabled} />
             </TouchableOpacity>
           )}
         </View>
@@ -160,7 +161,7 @@ export default function TeachingCaseListScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.primary]} />}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Ionicons name="book-outline" size={48} color="#9CA3AF" />
+            <Ionicons name="book-outline" size={48} color={colors.textDisabled} />
             <Text style={styles.emptyTitle}>暂无教学案例</Text>
             <Text style={styles.emptyDesc}>创建案例，记录禽病诊断经验</Text>
           </View>
@@ -171,16 +172,16 @@ export default function TeachingCaseListScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F9FAFB' },
+  container: { flex: 1, backgroundColor: colors.surfaceSoft },
   searchContainer: { paddingHorizontal: 12, paddingVertical: 8 },
   searchInputWrapper: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
-    backgroundColor: '#FFFFFF', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8,
+    backgroundColor: colors.surface, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8,
     borderWidth: 1, borderColor: COLORS.border,
   },
   searchInput: { flex: 1, fontSize: 14, color: COLORS.text },
   filterScroll: { paddingHorizontal: 12, paddingVertical: 4, gap: 8 },
-  filterChip: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 16, borderWidth: 1, borderColor: COLORS.border, backgroundColor: '#FFFFFF' },
+  filterChip: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: 16, borderWidth: 1, borderColor: COLORS.border, backgroundColor: colors.surface },
   filterChipActive: { backgroundColor: COLORS.bgLight, borderColor: COLORS.primary },
   filterChipText: { fontSize: 13, color: COLORS.textSecondary },
   filterChipTextActive: { color: COLORS.primaryDark, fontWeight: '600' },
@@ -192,7 +193,7 @@ const styles = StyleSheet.create({
 
 const cardStyles = StyleSheet.create({
   listContent: { padding: 12, gap: 12 },
-  card: { backgroundColor: '#FFFFFF', borderRadius: 12, padding: 14, borderWidth: 1, borderColor: COLORS.border },
+  card: { backgroundColor: colors.surface, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: COLORS.border },
   title: { fontSize: 15, fontWeight: '600', color: COLORS.text, marginBottom: 8 },
   metaRow: { flexDirection: 'row', gap: 8, marginBottom: 8 },
   tag: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10 },
@@ -200,5 +201,5 @@ const cardStyles = StyleSheet.create({
   findings: { fontSize: 13, color: COLORS.textSecondary, marginBottom: 8, lineHeight: 18 },
   footer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   author: { fontSize: 12, color: COLORS.textSecondary },
-  views: { fontSize: 12, color: '#9CA3AF', flexDirection: 'row', alignItems: 'center', gap: 2 },
+  views: { fontSize: 12, color: colors.textDisabled, flexDirection: 'row', alignItems: 'center', gap: 2 },
 });

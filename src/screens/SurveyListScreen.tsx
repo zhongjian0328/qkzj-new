@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
@@ -246,7 +247,7 @@ const SurveyListScreen: React.FC = () => {
           <TouchableOpacity
             onPress={() => navigation.navigate('SurveyForm', { mode: 'create' })}
           >
-            <Text style={{ color: '#2DBBA1', fontSize: 16, fontWeight: '600' }}>
+            <Text style={{ color: colors.primary, fontSize: 16, fontWeight: '600' }}>
               新增
             </Text>
           </TouchableOpacity>
@@ -266,7 +267,7 @@ const SurveyListScreen: React.FC = () => {
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#2DBBA1" />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : (
         <FlatList
@@ -279,8 +280,8 @@ const SurveyListScreen: React.FC = () => {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={['#2DBBA1']}
-              tintColor="#2DBBA1"
+              colors={[colors.primary]}
+              tintColor={colors.primary}
             />
           }
         />
@@ -296,33 +297,33 @@ const local = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: colors.border,
     gap: 12,
   },
   tab: {
     paddingVertical: 8,
     paddingHorizontal: 20,
     borderRadius: 20,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: colors.surfaceMuted,
   },
   tabActive: {
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
   },
   tabText: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.textTertiary,
     fontWeight: '500',
   },
   tabTextActive: {
-    color: '#FFFFFF',
+    color: colors.surface,
     fontWeight: '600',
   },
 
   // 错误提示
   errorBox: {
-    backgroundColor: '#FEF2F2',
+    backgroundColor: colors.errorLight,
     margin: 16,
     borderRadius: 8,
     padding: 12,
@@ -332,17 +333,17 @@ const local = StyleSheet.create({
   },
   errorText: {
     fontSize: 14,
-    color: '#DC2626',
+    color: colors.error,
     marginRight: 12,
   },
   retryBtn: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    backgroundColor: '#DC2626',
+    backgroundColor: colors.error,
     borderRadius: 6,
   },
   retryBtnText: {
-    color: '#FFFFFF',
+    color: colors.surface,
     fontSize: 13,
     fontWeight: '500',
   },
@@ -355,7 +356,7 @@ const local = StyleSheet.create({
 
   // 卡片
   surveyCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     marginBottom: 12,
     shadowColor: '#000',
@@ -382,10 +383,10 @@ const local = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     fontWeight: '600',
-    color: '#1F2937',
+    color: colors.textPrimary,
   },
   draftBadge: {
-    backgroundColor: '#FEF3C7',
+    backgroundColor: colors.warningLight,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 8,
@@ -393,18 +394,18 @@ const local = StyleSheet.create({
   },
   draftBadgeText: {
     fontSize: 11,
-    color: '#92400E',
+    color: colors.warningText,
     fontWeight: '500',
   },
   dateText: {
     fontSize: 13,
-    color: '#9CA3AF',
+    color: colors.textDisabled,
   },
 
   // 统计网格
   statsGrid: {
     flexDirection: 'row',
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surfaceSoft,
     borderRadius: 8,
     padding: 12,
     marginBottom: 12,
@@ -415,13 +416,13 @@ const local = StyleSheet.create({
   },
   statLabel: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.textTertiary,
     marginBottom: 4,
   },
   statValue: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#1F2937',
+    color: colors.textPrimary,
   },
 
   // 比率行
@@ -436,21 +437,21 @@ const local = StyleSheet.create({
   },
   rateLabel: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.textTertiary,
     marginBottom: 2,
   },
   rateValue: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#1F5E52',
+    color: colors.primaryDark,
   },
   rateValueDanger: {
-    color: '#DC2626',
+    color: colors.error,
   },
   rateDivider: {
     width: 1,
     height: 30,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: colors.border,
   },
 
   // 操作按钮
@@ -460,7 +461,7 @@ const local = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderTopWidth: 1,
-    borderTopColor: '#F3F4F6',
+    borderTopColor: colors.surfaceMuted,
     gap: 8,
   },
   actionBtn: {
@@ -469,18 +470,18 @@ const local = StyleSheet.create({
     borderRadius: 6,
   },
   actionBtnEdit: {
-    backgroundColor: '#E6F7F3',
+    backgroundColor: colors.primaryLight,
   },
   actionBtnDelete: {
-    backgroundColor: '#FEE2E2',
+    backgroundColor: colors.errorLight,
   },
   actionBtnText: {
     fontSize: 13,
     fontWeight: '500',
-    color: '#1F5E52',
+    color: colors.primaryDark,
   },
   actionBtnDeleteText: {
-    color: '#DC2626',
+    color: colors.error,
   },
 });
 

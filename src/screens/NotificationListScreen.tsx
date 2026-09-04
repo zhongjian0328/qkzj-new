@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useCallback } from 'react';
 import {
   View,
@@ -36,22 +37,22 @@ interface NotificationItem {
 // ---------------------------------------------------------------------------
 
 const TYPE_CONFIG: Record<NotificationType, { label: string; color: string; icon: string; bg: string }> = {
-  warning: { label: '预警', color: '#EF4444', icon: 'warning', bg: '#FEF2F2' },
-  followup: { label: '随访', color: '#3B82F6', icon: 'clipboard-outline', bg: '#EFF6FF' },
-  system: { label: '系统', color: '#6B7280', icon: 'settings-outline', bg: '#F3F4F6' },
-  diagnosis: { label: '诊断', color: '#22C55E', icon: 'medkit-outline', bg: '#F0FFF4' },
-  ticket: { label: '工单', color: '#F97316', icon: 'document-text-outline', bg: '#FFF7ED' },
+  warning: { label: '预警', color: colors.error, icon: 'warning', bg: colors.errorLight },
+  followup: { label: '随访', color: colors.info, icon: 'clipboard-outline', bg: colors.infoLight },
+  system: { label: '系统', color: colors.textTertiary, icon: 'settings-outline', bg: colors.surfaceMuted },
+  diagnosis: { label: '诊断', color: colors.success, icon: 'medkit-outline', bg: colors.successLight },
+  ticket: { label: '工单', color: colors.accent.orange, icon: 'document-text-outline', bg: colors.accent.orangeLight },
 };
 
 const COLORS = {
-  primary: '#2DBBA1',
-  primaryDark: '#1F5E52',
-  bgLight: '#E6F7F3',
-  text: '#1F2937',
-  textSecondary: '#6B7280',
-  border: '#E5E7EB',
-  white: '#FFFFFF',
-  red: '#EF4444',
+  primary: colors.primary,
+  primaryDark: colors.primaryDark,
+  bgLight: colors.primaryLight,
+  text: colors.textPrimary,
+  textSecondary: colors.textTertiary,
+  border: colors.border,
+  white: colors.surface,
+  red: colors.error,
 };
 
 // ---------------------------------------------------------------------------
@@ -231,7 +232,7 @@ export default function NotificationListScreen() {
                 onPress={() => handleDelete(item._id)}
                 activeOpacity={0.6}
               >
-                <Ionicons name="trash-outline" size={16} color="#9CA3AF" />
+                <Ionicons name="trash-outline" size={16} color={colors.textDisabled} />
               </TouchableOpacity>
             </View>
           </View>
@@ -323,7 +324,7 @@ export default function NotificationListScreen() {
         }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Ionicons name="notifications-outline" size={56} color="#9CA3AF" />
+            <Ionicons name="notifications-outline" size={56} color={colors.textDisabled} />
             <Text style={styles.emptyTitle}>暂无通知</Text>
             <Text style={styles.emptyDesc}>
               新的预警、随访、系统消息将在这里显示
@@ -340,7 +341,7 @@ export default function NotificationListScreen() {
 // ---------------------------------------------------------------------------
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F9FAFB' },
+  container: { flex: 1, backgroundColor: colors.surfaceSoft },
 
   // 加载中
   loadingCenter: {
@@ -371,7 +372,7 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.surface,
   },
 
   // 未读统计条
@@ -386,7 +387,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.bgLight,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#C6F6D5',
+    borderColor: colors.successLight,
   },
   unreadSummaryLeft: {
     flexDirection: 'row',
@@ -410,7 +411,7 @@ const styles = StyleSheet.create({
   markAllButtonText: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.surface,
   },
 
   // 错误条
@@ -420,7 +421,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 12,
     marginBottom: 8,
     padding: 10,
-    backgroundColor: '#FEF2F2',
+    backgroundColor: colors.errorLight,
     borderRadius: 8,
     gap: 6,
   },
@@ -433,7 +434,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 4,
-    backgroundColor: '#FEE2E2',
+    backgroundColor: colors.errorLight,
   },
   retryButtonText: {
     fontSize: 12,
@@ -456,7 +457,7 @@ const styles = StyleSheet.create({
   cardUnread: {
     borderColor: COLORS.primary,
     borderWidth: 1,
-    backgroundColor: '#F0FFFD',
+    backgroundColor: colors.primaryLighter,
   },
   typeBar: { width: 4 },
   cardContent: { flex: 1, padding: 12 },
@@ -500,7 +501,7 @@ const styles = StyleSheet.create({
   },
   time: {
     fontSize: 11,
-    color: '#9CA3AF',
+    color: colors.textDisabled,
   },
   deleteButton: {
     padding: 4,

@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Image, Alert, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -300,7 +301,7 @@ const AuthCertificationScreen: React.FC = () => {
         <View style={styles.authTypeInfoCard}>
           <View style={styles.authTypeInfoContent}>
             <View style={styles.authTypeInfoIcon}>
-              <Ionicons name="shield-checkmark" size={24} color="#2DBBA1" />
+              <Ionicons name="shield-checkmark" size={24} color={colors.primary} />
             </View>
             <View style={styles.authTypeInfoText}>
               <Text style={styles.authTypeInfoTitle}>{authTypeInfo.title}</Text>
@@ -312,7 +313,7 @@ const AuthCertificationScreen: React.FC = () => {
             <Text style={styles.authBenefitsTitle}>认证后可享受：</Text>
             {authTypeInfo.benefits.map((benefit, index) => (
               <View key={index} style={styles.authBenefitItem}>
-                <Ionicons name="checkmark-circle" size={16} color="#2DBBA1" />
+                <Ionicons name="checkmark-circle" size={16} color={colors.primary} />
                 <Text style={styles.authBenefitText}>{benefit}</Text>
               </View>
             ))}
@@ -343,10 +344,10 @@ const AuthCertificationScreen: React.FC = () => {
                   setPickerVisible(true);
                 }}
               >
-                <Text style={[styles.pickerFieldText, !formData.enterpriseType && { color: '#9CA3AF' }]}>
+                <Text style={[styles.pickerFieldText, !formData.enterpriseType && { color: colors.textDisabled }]}>
                   {formData.enterpriseType || '请选择企业类型'}
                 </Text>
-                <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
+                <Ionicons name="chevron-down" size={20} color={colors.textDisabled} />
               </TouchableOpacity>
             </View>
             
@@ -388,7 +389,7 @@ const AuthCertificationScreen: React.FC = () => {
                     );
                   }}
                 >
-                  <Ionicons name="document-attach" size={32} color="#9CA3AF" />
+                  <Ionicons name="document-attach" size={32} color={colors.textDisabled} />
                   <Text style={styles.authUploadText}>点击上传营业执照照片</Text>
                   <Text style={styles.authUploadSubtext}>支持 JPG、PNG 格式，文件不超过 5MB</Text>
                 </TouchableOpacity>
@@ -486,10 +487,10 @@ const AuthCertificationScreen: React.FC = () => {
                   setPickerVisible(true);
                 }}
               >
-                <Text style={[styles.pickerFieldText, !formData.institutionType && { color: '#9CA3AF' }]}>
+                <Text style={[styles.pickerFieldText, !formData.institutionType && { color: colors.textDisabled }]}>
                   {formData.institutionType || '请选择机构类型'}
                 </Text>
-                <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
+                <Ionicons name="chevron-down" size={20} color={colors.textDisabled} />
               </TouchableOpacity>
             </View>
             
@@ -510,7 +511,7 @@ const AuthCertificationScreen: React.FC = () => {
                     );
                   }}
                 >
-                  <Ionicons name="document-text" size={32} color="#9CA3AF" />
+                  <Ionicons name="document-text" size={32} color={colors.textDisabled} />
                   <Text style={styles.authUploadText}>点击上传资质证书</Text>
                   <Text style={styles.authUploadSubtext}>兽医资格证、经营许可证等</Text>
                 </TouchableOpacity>
@@ -554,11 +555,11 @@ const AuthCertificationScreen: React.FC = () => {
           disabled={isSubmitting}
         >
           {isSubmitting ? (
-            <ActivityIndicator color="#1F5E52" />
+            <ActivityIndicator color={colors.primaryDark} />
           ) : (
             <>
-              <Ionicons name="cloud-upload" size={16} color="#1F5E52" style={{ marginRight: 8 }} />
-              <Text style={{ color: '#1F5E52', fontSize: 16 }}>提交审核</Text>
+              <Ionicons name="cloud-upload" size={16} color={colors.primaryDark} style={{ marginRight: 8 }} />
+              <Text style={{ color: colors.primaryDark, fontSize: 16 }}>提交审核</Text>
             </>
           )}
         </TouchableOpacity>

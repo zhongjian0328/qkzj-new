@@ -3,6 +3,7 @@ import { Text, StyleSheet, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
 import { getIsSyncing, onSyncingChange } from '../services/syncManager';
+import { colors, spacing, typography } from '../theme';
 
 /**
  * 离线状态横幅指示器
@@ -111,15 +112,18 @@ const OfflineBanner: React.FC = () => {
         {
           transform: [{ translateY }],
           opacity,
-          backgroundColor: isOffline ? '#EF4444' : '#22C55E',
+          backgroundColor: isOffline ? colors.error : colors.success,
         },
       ]}
     >
-      <Ionicons name={isOffline ? 'alert-circle' : 'sync'} size={16} color="#FFFFFF" style={{ marginRight: 8 }} />
+      <Ionicons
+        name={isOffline ? 'alert-circle' : 'sync'}
+        size={16}
+        color={colors.textOnPrimary}
+        style={{ marginRight: spacing.sm }}
+      />
       <Text style={styles.text}>
-        {isOffline
-          ? '网络连接中断，当前显示离线缓存数据'
-          : '网络已恢复，正在同步数据...'}
+        {isOffline ? '网络连接中断，当前显示离线缓存数据' : '网络已恢复，正在同步数据...'}
       </Text>
     </Animated.View>
   );
@@ -135,7 +139,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.lg,
     paddingVertical: 10,
     elevation: 10,
     shadowColor: '#000',
@@ -144,9 +148,9 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   text: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    fontSize: typography.size.small,
+    fontWeight: typography.weight.semibold,
+    color: colors.textOnPrimary,
     textAlign: 'center',
   },
 });

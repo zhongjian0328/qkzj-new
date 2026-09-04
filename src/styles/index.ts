@@ -1,10 +1,11 @@
 import { StyleSheet } from 'react-native';
+import { colors } from '../theme';
 
 export const styles = StyleSheet.create({
   // 启动屏幕样式
   splashScreenContainer: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -12,7 +13,7 @@ export const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: '#E6F7F3',
+    backgroundColor: colors.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 24,
@@ -23,12 +24,12 @@ export const styles = StyleSheet.create({
   splashAppTitle: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#1F5E52',
+    color: colors.primaryDark,
     marginBottom: 8,
   },
   splashAppSubtitle: {
     fontSize: 16,
-    color: '#666',
+    color: colors.textSecondary,
   },
   // 多角色首页样式
   homeWelcomeSection: {
@@ -48,12 +49,12 @@ export const styles = StyleSheet.create({
   homeWelcomeTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#1F5E52',
+    color: colors.primaryDark,
     marginBottom: 8,
   },
   homeWelcomeDescription: {
     fontSize: 16,
-    color: '#666',
+    color: colors.textSecondary,
   },
   homeWelcomeIcon: {
     width: 80,
@@ -74,7 +75,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
-    backgroundColor: '#E6F7F3',
+    backgroundColor: colors.primaryLight,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -87,13 +88,13 @@ export const styles = StyleSheet.create({
   homeSectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1F5E52',
+    color: colors.primaryDark,
   },
   homeSectionItems: {
     gap: 16,
   },
   homeSectionItemCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     shadowColor: '#000',
@@ -116,7 +117,7 @@ export const styles = StyleSheet.create({
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#E6F7F3',
+    backgroundColor: colors.primaryLight,
     marginRight: 16,
   },
   homeSectionItemInfo: {
@@ -125,25 +126,25 @@ export const styles = StyleSheet.create({
   homeSectionItemTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1F5E52',
+    color: colors.primaryDark,
     marginBottom: 4,
   },
   homeSectionItemDescription: {
     fontSize: 14,
-    color: '#666',
+    color: colors.textSecondary,
   },
   homeSectionItemArrow: {
     marginLeft: 8,
   },
   homeSectionItemArrowText: {
     fontSize: 20,
-    color: '#2DBBA1',
+    color: colors.primary,
   },
   homeAnnouncementSection: {
     marginTop: 24,
   },
   homeAnnouncementCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
   },
@@ -160,12 +161,12 @@ export const styles = StyleSheet.create({
   homeAnnouncementTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1F5E52',
+    color: colors.primaryDark,
     marginBottom: 4,
   },
   homeAnnouncementDescription: {
     fontSize: 14,
-    color: '#666',
+    color: colors.textSecondary,
   },
   // 首页差异化：渐变CTA大卡片
   homeCtaCard: {
@@ -184,7 +185,7 @@ export const styles = StyleSheet.create({
   homeCtaTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#1F5E52',
+    color: colors.primaryDark,
     marginBottom: 6,
   },
   homeCtaDesc: {
@@ -201,7 +202,7 @@ export const styles = StyleSheet.create({
   },
   // 首页差异化：数据指标卡
   homeMetricCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     flex: 1,
@@ -220,7 +221,7 @@ export const styles = StyleSheet.create({
   homeMetricLabel: {
     fontSize: 13,
     fontWeight: '500',
-    color: '#666',
+    color: colors.textSecondary,
   },
   homeMetricValue: {
     fontSize: 26,
@@ -228,17 +229,17 @@ export const styles = StyleSheet.create({
   },
   homeMetricUnit: {
     fontSize: 13,
-    color: '#666',
+    color: colors.textSecondary,
     marginLeft: 2,
   },
   homeMetricSub: {
     fontSize: 12,
-    color: '#999',
+    color: colors.textTertiary,
     marginTop: 4,
   },
   // 首页差异化：2x2网格卡
   homeGridCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     flex: 1,
@@ -261,18 +262,18 @@ export const styles = StyleSheet.create({
   homeGridTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#1F5E52',
+    color: colors.primaryDark,
     marginBottom: 2,
   },
   homeGridDesc: {
     fontSize: 12,
-    color: '#999',
+    color: colors.textTertiary,
   },
   // 首页差异化：进度条
   homeProgressBar: {
     flex: 1,
     height: 8,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: colors.border,
     borderRadius: 4,
     marginHorizontal: 12,
   },
@@ -282,7 +283,7 @@ export const styles = StyleSheet.create({
   },
   // 首页差异化：告警条目
   homeAlertCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     flexDirection: 'row',
@@ -297,7 +298,7 @@ export const styles = StyleSheet.create({
   },
   // 首页差异化：任务条目
   homeTaskCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     flexDirection: 'row',
@@ -319,7 +320,7 @@ export const styles = StyleSheet.create({
   },
   // 首页差异化：信息列表条目
   homeInfoCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     shadowColor: '#000',
@@ -336,17 +337,17 @@ export const styles = StyleSheet.create({
   homeInfoTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#1F5E52',
+    color: colors.primaryDark,
     marginBottom: 4,
   },
   homeInfoSub: {
     fontSize: 13,
-    color: '#666',
+    color: colors.textSecondary,
     marginBottom: 2,
   },
   homeInfoTime: {
     fontSize: 12,
-    color: '#999',
+    color: colors.textTertiary,
   },
   // 首页差异化：区域标题
   homeSectionHeaderRow: {
@@ -362,11 +363,11 @@ export const styles = StyleSheet.create({
   homeSectionHeaderTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1F5E52',
+    color: colors.primaryDark,
   },
   homeSectionHeaderAction: {
     fontSize: 14,
-    color: '#2DBBA1',
+    color: colors.primary,
   },
   // 首页差异化：统计3格
   homeStats3Col: {
@@ -375,7 +376,7 @@ export const styles = StyleSheet.create({
     marginBottom: 24,
   },
   homeStats3Card: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     flex: 1,
@@ -401,7 +402,7 @@ export const styles = StyleSheet.create({
   },
   homeStats3Label: {
     fontSize: 12,
-    color: '#666',
+    color: colors.textSecondary,
   },
   // 首页差异化：2x2网格容器
   homeGrid2x2: {
@@ -415,21 +416,21 @@ export const styles = StyleSheet.create({
   // 全局样式定义
   container: {
     flex: 1,
-    backgroundColor: '#F8FFF7', // 统一背景色为浅绿色
+    backgroundColor: colors.background, // 统一背景色为浅绿色
   },
   scrollContent: {
     padding: 16,
   },
   // 统一按钮样式
   primaryButton: {
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
     gap: 8,
-    shadowColor: '#2DBBA1',
+    shadowColor: colors.primary,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -441,12 +442,12 @@ export const styles = StyleSheet.create({
   primaryButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.surface,
   },
   secondaryButton: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderWidth: 2,
-    borderColor: '#2DBBA1',
+    borderColor: colors.primary,
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
@@ -457,7 +458,7 @@ export const styles = StyleSheet.create({
   secondaryButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2DBBA1',
+    color: colors.primary,
   },
   // 阶段指示器样式
   stepIndicatorContainer: {
@@ -476,37 +477,37 @@ export const styles = StyleSheet.create({
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#E0E0E0',
+    backgroundColor: colors.border,
   },
   stepIndicatorActive: {
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
   },
   stepIndicatorCompleted: {
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
   },
   stepIndicatorText: {
-    color: '#FFFFFF',
+    color: colors.surface,
     fontWeight: 'bold',
     fontSize: 14,
   },
   stepIndicatorTextActive: {
-    color: '#FFFFFF',
+    color: colors.surface,
     fontWeight: 'bold',
     fontSize: 14,
   },
   stepIndicatorTextCompleted: {
-    color: '#FFFFFF',
+    color: colors.surface,
     fontWeight: 'bold',
     fontSize: 14,
   },
   stepSeparator: {
     width: 40,
     height: 2,
-    backgroundColor: '#E0E0E0',
+    backgroundColor: colors.border,
     marginHorizontal: 10,
   },
   stepSeparatorCompleted: {
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
   },
   // 新的阶段指示器样式（基于交互原型）
   stageIndicatorContainer: {
@@ -528,29 +529,29 @@ export const styles = StyleSheet.create({
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#E5E7EB',
+    backgroundColor: colors.border,
     marginBottom: 4,
   },
   stageCircleText: {
     fontSize: 12,
     fontWeight: '500',
-    color: '#9CA3AF',
+    color: colors.textDisabled,
   },
   stageLine: {
     flex: 1,
     height: 2,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: colors.border,
     marginHorizontal: 12,
   },
   stageText: {
     fontSize: 12,
-    color: '#9CA3AF',
+    color: colors.textDisabled,
   },
   stageActive: {
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
   },
   stageActiveText: {
-    color: '#2DBBA1',
+    color: colors.primary,
     fontWeight: '500',
   },
   stepCard: {
@@ -560,13 +561,13 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 16,
-    color: '#1F5E52',
+    color: colors.primaryDark,
   },
   sectionSubtitle: {
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 12,
-    color: '#1F5E52',
+    color: colors.primaryDark,
   },
   input: {
     marginBottom: 16,
@@ -579,7 +580,7 @@ export const styles = StyleSheet.create({
     alignItems: 'flex-end',
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
+    borderTopColor: colors.border,
   },
   stepButtonContainer: {
     flexDirection: 'row',
@@ -600,19 +601,19 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: colors.border,
     marginRight: 10,
     marginBottom: 10,
   },
   symptomItemSelected: {
-    backgroundColor: '#2DBBA1',
-    borderColor: '#2DBBA1',
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   symptomItemText: {
-    color: '#333333',
+    color: colors.textPrimary,
   },
   symptomItemTextSelected: {
-    color: '#FFFFFF',
+    color: colors.surface,
   },
   imageUploadContainer: {
     marginBottom: 16,
@@ -634,7 +635,7 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     top: -8,
     right: -8,
-    backgroundColor: '#FF5252',
+    backgroundColor: colors.error,
     borderRadius: 10,
     width: 20,
     height: 20,
@@ -642,7 +643,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   removeImageText: {
-    color: '#FFFFFF',
+    color: colors.surface,
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -650,12 +651,12 @@ export const styles = StyleSheet.create({
     height: 100,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.surfaceMuted,
     borderRadius: 8,
     marginBottom: 10,
   },
   noImagesText: {
-    color: '#9E9E9E',
+    color: colors.textTertiary,
   },
   uploadButton: {
     alignSelf: 'flex-start',
@@ -674,11 +675,11 @@ export const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 10,
-    color: '#1F5E52',
+    color: colors.primaryDark,
     fontSize: 16,
   },
   diagnosisSummary: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: colors.surfaceMuted,
     padding: 16,
     borderRadius: 8,
     marginBottom: 20,
@@ -687,11 +688,11 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#1F5E52',
+    color: colors.primaryDark,
   },
   summaryText: {
     marginBottom: 5,
-    color: '#333333',
+    color: colors.textPrimary,
   },
   messageContainer: {
     marginVertical: 8,
@@ -710,11 +711,11 @@ export const styles = StyleSheet.create({
     maxWidth: '100%',
   },
   userMessageBubble: {
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
     borderBottomRightRadius: 4,
   },
   aiMessageBubble: {
-    backgroundColor: '#F0F0F0',
+    backgroundColor: colors.surfaceMuted,
     borderBottomLeftRadius: 4,
   },
   messageText: {
@@ -722,10 +723,10 @@ export const styles = StyleSheet.create({
     lineHeight: 22,
   },
   userMessageText: {
-    color: '#FFFFFF',
+    color: colors.surface,
   },
   aiMessageText: {
-    color: '#333333',
+    color: colors.textPrimary,
   },
   messageTimestamp: {
     fontSize: 12,
@@ -757,12 +758,12 @@ export const styles = StyleSheet.create({
     height: 100,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: colors.border,
   },
   imagePickerButton: {
     marginRight: 10,
     padding: 10,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: colors.surfaceMuted,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -772,7 +773,7 @@ export const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: colors.surfaceMuted,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -787,7 +788,7 @@ export const styles = StyleSheet.create({
   },
   typingText: {
     marginLeft: 8,
-    color: '#9E9E9E',
+    color: colors.textTertiary,
   },
   // 登录和注册页面样式
   roleContainer: {
@@ -800,21 +801,21 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 25,
     borderWidth: 2,
-    borderColor: '#2DBBA1',
+    borderColor: colors.primary,
     backgroundColor: 'transparent',
   },
   roleButtonActive: {
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
   },
   roleButtonText: {
-    color: '#2DBBA1',
+    color: colors.primary,
     fontWeight: 'bold',
   },
   roleButtonTextActive: {
-    color: '#FFFFFF',
+    color: colors.surface,
   },
   errorText: {
-    color: '#FF5252',
+    color: colors.error,
     marginBottom: 16,
     textAlign: 'center',
   },
@@ -827,10 +828,10 @@ export const styles = StyleSheet.create({
     marginTop: 20,
   },
   loginLinkText: {
-    color: '#666666',
+    color: colors.textSecondary,
   },
   loginLink: {
-    color: '#2DBBA1',
+    color: colors.primary,
     fontWeight: 'bold',
     marginLeft: 5,
   },
@@ -838,17 +839,17 @@ export const styles = StyleSheet.create({
   introCard: {
     marginBottom: 20,
     padding: 20,
-    backgroundColor: '#E8F5E8',
+    backgroundColor: colors.primaryLight,
   },
   introTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#1F5E52',
+    color: colors.primaryDark,
   },
   introText: {
     fontSize: 16,
-    color: '#666666',
+    color: colors.textSecondary,
     lineHeight: 24,
   },
   diagnosisModesContainer: {
@@ -872,11 +873,11 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#1F5E52',
+    color: colors.primaryDark,
   },
   modeDescription: {
     fontSize: 14,
-    color: '#666666',
+    color: colors.textSecondary,
     textAlign: 'center',
     marginBottom: 15,
     lineHeight: 20,
@@ -893,17 +894,17 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#1F5E52',
+    color: colors.primaryDark,
     marginBottom: 10,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666666',
+    color: colors.textSecondary,
     marginBottom: 30,
   },
   loginCard: {
     padding: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {
@@ -917,7 +918,7 @@ export const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#1F5E52',
+    color: colors.primaryDark,
     marginBottom: 20,
     textAlign: 'center',
   },
@@ -925,7 +926,7 @@ export const styles = StyleSheet.create({
     textAlign: 'right',
     marginTop: 10,
     marginBottom: 20,
-    color: '#2DBBA1',
+    color: colors.primary,
     fontWeight: 'bold',
   },
   registerLink: {
@@ -934,17 +935,17 @@ export const styles = StyleSheet.create({
     marginTop: 20,
   },
   registerLinkText: {
-    color: '#666666',
+    color: colors.textSecondary,
   },
   registerLinkButton: {
-    color: '#2DBBA1',
+    color: colors.primary,
     fontWeight: 'bold',
     marginLeft: 5,
   },
   // 聊天诊断页面样式
   chatContainer: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
   },
   chatContent: {
     flex: 1,
@@ -958,7 +959,7 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 15,
-    color: '#1F5E52',
+    color: colors.primaryDark,
     textAlign: 'center',
   },
   guideContainer: {
@@ -976,8 +977,8 @@ export const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: '#2DBBA1',
-    color: '#FFFFFF',
+    backgroundColor: colors.primary,
+    color: colors.surface,
     textAlign: 'center',
     lineHeight: 30,
     fontWeight: 'bold',
@@ -986,7 +987,7 @@ export const styles = StyleSheet.create({
   guideItemText: {
     flex: 1,
     fontSize: 14,
-    color: '#666666',
+    color: colors.textSecondary,
     lineHeight: 20,
   },
   // 登录页面样式补充
@@ -1000,23 +1001,23 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 25,
     borderWidth: 2,
-    borderColor: '#2DBBA1',
+    borderColor: colors.primary,
     backgroundColor: 'transparent',
   },
   loginTypeButtonActive: {
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
   },
   loginTypeText: {
-    color: '#2DBBA1',
+    color: colors.primary,
     fontWeight: 'bold',
   },
   loginTypeTextActive: {
-    color: '#FFFFFF',
+    color: colors.surface,
   },
   // 登录模式切换样式
   loginModeSwitcher: {
     flexDirection: 'row',
-    backgroundColor: '#E5E7EB',
+    backgroundColor: colors.border,
     borderRadius: 8,
     padding: 4,
     marginBottom: 16,
@@ -1028,7 +1029,7 @@ export const styles = StyleSheet.create({
     borderRadius: 6,
   },
   loginModeActive: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -1041,10 +1042,10 @@ export const styles = StyleSheet.create({
   loginModeText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#6B7280',
+    color: colors.textTertiary,
   },
   loginModeTextActive: {
-    color: '#3BCCA5',
+    color: colors.primary,
     fontWeight: '600',
   },
   verificationContainer: {
@@ -1059,14 +1060,14 @@ export const styles = StyleSheet.create({
   codeButton: {
     paddingVertical: 10,
     paddingHorizontal: 15,
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
     borderRadius: 8,
   },
   codeButtonDisabled: {
-    backgroundColor: '#B0B0B0',
+    backgroundColor: colors.textDisabled,
   },
   codeButtonText: {
-    color: '#FFFFFF',
+    color: colors.surface,
     fontWeight: 'bold',
   },
   loginButton: {
@@ -1078,7 +1079,7 @@ export const styles = StyleSheet.create({
     marginTop: 20,
   },
   footerText: {
-    color: '#666666',
+    color: colors.textSecondary,
   },
   // 新登录界面样式
   loginLogoSection: {
@@ -1091,7 +1092,7 @@ export const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: 24,
-    backgroundColor: '#E6F7F3',
+    backgroundColor: colors.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
@@ -1111,12 +1112,12 @@ export const styles = StyleSheet.create({
   loginAppTitle: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   loginAppSubtitle: {
     fontSize: 16,
-    color: '#4B5563',
+    color: colors.textSecondary,
     textAlign: 'center',
   },
   loginFormSection: {
@@ -1125,7 +1126,7 @@ export const styles = StyleSheet.create({
   },
   loginTabSwitcher: {
     flexDirection: 'row',
-    backgroundColor: '#E5E7EB',
+    backgroundColor: colors.border,
     borderRadius: 8,
     padding: 4,
     marginBottom: 24,
@@ -1137,7 +1138,7 @@ export const styles = StyleSheet.create({
     borderRadius: 6,
   },
   loginTabActive: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -1150,10 +1151,10 @@ export const styles = StyleSheet.create({
   loginTabText: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#6B7280',
+    color: colors.textTertiary,
   },
   loginTabTextActive: {
-    color: '#3BCCA5',
+    color: colors.primary,
     fontWeight: '600',
   },
   loginFormGroup: {
@@ -1176,16 +1177,16 @@ export const styles = StyleSheet.create({
   loginCodeButton: {
     paddingVertical: 16,
     paddingHorizontal: 20,
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
   },
   loginCodeButtonDisabled: {
-    backgroundColor: '#9CA3AF',
+    backgroundColor: colors.textDisabled,
   },
   loginCodeButtonText: {
-    color: '#FFFFFF',
+    color: colors.surface,
     fontSize: 14,
     fontWeight: '500',
   },
@@ -1203,7 +1204,7 @@ export const styles = StyleSheet.create({
   },
   loginForgotPasswordText: {
     fontSize: 14,
-    color: '#2DBBA1',
+    color: colors.primary,
     fontWeight: '500',
   },
   // 体验APP按钮
@@ -1225,21 +1226,21 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 24,
     paddingVertical: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: colors.border,
   },
   loginBackButton: {
     padding: 8,
   },
   loginBackButtonText: {
     fontSize: 24,
-    color: '#111827',
+    color: colors.textPrimary,
   },
   loginHeaderTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.textPrimary,
   },
   loginHeaderRight: {
     width: 40,
@@ -1254,14 +1255,14 @@ export const styles = StyleSheet.create({
   roleSelectSectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 16,
   },
   roleSelectMainRolesContainer: {
     gap: 16,
   },
   roleSelectMainRoleCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 24,
     shadowColor: '#000',
@@ -1276,7 +1277,7 @@ export const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   roleSelectMainRoleCardSelected: {
-    borderColor: '#2DBBA1',
+    borderColor: colors.primary,
     backgroundColor: 'rgba(45, 187, 161, 0.05)',
   },
   roleSelectMainRoleContent: {
@@ -1297,12 +1298,12 @@ export const styles = StyleSheet.create({
   roleSelectMainRoleTitle: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   roleSelectMainRoleDescription: {
     fontSize: 14,
-    color: '#4B5563',
+    color: colors.textSecondary,
   },
   roleSelectMainRoleArrow: {
     justifyContent: 'center',
@@ -1310,34 +1311,34 @@ export const styles = StyleSheet.create({
   },
   roleSelectMainRoleArrowText: {
     fontSize: 20,
-    color: '#6B7280',
+    color: colors.textTertiary,
   },
   roleSelectSubRolesContainer: {
     gap: 12,
   },
   roleSelectSubRoleCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.border,
   },
   roleSelectSubRoleCardSelected: {
-    borderColor: '#2DBBA1',
+    borderColor: colors.primary,
     backgroundColor: 'rgba(45, 187, 161, 0.1)',
   },
   roleSelectSubRoleTitle: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   roleSelectSubRoleDescription: {
     fontSize: 14,
-    color: '#4B5563',
+    color: colors.textSecondary,
   },
   roleSelectDescriptionCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     shadowColor: '#000',
@@ -1358,7 +1359,7 @@ export const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#E6F7F3',
+    backgroundColor: colors.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
     flexShrink: 0,
@@ -1369,12 +1370,12 @@ export const styles = StyleSheet.create({
   roleSelectDescriptionTitle: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   roleSelectDescriptionText: {
     fontSize: 14,
-    color: '#4B5563',
+    color: colors.textSecondary,
     lineHeight: 20,
   },
   roleSelectBottomButtonContainer: {
@@ -1382,13 +1383,13 @@ export const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     padding: 24,
     borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
+    borderTopColor: colors.border,
   },
   roleSelectNextButton: {
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
@@ -1400,11 +1401,11 @@ export const styles = StyleSheet.create({
   roleSelectNextButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.surface,
   },
   // 体验模式页面样式
   experienceInfoCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     marginBottom: 32,
@@ -1426,7 +1427,7 @@ export const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#E6F7F3',
+    backgroundColor: colors.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
     flexShrink: 0,
@@ -1437,12 +1438,12 @@ export const styles = StyleSheet.create({
   experienceInfoTitle: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   experienceInfoDescription: {
     fontSize: 14,
-    color: '#4B5563',
+    color: colors.textSecondary,
     lineHeight: 20,
   },
   experienceRolesSection: {
@@ -1451,14 +1452,14 @@ export const styles = StyleSheet.create({
   experienceRolesTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 16,
   },
   experienceRolesContainer: {
     gap: 16,
   },
   experienceRoleCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 24,
     shadowColor: '#000',
@@ -1473,7 +1474,7 @@ export const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   experienceRoleCardSelected: {
-    borderColor: '#2DBBA1',
+    borderColor: colors.primary,
     backgroundColor: 'rgba(45, 187, 161, 0.05)',
   },
   experienceRoleContent: {
@@ -1494,12 +1495,12 @@ export const styles = StyleSheet.create({
   experienceRoleTitle: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   experienceRoleDescription: {
     fontSize: 14,
-    color: '#4B5563',
+    color: colors.textSecondary,
   },
   experienceRoleArrow: {
     justifyContent: 'center',
@@ -1507,10 +1508,10 @@ export const styles = StyleSheet.create({
   },
   experienceRoleArrowText: {
     fontSize: 20,
-    color: '#6B7280',
+    color: colors.textTertiary,
   },
   loginErrorText: {
-    color: '#EF4444',
+    color: colors.error,
     fontSize: 14,
   },
   loginAgreementSection: {
@@ -1518,18 +1519,18 @@ export const styles = StyleSheet.create({
   },
   loginAgreementText: {
     fontSize: 12,
-    color: '#9CA3AF',
+    color: colors.textDisabled,
     textAlign: 'center',
     lineHeight: 18,
   },
   loginAgreementLink: {
-    color: '#2DBBA1',
+    color: colors.primary,
     fontWeight: '500',
   },
   // 注册页面样式补充
   registerCard: {
     padding: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {
@@ -1547,14 +1548,14 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#1F5E52',
+    color: colors.primaryDark,
   },
   // 诊断首页历史记录样式
   historyCard: {
     padding: 16,
     marginBottom: 16,
     borderRadius: 12,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
   },
   historyHeader: {
     flexDirection: 'row',
@@ -1565,11 +1566,11 @@ export const styles = StyleSheet.create({
   historyTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.textPrimary,
   },
   viewAllText: {
     fontSize: 14,
-    color: '#2DBBA1',
+    color: colors.primary,
     fontWeight: '500',
   },
   historyList: {
@@ -1580,10 +1581,10 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 12,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surfaceSoft,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.border,
   },
   historyItemLeft: {
     flex: 1,
@@ -1591,17 +1592,17 @@ export const styles = StyleSheet.create({
   historyItemTitle: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   historyItemDate: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.textTertiary,
   },
   historyItemStatus: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#2DBBA1',
+    color: colors.primary,
   },
   // 指南列表样式
   guideList: {
@@ -1614,7 +1615,7 @@ export const styles = StyleSheet.create({
   },
   diagnosisHomeIntroCard: {
     padding: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     shadowColor: '#000',
     shadowOffset: {
@@ -1628,18 +1629,18 @@ export const styles = StyleSheet.create({
   diagnosisHomeIntroTitle: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   diagnosisHomeIntroText: {
     fontSize: 14,
-    color: '#4B5563',
+    color: colors.textSecondary,
   },
   diagnosisHomeModeCardsSection: {
     marginBottom: 24,
   },
   diagnosisHomeModeCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 24,
     shadowColor: '#000',
@@ -1662,13 +1663,13 @@ export const styles = StyleSheet.create({
   diagnosisHomeModeCardIcon: {
     width: 56,
     height: 56,
-    backgroundColor: '#E6F7F3',
+    backgroundColor: colors.primaryLight,
     borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
     flexShrink: 0,
     marginRight: 16,
-    shadowColor: '#2DBBA1',
+    shadowColor: colors.primary,
     shadowOffset: {
       width: 0,
       height: 3,
@@ -1683,12 +1684,12 @@ export const styles = StyleSheet.create({
   diagnosisHomeModeCardTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   diagnosisHomeModeCardDescription: {
     fontSize: 14,
-    color: '#4B5563',
+    color: colors.textSecondary,
     marginBottom: 12,
     lineHeight: 20,
   },
@@ -1703,17 +1704,17 @@ export const styles = StyleSheet.create({
   },
   diagnosisHomeModeCardBadgeText: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.textTertiary,
   },
   diagnosisHomeNotesSection: {
     marginBottom: 24,
   },
   diagnosisHomeNotesCard: {
     padding: 16,
-    backgroundColor: '#EBF8FF',
+    backgroundColor: colors.infoLight,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#3182CE',
+    borderColor: colors.info,
   },
   diagnosisHomeNotesContent: {
     flexDirection: 'row',
@@ -1732,17 +1733,17 @@ export const styles = StyleSheet.create({
   diagnosisHomeNotesTitle: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   diagnosisHomeNotesText: {
     fontSize: 12,
-    color: '#4B5563',
+    color: colors.textSecondary,
     lineHeight: 18,
   },
   // 认证页面样式
   authTypeInfoCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     marginBottom: 24,
@@ -1764,7 +1765,7 @@ export const styles = StyleSheet.create({
   authTypeInfoIcon: {
     width: 48,
     height: 48,
-    backgroundColor: '#E6F7F3',
+    backgroundColor: colors.primaryLight,
     borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
@@ -1776,22 +1777,22 @@ export const styles = StyleSheet.create({
   authTypeInfoTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   authTypeInfoDescription: {
     fontSize: 14,
-    color: '#4B5563',
+    color: colors.textSecondary,
   },
   authBenefits: {
-    backgroundColor: '#F3F4F6',
+    backgroundColor: colors.surfaceMuted,
     borderRadius: 8,
     padding: 12,
   },
   authBenefitsTitle: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   authBenefitItem: {
@@ -1802,14 +1803,14 @@ export const styles = StyleSheet.create({
   authBenefitIcon: {
     fontSize: 12,
     marginRight: 8,
-    color: '#2DBBA1',
+    color: colors.primary,
   },
   authBenefitText: {
     fontSize: 14,
-    color: '#4B5563',
+    color: colors.textSecondary,
   },
   authFormCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     marginBottom: 24,
@@ -1825,7 +1826,7 @@ export const styles = StyleSheet.create({
   authFormTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 16,
   },
   authFormGroup: {
@@ -1834,63 +1835,63 @@ export const styles = StyleSheet.create({
   authFormLabel: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   authFormInput: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.border,
     borderRadius: 8,
     padding: 12,
     fontSize: 14,
-    color: '#111827',
+    color: colors.textPrimary,
   },
   authFormSelect: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.border,
     borderRadius: 8,
     overflow: 'hidden',
   },
   authFormSelectButton: {
     padding: 12,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: colors.surfaceMuted,
   },
   authFormSelectButtonText: {
-    color: '#4B5563',
+    color: colors.textSecondary,
     fontSize: 16,
   },
   authUploadArea: {
     borderWidth: 2,
     borderStyle: 'dashed',
-    borderColor: '#E5E7EB',
+    borderColor: colors.border,
     borderRadius: 8,
     padding: 24,
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surfaceSoft,
   },
   authUploadIcon: {
     fontSize: 48,
-    color: '#9CA3AF',
+    color: colors.textDisabled,
     marginBottom: 8,
   },
   authUploadText: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   authUploadSubtext: {
     fontSize: 12,
-    color: '#9CA3AF',
+    color: colors.textDisabled,
   },
   authUploadPreview: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.border,
     borderRadius: 8,
     overflow: 'hidden',
   },
@@ -1908,29 +1909,29 @@ export const styles = StyleSheet.create({
   authUploadPreviewButton: {
     paddingVertical: 8,
     paddingHorizontal: 16,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: colors.surfaceMuted,
     borderRadius: 8,
   },
   authUploadPreviewButtonDelete: {
-    backgroundColor: '#FEE2E2',
+    backgroundColor: colors.errorLight,
   },
   authUploadPreviewButtonText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#111827',
+    color: colors.textPrimary,
   },
   authUploadPreviewButtonTextDelete: {
-    color: '#EF4444',
+    color: colors.error,
   },
   authSubmitButton: {
-    backgroundColor: '#E6F7F3',
+    backgroundColor: colors.primaryLight,
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
     marginBottom: 12,
-    shadowColor: '#2DBBA1',
+    shadowColor: colors.primary,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -1942,7 +1943,7 @@ export const styles = StyleSheet.create({
   authSubmitNote: {
     textAlign: 'center',
     fontSize: 12,
-    color: '#9CA3AF',
+    color: colors.textDisabled,
     marginTop: 12,
   },
   // 聊天诊断页面样式
@@ -1950,7 +1951,7 @@ export const styles = StyleSheet.create({
     flexGrow: 1,
     padding: 16,
     gap: 16,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: colors.surfaceMuted,
   },
   chatMessageRow: {
     flexDirection: 'row',
@@ -1981,11 +1982,11 @@ export const styles = StyleSheet.create({
     borderRadius: 16,
   },
   chatAiMessageBubble: {
-    backgroundColor: '#F0F2F5',
+    backgroundColor: colors.surfaceMuted,
     borderBottomLeftRadius: 4,
   },
   chatUserMessageBubble: {
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
     borderBottomRightRadius: 4,
   },
   chatAiHeader: {
@@ -1996,7 +1997,7 @@ export const styles = StyleSheet.create({
   chatAiName: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.textPrimary,
   },
   chatMessageImages: {
     gap: 8,
@@ -2013,14 +2014,14 @@ export const styles = StyleSheet.create({
     marginBottom: 4,
   },
   chatAiMessageText: {
-    color: '#111827',
+    color: colors.textPrimary,
   },
   chatUserMessageText: {
-    color: '#FFFFFF',
+    color: colors.surface,
   },
   chatMessageTimestamp: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.textTertiary,
     alignSelf: 'flex-end',
   },
   chatInputArea: {
@@ -2028,9 +2029,9 @@ export const styles = StyleSheet.create({
     alignItems: 'flex-end',
     gap: 12,
     padding: 12,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
+    borderTopColor: colors.border,
   },
   chatFunctionButtons: {
     flexDirection: 'row',
@@ -2040,7 +2041,7 @@ export const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: colors.surfaceMuted,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -2054,28 +2055,28 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 20,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: colors.surfaceMuted,
     fontSize: 14,
-    color: '#111827',
+    color: colors.textPrimary,
   },
   chatSendButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   chatSendButtonIcon: {
     fontSize: 20,
-    color: '#FFFFFF',
+    color: colors.surface,
   },
   chatImagePreviewContainer: {
     paddingHorizontal: 12,
     paddingVertical: 8,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
+    borderTopColor: colors.border,
   },
   chatImagePreviewList: {
     flexDirection: 'row',
@@ -2098,13 +2099,13 @@ export const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#EF4444',
+    backgroundColor: colors.error,
     justifyContent: 'center',
     alignItems: 'center',
   },
   chatRemoveImageText: {
     fontSize: 16,
-    color: '#FFFFFF',
+    color: colors.surface,
     fontWeight: 'bold',
   },
   chatTypingIndicator: {
@@ -2114,20 +2115,20 @@ export const styles = StyleSheet.create({
     marginHorizontal: 12,
     marginBottom: 8,
     borderRadius: 12,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     alignSelf: 'flex-start',
   },
   chatTypingText: {
     marginLeft: 8,
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.textTertiary,
   },
   // AI兽医诊断页面样式
   tabContainer: {
     marginBottom: 16,
   },
   tabScrollView: {
-    backgroundColor: '#F3F4F6',
+    backgroundColor: colors.surfaceMuted,
     borderRadius: 8,
     paddingHorizontal: 4,
   },
@@ -2139,15 +2140,15 @@ export const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   tabActive: {
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
   },
   tabButtonText: {
-    color: '#6B7280',
+    color: colors.textTertiary,
     fontSize: 14,
     fontWeight: '500',
   },
   tabButtonTextActive: {
-    color: '#FFFFFF',
+    color: colors.surface,
     fontWeight: '600',
   },
   tabContent: {
@@ -2157,7 +2158,7 @@ export const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 12,
   },
   formGrid: {
@@ -2174,24 +2175,24 @@ export const styles = StyleSheet.create({
   testResultLabel: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   pickerField: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surfaceSoft,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 14,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.border,
     marginBottom: 16,
   },
   pickerFieldText: {
     fontSize: 15,
-    color: '#111827',
+    color: colors.textPrimary,
     flex: 1,
   },
   experimentItem: {
@@ -2200,7 +2201,7 @@ export const styles = StyleSheet.create({
   experimentItemTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 12,
   },
   imageUploadGrid: {
@@ -2222,7 +2223,7 @@ export const styles = StyleSheet.create({
   },
   uploadButtonText: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.textTertiary,
   },
   loadingOverlay: {
     position: 'absolute',
@@ -2237,7 +2238,7 @@ export const styles = StyleSheet.create({
   },
   // 诊断报告页面样式
   reportHeader: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
@@ -2258,23 +2259,23 @@ export const styles = StyleSheet.create({
   reportTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   reportNumber: {
     fontSize: 12,
-    color: '#9CA3AF',
+    color: colors.textDisabled,
   },
   reportTimeInfo: {
     alignItems: 'flex-end',
   },
   reportTime: {
     fontSize: 12,
-    color: '#9CA3AF',
+    color: colors.textDisabled,
     marginBottom: 2,
   },
   card: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
@@ -2303,12 +2304,12 @@ export const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 12,
-    color: '#9CA3AF',
+    color: colors.textDisabled,
     marginBottom: 4,
   },
   infoValue: {
     fontSize: 14,
-    color: '#111827',
+    color: colors.textPrimary,
   },
   symptomsSection: {
     marginTop: 8,
@@ -2319,19 +2320,19 @@ export const styles = StyleSheet.create({
     gap: 8,
   },
   symptomTag: {
-    backgroundColor: '#EBF8FF',
+    backgroundColor: colors.infoLight,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
   },
   symptomTagText: {
     fontSize: 12,
-    color: '#3182CE',
+    color: colors.info,
   },
   conclusionCard: {
-    backgroundColor: '#F0FFF4',
+    backgroundColor: colors.successLight,
     borderWidth: 1,
-    borderColor: '#C6F6D5',
+    borderColor: colors.success,
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,
@@ -2339,12 +2340,12 @@ export const styles = StyleSheet.create({
   conclusionTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#22543D',
+    color: colors.successText,
     marginBottom: 8,
   },
   conclusionDescription: {
     fontSize: 14,
-    color: '#22543D',
+    color: colors.successText,
   },
   basisSection: {
     marginTop: 8,
@@ -2352,7 +2353,7 @@ export const styles = StyleSheet.create({
   basisTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   basisList: {
@@ -2360,12 +2361,12 @@ export const styles = StyleSheet.create({
   },
   basisItem: {
     fontSize: 14,
-    color: '#4B5563',
+    color: colors.textSecondary,
     marginBottom: 4,
   },
   planTabs: {
     flexDirection: 'row',
-    backgroundColor: '#F3F4F6',
+    backgroundColor: colors.surfaceMuted,
     borderRadius: 8,
     padding: 4,
     marginBottom: 16,
@@ -2376,15 +2377,15 @@ export const styles = StyleSheet.create({
     borderRadius: 6,
   },
   planTabActive: {
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
   },
   planTabText: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.textTertiary,
     fontWeight: '500',
   },
   planTabTextActive: {
-    color: '#FFFFFF',
+    color: colors.surface,
   },
   planContent: {
     gap: 12,
@@ -2395,41 +2396,41 @@ export const styles = StyleSheet.create({
   },
   planItemIcon: {
     fontSize: 16,
-    color: '#10B981',
+    color: colors.success,
     marginTop: 2,
   },
   planItemTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   planItemDescription: {
     fontSize: 14,
-    color: '#4B5563',
+    color: colors.textSecondary,
   },
   optimizationList: {
     gap: 12,
   },
   optimizationItem: {
-    backgroundColor: '#F3F4F6',
+    backgroundColor: colors.surfaceMuted,
     borderRadius: 8,
     padding: 12,
   },
   optimizationTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   optimizationDescription: {
     fontSize: 14,
-    color: '#4B5563',
+    color: colors.textSecondary,
   },
   saveButton: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderWidth: 2,
-    borderColor: '#2DBBA1',
+    borderColor: colors.primary,
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
@@ -2444,10 +2445,10 @@ export const styles = StyleSheet.create({
   saveButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2DBBA1',
+    color: colors.primary,
   },
   shareButton: {
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
@@ -2455,7 +2456,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
     marginBottom: 16,
-    shadowColor: '#2DBBA1',
+    shadowColor: colors.primary,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -2466,19 +2467,19 @@ export const styles = StyleSheet.create({
   },
   shareButtonIcon: {
     fontSize: 20,
-    color: '#FFFFFF',
+    color: colors.surface,
   },
   shareButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.surface,
   },
   // 诊断历史页面样式
   diagnosisHistoryList: {
     gap: 16,
   },
   diagnosisHistoryItem: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     shadowColor: '#000',
@@ -2508,7 +2509,7 @@ export const styles = StyleSheet.create({
   diagnosisHistoryItemId: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.textPrimary,
   },
   diagnosisHistoryItemStatus: {
     fontSize: 12,
@@ -2518,26 +2519,26 @@ export const styles = StyleSheet.create({
     borderRadius: 12,
   },
   statusConfirmed: {
-    backgroundColor: '#D1FAE5',
-    color: '#1F5E52',
+    backgroundColor: colors.successLight,
+    color: colors.primaryDark,
   },
   statusPreDiagnosis: {
-    backgroundColor: '#FEF3C7',
-    color: '#92400E',
+    backgroundColor: colors.warningLight,
+    color: colors.warningText,
   },
   diagnosisHistoryItemDate: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.textTertiary,
     marginBottom: 4,
   },
   diagnosisHistoryItemMode: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.textTertiary,
     marginBottom: 4,
   },
   diagnosisHistoryItemResult: {
     fontSize: 14,
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   diagnosisHistoryItemSymptoms: {
@@ -2546,20 +2547,20 @@ export const styles = StyleSheet.create({
     gap: 8,
   },
   diagnosisHistoryItemSymptomTag: {
-    backgroundColor: '#E6F7F3',
+    backgroundColor: colors.primaryLight,
     paddingVertical: 4,
     paddingHorizontal: 12,
     borderRadius: 16,
     fontSize: 12,
-    color: '#1F5E52',
+    color: colors.primaryDark,
   },
   diagnosisHistoryItemSymptomMore: {
-    backgroundColor: '#F3F4F6',
+    backgroundColor: colors.surfaceMuted,
     paddingVertical: 4,
     paddingHorizontal: 12,
     borderRadius: 16,
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.textTertiary,
   },
   diagnosisHistoryItemActions: {
     flexDirection: 'row',
@@ -2570,15 +2571,15 @@ export const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 8,
-    backgroundColor: '#E6F7F3',
+    backgroundColor: colors.primaryLight,
   },
   diagnosisHistoryItemActionText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#1F5E52',
+    color: colors.primaryDark,
   },
   deleteButtonText: {
-    color: '#EF4444',
+    color: colors.error,
   },
 
   emptyHistoryContainer: {
@@ -2593,18 +2594,18 @@ export const styles = StyleSheet.create({
   emptyHistoryTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   emptyHistoryText: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.textTertiary,
     marginBottom: 24,
     textAlign: 'center',
     paddingHorizontal: 32,
   },
   emptyHistoryButton: {
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
@@ -2612,14 +2613,14 @@ export const styles = StyleSheet.create({
   emptyHistoryButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.surface,
   },
   // 生产管理样式
   productionModulesContainer: {
     paddingBottom: 24,
   },
   productionModuleCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
@@ -2648,19 +2649,19 @@ export const styles = StyleSheet.create({
   productionModuleTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1F2937',
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   productionModuleDescription: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.textTertiary,
   },
   productionModuleArrow: {
     marginLeft: 8,
   },
   productionModuleArrowText: {
     fontSize: 18,
-    color: '#6B7280',
+    color: colors.textTertiary,
   },
   
   // 批次管理样式
@@ -2668,7 +2669,7 @@ export const styles = StyleSheet.create({
     padding: 16,
   },
   batchItem: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
@@ -2690,7 +2691,7 @@ export const styles = StyleSheet.create({
   batchItemTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1F2937',
+    color: colors.textPrimary,
   },
   batchItemStatus: {
     fontSize: 14,
@@ -2700,19 +2701,19 @@ export const styles = StyleSheet.create({
     borderRadius: 12,
   },
   batchStatusActive: {
-    backgroundColor: '#D1FAE5',
-    color: '#1F5E52',
+    backgroundColor: colors.successLight,
+    color: colors.primaryDark,
   },
   batchStatusInactive: {
-    backgroundColor: '#F3F4F6',
-    color: '#6B7280',
+    backgroundColor: colors.surfaceMuted,
+    color: colors.textTertiary,
   },
   batchItemContent: {
     marginBottom: 12,
   },
   batchItemInfo: {
     fontSize: 14,
-    color: '#4B5563',
+    color: colors.textSecondary,
     marginBottom: 4,
   },
   batchItemActions: {
@@ -2726,10 +2727,10 @@ export const styles = StyleSheet.create({
     marginLeft: 8,
   },
   editButton: {
-    backgroundColor: '#E6F7F3',
+    backgroundColor: colors.primaryLight,
   },
   deleteButton: {
-    backgroundColor: '#FEE2E2',
+    backgroundColor: colors.errorLight,
   },
   actionButtonText: {
     fontSize: 14,
@@ -2744,7 +2745,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     width: '90%',
     maxHeight: '80%',
@@ -2763,16 +2764,16 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: colors.border,
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1F2937',
+    color: colors.textPrimary,
   },
   modalCloseButton: {
     fontSize: 24,
-    color: '#6B7280',
+    color: colors.textTertiary,
     padding: 4,
   },
   modalBody: {
@@ -2780,19 +2781,19 @@ export const styles = StyleSheet.create({
   },
   modalInput: {
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.border,
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,
     fontSize: 14,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
   },
   modalFooter: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
+    borderTopColor: colors.border,
   },
   modalButton: {
     paddingVertical: 10,
@@ -2801,15 +2802,15 @@ export const styles = StyleSheet.create({
     marginLeft: 12,
   },
   cancelButton: {
-    backgroundColor: '#F3F4F6',
+    backgroundColor: colors.surfaceMuted,
   },
   submitButton: {
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
   },
   modalButtonText: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#FFFFFF',
+    color: colors.surface,
   },
   
   // 表单样式
@@ -2819,17 +2820,17 @@ export const styles = StyleSheet.create({
   formLabel: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#4B5563',
+    color: colors.textSecondary,
     marginBottom: 8,
   },
   formInput: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surfaceSoft,
     borderRadius: 8,
     padding: 12,
     fontSize: 15,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    color: '#1F2937',
+    borderColor: colors.border,
+    color: colors.textPrimary,
   },
   
   // 死淘/耗料记录样式
@@ -2839,7 +2840,7 @@ export const styles = StyleSheet.create({
   batchSelectLabel: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#4B5563',
+    color: colors.textSecondary,
     marginBottom: 12,
   },
   batchSelectScrollView: {
@@ -2849,38 +2850,38 @@ export const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 20,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: colors.surfaceMuted,
     marginRight: 8,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.border,
   },
   batchSelectItemSelected: {
-    backgroundColor: '#2DBBA1',
-    borderColor: '#2DBBA1',
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   batchSelectItemText: {
     fontSize: 14,
-    color: '#4B5563',
+    color: colors.textSecondary,
     fontWeight: '500',
   },
   batchSelectItemTextSelected: {
-    color: '#FFFFFF',
+    color: colors.surface,
     fontWeight: '600',
   },
   selectedBatchInfo: {
     padding: 16,
-    backgroundColor: '#E6F7F3',
+    backgroundColor: colors.primaryLight,
     marginBottom: 8,
   },
   selectedBatchText: {
     fontSize: 14,
-    color: '#1F5E52',
+    color: colors.primaryDark,
   },
   recordList: {
     padding: 16,
   },
   deathFeedItem: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
@@ -2902,11 +2903,11 @@ export const styles = StyleSheet.create({
   deathFeedItemDate: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1F2937',
+    color: colors.textPrimary,
   },
   deathFeedItemBatch: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.textTertiary,
   },
   deathFeedItemContent: {
     marginBottom: 12,
@@ -2914,7 +2915,7 @@ export const styles = StyleSheet.create({
   deathFeedItemStats: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surfaceSoft,
     borderRadius: 8,
     padding: 12,
   },
@@ -2923,13 +2924,13 @@ export const styles = StyleSheet.create({
   },
   statItemLabel: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.textTertiary,
     marginBottom: 4,
   },
   statItemValue: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1F2937',
+    color: colors.textPrimary,
   },
   deathFeedItemActions: {
     flexDirection: 'row',
@@ -2939,14 +2940,14 @@ export const styles = StyleSheet.create({
     marginTop: 16,
     paddingVertical: 12,
     paddingHorizontal: 24,
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
     borderRadius: 8,
     alignItems: 'center',
   },
   addFirstRecordText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.surface,
   },
   
   // 员工管理样式
@@ -2954,7 +2955,7 @@ export const styles = StyleSheet.create({
     padding: 16,
   },
   employeeItem: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
@@ -2976,12 +2977,12 @@ export const styles = StyleSheet.create({
   employeeItemName: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1F2937',
+    color: colors.textPrimary,
   },
   employeeItemRole: {
     fontSize: 14,
-    backgroundColor: '#E6F7F3',
-    color: '#1F5E52',
+    backgroundColor: colors.primaryLight,
+    color: colors.primaryDark,
     paddingVertical: 4,
     paddingHorizontal: 8,
     borderRadius: 12,
@@ -2992,7 +2993,7 @@ export const styles = StyleSheet.create({
   employeeItemPermissionsTitle: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#4B5563',
+    color: colors.textSecondary,
     marginBottom: 8,
   },
   employeePermissionsContainer: {
@@ -3000,7 +3001,7 @@ export const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   employeePermissionTag: {
-    backgroundColor: '#EBF5FF',
+    backgroundColor: colors.infoLight,
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 16,
@@ -3009,7 +3010,7 @@ export const styles = StyleSheet.create({
   },
   employeePermissionTagText: {
     fontSize: 14,
-    color: '#3B82F6',
+    color: colors.info,
   },
   employeeItemActions: {
     flexDirection: 'row',
@@ -3022,31 +3023,31 @@ export const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   permissionOptionItem: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surfaceSoft,
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 20,
     marginRight: 8,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.border,
   },
   permissionOptionItemSelected: {
-    backgroundColor: '#D1FAE5',
-    borderColor: '#2DBBA1',
+    backgroundColor: colors.successLight,
+    borderColor: colors.primary,
   },
   permissionOptionText: {
     fontSize: 14,
-    color: '#4B5563',
+    color: colors.textSecondary,
   },
   permissionOptionTextSelected: {
-    color: '#1F5E52',
+    color: colors.primaryDark,
     fontWeight: '500',
   },
   
   // 空状态样式
   emptyState: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 24,
     alignItems: 'center',
@@ -3059,12 +3060,12 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: colors.surfaceMuted,
     borderRadius: 8,
   },
   filterValueText: {
     fontSize: 14,
-    color: '#111827',
+    color: colors.textPrimary,
     marginRight: 4,
   },
   filterValueIcon: {
@@ -3078,7 +3079,7 @@ export const styles = StyleSheet.create({
   filterLabel: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   filterOptions: {
@@ -3088,33 +3089,33 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: colors.surfaceMuted,
     marginRight: 8,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.border,
   },
   filterOptionActive: {
-    backgroundColor: '#1F5E52',
-    borderColor: '#1F5E52',
+    backgroundColor: colors.primaryDark,
+    borderColor: colors.primaryDark,
   },
   filterOptionText: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.textTertiary,
   },
   filterOptionTextActive: {
-    color: '#FFFFFF',
+    color: colors.surface,
     fontWeight: '500',
   },
   
   // 热力图样式
   heatmapContainer: {
     padding: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     marginBottom: 12,
   },
   heatmapPlaceholder: {
     height: 200,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surfaceSoft,
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -3126,12 +3127,12 @@ export const styles = StyleSheet.create({
   heatmapPlaceholderText: {
     fontSize: 18,
     fontWeight: '500',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   heatmapPlaceholderSubtext: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.textTertiary,
   },
   heatmapLegend: {
     marginTop: 16,
@@ -3139,7 +3140,7 @@ export const styles = StyleSheet.create({
   heatmapLegendTitle: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#4B5563',
+    color: colors.textSecondary,
     marginBottom: 8,
   },
   heatmapLegendItems: {
@@ -3158,7 +3159,7 @@ export const styles = StyleSheet.create({
   },
   heatmapLegendText: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.textTertiary,
   },
   
   // 通用区块标题样式
@@ -3171,7 +3172,7 @@ export const styles = StyleSheet.create({
   
   // 个人中心样式
   profileUserCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
@@ -3191,7 +3192,7 @@ export const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#E6F7F3',
+    backgroundColor: colors.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -3204,17 +3205,17 @@ export const styles = StyleSheet.create({
   profileUserName: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   
   profileUserRole: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.textTertiary,
   },
   
   profileMenuSection: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 8,
     marginBottom: 16,
@@ -3239,12 +3240,12 @@ export const styles = StyleSheet.create({
   profileMenuItemText: {
     flex: 1,
     fontSize: 16,
-    color: '#111827',
+    color: colors.textPrimary,
   },
   
   profileMenuArrow: {
     fontSize: 16,
-    color: '#9CA3AF',
+    color: colors.textDisabled,
   },
   
   profileVersionInfo: {
@@ -3255,13 +3256,13 @@ export const styles = StyleSheet.create({
   
   profileVersionText: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.textTertiary,
     marginBottom: 4,
   },
   
   profileCopyrightText: {
     fontSize: 12,
-    color: '#9CA3AF',
+    color: colors.textDisabled,
   },
 
   // 编辑个人信息页面样式
@@ -3270,29 +3271,29 @@ export const styles = StyleSheet.create({
   },
   profileEditLabel: {
     fontSize: 14,
-    color: '#374151',
+    color: colors.textSecondary,
     marginBottom: 6,
     fontWeight: '600',
   },
   profileEditInput: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#D1D5DB',
+    borderColor: colors.borderStrong,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 16,
-    color: '#111827',
+    color: colors.textPrimary,
   },
   profileEditInfoCard: {
-    backgroundColor: '#F3F4F6',
+    backgroundColor: colors.surfaceMuted,
     borderRadius: 8,
     padding: 16,
     marginTop: 8,
   },
   profileEditInfoText: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.textTertiary,
     marginBottom: 4,
   },
   profileEditBottomButtonContainer: {
@@ -3301,12 +3302,12 @@ export const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
+    borderTopColor: colors.border,
   },
   profileEditSaveButton: {
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
     borderRadius: 8,
     paddingVertical: 14,
     alignItems: 'center',
@@ -3315,7 +3316,7 @@ export const styles = StyleSheet.create({
     opacity: 0.6,
   },
   profileEditSaveButtonText: {
-    color: '#FFFFFF',
+    color: colors.surface,
     fontSize: 16,
     fontWeight: '700',
   },
@@ -3336,14 +3337,14 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: colors.border,
   },
   
   epidemicDataSection: {
     padding: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     marginBottom: 12,
   },
   
@@ -3360,18 +3361,18 @@ export const styles = StyleSheet.create({
   epidemicStatValue: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#111827',
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   
   epidemicStatLabel: {
     fontSize: 14,
-    color: '#6B7280',
+    color: colors.textTertiary,
   },
   
   epidemicDetailSection: {
     padding: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     marginBottom: 12,
   },
   
@@ -3380,7 +3381,7 @@ export const styles = StyleSheet.create({
   },
   
   epidemicDetailItem: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surfaceSoft,
     borderRadius: 8,
     padding: 12,
     marginBottom: 12,
@@ -3396,7 +3397,7 @@ export const styles = StyleSheet.create({
   epidemicDetailLocation: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#111827',
+    color: colors.textPrimary,
   },
   
   epidemicDetailRiskLevel: {
@@ -3419,12 +3420,12 @@ export const styles = StyleSheet.create({
   
   epidemicDetailDisease: {
     fontSize: 14,
-    color: '#374151',
+    color: colors.textSecondary,
   },
   
   epidemicDetailCases: {
     fontSize: 14,
-    color: '#EF4444',
+    color: colors.error,
     fontWeight: '500',
   },
   
@@ -3437,23 +3438,23 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 6,
-    backgroundColor: '#1F5E52',
+    backgroundColor: colors.primaryDark,
   },
   
   epidemicDetailActionText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#FFFFFF',
+    color: colors.surface,
   },
   
   epidemicAlertsSection: {
     padding: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
   },
   
   sectionMoreText: {
     fontSize: 14,
-    color: '#1F5E52',
+    color: colors.primaryDark,
     fontWeight: '500',
   },
   
@@ -3462,7 +3463,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 12,
-    backgroundColor: '#FEF3C7',
+    backgroundColor: colors.warningLight,
     borderRadius: 8,
     marginBottom: 12,
   },
@@ -3476,7 +3477,7 @@ export const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#FCD34D',
+    backgroundColor: colors.warning,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -3493,19 +3494,19 @@ export const styles = StyleSheet.create({
   epidemicAlertTitle: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#92400E',
+    color: colors.warningText,
     marginBottom: 4,
   },
   
   epidemicAlertTime: {
     fontSize: 12,
-    color: '#B45309',
+    color: colors.warningText,
     marginBottom: 4,
   },
   
   epidemicAlertDescription: {
     fontSize: 14,
-    color: '#B45309',
+    color: colors.warningText,
     lineHeight: 20,
   },
   
@@ -3513,28 +3514,28 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 6,
-    backgroundColor: '#F59E0B',
+    backgroundColor: colors.warning,
   },
   
   epidemicAlertActionText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#FFFFFF',
+    color: colors.surface,
   },
   emptyStateText: {
     fontSize: 16,
-    color: '#6B7280',
+    color: colors.textTertiary,
     marginBottom: 16,
   },
 
   addFirstEmployeeButton: {
-    backgroundColor: '#E6F7F3',
+    backgroundColor: colors.primaryLight,
     borderRadius: 8,
     padding: 12,
   },
   addFirstEmployeeText: {
     fontSize: 15,
     fontWeight: '500',
-    color: '#1F5E52',
+    color: colors.primaryDark,
   },
 });

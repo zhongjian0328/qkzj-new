@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -6,7 +7,7 @@ import Header from '../components/Header';
 import { controlPlanApi } from '../services/api';
 import { styles } from '../styles';
 
-const SEVERITY_COLORS: Record<string, string> = { low: '#22C55E', medium: '#F59E0B', high: '#EF4444', critical: '#991B1B' };
+const SEVERITY_COLORS: Record<string, string> = { low: colors.success, medium: colors.warning, high: colors.error, critical: colors.errorText };
 const SEVERITY_LABELS: Record<string, string> = { low: '低风险', medium: '中风险', high: '高风险', critical: '极高风险' };
 const STATUS_LABELS: Record<string, string> = { draft: '草稿', active: '进行中', completed: '已完成', archived: '已归档' };
 
@@ -16,10 +17,10 @@ function SectionCard({ title, iconName, children, defaultOpen = true }: any) {
     <View style={styles.card}>
       <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} onPress={() => setOpen(!open)}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <Ionicons name={iconName} size={20} color="#2DBBA1" />
-          <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827' }}>{title}</Text>
+          <Ionicons name={iconName} size={20} color={colors.primary} />
+          <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textPrimary }}>{title}</Text>
         </View>
-        <Ionicons name={open ? 'chevron-up' : 'chevron-down'} size={20} color="#6B7280" />
+        <Ionicons name={open ? 'chevron-up' : 'chevron-down'} size={20} color={colors.textTertiary} />
       </TouchableOpacity>
       {open && <View style={{ marginTop: 12, gap: 8 }}>{children}</View>}
     </View>
@@ -65,7 +66,7 @@ export default function ControlPlanDetailScreen() {
     ]);
   };
 
-  if (loading) return <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}><ActivityIndicator size="large" color="#2DBBA1" /></View>;
+  if (loading) return <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}><ActivityIndicator size="large" color={colors.primary} /></View>;
   if (!plan) return <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}><Text>预案不存在</Text></View>;
 
   const content = plan.planContent || {};
@@ -79,7 +80,7 @@ export default function ControlPlanDetailScreen() {
       <ScrollView style={{ padding: 12, gap: 12 }}>
         {/* 基本信息 */}
         <View style={styles.card}>
-          <Text style={{ fontSize: 18, fontWeight: '600', color: '#111827', marginBottom: 8 }}>{plan.planName}</Text>
+          <Text style={{ fontSize: 18, fontWeight: '600', color: colors.textPrimary, marginBottom: 8 }}>{plan.planName}</Text>
           <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
             <View style={{
               paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12,
@@ -91,66 +92,66 @@ export default function ControlPlanDetailScreen() {
             </View>
             <View style={{
               paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12,
-              backgroundColor: '#E6F7F3',
+              backgroundColor: colors.primaryLight,
             }}>
-              <Text style={{ fontSize: 12, color: '#1F5E52' }}>{STATUS_LABELS[plan.status]}</Text>
+              <Text style={{ fontSize: 12, color: colors.primaryDark }}>{STATUS_LABELS[plan.status]}</Text>
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'center', gap: 4 }}>
               {plan.generatedBy === 'ai' ? (
-                <><Ionicons name="hardware-chip" size={12} color="#2DBBA1" /><Text style={{ fontSize: 12, color: '#2DBBA1' }}>AI生成</Text></>
+                <><Ionicons name="hardware-chip" size={12} color={colors.primary} /><Text style={{ fontSize: 12, color: colors.primary }}>AI生成</Text></>
               ) : (
-                <><Ionicons name="create" size={12} color="#6B7280" /><Text style={{ fontSize: 12, color: '#6B7280' }}>手动创建</Text></>
+                <><Ionicons name="create" size={12} color={colors.textTertiary} /><Text style={{ fontSize: 12, color: colors.textTertiary }}>手动创建</Text></>
               )}
             </View>
           </View>
-          <Text style={{ fontSize: 12, color: '#9CA3AF', marginTop: 8 }}>
+          <Text style={{ fontSize: 12, color: colors.textDisabled, marginTop: 8 }}>
             创建时间：{new Date(plan.createdAt).toLocaleString('zh-CN')}
           </Text>
         </View>
 
         {/* 8 章节折叠面板 */}
-        <SectionCard title="疫情概述" iconName="stats-chart">{content.overview ? <Text style={{ fontSize: 14, color: '#4B5563', lineHeight: 22 }}>{content.overview}</Text> : <Text style={{ color: '#9CA3AF' }}>暂无</Text>}</SectionCard>
-        <SectionCard title="隔离措施" iconName="construct">{content.isolation ? <Text style={{ fontSize: 14, color: '#4B5563', lineHeight: 22 }}>{content.isolation}</Text> : <Text style={{ color: '#9CA3AF' }}>暂无</Text>}</SectionCard>
-        <SectionCard title="消毒方案" iconName="sparkles">{content.disinfection ? <Text style={{ fontSize: 14, color: '#4B5563', lineHeight: 22 }}>{content.disinfection}</Text> : <Text style={{ color: '#9CA3AF' }}>暂无</Text>}</SectionCard>
+        <SectionCard title="疫情概述" iconName="stats-chart">{content.overview ? <Text style={{ fontSize: 14, color: colors.textSecondary, lineHeight: 22 }}>{content.overview}</Text> : <Text style={{ color: colors.textDisabled }}>暂无</Text>}</SectionCard>
+        <SectionCard title="隔离措施" iconName="construct">{content.isolation ? <Text style={{ fontSize: 14, color: colors.textSecondary, lineHeight: 22 }}>{content.isolation}</Text> : <Text style={{ color: colors.textDisabled }}>暂无</Text>}</SectionCard>
+        <SectionCard title="消毒方案" iconName="sparkles">{content.disinfection ? <Text style={{ fontSize: 14, color: colors.textSecondary, lineHeight: 22 }}>{content.disinfection}</Text> : <Text style={{ color: colors.textDisabled }}>暂无</Text>}</SectionCard>
 
         {/* 用药推荐（绿色高亮） */}
         <SectionCard title="用药推荐" iconName="medkit">
           {medications.length > 0 ? medications.map((med: any, i: number) => (
-            <View key={i} style={{ backgroundColor: '#F9FAFB', borderRadius: 8, padding: 12 }}>
-              <Text style={{ fontSize: 14, fontWeight: '600', color: '#111827' }}>{med.drugName}</Text>
-              <Text style={{ fontSize: 13, color: '#4B5563', marginTop: 4 }}>剂量：{med.dosage}</Text>
-              <Text style={{ fontSize: 13, color: '#4B5563' }}>疗程：{med.duration}</Text>
-              {med.note && <Text style={{ fontSize: 13, color: '#6B7280', marginTop: 4 }}>备注：{med.note}</Text>}
+            <View key={i} style={{ backgroundColor: colors.surfaceSoft, borderRadius: 8, padding: 12 }}>
+              <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>{med.drugName}</Text>
+              <Text style={{ fontSize: 13, color: colors.textSecondary, marginTop: 4 }}>剂量：{med.dosage}</Text>
+              <Text style={{ fontSize: 13, color: colors.textSecondary }}>疗程：{med.duration}</Text>
+              {med.note && <Text style={{ fontSize: 13, color: colors.textTertiary, marginTop: 4 }}>备注：{med.note}</Text>}
             </View>
-          )) : <Text style={{ color: '#9CA3AF' }}>暂无用药推荐</Text>}
+          )) : <Text style={{ color: colors.textDisabled }}>暂无用药推荐</Text>}
           {greenDrugs.length > 0 && (
-            <View style={{ marginTop: 8, backgroundColor: '#F0FFF4', borderRadius: 8, padding: 12, borderWidth: 1, borderColor: '#C6F6D5' }}>
+            <View style={{ marginTop: 8, backgroundColor: colors.successLight, borderRadius: 8, padding: 12, borderWidth: 1, borderColor: colors.successLight }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 4 }}>
-                <Ionicons name="leaf" size={16} color="#22543D" />
-                <Text style={{ fontSize: 14, fontWeight: '600', color: '#22543D' }}>绿色用药推荐</Text>
+                <Ionicons name="leaf" size={16} color={colors.successText} />
+                <Text style={{ fontSize: 14, fontWeight: '600', color: colors.successText }}>绿色用药推荐</Text>
               </View>
               {greenDrugs.map((drug: string, i: number) => (
-                <Text key={i} style={{ fontSize: 13, color: '#22543D', lineHeight: 20 }}>• {drug}</Text>
+                <Text key={i} style={{ fontSize: 13, color: colors.successText, lineHeight: 20 }}>• {drug}</Text>
               ))}
             </View>
           )}
         </SectionCard>
 
-        <SectionCard title="疫苗接种" iconName="fitness">{content.vaccination ? <Text style={{ fontSize: 14, color: '#4B5563', lineHeight: 22 }}>{content.vaccination}</Text> : <Text style={{ color: '#9CA3AF' }}>暂无</Text>}</SectionCard>
-        <SectionCard title="监测计划" iconName="trending-up">{content.monitoring ? <Text style={{ fontSize: 14, color: '#4B5563', lineHeight: 22 }}>{content.monitoring}</Text> : <Text style={{ color: '#9CA3AF' }}>暂无</Text>}</SectionCard>
-        <SectionCard title="应急处理" iconName="warning">{content.emergency ? <Text style={{ fontSize: 14, color: '#4B5563', lineHeight: 22 }}>{content.emergency}</Text> : <Text style={{ color: '#9CA3AF' }}>暂无</Text>}</SectionCard>
+        <SectionCard title="疫苗接种" iconName="fitness">{content.vaccination ? <Text style={{ fontSize: 14, color: colors.textSecondary, lineHeight: 22 }}>{content.vaccination}</Text> : <Text style={{ color: colors.textDisabled }}>暂无</Text>}</SectionCard>
+        <SectionCard title="监测计划" iconName="trending-up">{content.monitoring ? <Text style={{ fontSize: 14, color: colors.textSecondary, lineHeight: 22 }}>{content.monitoring}</Text> : <Text style={{ color: colors.textDisabled }}>暂无</Text>}</SectionCard>
+        <SectionCard title="应急处理" iconName="warning">{content.emergency ? <Text style={{ fontSize: 14, color: colors.textSecondary, lineHeight: 22 }}>{content.emergency}</Text> : <Text style={{ color: colors.textDisabled }}>暂无</Text>}</SectionCard>
 
         {/* 时间轴 */}
         {timeline.length > 0 && (
           <SectionCard title="执行时间轴" iconName="calendar">
             {timeline.map((item: any, i: number) => (
               <View key={i} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 4 }}>
-                <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: '#E6F7F3', justifyContent: 'center', alignItems: 'center' }}>
-                  <Text style={{ fontSize: 14, fontWeight: '600', color: '#1F5E52' }}>D{item.day}</Text>
+                <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: colors.primaryLight, justifyContent: 'center', alignItems: 'center' }}>
+                  <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primaryDark }}>D{item.day}</Text>
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 14, fontWeight: '500', color: '#111827' }}>{item.action}</Text>
-                  {item.responsible && <Text style={{ fontSize: 12, color: '#9CA3AF' }}>责任人：{item.responsible}</Text>}
+                  <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textPrimary }}>{item.action}</Text>
+                  {item.responsible && <Text style={{ fontSize: 12, color: colors.textDisabled }}>责任人：{item.responsible}</Text>}
                 </View>
               </View>
             ))}
@@ -159,21 +160,21 @@ export default function ControlPlanDetailScreen() {
 
         {plan.completionNotes && (
           <View style={styles.card}>
-            <Text style={{ fontSize: 14, fontWeight: '600', color: '#111827', marginBottom: 4 }}>完成备注</Text>
-            <Text style={{ fontSize: 14, color: '#4B5563', lineHeight: 22 }}>{plan.completionNotes}</Text>
+            <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary, marginBottom: 4 }}>完成备注</Text>
+            <Text style={{ fontSize: 14, color: colors.textSecondary, lineHeight: 22 }}>{plan.completionNotes}</Text>
           </View>
         )}
       </ScrollView>
 
       {/* 底部操作 */}
       {plan.status === 'active' && (
-        <View style={{ padding: 16, backgroundColor: '#FFFFFF', borderTopWidth: 1, borderTopColor: '#E5E7EB' }}>
+        <View style={{ padding: 16, backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.border }}>
           <View style={{ flexDirection: 'row', gap: 12 }}>
             <TouchableOpacity style={{ flex: 1, ...styles.secondaryButton }} onPress={() => handleAction('complete', '确认已完成该防控预案？')}>
               <Text style={styles.secondaryButtonText}>标记完成</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{ flex: 1, ...styles.secondaryButton, borderColor: '#9CA3AF' }} onPress={() => handleAction('archive', '确认归档该预案？')}>
-              <Text style={{ ...styles.secondaryButtonText, color: '#6B7280' }}>归档</Text>
+            <TouchableOpacity style={{ flex: 1, ...styles.secondaryButton, borderColor: colors.textDisabled }} onPress={() => handleAction('archive', '确认归档该预案？')}>
+              <Text style={{ ...styles.secondaryButtonText, color: colors.textTertiary }}>归档</Text>
             </TouchableOpacity>
           </View>
         </View>

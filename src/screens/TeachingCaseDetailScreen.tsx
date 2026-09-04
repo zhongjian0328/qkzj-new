@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useCallback, useEffect } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, TextInput,
@@ -9,20 +10,20 @@ import { teachingCaseApi } from '../services/api';
 import { StyleSheet } from 'react-native';
 
 const COLORS = {
-  primary: '#2DBBA1',
-  primaryDark: '#1F5E52',
-  bgLight: '#E6F7F3',
-  text: '#1F2937',
-  textSecondary: '#6B7280',
-  border: '#E5E7EB',
-  danger: '#EF4444',
-  warning: '#F59E0B',
+  primary: colors.primary,
+  primaryDark: colors.primaryDark,
+  bgLight: colors.primaryLight,
+  text: colors.textPrimary,
+  textSecondary: colors.textTertiary,
+  border: colors.border,
+  danger: colors.error,
+  warning: colors.warning,
 };
 
 const STATUS_CONFIG: Record<string, { color: string; label: string }> = {
-  draft: { color: '#9CA3AF', label: '草稿' },
+  draft: { color: colors.textDisabled, label: '草稿' },
   pending_review: { color: COLORS.warning, label: '待审核' },
-  approved: { color: '#22C55E', label: '已通过' },
+  approved: { color: colors.success, label: '已通过' },
   rejected: { color: COLORS.danger, label: '已驳回' },
 };
 
@@ -279,7 +280,7 @@ export default function TeachingCaseDetailScreen() {
             </TouchableOpacity>
           )}
           {caseData.status === 'draft' && (
-            <TouchableOpacity style={[styles.actionButton, { backgroundColor: '#22C55E' }]} onPress={handleSubmitForReview}>
+            <TouchableOpacity style={[styles.actionButton, { backgroundColor: colors.success }]} onPress={handleSubmitForReview}>
               <Text style={styles.actionButtonText}>提交审核</Text>
             </TouchableOpacity>
           )}
@@ -287,7 +288,7 @@ export default function TeachingCaseDetailScreen() {
           {caseData.status === 'pending_review' && (
             <View style={{ flexDirection: 'row', gap: 8 }}>
               <TouchableOpacity
-                style={[styles.actionButton, { flex: 1, backgroundColor: '#22C55E' }]}
+                style={[styles.actionButton, { flex: 1, backgroundColor: colors.success }]}
                 onPress={() => { setReviewStatus('approved'); setReviewComment(''); setShowReviewModal(true); }}
               >
                 <Text style={styles.actionButtonText}>审核通过</Text>
@@ -307,7 +308,7 @@ export default function TeachingCaseDetailScreen() {
       {isEditing && (
         <View style={styles.actionBar}>
           <View style={{ flexDirection: 'row', gap: 8 }}>
-            <TouchableOpacity style={[styles.actionButton, { flex: 1, backgroundColor: '#F3F4F6' }]} onPress={() => { setIsEditing(false); if (isNew) navigation.goBack(); }}>
+            <TouchableOpacity style={[styles.actionButton, { flex: 1, backgroundColor: colors.surfaceMuted }]} onPress={() => { setIsEditing(false); if (isNew) navigation.goBack(); }}>
               <Text style={[styles.actionButtonText, { color: COLORS.textSecondary }]}>取消</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.actionButton, { flex: 1, backgroundColor: COLORS.primary }]} onPress={handleSave}>
@@ -333,11 +334,11 @@ export default function TeachingCaseDetailScreen() {
               maxLength={500}
             />
             <View style={styles.modalButtons}>
-              <TouchableOpacity style={[styles.modalButton, { backgroundColor: '#F3F4F6' }]} onPress={() => setShowReviewModal(false)}>
+              <TouchableOpacity style={[styles.modalButton, { backgroundColor: colors.surfaceMuted }]} onPress={() => setShowReviewModal(false)}>
                 <Text style={[styles.modalButtonText, { color: COLORS.textSecondary }]}>取消</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: reviewStatus === 'approved' ? '#22C55E' : COLORS.danger }]}
+                style={[styles.modalButton, { backgroundColor: reviewStatus === 'approved' ? colors.success : COLORS.danger }]}
                 onPress={handleReview}
               >
                 <Text style={styles.modalButtonText}>确认</Text>
@@ -351,17 +352,17 @@ export default function TeachingCaseDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F9FAFB' },
+  container: { flex: 1, backgroundColor: colors.surfaceSoft },
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 100 },
-  headerSection: { backgroundColor: '#FFFFFF', margin: 12, borderRadius: 12, padding: 16, borderWidth: 1, borderColor: COLORS.border },
+  headerSection: { backgroundColor: colors.surface, margin: 12, borderRadius: 12, padding: 16, borderWidth: 1, borderColor: COLORS.border },
   title: { fontSize: 18, fontWeight: '700', color: COLORS.text, marginBottom: 10 },
   metaRow: { flexDirection: 'row', gap: 8, marginBottom: 10 },
   tag: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
   tagText: { fontSize: 13, fontWeight: '500' },
   metaInfo: { gap: 4 },
   metaText: { fontSize: 13, color: COLORS.textSecondary },
-  section: { backgroundColor: '#FFFFFF', marginHorizontal: 12, marginBottom: 8, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: COLORS.border },
+  section: { backgroundColor: colors.surface, marginHorizontal: 12, marginBottom: 8, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: COLORS.border },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   sectionTitle: { fontSize: 15, fontWeight: '600', color: COLORS.text },
   sectionContent: { fontSize: 14, color: COLORS.textSecondary, lineHeight: 22, marginTop: 8 },
@@ -371,18 +372,18 @@ const styles = StyleSheet.create({
   editInput: {
     borderWidth: 1, borderColor: COLORS.border, borderRadius: 8,
     paddingHorizontal: 12, paddingVertical: 10, fontSize: 14,
-    backgroundColor: '#FAFAFA', color: COLORS.text, minHeight: 40,
+    backgroundColor: colors.surfaceSoft, color: COLORS.text, minHeight: 40,
     textAlignVertical: 'top',
   },
-  galleryImage: { width: 120, height: 120, borderRadius: 8, marginRight: 8, backgroundColor: '#F3F4F6' },
-  actionBar: { padding: 12, backgroundColor: '#FFFFFF', borderTopWidth: 1, borderTopColor: COLORS.border },
+  galleryImage: { width: 120, height: 120, borderRadius: 8, marginRight: 8, backgroundColor: colors.surfaceMuted },
+  actionBar: { padding: 12, backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: COLORS.border },
   actionButton: { paddingVertical: 12, borderRadius: 8, alignItems: 'center' },
-  actionButtonText: { fontSize: 15, fontWeight: '600', color: '#FFFFFF' },
+  actionButtonText: { fontSize: 15, fontWeight: '600', color: colors.surface },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
-  modalContent: { backgroundColor: '#FFFFFF', borderRadius: 16, padding: 24, width: '80%', maxWidth: 340 },
+  modalContent: { backgroundColor: colors.surface, borderRadius: 16, padding: 24, width: '80%', maxWidth: 340 },
   modalTitle: { fontSize: 18, fontWeight: '700', color: COLORS.text, textAlign: 'center', marginBottom: 16 },
   reviewInput: { borderWidth: 1, borderColor: COLORS.border, borderRadius: 8, padding: 10, fontSize: 14, minHeight: 80, textAlignVertical: 'top', marginBottom: 16 },
   modalButtons: { flexDirection: 'row', gap: 12 },
   modalButton: { flex: 1, paddingVertical: 12, borderRadius: 8, alignItems: 'center' },
-  modalButtonText: { fontSize: 15, fontWeight: '600', color: '#FFFFFF' },
+  modalButtonText: { fontSize: 15, fontWeight: '600', color: colors.surface },
 });

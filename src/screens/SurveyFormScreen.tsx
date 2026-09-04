@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState } from 'react';
 import {
   View,
@@ -766,9 +767,9 @@ const local = StyleSheet.create({
 
   // 步骤指示器
   stepIndicatorContainer: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: colors.border,
   },
   stepIndicatorScroll: {
     paddingHorizontal: 12,
@@ -782,38 +783,38 @@ const local = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: colors.border,
     justifyContent: 'center',
     alignItems: 'center',
   },
   stepCircleActive: {
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
   },
   stepCircleCompleted: {
-    backgroundColor: '#1F5E52',
+    backgroundColor: colors.primaryDark,
   },
   stepCircleText: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#9CA3AF',
+    color: colors.textDisabled,
   },
   stepCircleTextActive: {
-    color: '#FFFFFF',
+    color: colors.surface,
   },
   stepLabel: {
     fontSize: 11,
-    color: '#9CA3AF',
+    color: colors.textDisabled,
     marginLeft: 4,
     marginRight: 8,
   },
   stepLabelActive: {
-    color: '#2DBBA1',
+    color: colors.primary,
     fontWeight: '600',
   },
   stepLine: {
     width: 20,
     height: 2,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: colors.border,
     marginHorizontal: 4,
   },
 
@@ -824,12 +825,12 @@ const local = StyleSheet.create({
   stepTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1F5E52',
+    color: colors.primaryDark,
     marginBottom: 12,
   },
   subtleText: {
     fontSize: 13,
-    color: '#6B7280',
+    color: colors.textTertiary,
     marginBottom: 12,
   },
 
@@ -840,7 +841,7 @@ const local = StyleSheet.create({
   fieldLabel: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#374151',
+    color: colors.textSecondary,
   },
   fieldLabelTop: {
     marginBottom: 8,
@@ -868,19 +869,19 @@ const local = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#D1D5DB',
-    backgroundColor: '#F9FAFB',
+    borderColor: colors.borderStrong,
+    backgroundColor: colors.surfaceSoft,
   },
   optionPillActive: {
-    backgroundColor: '#2DBBA1',
-    borderColor: '#2DBBA1',
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   optionPillText: {
     fontSize: 14,
-    color: '#374151',
+    color: colors.textSecondary,
   },
   optionPillTextActive: {
-    color: '#FFFFFF',
+    color: colors.surface,
     fontWeight: '600',
   },
 
@@ -896,38 +897,38 @@ const local = StyleSheet.create({
     paddingHorizontal: 14,
     borderRadius: 20,
     borderWidth: 1.5,
-    borderColor: '#D1D5DB',
-    backgroundColor: '#FFFFFF',
+    borderColor: colors.borderStrong,
+    backgroundColor: colors.surface,
   },
   chipActive: {
-    backgroundColor: '#2DBBA1',
-    borderColor: '#2DBBA1',
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   chipText: {
     fontSize: 14,
-    color: '#374151',
+    color: colors.textSecondary,
   },
   chipTextActive: {
-    color: '#FFFFFF',
+    color: colors.surface,
     fontWeight: '500',
   },
 
   // 文本区域
   textArea: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.border,
     borderRadius: 8,
     padding: 12,
     fontSize: 15,
-    color: '#1F2937',
+    color: colors.textPrimary,
     minHeight: 80,
     marginBottom: 16,
   },
 
   // 计算框
   calcBox: {
-    backgroundColor: '#E6F7F3',
+    backgroundColor: colors.primaryLight,
     borderRadius: 12,
     padding: 16,
     marginTop: 8,
@@ -935,7 +936,7 @@ const local = StyleSheet.create({
   calcTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#1F5E52',
+    color: colors.primaryDark,
     marginBottom: 12,
   },
   calcRow: {
@@ -948,25 +949,25 @@ const local = StyleSheet.create({
   },
   calcLabel: {
     fontSize: 13,
-    color: '#6B7280',
+    color: colors.textTertiary,
     marginBottom: 4,
   },
   calcValue: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#1F5E52',
+    color: colors.primaryDark,
   },
   calcValueDanger: {
-    color: '#DC2626',
+    color: colors.error,
   },
   calcDivider: {
     width: 1,
     height: 40,
-    backgroundColor: '#B8DFD5',
+    backgroundColor: colors.primaryLight,
   },
   calcHint: {
     fontSize: 12,
-    color: '#6B7280',
+    color: colors.textTertiary,
     marginTop: 12,
     textAlign: 'center',
   },
@@ -974,22 +975,22 @@ const local = StyleSheet.create({
   // 疫苗
   emptyNote: {
     padding: 16,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surfaceSoft,
     borderRadius: 8,
     marginBottom: 12,
     alignItems: 'center',
   },
   emptyNoteText: {
     fontSize: 14,
-    color: '#9CA3AF',
+    color: colors.textDisabled,
   },
   vaccineItem: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: colors.surfaceSoft,
     borderRadius: 8,
     padding: 12,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.border,
   },
   vaccineHeader: {
     flexDirection: 'row',
@@ -1000,11 +1001,11 @@ const local = StyleSheet.create({
   vaccineItemTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#374151',
+    color: colors.textSecondary,
   },
   removeText: {
     fontSize: 14,
-    color: '#EF4444',
+    color: colors.error,
     fontWeight: '500',
   },
   compactInput: {
@@ -1012,23 +1013,23 @@ const local = StyleSheet.create({
   },
   addVaccineBtn: {
     marginTop: 8,
-    borderColor: '#2DBBA1',
+    borderColor: colors.primary,
     borderWidth: 1.5,
     borderStyle: 'dashed',
   },
 
   // 错误
   errorBox: {
-    backgroundColor: '#FEF2F2',
+    backgroundColor: colors.errorLight,
     borderWidth: 1,
-    borderColor: '#FECACA',
+    borderColor: colors.errorLight,
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,
   },
   errorText: {
     fontSize: 14,
-    color: '#DC2626',
+    color: colors.error,
     textAlign: 'center',
   },
 

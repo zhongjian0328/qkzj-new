@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
+import { colors, radii, spacing, typography, shadows } from '../theme';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -23,13 +24,13 @@ interface LineChartProps {
   yAxisSuffix?: string;
 }
 
-export const CustomLineChart: React.FC<LineChartProps> = ({ 
-  data, 
-  title, 
+export const CustomLineChart: React.FC<LineChartProps> = ({
+  data,
+  title,
   width = screenWidth - 32,
   height = 220,
   yAxisLabel = '',
-  yAxisSuffix = ''
+  yAxisSuffix = '',
 }) => {
   return (
     <View style={styles.chartContainer}>
@@ -41,25 +42,25 @@ export const CustomLineChart: React.FC<LineChartProps> = ({
         yAxisLabel={yAxisLabel}
         yAxisSuffix={yAxisSuffix}
         chartConfig={{
-          backgroundColor: '#FFFFFF',
-          backgroundGradientFrom: '#FFFFFF',
-          backgroundGradientTo: '#FFFFFF',
+          backgroundColor: colors.surface,
+          backgroundGradientFrom: colors.surface,
+          backgroundGradientTo: colors.surface,
           decimalPlaces: 0,
           color: (opacity = 1) => `rgba(45, 187, 161, ${opacity})`,
           labelColor: (opacity = 1) => `rgba(107, 114, 128, ${opacity})`,
           style: {
-            borderRadius: 16,
+            borderRadius: radii.lg,
           },
           propsForDots: {
             r: '6',
             strokeWidth: '2',
-            stroke: '#2DBBA1',
+            stroke: colors.primary,
           },
         }}
         bezier
         style={{
-          marginVertical: 8,
-          borderRadius: 16,
+          marginVertical: spacing.sm,
+          borderRadius: radii.lg,
         }}
       />
     </View>
@@ -84,13 +85,13 @@ interface BarChartProps {
   yAxisSuffix?: string;
 }
 
-export const CustomBarChart: React.FC<BarChartProps> = ({ 
-  data, 
-  title, 
+export const CustomBarChart: React.FC<BarChartProps> = ({
+  data,
+  title,
   width = screenWidth - 32,
   height = 220,
   yAxisLabel = '',
-  yAxisSuffix = ''
+  yAxisSuffix = '',
 }) => {
   return (
     <View style={styles.chartContainer}>
@@ -102,19 +103,19 @@ export const CustomBarChart: React.FC<BarChartProps> = ({
         yAxisLabel={yAxisLabel}
         yAxisSuffix={yAxisSuffix}
         chartConfig={{
-          backgroundColor: '#FFFFFF',
-          backgroundGradientFrom: '#FFFFFF',
-          backgroundGradientTo: '#FFFFFF',
+          backgroundColor: colors.surface,
+          backgroundGradientFrom: colors.surface,
+          backgroundGradientTo: colors.surface,
           decimalPlaces: 0,
           color: (opacity = 1) => `rgba(45, 187, 161, ${opacity})`,
           labelColor: (opacity = 1) => `rgba(107, 114, 128, ${opacity})`,
           style: {
-            borderRadius: 16,
+            borderRadius: radii.lg,
           },
         }}
         style={{
-          marginVertical: 8,
-          borderRadius: 16,
+          marginVertical: spacing.sm,
+          borderRadius: radii.lg,
         }}
       />
     </View>
@@ -135,11 +136,11 @@ interface PieChartProps {
   height?: number;
 }
 
-export const CustomPieChart: React.FC<PieChartProps> = ({ 
-  data, 
-  title, 
+export const CustomPieChart: React.FC<PieChartProps> = ({
+  data,
+  title,
   width = screenWidth - 32,
-  height = 220
+  height = 220,
 }) => {
   return (
     <View style={styles.chartContainer}>
@@ -149,9 +150,9 @@ export const CustomPieChart: React.FC<PieChartProps> = ({
         width={width}
         height={height}
         chartConfig={{
-          backgroundColor: '#FFFFFF',
-          backgroundGradientFrom: '#FFFFFF',
-          backgroundGradientTo: '#FFFFFF',
+          backgroundColor: colors.surface,
+          backgroundGradientFrom: colors.surface,
+          backgroundGradientTo: colors.surface,
           color: (opacity = 1) => `rgba(45, 187, 161, ${opacity})`,
         }}
         accessor="population"
@@ -163,7 +164,9 @@ export const CustomPieChart: React.FC<PieChartProps> = ({
         {data.map((item, index) => (
           <View key={index} style={styles.legendItem}>
             <View style={[styles.legendColor, { backgroundColor: item.color }]} />
-            <Text style={styles.legendText}>{item.name}: {item.population}</Text>
+            <Text style={styles.legendText}>
+              {item.name}: {item.population}
+            </Text>
           </View>
         ))}
       </View>
@@ -185,9 +188,9 @@ export const DataCard: React.FC<DataCardProps> = ({
   title,
   value,
   unit = '',
-  color = '#2DBBA1',
+  color = colors.primary,
   icon = '',
-  iconName
+  iconName,
 }) => {
   return (
     <View style={styles.dataCard}>
@@ -211,57 +214,49 @@ export const DataCard: React.FC<DataCardProps> = ({
 
 const styles = StyleSheet.create({
   chartContainer: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3.84,
-    elevation: 2,
+    backgroundColor: colors.surface,
+    borderRadius: radii.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.lg,
+    ...shadows.md,
   },
   chartTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#111827',
-    marginBottom: 12,
+    fontSize: typography.size.bodyLarge,
+    fontWeight: typography.weight.semibold,
+    color: colors.textPrimary,
+    marginBottom: spacing.md,
   },
   dataCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: colors.surface,
+    borderRadius: radii.md,
+    padding: spacing.lg,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3.84,
-    elevation: 2,
+    marginBottom: spacing.md,
+    ...shadows.md,
   },
   dataCardContent: {
     flex: 1,
   },
   dataCardTitle: {
-    fontSize: 14,
-    color: '#6B7280',
-    marginBottom: 4,
+    fontSize: typography.size.body,
+    color: colors.textTertiary,
+    marginBottom: spacing.xs,
   },
   dataCardValueContainer: {
     flexDirection: 'row',
     alignItems: 'baseline',
   },
   dataCardValue: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#111827',
+    fontSize: typography.size.heading,
+    fontWeight: typography.weight.bold,
+    color: colors.textPrimary,
   },
   dataCardUnit: {
-    fontSize: 14,
-    color: '#6B7280',
-    marginLeft: 4,
+    fontSize: typography.size.body,
+    color: colors.textTertiary,
+    marginLeft: spacing.xs,
   },
   dataCardIcon: {
     fontSize: 32,
@@ -269,26 +264,26 @@ const styles = StyleSheet.create({
   dataCardIconContainer: {
     width: 48,
     height: 48,
-    borderRadius: 12,
+    borderRadius: radii.md,
     justifyContent: 'center',
     alignItems: 'center',
   },
   legendContainer: {
-    marginTop: 16,
+    marginTop: spacing.lg,
   },
   legendItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   legendColor: {
     width: 16,
     height: 16,
     borderRadius: 8,
-    marginRight: 8,
+    marginRight: spacing.sm,
   },
   legendText: {
-    fontSize: 14,
-    color: '#6B7280',
+    fontSize: typography.size.body,
+    color: colors.textTertiary,
   },
 });

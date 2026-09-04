@@ -14,7 +14,7 @@ module.exports = {
         'text-primary': '#111827',
         'text-secondary': '#4B5563',
         'text-tertiary': '#9CA3AF',
-        'bg-light': '#F3F4F6',
+        'bg-light': '#F6F8F7',
         'card-bg': '#FFFFFF',
         'border-color': '#E5E7EB',
         'success': '#10B981',

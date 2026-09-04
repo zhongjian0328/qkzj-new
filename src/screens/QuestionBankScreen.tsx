@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Alert, ActivityIndicator, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -190,10 +191,10 @@ const QuestionBankScreen: React.FC = () => {
   // 获取难度颜色
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'EASY': case 'easy': return { bg: '#D1FAE5', text: '#1F5E52' };
-      case 'MEDIUM': case 'medium': return { bg: '#FEF3C7', text: '#92400E' };
-      case 'HARD': case 'hard': return { bg: '#FEE2E2', text: '#991B1B' };
-      default: return { bg: '#F3F4F6', text: '#6B7280' };
+      case 'EASY': case 'easy': return { bg: colors.successLight, text: colors.primaryDark };
+      case 'MEDIUM': case 'medium': return { bg: colors.warningLight, text: colors.warningText };
+      case 'HARD': case 'hard': return { bg: colors.errorLight, text: colors.errorText };
+      default: return { bg: colors.surfaceMuted, text: colors.textTertiary };
     }
   };
 
@@ -223,27 +224,27 @@ const QuestionBankScreen: React.FC = () => {
         // 题库模式
         loading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#2DBBA1" />
+            <ActivityIndicator size="large" color={colors.primary} />
             <Text style={styles.loadingText}>正在加载题库...</Text>
           </View>
         ) : error ? (
           <View style={styles.loadingContainer}>
-            <Ionicons name="alert-circle-outline" size={48} color="#9CA3AF" />
-            <Text style={{ fontSize: 16, color: '#6B7280', marginBottom: 16 }}>{error}</Text>
-            <TouchableOpacity style={{ backgroundColor: '#2DBBA1', borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchQuestions()}>
-              <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>重试</Text>
+            <Ionicons name="alert-circle-outline" size={48} color={colors.textDisabled} />
+            <Text style={{ fontSize: 16, color: colors.textTertiary, marginBottom: 16 }}>{error}</Text>
+            <TouchableOpacity style={{ backgroundColor: colors.primary, borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchQuestions()}>
+              <Text style={{ color: colors.surface, fontSize: 16, fontWeight: '600' }}>重试</Text>
             </TouchableOpacity>
           </View>
         ) : questions.length === 0 ? (
           <View style={styles.loadingContainer}>
-            <Ionicons name="folder-open-outline" size={48} color="#9CA3AF" />
-            <Text style={{ fontSize: 16, color: '#6B7280' }}>暂无题目数据</Text>
+            <Ionicons name="folder-open-outline" size={48} color={colors.textDisabled} />
+            <Text style={{ fontSize: 16, color: colors.textTertiary }}>暂无题目数据</Text>
           </View>
         ) : (
         <ScrollView contentContainerStyle={{ padding: 16 }}>
           {/* 筛选条件 */}
           <View style={{ marginBottom: 16 }}>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827', marginBottom: 8 }}>
+            <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textPrimary, marginBottom: 8 }}>
               分类筛选
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -256,7 +257,7 @@ const QuestionBankScreen: React.FC = () => {
                         paddingHorizontal: 16,
                         paddingVertical: 8,
                         borderRadius: 20,
-                        backgroundColor: activeCategory === category.id ? '#2DBBA1' : '#F3F4F6'
+                        backgroundColor: activeCategory === category.id ? colors.primary : colors.surfaceMuted
                       }
                     ]}
                     onPress={() => setActiveCategory(category.id)}
@@ -265,7 +266,7 @@ const QuestionBankScreen: React.FC = () => {
                       {
                         fontSize: 14,
                         fontWeight: '500',
-                        color: activeCategory === category.id ? '#FFFFFF' : '#6B7280'
+                        color: activeCategory === category.id ? colors.surface : colors.textTertiary
                       }
                     ]}>
                       {category.name}
@@ -277,7 +278,7 @@ const QuestionBankScreen: React.FC = () => {
           </View>
 
           <View style={{ marginBottom: 16 }}>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827', marginBottom: 8 }}>
+            <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textPrimary, marginBottom: 8 }}>
               难度筛选
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -290,7 +291,7 @@ const QuestionBankScreen: React.FC = () => {
                         paddingHorizontal: 16,
                         paddingVertical: 8,
                         borderRadius: 20,
-                        backgroundColor: activeDifficulty === difficulty.id ? '#2DBBA1' : '#F3F4F6'
+                        backgroundColor: activeDifficulty === difficulty.id ? colors.primary : colors.surfaceMuted
                       }
                     ]}
                     onPress={() => setActiveDifficulty(difficulty.id)}
@@ -299,7 +300,7 @@ const QuestionBankScreen: React.FC = () => {
                       {
                         fontSize: 14,
                         fontWeight: '500',
-                        color: activeDifficulty === difficulty.id ? '#FFFFFF' : '#6B7280'
+                        color: activeDifficulty === difficulty.id ? colors.surface : colors.textTertiary
                       }
                     ]}>
                       {difficulty.name}
@@ -313,19 +314,19 @@ const QuestionBankScreen: React.FC = () => {
           {/* 题目列表 */}
           <View style={{ marginBottom: 24 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-              <Text style={{ fontSize: 18, fontWeight: '600', color: '#111827' }}>
+              <Text style={{ fontSize: 18, fontWeight: '600', color: colors.textPrimary }}>
                 题目列表 ({filteredQuestions.length} 题)
               </Text>
               <TouchableOpacity
                 style={{
-                  backgroundColor: '#2DBBA1',
+                  backgroundColor: colors.primary,
                   borderRadius: 8,
                   paddingHorizontal: 16,
                   paddingVertical: 8
                 }}
                 onPress={startQuiz}
               >
-                <Text style={{ fontSize: 14, fontWeight: '600', color: '#FFFFFF' }}>
+                <Text style={{ fontSize: 14, fontWeight: '600', color: colors.surface }}>
                   开始测验
                 </Text>
               </TouchableOpacity>
@@ -333,7 +334,7 @@ const QuestionBankScreen: React.FC = () => {
 
             {filteredQuestions.map((question, index) => (
               <View key={question._id} style={{
-                backgroundColor: '#FFFFFF',
+                backgroundColor: colors.surface,
                 borderRadius: 12,
                 padding: 16,
                 marginBottom: 12,
@@ -344,15 +345,15 @@ const QuestionBankScreen: React.FC = () => {
                 elevation: 2
               }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <Text style={{ fontSize: 14, fontWeight: '500', color: '#6B7280' }}>
+                  <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textTertiary }}>
                     {index + 1}. {getQuestionTypeLabel(question.questionType)}
                   </Text>
                   <View style={{ flexDirection: 'row', gap: 8 }}>
                     <View style={{
                       paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12,
-                      backgroundColor: '#E6F7F3',
+                      backgroundColor: colors.primaryLight,
                     }}>
-                      <Text style={{ fontSize: 12, fontWeight: '500', color: '#1F5E52' }}>
+                      <Text style={{ fontSize: 12, fontWeight: '500', color: colors.primaryDark }}>
                         {question.knowledgePoint}
                       </Text>
                     </View>
@@ -366,7 +367,7 @@ const QuestionBankScreen: React.FC = () => {
                     </View>
                   </View>
                 </View>
-                <Text style={{ fontSize: 16, color: '#111827', marginBottom: 12 }}>
+                <Text style={{ fontSize: 16, color: colors.textPrimary, marginBottom: 12 }}>
                   {question.questionText}
                 </Text>
                 <View style={{ gap: 8 }}>
@@ -375,7 +376,7 @@ const QuestionBankScreen: React.FC = () => {
                       flexDirection: 'row',
                       alignItems: 'center',
                       padding: 12,
-                      backgroundColor: '#F3F4F6',
+                      backgroundColor: colors.surfaceMuted,
                       borderRadius: 8
                     }}>
                       <View style={{
@@ -383,16 +384,16 @@ const QuestionBankScreen: React.FC = () => {
                         height: 24,
                         borderRadius: isMultipleChoice(question.questionType) ? 8 : 12,
                         borderWidth: 2,
-                        borderColor: '#2DBBA1',
+                        borderColor: colors.primary,
                         justifyContent: 'center',
                         alignItems: 'center',
                         marginRight: 12
                       }}>
-                        <Text style={{ fontSize: 14, fontWeight: '600', color: '#2DBBA1' }}>
+                        <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primary }}>
                           {String.fromCharCode(65 + optionIndex)}
                         </Text>
                       </View>
-                      <Text style={{ fontSize: 14, color: '#4B5563' }}>
+                      <Text style={{ fontSize: 14, color: colors.textSecondary }}>
                         {option}
                       </Text>
                     </View>
@@ -407,7 +408,7 @@ const QuestionBankScreen: React.FC = () => {
         // 测验结果
         <ScrollView contentContainerStyle={{ padding: 16, alignItems: 'center' }}>
           <View style={{
-            backgroundColor: '#FFFFFF',
+            backgroundColor: colors.surface,
             borderRadius: 16,
             padding: 24,
             alignItems: 'center',
@@ -418,22 +419,22 @@ const QuestionBankScreen: React.FC = () => {
             shadowRadius: 3.84,
             elevation: 2
           }}>
-            <Ionicons name="checkmark-circle-outline" size={48} color="#2DBBA1" />
-            <Text style={{ fontSize: 24, fontWeight: '600', color: '#111827', marginBottom: 8 }}>
+            <Ionicons name="checkmark-circle-outline" size={48} color={colors.primary} />
+            <Text style={{ fontSize: 24, fontWeight: '600', color: colors.textPrimary, marginBottom: 8 }}>
               测验完成！
             </Text>
-            <Text style={{ fontSize: 16, color: '#6B7280', marginBottom: 24, textAlign: 'center' }}>
+            <Text style={{ fontSize: 16, color: colors.textTertiary, marginBottom: 24, textAlign: 'center' }}>
               你在本次测验中表现出色！
             </Text>
             
             <View style={{
               width: '100%',
-              backgroundColor: '#F3F4F6',
+              backgroundColor: colors.surfaceMuted,
               borderRadius: 12,
               padding: 20,
               marginBottom: 24
             }}>
-              <Text style={{ fontSize: 18, fontWeight: '600', color: '#111827', marginBottom: 16, textAlign: 'center' }}>
+              <Text style={{ fontSize: 18, fontWeight: '600', color: colors.textPrimary, marginBottom: 16, textAlign: 'center' }}>
                 测验结果
               </Text>
               <View style={{
@@ -442,26 +443,26 @@ const QuestionBankScreen: React.FC = () => {
                 marginBottom: 16
               }}>
                 <View style={{ alignItems: 'center' }}>
-                  <Text style={{ fontSize: 32, fontWeight: '600', color: '#2DBBA1' }}>
+                  <Text style={{ fontSize: 32, fontWeight: '600', color: colors.primary }}>
                     {quizScore}
                   </Text>
-                  <Text style={{ fontSize: 14, color: '#6B7280' }}>
+                  <Text style={{ fontSize: 14, color: colors.textTertiary }}>
                     得分
                   </Text>
                 </View>
                 <View style={{ alignItems: 'center' }}>
-                  <Text style={{ fontSize: 32, fontWeight: '600', color: '#2DBBA1' }}>
+                  <Text style={{ fontSize: 32, fontWeight: '600', color: colors.primary }}>
                     {quizQuestions.length}
                   </Text>
-                  <Text style={{ fontSize: 14, color: '#6B7280' }}>
+                  <Text style={{ fontSize: 14, color: colors.textTertiary }}>
                     总题数
                   </Text>
                 </View>
                 <View style={{ alignItems: 'center' }}>
-                  <Text style={{ fontSize: 32, fontWeight: '600', color: '#2DBBA1' }}>
+                  <Text style={{ fontSize: 32, fontWeight: '600', color: colors.primary }}>
                     {Math.round((quizScore / quizQuestions.length) * 100)}
                   </Text>
-                  <Text style={{ fontSize: 14, color: '#6B7280' }}>
+                  <Text style={{ fontSize: 14, color: colors.textTertiary }}>
                     正确率 %
                   </Text>
                 </View>
@@ -469,7 +470,7 @@ const QuestionBankScreen: React.FC = () => {
               
               <View style={{
                 height: 8,
-                backgroundColor: '#E5E7EB',
+                backgroundColor: colors.border,
                 borderRadius: 4,
                 overflow: 'hidden',
                 marginBottom: 8
@@ -477,11 +478,11 @@ const QuestionBankScreen: React.FC = () => {
                 <View style={{
                   height: '100%',
                   width: `${(quizScore / quizQuestions.length) * 100}%`,
-                  backgroundColor: '#2DBBA1',
+                  backgroundColor: colors.primary,
                   borderRadius: 4
                 }} />
               </View>
-              <Text style={{ fontSize: 12, color: '#6B7280', textAlign: 'center' }}>
+              <Text style={{ fontSize: 12, color: colors.textTertiary, textAlign: 'center' }}>
                 {quizScore}/{quizQuestions.length} 道题正确
               </Text>
 
@@ -489,11 +490,11 @@ const QuestionBankScreen: React.FC = () => {
               {(() => {
                 const rate = Math.round((quizScore / quizQuestions.length) * 100);
                 let label = '不及格';
-                let labelColor = '#EF4444';
-                let labelBg = '#FEE2E2';
-                if (rate >= 90) { label = '优秀'; labelColor = '#1F5E52'; labelBg = '#D1FAE5'; }
-                else if (rate >= 70) { label = '良好'; labelColor = '#92400E'; labelBg = '#FEF3C7'; }
-                else if (rate >= 60) { label = '及格'; labelColor = '#1F5E52'; labelBg = '#D1FAE5'; }
+                let labelColor: string = colors.error;
+                let labelBg: string = colors.errorLight;
+                if (rate >= 90) { label = '优秀'; labelColor = colors.primaryDark; labelBg = colors.successLight; }
+                else if (rate >= 70) { label = '良好'; labelColor = colors.warningText; labelBg = colors.warningLight; }
+                else if (rate >= 60) { label = '及格'; labelColor = colors.primaryDark; labelBg = colors.successLight; }
                 return (
                   <View style={{
                     marginTop: 12,
@@ -512,7 +513,7 @@ const QuestionBankScreen: React.FC = () => {
             {/* 错题回顾 */}
             {wrongQuestions.length > 0 && (
               <View style={{
-                backgroundColor: '#FFFFFF',
+                backgroundColor: colors.surface,
                 borderRadius: 16,
                 padding: 16,
                 marginBottom: 16,
@@ -522,26 +523,26 @@ const QuestionBankScreen: React.FC = () => {
                 shadowRadius: 3.84,
                 elevation: 2
               }}>
-                <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827', marginBottom: 12 }}>
+                <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textPrimary, marginBottom: 12 }}>
                   错题回顾 ({wrongQuestions.length} 题)
                 </Text>
                 {wrongQuestions.map((item, index) => (
                   <View key={index} style={{
-                    backgroundColor: '#FEF2F2',
+                    backgroundColor: colors.errorLight,
                     borderRadius: 8,
                     padding: 12,
                     marginBottom: 8,
                     borderLeftWidth: 3,
-                    borderLeftColor: '#EF4444'
+                    borderLeftColor: colors.error
                   }}>
-                    <Text style={{ fontSize: 14, fontWeight: '500', color: '#111827', marginBottom: 8 }}>
+                    <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textPrimary, marginBottom: 8 }}>
                       {item.question.questionText}
                     </Text>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                      <Text style={{ fontSize: 12, color: '#EF4444' }}>
+                      <Text style={{ fontSize: 12, color: colors.error }}>
                         你的答案：{item.userAnswers.map(a => String.fromCharCode(65 + a)).join('、')}
                       </Text>
-                      <Text style={{ fontSize: 12, color: '#10B981' }}>
+                      <Text style={{ fontSize: 12, color: colors.success }}>
                         正确答案：{(Array.isArray(item.question.correctAnswer)
                           ? item.question.correctAnswer
                           : [item.question.correctAnswer])
@@ -555,7 +556,7 @@ const QuestionBankScreen: React.FC = () => {
             
             <TouchableOpacity
               style={{
-                backgroundColor: '#2DBBA1',
+                backgroundColor: colors.primary,
                 borderRadius: 12,
                 paddingHorizontal: 32,
                 paddingVertical: 16,
@@ -565,25 +566,25 @@ const QuestionBankScreen: React.FC = () => {
               }}
               onPress={resetQuiz}
             >
-              <Text style={{ fontSize: 16, fontWeight: '600', color: '#FFFFFF' }}>
+              <Text style={{ fontSize: 16, fontWeight: '600', color: colors.surface }}>
                 重新测验
               </Text>
             </TouchableOpacity>
             
             <TouchableOpacity
               style={{
-                backgroundColor: '#FFFFFF',
+                backgroundColor: colors.surface,
                 borderRadius: 12,
                 paddingHorizontal: 32,
                 paddingVertical: 16,
                 alignItems: 'center',
                 justifyContent: 'center',
                 borderWidth: 2,
-                borderColor: '#2DBBA1'
+                borderColor: colors.primary
               }}
               onPress={() => setIsQuizMode(false)}
             >
-              <Text style={{ fontSize: 16, fontWeight: '600', color: '#2DBBA1' }}>
+              <Text style={{ fontSize: 16, fontWeight: '600', color: colors.primary }}>
                 返回题库
               </Text>
             </TouchableOpacity>
@@ -593,7 +594,7 @@ const QuestionBankScreen: React.FC = () => {
         // 测验模式
         <ScrollView contentContainerStyle={{ padding: 16 }}>
           <View style={{
-            backgroundColor: '#FFFFFF',
+            backgroundColor: colors.surface,
             borderRadius: 12,
             padding: 16,
             marginBottom: 16,
@@ -609,26 +610,26 @@ const QuestionBankScreen: React.FC = () => {
               alignItems: 'center',
               marginBottom: 16
             }}>
-              <Text style={{ fontSize: 16, fontWeight: '500', color: '#6B7280' }}>
+              <Text style={{ fontSize: 16, fontWeight: '500', color: colors.textTertiary }}>
                 第 {currentQuestionIndex + 1} 题 / 共 {quizQuestions.length} 题
               </Text>
               <View style={{
                 height: 8,
                 width: 120,
-                backgroundColor: '#E5E7EB',
+                backgroundColor: colors.border,
                 borderRadius: 4,
                 overflow: 'hidden'
               }}>
                 <View style={{
                   height: '100%',
                   width: `${((currentQuestionIndex + 1) / quizQuestions.length) * 100}%`,
-                  backgroundColor: '#2DBBA1',
+                  backgroundColor: colors.primary,
                   borderRadius: 4
                 }} />
               </View>
             </View>
             
-            <Text style={{ fontSize: 18, fontWeight: '600', color: '#111827', marginBottom: 20 }}>
+            <Text style={{ fontSize: 18, fontWeight: '600', color: colors.textPrimary, marginBottom: 20 }}>
               {quizQuestions[currentQuestionIndex].questionText}
             </Text>
             
@@ -640,27 +641,27 @@ const QuestionBankScreen: React.FC = () => {
                   : [quizQuestions[currentQuestionIndex].correctAnswer];
                 const isCorrectAnswer = correctArr.includes(optionIndex);
                 let optionStyle: any = {
-                  backgroundColor: '#F3F4F6',
-                  borderColor: '#E5E7EB'
+                  backgroundColor: colors.surfaceMuted,
+                  borderColor: colors.border
                 };
                 let indicatorStyle: any = {
                   borderWidth: 2,
-                  borderColor: '#D1D5DB',
+                  borderColor: colors.borderStrong,
                   backgroundColor: 'transparent'
                 };
 
                 if (showFeedback) {
                   // 反馈阶段：正确答案绿色，错误选择红色
                   if (isCorrectAnswer) {
-                    optionStyle = { backgroundColor: '#D1FAE5', borderColor: '#10B981' };
-                    indicatorStyle = { backgroundColor: '#10B981', borderColor: '#10B981' };
+                    optionStyle = { backgroundColor: colors.successLight, borderColor: colors.success };
+                    indicatorStyle = { backgroundColor: colors.success, borderColor: colors.success };
                   } else if (isSelected && !isCorrectAnswer) {
-                    optionStyle = { backgroundColor: '#FEE2E2', borderColor: '#EF4444' };
-                    indicatorStyle = { backgroundColor: '#EF4444', borderColor: '#EF4444' };
+                    optionStyle = { backgroundColor: colors.errorLight, borderColor: colors.error };
+                    indicatorStyle = { backgroundColor: colors.error, borderColor: colors.error };
                   }
                 } else if (isSelected) {
-                  optionStyle = { backgroundColor: '#E6F7F3', borderColor: '#2DBBA1' };
-                  indicatorStyle = { backgroundColor: '#2DBBA1', borderColor: '#2DBBA1' };
+                  optionStyle = { backgroundColor: colors.primaryLight, borderColor: colors.primary };
+                  indicatorStyle = { backgroundColor: colors.primary, borderColor: colors.primary };
                 }
 
                 return (
@@ -691,7 +692,7 @@ const QuestionBankScreen: React.FC = () => {
                     indicatorStyle
                   ]}>
                     {(isSelected || (showFeedback && isCorrectAnswer)) && (
-                      <Text style={{ fontSize: 16, color: '#FFFFFF', fontWeight: '600' }}>
+                      <Text style={{ fontSize: 16, color: colors.surface, fontWeight: '600' }}>
                         {showFeedback && isCorrectAnswer && !isSelected ? '✓' :
                          showFeedback && isSelected && !isCorrectAnswer ? '✗' : '✓'}
                       </Text>
@@ -700,7 +701,7 @@ const QuestionBankScreen: React.FC = () => {
                   <Text style={[
                     {
                       fontSize: 16,
-                      color: '#111827',
+                      color: colors.textPrimary,
                       flex: 1
                     },
                     (isSelected || (showFeedback && isCorrectAnswer)) && {
@@ -717,27 +718,27 @@ const QuestionBankScreen: React.FC = () => {
             {/* 答题反馈区 */}
             {showFeedback && (
               <View style={{
-                backgroundColor: lastAnswerCorrect ? '#D1FAE5' : '#FEE2E2',
+                backgroundColor: lastAnswerCorrect ? colors.successLight : colors.errorLight,
                 borderRadius: 12,
                 padding: 16,
                 marginBottom: 16,
                 borderWidth: 1,
-                borderColor: lastAnswerCorrect ? '#10B981' : '#EF4444'
+                borderColor: lastAnswerCorrect ? colors.success : colors.error
               }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
                   <Text style={{ fontSize: 20, marginRight: 8 }}>
-                    {lastAnswerCorrect ? <Ionicons name="checkmark-circle" size={14} color="#22C55E" /> : <Ionicons name="close-circle" size={14} color="#EF4444" />}
+                    {lastAnswerCorrect ? <Ionicons name="checkmark-circle" size={14} color={colors.success} /> : <Ionicons name="close-circle" size={14} color={colors.error} />}
                   </Text>
                   <Text style={{
                     fontSize: 16,
                     fontWeight: '600',
-                    color: lastAnswerCorrect ? '#1F5E52' : '#991B1B'
+                    color: lastAnswerCorrect ? colors.primaryDark : colors.errorText
                   }}>
                     {lastAnswerCorrect ? '回答正确！' : '回答错误'}
                   </Text>
                 </View>
                 {!lastAnswerCorrect && (
-                  <Text style={{ fontSize: 14, color: '#4B5563', lineHeight: 20 }}>
+                  <Text style={{ fontSize: 14, color: colors.textSecondary, lineHeight: 20 }}>
                     正确答案：{(Array.isArray(quizQuestions[currentQuestionIndex].correctAnswer)
                       ? quizQuestions[currentQuestionIndex].correctAnswer
                       : [quizQuestions[currentQuestionIndex].correctAnswer])
@@ -751,8 +752,8 @@ const QuestionBankScreen: React.FC = () => {
             <TouchableOpacity
               style={{
                 backgroundColor: showFeedback
-                  ? '#2DBBA1'
-                  : (selectedAnswers.length === 0 ? '#D1D5DB' : '#2DBBA1'),
+                  ? colors.primary
+                  : (selectedAnswers.length === 0 ? colors.borderStrong : colors.primary),
                 borderRadius: 12,
                 padding: 16,
                 alignItems: 'center',
@@ -761,7 +762,7 @@ const QuestionBankScreen: React.FC = () => {
               onPress={showFeedback ? nextQuestion : submitAnswer}
               disabled={!showFeedback && selectedAnswers.length === 0}
             >
-              <Text style={{ fontSize: 16, fontWeight: '600', color: '#FFFFFF' }}>
+              <Text style={{ fontSize: 16, fontWeight: '600', color: colors.surface }}>
                 {showFeedback
                   ? (currentQuestionIndex < quizQuestions.length - 1 ? '下一题' : '查看结果')
                   : (currentQuestionIndex < quizQuestions.length - 1 ? '提交答案' : '提交答案')}

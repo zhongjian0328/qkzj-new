@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, Modal, TextInput, ActivityIndicator, Alert, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -173,14 +174,14 @@ const EmployeeManagementScreen: React.FC = () => {
         onBack={() => navigation.goBack()} 
         rightComponent={
           <TouchableOpacity onPress={() => setModalVisible(true)}>
-            <Text style={{ color: '#2DBBA1', fontSize: 16 }}>新增员工</Text>
+            <Text style={{ color: colors.primary, fontSize: 16 }}>新增员工</Text>
           </TouchableOpacity>
         }
       />
       
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#2DBBA1" />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : (
         <FlatList
@@ -283,7 +284,7 @@ const EmployeeManagementScreen: React.FC = () => {
                 disabled={loading}
               >
                 {loading ? (
-                  <ActivityIndicator color="#FFFFFF" />
+                  <ActivityIndicator color={colors.surface} />
                 ) : (
                   <Text style={styles.modalButtonText}>
                     {editingEmployee ? '更新权限' : '创建员工'}

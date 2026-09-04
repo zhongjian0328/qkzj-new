@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -8,8 +9,8 @@ import { styles } from '../styles';
 
 // 饼图颜色调色板
 const PIE_COLORS = [
-  '#2DBBA1', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6',
-  '#EC4899', '#06B6D4', '#84CC16', '#F97316', '#6366F1',
+  colors.primary, colors.info, colors.warning, colors.error, colors.accent.purple,
+  colors.accent.pink, colors.accent.cyan, colors.accent.lime, colors.accent.orange, colors.accent.indigo,
 ];
 
 const StatisticsScreen: React.FC = () => {
@@ -62,27 +63,27 @@ const StatisticsScreen: React.FC = () => {
             value={production.totalBatches ?? 0}
             unit="个"
             iconName="layers-outline"
-            color="#2DBBA1"
+            color={colors.primary}
           />
           <DataCard
             title="总存栏"
             value={production.totalBirds ?? 0}
             unit="羽"
             iconName="egg-outline"
-            color="#F59E0B"
+            color={colors.warning}
           />
           <DataCard
             title="死淘率"
             value={production.mortalityRate ?? 0}
             unit="%"
             iconName="trending-down-outline"
-            color="#EF4444"
+            color={colors.error}
           />
           <DataCard
             title="料肉比"
             value={production.feedConversionRate ?? 0}
             iconName="scale-outline"
-            color="#3B82F6"
+            color={colors.info}
           />
         </View>
 
@@ -152,7 +153,7 @@ const StatisticsScreen: React.FC = () => {
       name: item.disease,
       population: item.count,
       color: PIE_COLORS[index % PIE_COLORS.length],
-      legendFontColor: '#6B7280',
+      legendFontColor: colors.textTertiary,
       legendFontSize: 12
     }));
 
@@ -165,14 +166,14 @@ const StatisticsScreen: React.FC = () => {
             value={diagnosis.totalDiagnoses ?? 0}
             unit="次"
             iconName="medkit-outline"
-            color="#2DBBA1"
+            color={colors.primary}
           />
           <DataCard
             title="诊断准确率"
             value={diagnosis.correctRate ?? 0}
             unit="%"
             iconName="checkmark-circle-outline"
-            color="#10B981"
+            color={colors.success}
           />
         </View>
 
@@ -236,28 +237,28 @@ const StatisticsScreen: React.FC = () => {
             value={epidemic.totalCases ?? 0}
             unit="例"
             iconName="warning-outline"
-            color="#F59E0B"
+            color={colors.warning}
           />
           <DataCard
             title="高风险区域"
             value={epidemic.highRiskRegions ?? 0}
             unit="个"
             iconName="alert-circle-outline"
-            color="#EF4444"
+            color={colors.error}
           />
           <DataCard
             title="中风险区域"
             value={epidemic.mediumRiskRegions ?? 0}
             unit="个"
             iconName="shield-outline"
-            color="#F59E0B"
+            color={colors.warning}
           />
           <DataCard
             title="今日新增"
             value={epidemic.newCasesToday ?? 0}
             unit="例"
             iconName="trending-up-outline"
-            color="#EF4444"
+            color={colors.error}
           />
         </View>
 
@@ -310,14 +311,14 @@ const StatisticsScreen: React.FC = () => {
             key={tab.id}
             style={[
               { flex: 1, paddingVertical: 12, alignItems: 'center', borderRadius: 8, marginHorizontal: 4 },
-              activeTab === tab.id && { backgroundColor: '#E6F7F3' }
+              activeTab === tab.id && { backgroundColor: colors.primaryLight }
             ]}
             onPress={() => setActiveTab(tab.id)}
           >
             <Text
               style={[
-                { fontSize: 16, color: '#6B7280', fontWeight: '500' },
-                activeTab === tab.id && { color: '#1F5E52' }
+                { fontSize: 16, color: colors.textTertiary, fontWeight: '500' },
+                activeTab === tab.id && { color: colors.primaryDark }
               ]}
             >
               {tab.label}
@@ -331,8 +332,8 @@ const StatisticsScreen: React.FC = () => {
   // 加载中
   if (loading) {
     return (
-      <View style={[local.loadingContainer, { backgroundColor: '#F8FFF7' }]}>
-        <ActivityIndicator size="large" color="#2DBBA1" />
+      <View style={[local.loadingContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
         <Text style={local.loadingText}>加载统计数据中...</Text>
       </View>
     );
@@ -341,7 +342,7 @@ const StatisticsScreen: React.FC = () => {
   // 错误状态
   if (error) {
     return (
-      <View style={[local.errorContainer, { backgroundColor: '#F8FFF7' }]}>
+      <View style={[local.errorContainer, { backgroundColor: colors.background }]}>
         <Text style={local.errorText}>加载失败: {error}</Text>
         <TouchableOpacity style={local.retryButton} onPress={loadDashboard}>
           <Text style={local.retryButtonText}>重新加载</Text>
@@ -380,7 +381,7 @@ const local = StyleSheet.create({
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: '#6B7280',
+    color: colors.textTertiary,
   },
   errorContainer: {
     flex: 1,
@@ -390,18 +391,18 @@ const local = StyleSheet.create({
   },
   errorText: {
     fontSize: 16,
-    color: '#EF4444',
+    color: colors.error,
     textAlign: 'center',
     marginBottom: 20,
   },
   retryButton: {
-    backgroundColor: '#2DBBA1',
+    backgroundColor: colors.primary,
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,
   },
   retryButtonText: {
-    color: '#FFFFFF',
+    color: colors.surface,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -411,17 +412,17 @@ const local = StyleSheet.create({
   },
   noDataText: {
     fontSize: 14,
-    color: '#9CA3AF',
+    color: colors.textDisabled,
   },
   heatmapButton: {
     marginTop: 16,
-    backgroundColor: '#1F5E52',
+    backgroundColor: colors.primaryDark,
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: 'center',
   },
   heatmapButtonText: {
-    color: '#FFFFFF',
+    color: colors.surface,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -431,11 +432,11 @@ const local = StyleSheet.create({
 export const statisticsStyles = StyleSheet.create({
   tabContainer: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: colors.border,
   },
   tabItem: {
     flex: 1,
@@ -445,15 +446,15 @@ export const statisticsStyles = StyleSheet.create({
     marginHorizontal: 4,
   },
   tabItemActive: {
-    backgroundColor: '#E6F7F3',
+    backgroundColor: colors.primaryLight,
   },
   tabText: {
     fontSize: 16,
-    color: '#6B7280',
+    color: colors.textTertiary,
     fontWeight: '500',
   },
   tabTextActive: {
-    color: '#1F5E52',
+    color: colors.primaryDark,
   },
   contentContainer: {
     flex: 1,
@@ -469,12 +470,12 @@ export const statisticsStyles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F8FFF7',
+    backgroundColor: colors.background,
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: '#6B7280',
+    color: colors.textTertiary,
   },
 });
 

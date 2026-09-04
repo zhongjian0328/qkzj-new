@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { colors, spacing, typography, component } from '../theme';
 
 interface TabItem {
   label: string;
@@ -21,10 +22,10 @@ const BottomTabNavigator: React.FC<BottomTabNavigatorProps> = ({
   tabs,
   activeTab,
   onTabPress,
-  backgroundColor = '#FFFFFF',
-  activeColor = '#2DBBA1',
-  inactiveColor = '#9CA3AF',
-  height = 64,
+  backgroundColor = colors.surface,
+  activeColor = colors.primary,
+  inactiveColor = colors.textDisabled,
+  height = component.tabBarHeight,
 }) => {
   return (
     <View style={[styles.container, { backgroundColor, height }]}>
@@ -67,9 +68,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
-    paddingBottom: 8,
-    paddingTop: 8,
+    borderTopColor: colors.border,
+    paddingBottom: spacing.sm,
+    paddingTop: spacing.sm,
     shadowColor: '#000000',
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.05,
@@ -83,14 +84,14 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 24,
-    marginBottom: 4,
+    marginBottom: spacing.xs,
   },
   label: {
-    fontSize: 12,
-    fontWeight: '500',
+    fontSize: typography.size.caption,
+    fontWeight: typography.weight.medium,
   },
   activeLabel: {
-    fontWeight: '600',
+    fontWeight: typography.weight.semibold,
   },
 });
 

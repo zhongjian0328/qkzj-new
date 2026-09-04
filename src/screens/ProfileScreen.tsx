@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -78,14 +79,14 @@ const ProfileScreen: React.FC = () => {
             title: '我的诊断',
             subtitle: '查看诊断历史记录',
             iconName: 'medkit-outline',
-            iconColor: '#2DBBA1',
+            iconColor: colors.primary,
             onPress: () => navigation.navigate('DiagnosisHistory'),
           },
           {
             title: '我的收藏',
             subtitle: '收藏的知识文章',
             iconName: 'heart-outline',
-            iconColor: '#EF4444',
+            iconColor: colors.error,
             onPress: () => navigation.navigate('MyFavorites'),
           },
         ],
@@ -103,21 +104,21 @@ const ProfileScreen: React.FC = () => {
             title: '批次管理',
             subtitle: '管理养殖批次',
             iconName: 'layers-outline',
-            iconColor: '#F59E0B',
+            iconColor: colors.warning,
             onPress: () => navigation.navigate('BatchManagement'),
           },
           {
             title: '环境监测',
             subtitle: '查看环境数据与预警',
             iconName: 'thermometer-outline',
-            iconColor: '#3B82F6',
+            iconColor: colors.info,
             onPress: () => navigation.navigate('EnvironmentRecord'),
           },
           {
             title: '数据统计',
             subtitle: '查看生产数据分析',
             iconName: 'bar-chart-outline',
-            iconColor: '#8B5CF6',
+            iconColor: colors.accent.purple,
             onPress: () => navigation.navigate('Statistics'),
           },
         ],
@@ -134,21 +135,21 @@ const ProfileScreen: React.FC = () => {
               title: '疫情热力图',
               subtitle: '实时疫情监测',
               iconName: 'map-outline',
-              iconColor: '#EF4444',
+              iconColor: colors.error,
               onPress: () => navigation.navigate('EpidemicHeatmap'),
             },
             {
               title: '流行病学调查',
               subtitle: '管理流调记录',
               iconName: 'clipboard-outline',
-              iconColor: '#3B82F6',
+              iconColor: colors.info,
               onPress: () => navigation.navigate('SurveyList'),
             },
             {
               title: '异常报警',
               subtitle: '查看环境预警',
               iconName: 'alert-circle-outline',
-              iconColor: '#F59E0B',
+              iconColor: colors.warning,
               onPress: () => navigation.navigate('EnvironmentAlert'),
             },
           ],
@@ -161,14 +162,14 @@ const ProfileScreen: React.FC = () => {
               title: '知识图谱',
               subtitle: '疾病图谱百科',
               iconName: 'git-network-outline',
-              iconColor: '#8B5CF6',
+              iconColor: colors.accent.purple,
               onPress: () => navigation.navigate('KnowledgeGraph'),
             },
             {
               title: '教学案例',
               subtitle: '管理教学案例库',
               iconName: 'book-outline',
-              iconColor: '#3B82F6',
+              iconColor: colors.info,
               onPress: () => navigation.navigate('TeachingCaseList'),
             },
           ],
@@ -181,7 +182,7 @@ const ProfileScreen: React.FC = () => {
               title: '服务工单',
               subtitle: '管理服务请求',
               iconName: 'document-text-outline',
-              iconColor: '#2DBBA1',
+              iconColor: colors.primary,
               onPress: () => navigation.navigate('TicketList'),
               badge: 3,
             },
@@ -189,7 +190,7 @@ const ProfileScreen: React.FC = () => {
               title: '知识库',
               subtitle: '查阅专业知识',
               iconName: 'library-outline',
-              iconColor: '#3B82F6',
+              iconColor: colors.info,
               onPress: () => navigation.navigate('KnowledgeList'),
             },
           ],
@@ -205,21 +206,21 @@ const ProfileScreen: React.FC = () => {
             title: '实习日志',
             subtitle: '记录实习经历',
             iconName: 'create-outline',
-            iconColor: '#2DBBA1',
+            iconColor: colors.primary,
             onPress: () => navigation.navigate('InternLog'),
           },
           {
             title: '题库测验',
             subtitle: '检验学习成果',
             iconName: 'school-outline',
-            iconColor: '#8B5CF6',
+            iconColor: colors.accent.purple,
             onPress: () => navigation.navigate('QuestionBank'),
           },
           {
             title: '知识图谱',
             subtitle: '疾病图谱百科',
             iconName: 'gitNetwork-outline',
-            iconColor: '#3B82F6',
+            iconColor: colors.info,
             onPress: () => navigation.navigate('KnowledgeGraph'),
           },
         ],
@@ -234,21 +235,21 @@ const ProfileScreen: React.FC = () => {
             title: '学生管理',
             subtitle: '管理实习生与日志',
             iconName: 'people-outline',
-            iconColor: '#2DBBA1',
+            iconColor: colors.primary,
             onPress: () => navigation.navigate('MentorManagement'),
           },
           {
             title: '教学案例',
             subtitle: '管理教学案例库',
             iconName: 'book-outline',
-            iconColor: '#3B82F6',
+            iconColor: colors.info,
             onPress: () => navigation.navigate('TeachingCaseList'),
           },
           {
             title: '诊断报告审核',
             subtitle: '批阅学生诊断报告',
             iconName: 'checkmark-done-outline',
-            iconColor: '#F59E0B',
+            iconColor: colors.warning,
             onPress: () => navigation.navigate('DiagnosisHistory'),
             badge: 12,
           },
@@ -263,21 +264,21 @@ const ProfileScreen: React.FC = () => {
           title: '个人信息',
           subtitle: '编辑个人资料',
           iconName: 'person-outline',
-          iconColor: '#6B7280',
+          iconColor: colors.textTertiary,
           onPress: () => navigation.navigate('EditProfile'),
         },
         {
           title: '身份认证',
           subtitle: '认证专业身份',
           iconName: 'shield-checkmark-outline',
-          iconColor: '#2DBBA1',
+          iconColor: colors.primary,
           onPress: () => navigation.navigate('AuthCertification', { role: user?.roleType }),
         },
         {
           title: '消息通知',
           subtitle: '查看系统通知',
           iconName: 'notifications-outline',
-          iconColor: '#F59E0B',
+          iconColor: colors.warning,
           onPress: () => navigation.navigate('Notifications'),
         },
       ],
@@ -308,7 +309,7 @@ const ProfileScreen: React.FC = () => {
                   user?.roleType === 'TEACHER' ? 'person-outline' : 'person-circle-outline'
                 }
                 size={40}
-                color="#2DBBA1"
+                color={colors.primary}
               />
             </View>
             <View style={styles.profileUserDetails}>
@@ -319,20 +320,20 @@ const ProfileScreen: React.FC = () => {
                   paddingHorizontal: 8,
                   paddingVertical: 2,
                   borderRadius: 10,
-                  backgroundColor: '#E6F7F3',
+                  backgroundColor: colors.primaryLight,
                 }}>
-                  <Text style={{ fontSize: 12, fontWeight: '500', color: '#1F5E52' }}>
+                  <Text style={{ fontSize: 12, fontWeight: '500', color: colors.primaryDark }}>
                     {roleLabel[user?.roleType || ''] || '未知'}
                   </Text>
                 </View>
               </View>
               {user?.subRole && subRoleLabel[user.subRole] && (
-                <Text style={{ fontSize: 12, color: '#6B7280', marginBottom: 2 }}>
+                <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: 2 }}>
                   {subRoleLabel[user.subRole]}
                 </Text>
               )}
               {user?.phoneNumber && (
-                <Text style={{ fontSize: 12, color: '#9CA3AF' }}>
+                <Text style={{ fontSize: 12, color: colors.textDisabled }}>
                   {user.phoneNumber.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')}
                 </Text>
               )}
@@ -343,7 +344,7 @@ const ProfileScreen: React.FC = () => {
         {/* 统计数据区 */}
         <View style={{
           flexDirection: 'row',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: colors.surface,
           borderRadius: 12,
           padding: 16,
           marginBottom: 16,
@@ -354,14 +355,14 @@ const ProfileScreen: React.FC = () => {
           elevation: 2,
         }}>
           {[
-            { label: '诊断次数', value: String(stats.diagnosisCount), icon: 'medkit-outline', color: '#2DBBA1' },
-            { label: '成功率', value: stats.successRate, icon: 'checkmark-circle-outline', color: '#10B981' },
-            { label: '使用天数', value: String(stats.usageDays), icon: 'calendar-outline', color: '#3B82F6' },
+            { label: '诊断次数', value: String(stats.diagnosisCount), icon: 'medkit-outline', color: colors.primary },
+            { label: '成功率', value: stats.successRate, icon: 'checkmark-circle-outline', color: colors.success },
+            { label: '使用天数', value: String(stats.usageDays), icon: 'calendar-outline', color: colors.info },
           ].map((stat, index) => (
             <View key={index} style={{ flex: 1, alignItems: 'center' }}>
               <Ionicons name={stat.icon as any} size={20} color={stat.color} style={{ marginBottom: 4 }} />
-              <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#111827' }}>{stat.value}</Text>
-              <Text style={{ fontSize: 12, color: '#6B7280' }}>{stat.label}</Text>
+              <Text style={{ fontSize: 20, fontWeight: 'bold', color: colors.textPrimary }}>{stat.value}</Text>
+              <Text style={{ fontSize: 12, color: colors.textTertiary }}>{stat.label}</Text>
             </View>
           ))}
         </View>
@@ -372,7 +373,7 @@ const ProfileScreen: React.FC = () => {
             <Text style={{
               fontSize: 14,
               fontWeight: '600',
-              color: '#6B7280',
+              color: colors.textTertiary,
               marginBottom: 8,
               marginLeft: 4,
             }}>
@@ -394,7 +395,7 @@ const ProfileScreen: React.FC = () => {
                     {item.badge && item.badge > 0 && (
                       <View style={{
                         marginLeft: 8,
-                        backgroundColor: '#EF4444',
+                        backgroundColor: colors.error,
                         borderRadius: 10,
                         minWidth: 20,
                         height: 20,
@@ -402,17 +403,17 @@ const ProfileScreen: React.FC = () => {
                         justifyContent: 'center',
                         paddingHorizontal: 6,
                       }}>
-                        <Text style={{ color: '#FFFFFF', fontSize: 11, fontWeight: '600' }}>
+                        <Text style={{ color: colors.surface, fontSize: 11, fontWeight: '600' }}>
                           {item.badge > 99 ? '99+' : item.badge}
                         </Text>
                       </View>
                     )}
                   </View>
                   {item.subtitle && (
-                    <Text style={{ fontSize: 12, color: '#9CA3AF', marginTop: 2 }}>{item.subtitle}</Text>
+                    <Text style={{ fontSize: 12, color: colors.textDisabled, marginTop: 2 }}>{item.subtitle}</Text>
                   )}
                 </View>
-                <Ionicons name="chevron-forward" size={18} color="#9CA3AF" />
+                <Ionicons name="chevron-forward" size={18} color={colors.textDisabled} />
               </TouchableOpacity>
             ))}
           </View>
@@ -421,19 +422,19 @@ const ProfileScreen: React.FC = () => {
         {/* 退出登录按钮 */}
         <TouchableOpacity
           style={{
-            backgroundColor: '#FFFFFF',
+            backgroundColor: colors.surface,
             borderRadius: 12,
             padding: 16,
             marginTop: 8,
             marginBottom: 16,
             alignItems: 'center',
             borderWidth: 1,
-            borderColor: '#FEE2E2',
+            borderColor: colors.errorLight,
           }}
           onPress={() => setLogoutModalVisible(true)}
           activeOpacity={0.7}
         >
-          <Text style={{ fontSize: 16, fontWeight: '600', color: '#EF4444' }}>退出登录</Text>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: colors.error }}>退出登录</Text>
         </TouchableOpacity>
 
         {/* 版本信息 */}
@@ -456,7 +457,7 @@ const ProfileScreen: React.FC = () => {
           justifyContent: 'flex-end',
         }}>
           <View style={{
-            backgroundColor: '#FFFFFF',
+            backgroundColor: colors.surface,
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             padding: 24,
@@ -466,17 +467,17 @@ const ProfileScreen: React.FC = () => {
               width: 56,
               height: 56,
               borderRadius: 28,
-              backgroundColor: '#FEE2E2',
+              backgroundColor: colors.errorLight,
               justifyContent: 'center',
               alignItems: 'center',
               marginBottom: 16,
             }}>
-              <Ionicons name="log-out-outline" size={28} color="#EF4444" />
+              <Ionicons name="log-out-outline" size={28} color={colors.error} />
             </View>
-            <Text style={{ fontSize: 18, fontWeight: '600', color: '#111827', marginBottom: 8 }}>
+            <Text style={{ fontSize: 18, fontWeight: '600', color: colors.textPrimary, marginBottom: 8 }}>
               确认退出登录
             </Text>
-            <Text style={{ fontSize: 14, color: '#6B7280', textAlign: 'center', marginBottom: 24 }}>
+            <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center', marginBottom: 24 }}>
               退出后需要重新登录才能使用APP功能
             </Text>
             <View style={{ flexDirection: 'row', gap: 12, width: '100%' }}>
@@ -485,19 +486,19 @@ const ProfileScreen: React.FC = () => {
                   flex: 1,
                   paddingVertical: 14,
                   borderRadius: 12,
-                  backgroundColor: '#F3F4F6',
+                  backgroundColor: colors.surfaceMuted,
                   alignItems: 'center',
                 }}
                 onPress={() => setLogoutModalVisible(false)}
               >
-                <Text style={{ fontSize: 16, fontWeight: '600', color: '#374151' }}>取消</Text>
+                <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textSecondary }}>取消</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={{
                   flex: 1,
                   paddingVertical: 14,
                   borderRadius: 12,
-                  backgroundColor: '#EF4444',
+                  backgroundColor: colors.error,
                   alignItems: 'center',
                 }}
                 onPress={() => {
@@ -505,7 +506,7 @@ const ProfileScreen: React.FC = () => {
                   logout();
                 }}
               >
-                <Text style={{ fontSize: 16, fontWeight: '600', color: '#FFFFFF' }}>退出登录</Text>
+                <Text style={{ fontSize: 16, fontWeight: '600', color: colors.surface }}>退出登录</Text>
               </TouchableOpacity>
             </View>
           </View>

@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,7 +8,7 @@ import { followUpApi } from '../services/api';
 import { styles } from '../styles';
 
 const TYPE_LABELS: Record<string, string> = { day3: '第3日回访', day7: '第7日回访', custom: '自定义回访' };
-const STATUS_COLORS: Record<string, string> = { pending: '#F59E0B', completed: '#22C55E', overdue: '#EF4444', cancelled: '#9CA3AF' };
+const STATUS_COLORS: Record<string, string> = { pending: colors.warning, completed: colors.success, overdue: colors.error, cancelled: colors.textDisabled };
 const STATUS_LABELS: Record<string, string> = { pending: '待回访', completed: '已完成', overdue: '逾期', cancelled: '已取消' };
 
 export default function FollowUpListScreen() {
@@ -44,7 +45,7 @@ export default function FollowUpListScreen() {
       onPress={() => navigation.navigate('FollowUpDetail', { followUpId: item._id })}
     >
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-        <Text style={{ fontSize: 15, fontWeight: '600', color: '#111827' }}>
+        <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
           {TYPE_LABELS[item.followUpType] || item.followUpType}
         </Text>
         <View style={{
@@ -57,17 +58,17 @@ export default function FollowUpListScreen() {
         </View>
       </View>
       {item.planId && (
-        <Text style={{ fontSize: 13, color: '#4B5563', marginBottom: 4 }}>
+        <Text style={{ fontSize: 13, color: colors.textSecondary, marginBottom: 4 }}>
           关联预案：{item.planId.planName || item.planId.diseaseName}
         </Text>
       )}
-      <Text style={{ fontSize: 12, color: '#9CA3AF' }}>
+      <Text style={{ fontSize: 12, color: colors.textDisabled }}>
         计划日期：{new Date(item.scheduledDate).toLocaleDateString('zh-CN')}
       </Text>
     </TouchableOpacity>
   );
 
-  if (loading) return <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}><ActivityIndicator size="large" color="#2DBBA1" /></View>;
+  if (loading) return <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}><ActivityIndicator size="large" color={colors.primary} /></View>;
 
   return (
     <View style={styles.container}>
@@ -75,18 +76,18 @@ export default function FollowUpListScreen() {
       {/* 统计卡片 */}
       <View style={{ flexDirection: 'row', padding: 12, gap: 8 }}>
         {[
-          { label: '待回访', value: stats.pending, color: '#F59E0B' },
-          { label: '已完成', value: stats.completed, color: '#22C55E' },
-          { label: '逾期', value: stats.overdue, color: '#EF4444' },
+          { label: '待回访', value: stats.pending, color: colors.warning },
+          { label: '已完成', value: stats.completed, color: colors.success },
+          { label: '逾期', value: stats.overdue, color: colors.error },
         ].map(s => (
-          <View key={s.label} style={{ flex: 1, backgroundColor: '#FFFFFF', borderRadius: 12, padding: 12, alignItems: 'center' }}>
+          <View key={s.label} style={{ flex: 1, backgroundColor: colors.surface, borderRadius: 12, padding: 12, alignItems: 'center' }}>
             <Text style={{ fontSize: 24, fontWeight: '700', color: s.color }}>{s.value}</Text>
-            <Text style={{ fontSize: 12, color: '#6B7280', marginTop: 4 }}>{s.label}</Text>
+            <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: 4 }}>{s.label}</Text>
           </View>
         ))}
       </View>
       {/* Tab 切换 */}
-      <View style={{ flexDirection: 'row', backgroundColor: '#F3F4F6', padding: 4, marginHorizontal: 12, borderRadius: 8 }}>
+      <View style={{ flexDirection: 'row', backgroundColor: colors.surfaceMuted, padding: 4, marginHorizontal: 12, borderRadius: 8 }}>
         {[
           { key: 'all', label: '全部' },
           { key: 'pending', label: '待回访' },
@@ -97,14 +98,14 @@ export default function FollowUpListScreen() {
             key={tab.key}
             style={{
               flex: 1, paddingVertical: 8, borderRadius: 6, alignItems: 'center',
-              backgroundColor: activeTab === tab.key ? '#FFFFFF' : 'transparent',
+              backgroundColor: activeTab === tab.key ? colors.surface : 'transparent',
               elevation: activeTab === tab.key ? 1 : 0,
             }}
             onPress={() => setActiveTab(tab.key)}
           >
             <Text style={{
               fontSize: 13, fontWeight: activeTab === tab.key ? '600' : '500',
-              color: activeTab === tab.key ? '#2DBBA1' : '#6B7280',
+              color: activeTab === tab.key ? colors.primary : colors.textTertiary,
             }}>{tab.label}</Text>
           </TouchableOpacity>
         ))}
@@ -114,12 +115,12 @@ export default function FollowUpListScreen() {
         renderItem={renderFollowUp}
         keyExtractor={(item) => item._id}
         contentContainerStyle={{ padding: 12, gap: 8 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#2DBBA1']} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />}
         ListEmptyComponent={
           <View style={{ alignItems: 'center', paddingVertical: 64 }}>
-            <Ionicons name="call-outline" size={48} color="#9CA3AF" />
-            <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827', marginBottom: 8 }}>暂无回访</Text>
-            <Text style={{ fontSize: 14, color: '#6B7280', textAlign: 'center', paddingHorizontal: 32 }}>
+            <Ionicons name="call-outline" size={48} color={colors.textDisabled} />
+            <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textPrimary, marginBottom: 8 }}>暂无回访</Text>
+            <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center', paddingHorizontal: 32 }}>
               完成防控预案后会自动创建回访任务
             </Text>
           </View>

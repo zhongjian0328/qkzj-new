@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, Modal, TextInput, ActivityIndicator, Alert, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -230,11 +231,11 @@ const BatchManagementScreen: React.FC = () => {
         rightComponent={
           <View style={{ flexDirection: 'row', gap: 16 }}>
             <TouchableOpacity onPress={handleExportData} disabled={exporting} style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-              <Ionicons name="download-outline" size={18} color="#2DBBA1" />
-              <Text style={{ color: '#2DBBA1', fontSize: 14 }}>{exporting ? '导出中...' : '导出'}</Text>
+              <Ionicons name="download-outline" size={18} color={colors.primary} />
+              <Text style={{ color: colors.primary, fontSize: 14 }}>{exporting ? '导出中...' : '导出'}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setModalVisible(true)}>
-              <Text style={{ color: '#2DBBA1', fontSize: 16 }}>新增</Text>
+              <Text style={{ color: colors.primary, fontSize: 16 }}>新增</Text>
             </TouchableOpacity>
           </View>
         }
@@ -242,7 +243,7 @@ const BatchManagementScreen: React.FC = () => {
       
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#2DBBA1" />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : (
         <FlatList
@@ -313,7 +314,7 @@ const BatchManagementScreen: React.FC = () => {
                 disabled={loading}
               >
                 {loading ? (
-                  <ActivityIndicator color="#FFFFFF" />
+                  <ActivityIndicator color={colors.surface} />
                 ) : (
                   <Text style={styles.modalButtonText}>
                     {editingBatch ? '更新' : '创建'}

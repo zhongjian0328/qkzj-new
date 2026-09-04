@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AppProvider from './context/AppProvider';
 import { useAuth } from './context/UserContext';
 import { styles } from './styles';
+import { colors } from './theme';
 import * as SplashScreen from 'expo-splash-screen';
 import OfflineBanner from './components/OfflineBanner';
 
@@ -119,7 +120,7 @@ const ServiceCycleScreen = lazy(() => import('./screens/ServiceCycleScreen'));
 // 加载指示器组件
 const LoadingIndicator = () => (
   <View style={styles.loadingContainer}>
-    <ActivityIndicator size="large" color="#2DBBA1" />
+    <ActivityIndicator size="large" color={colors.primary} />
     <Text style={styles.loadingText}>加载中...</Text>
   </View>
 );
@@ -214,15 +215,15 @@ const MainTabs: React.FC = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: '#2DBBA1',
-        tabBarInactiveTintColor: '#9CA3AF',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textDisabled,
         tabBarStyle: {
           height: 64,
           paddingBottom: 8,
           paddingTop: 8,
-          backgroundColor: '#FFFFFF',
+          backgroundColor: colors.surface,
           borderTopWidth: 1,
-          borderTopColor: '#E5E7EB',
+          borderTopColor: colors.border,
           shadowColor: '#000',
           shadowOffset: {
             width: 0,
@@ -381,7 +382,7 @@ const SplashScreenComponent: React.FC<{ onAnimationComplete: () => void }> = ({ 
           },
         ]}
       >
-        <Ionicons name="medical" size={64} color="#2DBBA1" />
+        <Ionicons name="medical" size={64} color={colors.primary} />
       </Animated.View>
       <Animated.Text
         style={[

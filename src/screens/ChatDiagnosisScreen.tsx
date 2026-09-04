@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, Image, KeyboardAvoidingView, Platform, ActivityIndicator, ScrollView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -106,7 +107,7 @@ const ChatDiagnosisScreen: React.FC = () => {
       <View style={[styles.chatMessageRow, isUser ? styles.chatUserMessageRow : styles.chatAiMessageRow]}>
         {!isUser && (
           <View style={styles.chatAiAvatar}>
-            <Ionicons name="hardware-chip" size={24} color="#2DBBA1" />
+            <Ionicons name="hardware-chip" size={24} color={colors.primary} />
           </View>
         )}
         <View style={[styles.chatMessageBubble, isUser ? styles.chatUserMessageBubble : styles.chatAiMessageBubble]}>
@@ -136,7 +137,7 @@ const ChatDiagnosisScreen: React.FC = () => {
         </View>
         {isUser && (
           <View style={styles.chatUserAvatar}>
-            <Ionicons name="person" size={24} color="#6B7280" />
+            <Ionicons name="person" size={24} color={colors.textTertiary} />
           </View>
         )}
       </View>
@@ -264,15 +265,15 @@ const ChatDiagnosisScreen: React.FC = () => {
             style={styles.chatFunctionButton} 
             onPress={pickImage}
           >
-            <Ionicons name="camera" size={20} color="#6B7280" />
+            <Ionicons name="camera" size={20} color={colors.textTertiary} />
           </TouchableOpacity>
           
           {/* 语音输入按钮 */}
           <TouchableOpacity
-            style={[styles.chatFunctionButton, isListening && { backgroundColor: '#EF4444' }]}
+            style={[styles.chatFunctionButton, isListening && { backgroundColor: colors.error }]}
             onPress={toggleVoiceInput}
           >
-            <Ionicons name={isListening ? 'mic' : 'mic-outline'} size={20} color={isListening ? '#FFFFFF' : '#6B7280'} />
+            <Ionicons name={isListening ? 'mic' : 'mic-outline'} size={20} color={isListening ? colors.surface : colors.textTertiary} />
           </TouchableOpacity>
         </View>
         
@@ -294,16 +295,16 @@ const ChatDiagnosisScreen: React.FC = () => {
           disabled={(!inputText.trim() && imageUrls.length === 0) || loading}
         >
           {loading ? (
-            <ActivityIndicator size="small" color="#FFFFFF" />
+            <ActivityIndicator size="small" color={colors.surface} />
           ) : (
-            <Ionicons name="send" size={20} color="#FFFFFF" />
+            <Ionicons name="send" size={20} color={colors.surface} />
           )}
         </TouchableOpacity>
       </View>
       
       {loading && (
         <View style={styles.chatTypingIndicator}>
-          <ActivityIndicator size="small" color="#2DBBA1" />
+          <ActivityIndicator size="small" color={colors.primary} />
           <Text style={styles.chatTypingText}>AI正在思考...</Text>
         </View>
       )}

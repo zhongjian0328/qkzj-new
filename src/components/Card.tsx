@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ViewProps } from 'react-native';
+import { colors, radii, spacing, typography, shadows } from '../theme';
 
 interface CardProps extends ViewProps {
   title?: string;
@@ -46,88 +47,42 @@ const Card: React.FC<CardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     overflow: 'hidden',
   },
-  // Padding variants
-  nonePadding: {
-    padding: 0,
-  },
-  smallPadding: {
-    padding: 12,
-  },
-  mediumPadding: {
-    padding: 16,
-  },
-  largePadding: {
-    padding: 24,
-  },
-  // Shadow variants
-  noneShadow: {
-    shadowColor: 'transparent',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0,
-    shadowRadius: 0,
-    elevation: 0,
-  },
-  smallShadow: {
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  mediumShadow: {
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  largeShadow: {
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 4,
-  },
-  // Border radius variants
-  smallRadius: {
-    borderRadius: 8,
-  },
-  mediumRadius: {
-    borderRadius: 12,
-  },
-  largeRadius: {
-    borderRadius: 16,
-  },
-  fullRadius: {
-    borderRadius: 9999,
-  },
-  // Header styles
+  nonePadding: { padding: 0 },
+  smallPadding: { padding: spacing.md },
+  mediumPadding: { padding: spacing.lg },
+  largePadding: { padding: spacing.xxl },
+  noneShadow: { ...shadows.none },
+  smallShadow: { ...shadows.sm },
+  mediumShadow: { ...shadows.md },
+  largeShadow: { ...shadows.lg },
+  smallRadius: { borderRadius: radii.sm },
+  mediumRadius: { borderRadius: radii.md },
+  largeRadius: { borderRadius: radii.lg },
+  fullRadius: { borderRadius: radii.full },
   header: {
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   title: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#111827',
-    marginBottom: 4,
+    fontSize: typography.size.subtitle,
+    fontWeight: typography.weight.semibold,
+    color: colors.textPrimary,
+    marginBottom: spacing.xs,
   },
   subtitle: {
-    fontSize: 14,
-    color: '#4B5563',
+    fontSize: typography.size.body,
+    color: colors.textSecondary,
   },
-  // Content styles
   content: {
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
-  // Footer styles
   footer: {
-    marginTop: 12,
-    paddingTop: 12,
+    marginTop: spacing.md,
+    paddingTop: spacing.md,
     borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
+    borderTopColor: colors.border,
   },
 });
 

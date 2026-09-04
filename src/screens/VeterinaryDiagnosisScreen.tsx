@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Image, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -492,10 +493,10 @@ const VeterinaryDiagnosisScreen: React.FC = () => {
               style={styles.pickerField}
               onPress={() => openPicker('选择品种', BREED_OPTIONS, 'basicInfo', 'chickenBreed')}
             >
-              <Text style={[styles.pickerFieldText, !basicInfo.chickenBreed && { color: '#9CA3AF' }]}>
+              <Text style={[styles.pickerFieldText, !basicInfo.chickenBreed && { color: colors.textDisabled }]}>
                 {basicInfo.chickenBreed || '请选择品种'}
               </Text>
-              <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
+              <Ionicons name="chevron-down" size={20} color={colors.textDisabled} />
             </TouchableOpacity>
             
             <View style={styles.formGrid}>
@@ -639,10 +640,10 @@ const VeterinaryDiagnosisScreen: React.FC = () => {
                 style={styles.pickerField}
                 onPress={() => openPicker('AIV检测结果', TEST_RESULT_OPTIONS, 'rapidTestResults', 'aivTest')}
               >
-                <Text style={[styles.pickerFieldText, !rapidTestResults.aivTest && { color: '#9CA3AF' }]}>
+                <Text style={[styles.pickerFieldText, !rapidTestResults.aivTest && { color: colors.textDisabled }]}>
                   {TEST_RESULT_OPTIONS.find(o => o.value === rapidTestResults.aivTest)?.label || '请选择检测结果'}
                 </Text>
-                <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
+                <Ionicons name="chevron-down" size={20} color={colors.textDisabled} />
               </TouchableOpacity>
             </View>
 
@@ -652,10 +653,10 @@ const VeterinaryDiagnosisScreen: React.FC = () => {
                 style={styles.pickerField}
                 onPress={() => openPicker('NDV检测结果', TEST_RESULT_OPTIONS, 'rapidTestResults', 'ndvTest')}
               >
-                <Text style={[styles.pickerFieldText, !rapidTestResults.ndvTest && { color: '#9CA3AF' }]}>
+                <Text style={[styles.pickerFieldText, !rapidTestResults.ndvTest && { color: colors.textDisabled }]}>
                   {TEST_RESULT_OPTIONS.find(o => o.value === rapidTestResults.ndvTest)?.label || '请选择检测结果'}
                 </Text>
-                <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
+                <Ionicons name="chevron-down" size={20} color={colors.textDisabled} />
               </TouchableOpacity>
             </View>
 
@@ -665,10 +666,10 @@ const VeterinaryDiagnosisScreen: React.FC = () => {
                 style={styles.pickerField}
                 onPress={() => openPicker('IBV检测结果', TEST_RESULT_OPTIONS, 'rapidTestResults', 'ibvTest')}
               >
-                <Text style={[styles.pickerFieldText, !rapidTestResults.ibvTest && { color: '#9CA3AF' }]}>
+                <Text style={[styles.pickerFieldText, !rapidTestResults.ibvTest && { color: colors.textDisabled }]}>
                   {TEST_RESULT_OPTIONS.find(o => o.value === rapidTestResults.ibvTest)?.label || '请选择检测结果'}
                 </Text>
-                <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
+                <Ionicons name="chevron-down" size={20} color={colors.textDisabled} />
               </TouchableOpacity>
             </View>
           </View>
@@ -691,10 +692,10 @@ const VeterinaryDiagnosisScreen: React.FC = () => {
                 style={[styles.pickerField, styles.gridItem]}
                 onPress={() => openPicker('保存条件', PRESERVATION_OPTIONS, 'samplingInfo', 'preservationCondition')}
               >
-                <Text style={[styles.pickerFieldText, !samplingInfo.preservationCondition && { color: '#9CA3AF' }]}>
+                <Text style={[styles.pickerFieldText, !samplingInfo.preservationCondition && { color: colors.textDisabled }]}>
                   {samplingInfo.preservationCondition || '请选择'}
                 </Text>
-                <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
+                <Ionicons name="chevron-down" size={20} color={colors.textDisabled} />
               </TouchableOpacity>
             </View>
             
@@ -813,7 +814,7 @@ const VeterinaryDiagnosisScreen: React.FC = () => {
               style={styles.uploadButton}
               onPress={pickImage}
             >
-              <Ionicons name="camera" size={24} color="#9CA3AF" />
+              <Ionicons name="camera" size={24} color={colors.textDisabled} />
               <Text style={styles.uploadButtonText}>拍照上传</Text>
             </TouchableOpacity>
             
@@ -822,7 +823,7 @@ const VeterinaryDiagnosisScreen: React.FC = () => {
               style={styles.uploadButton}
               onPress={pickImage}
             >
-              <Ionicons name="folder-open" size={24} color="#9CA3AF" />
+              <Ionicons name="folder-open" size={24} color={colors.textDisabled} />
               <Text style={styles.uploadButtonText}>选择图片</Text>
             </TouchableOpacity>
           </View>
@@ -848,14 +849,14 @@ const VeterinaryDiagnosisScreen: React.FC = () => {
                 <Text style={styles.summaryTitle}>诊断评分：{studentDiagnosisScore}/100</Text>
                 <View style={{
                   height: 8,
-                  backgroundColor: '#E0E0E0',
+                  backgroundColor: colors.border,
                   borderRadius: 4,
                   marginTop: 8,
                   overflow: 'hidden'
                 }}>
                   <View style={{
                     height: '100%',
-                    backgroundColor: studentDiagnosisScore >= 80 ? '#4CAF50' : studentDiagnosisScore >= 60 ? '#FFC107' : '#F44336',
+                    backgroundColor: studentDiagnosisScore >= 80 ? colors.success : studentDiagnosisScore >= 60 ? colors.warning : colors.error,
                     width: `${studentDiagnosisScore}%`,
                     borderRadius: 4
                   }} />
@@ -885,7 +886,7 @@ const VeterinaryDiagnosisScreen: React.FC = () => {
         
         {loading && (
           <View style={styles.loadingOverlay}>
-            <ActivityIndicator size="large" color="#2DBBA1" />
+            <ActivityIndicator size="large" color={colors.primary} />
             <Text style={styles.loadingText}>AI正在分析中，请稍候...</Text>
           </View>
         )}

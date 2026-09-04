@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useCallback, useEffect } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, TextInput,
@@ -9,28 +10,28 @@ import { serviceTicketApi } from '../services/api';
 import { StyleSheet } from 'react-native';
 
 const COLORS = {
-  primary: '#2DBBA1',
-  primaryDark: '#1F5E52',
-  bgLight: '#E6F7F3',
-  text: '#1F2937',
-  textSecondary: '#6B7280',
-  border: '#E5E7EB',
-  danger: '#EF4444',
-  warning: '#F59E0B',
+  primary: colors.primary,
+  primaryDark: colors.primaryDark,
+  bgLight: colors.primaryLight,
+  text: colors.textPrimary,
+  textSecondary: colors.textTertiary,
+  border: colors.border,
+  danger: colors.error,
+  warning: colors.warning,
 };
 
 const PRIORITY_CONFIG: Record<string, { color: string; label: string }> = {
   urgent: { color: COLORS.danger, label: '紧急' },
   high: { color: COLORS.warning, label: '高' },
-  medium: { color: '#3B82F6', label: '中' },
-  low: { color: '#9CA3AF', label: '低' },
+  medium: { color: colors.info, label: '中' },
+  low: { color: colors.textDisabled, label: '低' },
 };
 
 const STATUS_CONFIG: Record<string, { color: string; label: string }> = {
-  open: { color: '#3B82F6', label: '待处理' },
+  open: { color: colors.info, label: '待处理' },
   in_progress: { color: COLORS.warning, label: '进行中' },
-  completed: { color: '#22C55E', label: '已完成' },
-  cancelled: { color: '#9CA3AF', label: '已取消' },
+  completed: { color: colors.success, label: '已完成' },
+  cancelled: { color: colors.textDisabled, label: '已取消' },
 };
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -278,7 +279,7 @@ export default function TicketDetailScreen() {
                 <Text style={styles.actionButtonText}>发送</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity style={[styles.actionButton, { backgroundColor: '#22C55E', marginTop: 8 }]} onPress={handleComplete}>
+            <TouchableOpacity style={[styles.actionButton, { backgroundColor: colors.success, marginTop: 8 }]} onPress={handleComplete}>
               <Text style={styles.actionButtonText}>完成工单</Text>
             </TouchableOpacity>
           </>
@@ -336,14 +337,14 @@ export default function TicketDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F9FAFB' },
+  container: { flex: 1, backgroundColor: colors.surfaceSoft },
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 120 },
-  section: { backgroundColor: '#FFFFFF', margin: 12, borderRadius: 12, padding: 16, borderWidth: 1, borderColor: COLORS.border },
+  section: { backgroundColor: colors.surface, margin: 12, borderRadius: 12, padding: 16, borderWidth: 1, borderColor: COLORS.border },
   infoRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
   ticketNo: { fontSize: 13, color: COLORS.textSecondary },
   priorityBadge: { paddingHorizontal: 10, paddingVertical: 3, borderRadius: 12 },
-  priorityBadgeText: { fontSize: 12, color: '#FFFFFF', fontWeight: '600' },
+  priorityBadgeText: { fontSize: 12, color: colors.surface, fontWeight: '600' },
   title: { fontSize: 18, fontWeight: '700', color: COLORS.text, marginBottom: 12 },
   metaRow: { flexDirection: 'row', gap: 8, marginBottom: 8 },
   tag: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
@@ -357,26 +358,26 @@ const styles = StyleSheet.create({
   messageItem: { flexDirection: 'row', gap: 10, marginBottom: 14 },
   avatar: { width: 36, height: 36, borderRadius: 18, backgroundColor: COLORS.bgLight, justifyContent: 'center', alignItems: 'center' },
   avatarText: { fontSize: 14, fontWeight: '600', color: COLORS.primaryDark },
-  messageBubble: { flex: 1, backgroundColor: '#F3F4F6', borderRadius: 12, padding: 10 },
+  messageBubble: { flex: 1, backgroundColor: colors.surfaceMuted, borderRadius: 12, padding: 10 },
   messageHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
   senderName: { fontSize: 13, fontWeight: '600', color: COLORS.text },
-  messageTime: { fontSize: 11, color: '#9CA3AF' },
+  messageTime: { fontSize: 11, color: colors.textDisabled },
   messageContent: { fontSize: 14, color: COLORS.textSecondary, lineHeight: 20 },
-  actionBar: { padding: 12, backgroundColor: '#FFFFFF', borderTopWidth: 1, borderTopColor: COLORS.border },
+  actionBar: { padding: 12, backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: COLORS.border },
   actionButton: { paddingVertical: 12, borderRadius: 8, alignItems: 'center' },
-  actionButtonText: { fontSize: 15, fontWeight: '600', color: '#FFFFFF' },
+  actionButtonText: { fontSize: 15, fontWeight: '600', color: colors.surface },
   messageInput: { flex: 1, borderWidth: 1, borderColor: COLORS.border, borderRadius: 8, paddingHorizontal: 12, paddingVertical: 8, fontSize: 14, maxHeight: 80 },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
-  modalContent: { backgroundColor: '#FFFFFF', borderRadius: 16, padding: 24, width: '80%', maxWidth: 340 },
+  modalContent: { backgroundColor: colors.surface, borderRadius: 16, padding: 24, width: '80%', maxWidth: 340 },
   modalTitle: { fontSize: 18, fontWeight: '700', color: COLORS.text, textAlign: 'center', marginBottom: 4 },
   modalSubtitle: { fontSize: 14, color: COLORS.textSecondary, textAlign: 'center', marginBottom: 16 },
   starsRow: { flexDirection: 'row', justifyContent: 'center', gap: 8, marginBottom: 16 },
-  star: { fontSize: 32, color: '#D1D5DB' },
-  starActive: { color: '#F59E0B' },
+  star: { fontSize: 32, color: colors.borderStrong },
+  starActive: { color: colors.warning },
   ratingInput: { borderWidth: 1, borderColor: COLORS.border, borderRadius: 8, padding: 10, fontSize: 14, minHeight: 60, textAlignVertical: 'top', marginBottom: 16 },
   modalButtons: { flexDirection: 'row', gap: 12 },
   modalButton: { flex: 1, paddingVertical: 12, borderRadius: 8, alignItems: 'center' },
-  modalButtonCancel: { backgroundColor: '#F3F4F6' },
-  modalButtonText: { fontSize: 15, fontWeight: '600', color: '#FFFFFF' },
+  modalButtonCancel: { backgroundColor: colors.surfaceMuted },
+  modalButtonText: { fontSize: 15, fontWeight: '600', color: colors.surface },
   modalButtonTextCancel: { fontSize: 15, fontWeight: '600', color: COLORS.textSecondary },
 });

@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, TextInput,
@@ -9,14 +10,14 @@ import { serviceTicketApi } from '../services/api';
 import { StyleSheet } from 'react-native';
 
 const COLORS = {
-  primary: '#2DBBA1',
-  primaryDark: '#1F5E52',
-  bgLight: '#E6F7F3',
-  text: '#1F2937',
-  textSecondary: '#6B7280',
-  border: '#E5E7EB',
-  danger: '#EF4444',
-  warning: '#F59E0B',
+  primary: colors.primary,
+  primaryDark: colors.primaryDark,
+  bgLight: colors.primaryLight,
+  text: colors.textPrimary,
+  textSecondary: colors.textTertiary,
+  border: colors.border,
+  danger: colors.error,
+  warning: colors.warning,
 };
 
 const CATEGORIES = [
@@ -28,8 +29,8 @@ const CATEGORIES = [
 ];
 
 const PRIORITIES = [
-  { key: 'low', label: '低', color: '#9CA3AF' },
-  { key: 'medium', label: '中', color: '#3B82F6' },
+  { key: 'low', label: '低', color: colors.textDisabled },
+  { key: 'medium', label: '中', color: colors.info },
   { key: 'high', label: '高', color: COLORS.warning },
   { key: 'urgent', label: '紧急', color: COLORS.danger },
 ];
@@ -170,7 +171,7 @@ export default function CreateTicketScreen() {
           <TextInput
             style={[styles.input, { justifyContent: 'center' }]}
             placeholder="输入预约时间（如：2026-09-05 14:00，可选）"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.textDisabled}
             value={scheduledDateStr}
             onChangeText={setScheduledDateStr}
           />
@@ -185,7 +186,7 @@ export default function CreateTicketScreen() {
           disabled={submitting}
         >
           {submitting ? (
-            <ActivityIndicator color="#FFFFFF" />
+            <ActivityIndicator color={colors.surface} />
           ) : (
             <Text style={styles.submitButtonText}>提交工单</Text>
           )}
@@ -196,32 +197,32 @@ export default function CreateTicketScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F9FAFB' },
+  container: { flex: 1, backgroundColor: colors.surfaceSoft },
   scroll: { flex: 1 },
   scrollContent: { padding: 12, paddingBottom: 100 },
-  section: { backgroundColor: '#FFFFFF', borderRadius: 12, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: COLORS.border },
+  section: { backgroundColor: colors.surface, borderRadius: 12, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: COLORS.border },
   label: { fontSize: 14, fontWeight: '600', color: COLORS.text, marginBottom: 10 },
   required: { color: COLORS.danger },
   input: {
     borderWidth: 1, borderColor: COLORS.border, borderRadius: 8,
     paddingHorizontal: 12, paddingVertical: 10, fontSize: 14,
-    backgroundColor: '#FAFAFA', color: COLORS.text,
+    backgroundColor: colors.surfaceSoft, color: COLORS.text,
   },
   textArea: { minHeight: 100, paddingTop: 10 },
   charCount: { fontSize: 12, color: COLORS.textSecondary, textAlign: 'right', marginTop: 4 },
   optionGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   optionChip: {
     paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
-    borderWidth: 1, borderColor: COLORS.border, backgroundColor: '#FAFAFA',
+    borderWidth: 1, borderColor: COLORS.border, backgroundColor: colors.surfaceSoft,
   },
   optionChipSelected: { borderColor: COLORS.primary, backgroundColor: COLORS.bgLight },
   optionChipText: { fontSize: 13, fontWeight: '500', color: COLORS.textSecondary },
   optionChipTextSelected: { color: COLORS.primaryDark },
   priorityDot: { width: 8, height: 8, borderRadius: 4 },
-  placeholderText: { fontSize: 14, color: '#9CA3AF' },
+  placeholderText: { fontSize: 14, color: colors.textDisabled },
   dateText: { fontSize: 14, color: COLORS.text },
-  footer: { padding: 16, backgroundColor: '#FFFFFF', borderTopWidth: 1, borderTopColor: COLORS.border },
+  footer: { padding: 16, backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: COLORS.border },
   submitButton: { backgroundColor: COLORS.primary, borderRadius: 8, paddingVertical: 14, alignItems: 'center' },
   submitButtonDisabled: { opacity: 0.6 },
-  submitButtonText: { fontSize: 16, fontWeight: '600', color: '#FFFFFF' },
+  submitButtonText: { fontSize: 16, fontWeight: '600', color: colors.surface },
 });

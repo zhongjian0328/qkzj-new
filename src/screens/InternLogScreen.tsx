@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert, ActivityIndicator, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -93,11 +94,11 @@ const InternLogScreen: React.FC = () => {
   // 获取状态样式
   const getStatusStyle = (status: string) => {
     switch (status) {
-      case 'draft': return { backgroundColor: '#E5E7EB', color: '#6B7280' };
-      case 'submitted': return { backgroundColor: '#FEF3C7', color: '#92400E' };
-      case 'approved': return { backgroundColor: '#D1FAE5', color: '#1F5E52' };
-      case 'rejected': return { backgroundColor: '#FEE2E2', color: '#991B1B' };
-      default: return { backgroundColor: '#E5E7EB', color: '#6B7280' };
+      case 'draft': return { backgroundColor: colors.border, color: colors.textTertiary };
+      case 'submitted': return { backgroundColor: colors.warningLight, color: colors.warningText };
+      case 'approved': return { backgroundColor: colors.successLight, color: colors.primaryDark };
+      case 'rejected': return { backgroundColor: colors.errorLight, color: colors.errorText };
+      default: return { backgroundColor: colors.border, color: colors.textTertiary };
     }
   };
 
@@ -217,27 +218,27 @@ const InternLogScreen: React.FC = () => {
       
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#2DBBA1" />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>正在加载实习日志...</Text>
         </View>
       ) : error ? (
         <View style={styles.loadingContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color="#9CA3AF" />
-          <Text style={{ fontSize: 16, color: '#6B7280', marginBottom: 16 }}>{error}</Text>
-          <TouchableOpacity style={{ backgroundColor: '#2DBBA1', borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchLogs()}>
-            <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>重试</Text>
+          <Ionicons name="alert-circle-outline" size={48} color={colors.textDisabled} />
+          <Text style={{ fontSize: 16, color: colors.textTertiary, marginBottom: 16 }}>{error}</Text>
+          <TouchableOpacity style={{ backgroundColor: colors.primary, borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchLogs()}>
+            <Text style={{ color: colors.surface, fontSize: 16, fontWeight: '600' }}>重试</Text>
           </TouchableOpacity>
         </View>
       ) : logs.length === 0 ? (
         <View style={styles.loadingContainer}>
-          <Ionicons name="folder-open-outline" size={48} color="#9CA3AF" />
-          <Text style={{ fontSize: 16, color: '#6B7280' }}>暂无实习日志记录</Text>
+          <Ionicons name="folder-open-outline" size={48} color={colors.textDisabled} />
+          <Text style={{ fontSize: 16, color: colors.textTertiary }}>暂无实习日志记录</Text>
         </View>
       ) : (
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         {/* 筛选条件 */}
         <View style={{ marginBottom: 16 }}>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827', marginBottom: 8 }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textPrimary, marginBottom: 8 }}>
             日志状态
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -250,7 +251,7 @@ const InternLogScreen: React.FC = () => {
                       paddingHorizontal: 16,
                       paddingVertical: 8,
                       borderRadius: 20,
-                      backgroundColor: activeStatus === option.id ? '#2DBBA1' : '#F3F4F6'
+                      backgroundColor: activeStatus === option.id ? colors.primary : colors.surfaceMuted
                     }
                   ]}
                   onPress={() => setActiveStatus(option.id)}
@@ -259,7 +260,7 @@ const InternLogScreen: React.FC = () => {
                     {
                       fontSize: 14,
                       fontWeight: '500',
-                      color: activeStatus === option.id ? '#FFFFFF' : '#6B7280'
+                      color: activeStatus === option.id ? colors.surface : colors.textTertiary
                     }
                   ]}>
                     {option.name}
@@ -273,7 +274,7 @@ const InternLogScreen: React.FC = () => {
         {/* 添加日志按钮 */}
         <TouchableOpacity
           style={{
-            backgroundColor: '#2DBBA1',
+            backgroundColor: colors.primary,
             borderRadius: 12,
             padding: 16,
             alignItems: 'center',
@@ -284,8 +285,8 @@ const InternLogScreen: React.FC = () => {
           }}
           onPress={() => setShowAddLog(true)}
         >
-          <Ionicons name="create" size={18} color="#2DBBA1" />
-          <Text style={{ fontSize: 16, fontWeight: '600', color: '#FFFFFF' }}>
+          <Ionicons name="create" size={18} color={colors.primary} />
+          <Text style={{ fontSize: 16, fontWeight: '600', color: colors.surface }}>
             撰写新日志
           </Text>
         </TouchableOpacity>
@@ -293,7 +294,7 @@ const InternLogScreen: React.FC = () => {
         {/* 添加日志表单 */}
         {showAddLog && (
           <View style={{
-            backgroundColor: '#FFFFFF',
+            backgroundColor: colors.surface,
             borderRadius: 12,
             padding: 16,
             marginBottom: 16,
@@ -303,7 +304,7 @@ const InternLogScreen: React.FC = () => {
             shadowRadius: 3.84,
             elevation: 2
           }}>
-            <Text style={{ fontSize: 18, fontWeight: '600', color: '#111827', marginBottom: 16 }}>
+            <Text style={{ fontSize: 18, fontWeight: '600', color: colors.textPrimary, marginBottom: 16 }}>
               撰写新日志
             </Text>
             
@@ -311,14 +312,14 @@ const InternLogScreen: React.FC = () => {
               style={{
                 fontSize: 16,
                 fontWeight: '600',
-                color: '#111827',
+                color: colors.textPrimary,
                 marginBottom: 12,
                 padding: 12,
                 borderBottomWidth: 2,
-                borderBottomColor: '#E5E7EB'
+                borderBottomColor: colors.border
               }}
               placeholder="日志标题"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={colors.textDisabled}
               value={newLogTitle}
               onChangeText={setNewLogTitle}
             />
@@ -326,17 +327,17 @@ const InternLogScreen: React.FC = () => {
             <TextInput
               style={{
                 fontSize: 14,
-                color: '#4B5563',
+                color: colors.textSecondary,
                 marginBottom: 16,
                 padding: 12,
                 borderWidth: 2,
-                borderColor: '#E5E7EB',
+                borderColor: colors.border,
                 borderRadius: 8,
                 minHeight: 120,
                 textAlignVertical: 'top'
               }}
               placeholder="日志内容"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={colors.textDisabled}
               value={newLogContent}
               onChangeText={setNewLogContent}
               multiline
@@ -349,9 +350,9 @@ const InternLogScreen: React.FC = () => {
               <TouchableOpacity
                 style={{
                   flex: 1,
-                  backgroundColor: '#FFFFFF',
+                  backgroundColor: colors.surface,
                   borderWidth: 2,
-                  borderColor: '#E5E7EB',
+                  borderColor: colors.border,
                   borderRadius: 8,
                   padding: 12,
                   alignItems: 'center',
@@ -359,7 +360,7 @@ const InternLogScreen: React.FC = () => {
                 }}
                 onPress={() => setShowAddLog(false)}
               >
-                <Text style={{ fontSize: 14, fontWeight: '500', color: '#6B7280' }}>
+                <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textTertiary }}>
                   取消
                 </Text>
               </TouchableOpacity>
@@ -367,7 +368,7 @@ const InternLogScreen: React.FC = () => {
               <TouchableOpacity
                 style={{
                   flex: 1,
-                  backgroundColor: '#2DBBA1',
+                  backgroundColor: colors.primary,
                   borderRadius: 8,
                   padding: 12,
                   alignItems: 'center',
@@ -375,7 +376,7 @@ const InternLogScreen: React.FC = () => {
                 }}
                 onPress={handleAddLog}
               >
-                <Text style={{ fontSize: 14, fontWeight: '500', color: '#FFFFFF' }}>
+                <Text style={{ fontSize: 14, fontWeight: '500', color: colors.surface }}>
                   保存草稿
                 </Text>
               </TouchableOpacity>
@@ -386,7 +387,7 @@ const InternLogScreen: React.FC = () => {
         {/* 日志详情 */}
         {selectedLog && (
           <View style={{
-            backgroundColor: '#FFFFFF',
+            backgroundColor: colors.surface,
             borderRadius: 12,
             padding: 16,
             marginBottom: 16,
@@ -399,7 +400,7 @@ const InternLogScreen: React.FC = () => {
             {isEditing ? (
               // 编辑模式
               <View>
-                <Text style={{ fontSize: 18, fontWeight: '600', color: '#111827', marginBottom: 16 }}>
+                <Text style={{ fontSize: 18, fontWeight: '600', color: colors.textPrimary, marginBottom: 16 }}>
                   编辑日志
                 </Text>
                 
@@ -407,14 +408,14 @@ const InternLogScreen: React.FC = () => {
                   style={{
                     fontSize: 16,
                     fontWeight: '600',
-                    color: '#111827',
+                    color: colors.textPrimary,
                     marginBottom: 12,
                     padding: 12,
                     borderBottomWidth: 2,
-                    borderBottomColor: '#E5E7EB'
+                    borderBottomColor: colors.border
                   }}
                   placeholder="日志标题"
-                  placeholderTextColor="#9CA3AF"
+                  placeholderTextColor={colors.textDisabled}
                   value={editTitle}
                   onChangeText={setEditTitle}
                 />
@@ -422,17 +423,17 @@ const InternLogScreen: React.FC = () => {
                 <TextInput
                   style={{
                     fontSize: 14,
-                    color: '#4B5563',
+                    color: colors.textSecondary,
                     marginBottom: 16,
                     padding: 12,
                     borderWidth: 2,
-                    borderColor: '#E5E7EB',
+                    borderColor: colors.border,
                     borderRadius: 8,
                     minHeight: 120,
                     textAlignVertical: 'top'
                   }}
                   placeholder="日志内容"
-                  placeholderTextColor="#9CA3AF"
+                  placeholderTextColor={colors.textDisabled}
                   value={editContent}
                   onChangeText={setEditContent}
                   multiline
@@ -445,9 +446,9 @@ const InternLogScreen: React.FC = () => {
                   <TouchableOpacity
                     style={{
                       flex: 1,
-                      backgroundColor: '#FFFFFF',
+                      backgroundColor: colors.surface,
                       borderWidth: 2,
-                      borderColor: '#E5E7EB',
+                      borderColor: colors.border,
                       borderRadius: 8,
                       padding: 12,
                       alignItems: 'center',
@@ -455,7 +456,7 @@ const InternLogScreen: React.FC = () => {
                     }}
                     onPress={() => setIsEditing(false)}
                   >
-                    <Text style={{ fontSize: 14, fontWeight: '500', color: '#6B7280' }}>
+                    <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textTertiary }}>
                       取消
                     </Text>
                   </TouchableOpacity>
@@ -463,7 +464,7 @@ const InternLogScreen: React.FC = () => {
                   <TouchableOpacity
                     style={{
                       flex: 1,
-                      backgroundColor: '#2DBBA1',
+                      backgroundColor: colors.primary,
                       borderRadius: 8,
                       padding: 12,
                       alignItems: 'center',
@@ -471,7 +472,7 @@ const InternLogScreen: React.FC = () => {
                     }}
                     onPress={handleSaveEdit}
                   >
-                    <Text style={{ fontSize: 14, fontWeight: '500', color: '#FFFFFF' }}>
+                    <Text style={{ fontSize: 14, fontWeight: '500', color: colors.surface }}>
                       保存
                     </Text>
                   </TouchableOpacity>
@@ -486,7 +487,7 @@ const InternLogScreen: React.FC = () => {
                   alignItems: 'center',
                   marginBottom: 8
                 }}>
-                  <Text style={{ fontSize: 18, fontWeight: '600', color: '#111827' }}>
+                  <Text style={{ fontSize: 18, fontWeight: '600', color: colors.textPrimary }}>
                     {selectedLog.title}
                   </Text>
                   <View style={[
@@ -511,23 +512,23 @@ const InternLogScreen: React.FC = () => {
                   </View>
                 </View>
                 
-                <Text style={{ fontSize: 14, color: '#6B7280', marginBottom: 16 }}>
+                <Text style={{ fontSize: 14, color: colors.textTertiary, marginBottom: 16 }}>
                   {selectedLog.date}
                 </Text>
                 
-                <Text style={{ fontSize: 14, color: '#4B5563', lineHeight: 22, marginBottom: 20 }}>
+                <Text style={{ fontSize: 14, color: colors.textSecondary, lineHeight: 22, marginBottom: 20 }}>
                   {selectedLog.content}
                 </Text>
                 
                 {/* 导师批注 */}
                 {selectedLog.status === 'approved' || selectedLog.status === 'rejected' ? (
                   <View style={{
-                    backgroundColor: '#F3F4F6',
+                    backgroundColor: colors.surfaceMuted,
                     borderRadius: 8,
                     padding: 16,
                     marginBottom: 16
                   }}>
-                    <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827', marginBottom: 12 }}>
+                    <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textPrimary, marginBottom: 12 }}>
                       导师批注
                     </Text>
                     
@@ -537,25 +538,25 @@ const InternLogScreen: React.FC = () => {
                         alignItems: 'center',
                         marginBottom: 12
                       }}>
-                        <Text style={{ fontSize: 14, fontWeight: '500', color: '#4B5563', marginRight: 8 }}>
+                        <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary, marginRight: 8 }}>
                           评分：
                         </Text>
                         <View style={{ flexDirection: 'row' }}>
                           {[...Array(5)].map((_, index) => (
-                            <Text key={index} style={{ fontSize: 16, color: index < (selectedLog.rating ?? 0) ? '#FBBF24' : '#D1D5DB' }}>
-                              <Ionicons name="star" size={14} color="#F59E0B" />
+                            <Text key={index} style={{ fontSize: 16, color: index < (selectedLog.rating ?? 0) ? colors.warning : colors.borderStrong }}>
+                              <Ionicons name="star" size={14} color={colors.warning} />
                             </Text>
                           ))}
                         </View>
                       </View>
                     )}
                     
-                    <Text style={{ fontSize: 14, color: '#4B5563', lineHeight: 22 }}>
+                    <Text style={{ fontSize: 14, color: colors.textSecondary, lineHeight: 22 }}>
                       {selectedLog.mentorComments || '暂无批注'}
                     </Text>
                     
                     {selectedLog.mentorName && (
-                      <Text style={{ fontSize: 14, fontWeight: '500', color: '#6B7280', marginTop: 8, textAlign: 'right' }}>
+                      <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textTertiary, marginTop: 8, textAlign: 'right' }}>
                         —— {selectedLog.mentorName}
                       </Text>
                     )}
@@ -570,9 +571,9 @@ const InternLogScreen: React.FC = () => {
                   <TouchableOpacity
                     style={{
                       flex: 1,
-                      backgroundColor: '#FFFFFF',
+                      backgroundColor: colors.surface,
                       borderWidth: 2,
-                      borderColor: '#E5E7EB',
+                      borderColor: colors.border,
                       borderRadius: 8,
                       padding: 12,
                       alignItems: 'center',
@@ -580,7 +581,7 @@ const InternLogScreen: React.FC = () => {
                     }}
                     onPress={handleStartEdit}
                   >
-                    <Text style={{ fontSize: 14, fontWeight: '500', color: '#6B7280' }}>
+                    <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textTertiary }}>
                       编辑
                     </Text>
                   </TouchableOpacity>
@@ -588,7 +589,7 @@ const InternLogScreen: React.FC = () => {
                   <TouchableOpacity
                     style={{
                       flex: 1,
-                      backgroundColor: '#EF4444',
+                      backgroundColor: colors.error,
                       borderRadius: 8,
                       padding: 12,
                       alignItems: 'center',
@@ -596,7 +597,7 @@ const InternLogScreen: React.FC = () => {
                     }}
                     onPress={handleDeleteLog}
                   >
-                    <Text style={{ fontSize: 14, fontWeight: '500', color: '#FFFFFF' }}>
+                    <Text style={{ fontSize: 14, fontWeight: '500', color: colors.surface }}>
                       删除
                     </Text>
                   </TouchableOpacity>
@@ -605,7 +606,7 @@ const InternLogScreen: React.FC = () => {
                     <TouchableOpacity
                       style={{
                         flex: 1,
-                        backgroundColor: '#2DBBA1',
+                        backgroundColor: colors.primary,
                         borderRadius: 8,
                         padding: 12,
                         alignItems: 'center',
@@ -613,7 +614,7 @@ const InternLogScreen: React.FC = () => {
                       }}
                       onPress={handleSubmitLog}
                     >
-                      <Text style={{ fontSize: 14, fontWeight: '500', color: '#FFFFFF' }}>
+                      <Text style={{ fontSize: 14, fontWeight: '500', color: colors.surface }}>
                         提交
                       </Text>
                     </TouchableOpacity>
@@ -626,7 +627,7 @@ const InternLogScreen: React.FC = () => {
 
         {/* 日志列表 */}
         <View>
-          <Text style={{ fontSize: 18, fontWeight: '600', color: '#111827', marginBottom: 12 }}>
+          <Text style={{ fontSize: 18, fontWeight: '600', color: colors.textPrimary, marginBottom: 12 }}>
             日志列表 ({filteredLogs.length} 篇)
           </Text>
           
@@ -635,7 +636,7 @@ const InternLogScreen: React.FC = () => {
               key={log.id}
               style={[
                 {
-                  backgroundColor: '#FFFFFF',
+                  backgroundColor: colors.surface,
                   borderRadius: 12,
                   padding: 16,
                   marginBottom: 12,
@@ -647,8 +648,8 @@ const InternLogScreen: React.FC = () => {
                 },
                 selectedLog?.id === log.id && {
                   borderWidth: 2,
-                  borderColor: '#2DBBA1',
-                  backgroundColor: '#E6F7F3'
+                  borderColor: colors.primary,
+                  backgroundColor: colors.primaryLight
                 }
               ]}
               onPress={() => handleSelectLog(log)}
@@ -663,11 +664,11 @@ const InternLogScreen: React.FC = () => {
                   {
                     fontSize: 16,
                     fontWeight: '600',
-                    color: '#111827',
+                    color: colors.textPrimary,
                     flex: 1
                   },
                   selectedLog?.id === log.id && {
-                    color: '#1F5E52'
+                    color: colors.primaryDark
                   }
                 ]}>
                   {log.title}
@@ -695,11 +696,11 @@ const InternLogScreen: React.FC = () => {
                 </View>
               </View>
               
-              <Text style={{ fontSize: 14, color: '#6B7280', marginBottom: 8 }}>
+              <Text style={{ fontSize: 14, color: colors.textTertiary, marginBottom: 8 }}>
                 {log.date}
               </Text>
               
-              <Text style={{ fontSize: 14, color: '#9CA3AF', lineHeight: 20 }} numberOfLines={2}>
+              <Text style={{ fontSize: 14, color: colors.textDisabled, lineHeight: 20 }} numberOfLines={2}>
                 {log.content}
               </Text>
             </TouchableOpacity>

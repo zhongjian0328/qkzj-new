@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -60,21 +61,21 @@ const PolicyPublishScreen: React.FC = () => {
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 100 }}>
         {/* 标题输入 */}
         <View style={{ marginBottom: 16 }}>
-          <Text style={{ fontSize: 14, fontWeight: '600', color: '#111827', marginBottom: 8 }}>
+          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary, marginBottom: 8 }}>
             政策标题
           </Text>
           <TextInput
             style={{
-              backgroundColor: '#FFFFFF',
+              backgroundColor: colors.surface,
               borderWidth: 1,
-              borderColor: '#E5E7EB',
+              borderColor: colors.border,
               borderRadius: 8,
               padding: 12,
               fontSize: 16,
-              color: '#111827',
+              color: colors.textPrimary,
             }}
             placeholder="请输入政策标题"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.textDisabled}
             value={title}
             onChangeText={setTitle}
           />
@@ -82,23 +83,23 @@ const PolicyPublishScreen: React.FC = () => {
 
         {/* 内容输入 */}
         <View style={{ marginBottom: 16 }}>
-          <Text style={{ fontSize: 14, fontWeight: '600', color: '#111827', marginBottom: 8 }}>
+          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary, marginBottom: 8 }}>
             政策内容
           </Text>
           <TextInput
             style={{
-              backgroundColor: '#FFFFFF',
+              backgroundColor: colors.surface,
               borderWidth: 1,
-              borderColor: '#E5E7EB',
+              borderColor: colors.border,
               borderRadius: 8,
               padding: 12,
               fontSize: 14,
-              color: '#4B5563',
+              color: colors.textSecondary,
               minHeight: 200,
               textAlignVertical: 'top',
             }}
             placeholder="请输入政策详细内容..."
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.textDisabled}
             value={content}
             onChangeText={setContent}
             multiline
@@ -107,7 +108,7 @@ const PolicyPublishScreen: React.FC = () => {
 
         {/* 目标角色选择 */}
         <View style={{ marginBottom: 16 }}>
-          <Text style={{ fontSize: 14, fontWeight: '600', color: '#111827', marginBottom: 8 }}>
+          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary, marginBottom: 8 }}>
             推送对象（不选则全员）
           </Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
@@ -117,9 +118,9 @@ const PolicyPublishScreen: React.FC = () => {
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
-                  backgroundColor: selectedRoles.includes(role.value) ? '#2DBBA1' : '#FFFFFF',
+                  backgroundColor: selectedRoles.includes(role.value) ? colors.primary : colors.surface,
                   borderWidth: 1,
-                  borderColor: selectedRoles.includes(role.value) ? '#2DBBA1' : '#E5E7EB',
+                  borderColor: selectedRoles.includes(role.value) ? colors.primary : colors.border,
                   borderRadius: 20,
                   paddingHorizontal: 14,
                   paddingVertical: 8,
@@ -127,11 +128,11 @@ const PolicyPublishScreen: React.FC = () => {
                 }}
                 onPress={() => toggleRole(role.value)}
               >
-                <Ionicons name={role.icon} size={14} color={selectedRoles.includes(role.value) ? '#FFFFFF' : '#6B7280'} />
+                <Ionicons name={role.icon} size={14} color={selectedRoles.includes(role.value) ? colors.surface : colors.textTertiary} />
                 <Text style={{
                   fontSize: 13,
                   fontWeight: '500',
-                  color: selectedRoles.includes(role.value) ? '#FFFFFF' : '#6B7280',
+                  color: selectedRoles.includes(role.value) ? colors.surface : colors.textTertiary,
                 }}>
                   {role.label}
                 </Text>
@@ -143,20 +144,20 @@ const PolicyPublishScreen: React.FC = () => {
         {/* 预览 */}
         {(title || content) && (
           <View style={{
-            backgroundColor: '#F0FDF4',
+            backgroundColor: colors.successLight,
             borderRadius: 12,
             padding: 16,
             marginBottom: 16,
             borderWidth: 1,
-            borderColor: '#BBF7D0',
+            borderColor: colors.successLight,
           }}>
-            <Text style={{ fontSize: 12, fontWeight: '600', color: '#15803D', marginBottom: 8 }}>
+            <Text style={{ fontSize: 12, fontWeight: '600', color: colors.successText, marginBottom: 8 }}>
               预览效果
             </Text>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827', marginBottom: 4 }}>
+            <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textPrimary, marginBottom: 4 }}>
               [政策通知] {title || '政策标题'}
             </Text>
-            <Text style={{ fontSize: 14, color: '#4B5563', lineHeight: 22 }}>
+            <Text style={{ fontSize: 14, color: colors.textSecondary, lineHeight: 22 }}>
               {content || '政策内容预览...'}
             </Text>
           </View>
@@ -169,14 +170,14 @@ const PolicyPublishScreen: React.FC = () => {
         bottom: 0,
         left: 0,
         right: 0,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: colors.surface,
         padding: 16,
         borderTopWidth: 1,
-        borderTopColor: '#E5E7EB',
+        borderTopColor: colors.border,
       }}>
         <TouchableOpacity
           style={{
-            backgroundColor: '#2DBBA1',
+            backgroundColor: colors.primary,
             borderRadius: 12,
             padding: 16,
             alignItems: 'center',
@@ -188,11 +189,11 @@ const PolicyPublishScreen: React.FC = () => {
           disabled={publishing}
         >
           {publishing ? (
-            <ActivityIndicator size="small" color="#FFFFFF" />
+            <ActivityIndicator size="small" color={colors.surface} />
           ) : (
-            <Ionicons name="paper-plane" size={18} color="#FFFFFF" />
+            <Ionicons name="paper-plane" size={18} color={colors.surface} />
           )}
-          <Text style={{ fontSize: 16, fontWeight: '600', color: '#FFFFFF' }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: colors.surface }}>
             {publishing ? '发布中...' : '发布政策通知'}
           </Text>
         </TouchableOpacity>

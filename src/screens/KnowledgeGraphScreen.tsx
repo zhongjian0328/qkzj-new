@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput, ActivityIndicator, Modal, Dimensions, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,23 +13,23 @@ const GRID_ITEM_WIDTH = (SCREEN_WIDTH - 32 - GRID_GAP) / 2;
 
 // 疾病分类配置——对齐后端 KnowledgeGraph.category 枚举
 const CATEGORY_CONFIG: Record<string, { icon: string; color: string; bg: string; label: string }> = {
-  viral: { icon: 'bug', color: '#EF4444', bg: '#FEE2E2', label: '病毒病' },
-  bacterial: { icon: 'flask', color: '#F59E0B', bg: '#FEF3C7', label: '细菌病' },
-  other_microbial: { icon: 'magnet', color: '#8B5CF6', bg: '#EDE9FE', label: '其他微生物' },
-  parasitic: { icon: 'bug-outline', color: '#EC4899', bg: '#FCE7F3', label: '寄生虫病' },
-  non_infectious: { icon: 'restaurant', color: '#06B6D4', bg: '#CFFAFE', label: '普通病' },
-  general: { icon: 'book', color: '#22C55E', bg: '#DCFCE7', label: '总论' },
+  viral: { icon: 'bug', color: colors.error, bg: colors.errorLight, label: '病毒病' },
+  bacterial: { icon: 'flask', color: colors.warning, bg: colors.warningLight, label: '细菌病' },
+  other_microbial: { icon: 'magnet', color: colors.accent.purple, bg: colors.accent.indigoLight, label: '其他微生物' },
+  parasitic: { icon: 'bug-outline', color: colors.accent.pink, bg: colors.accent.pinkLight, label: '寄生虫病' },
+  non_infectious: { icon: 'restaurant', color: colors.accent.cyan, bg: colors.accent.cyanLight, label: '普通病' },
+  general: { icon: 'book', color: colors.success, bg: colors.successLight, label: '总论' },
 };
 
 // 分类筛选Tab
 const CATEGORY_TABS = [
-  { key: 'all', label: '全部', icon: 'grid', color: '#6B7280' },
-  { key: 'viral', label: '病毒病', icon: 'bug', color: '#EF4444' },
-  { key: 'bacterial', label: '细菌病', icon: 'flask', color: '#F59E0B' },
-  { key: 'other_microbial', label: '其他微生物', icon: 'magnet', color: '#8B5CF6' },
-  { key: 'parasitic', label: '寄生虫病', icon: 'bug-outline', color: '#EC4899' },
-  { key: 'non_infectious', label: '普通病', icon: 'restaurant', color: '#06B6D4' },
-  { key: 'general', label: '总论', icon: 'book', color: '#22C55E' },
+  { key: 'all', label: '全部', icon: 'grid', color: colors.textTertiary },
+  { key: 'viral', label: '病毒病', icon: 'bug', color: colors.error },
+  { key: 'bacterial', label: '细菌病', icon: 'flask', color: colors.warning },
+  { key: 'other_microbial', label: '其他微生物', icon: 'magnet', color: colors.accent.purple },
+  { key: 'parasitic', label: '寄生虫病', icon: 'bug-outline', color: colors.accent.pink },
+  { key: 'non_infectious', label: '普通病', icon: 'restaurant', color: colors.accent.cyan },
+  { key: 'general', label: '总论', icon: 'book', color: colors.success },
 ];
 
 // 知识点列表项数据
@@ -139,9 +140,9 @@ const KnowledgeGraphScreen: React.FC = () => {
   // 难度标签
   const getDifficultyLabel = (level?: string) => {
     switch (level) {
-      case 'BEGINNER': return { text: '入门', color: '#22C55E' };
-      case 'INTERMEDIATE': return { text: '进阶', color: '#F59E0B' };
-      case 'ADVANCED': return { text: '高级', color: '#EF4444' };
+      case 'BEGINNER': return { text: '入门', color: colors.success };
+      case 'INTERMEDIATE': return { text: '进阶', color: colors.warning };
+      case 'ADVANCED': return { text: '高级', color: colors.error };
       default: return null;
     }
   };
@@ -162,21 +163,21 @@ const KnowledgeGraphScreen: React.FC = () => {
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#2DBBA1" />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>正在加载知识点...</Text>
         </View>
       ) : error ? (
         <View style={styles.loadingContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color="#9CA3AF" />
-          <Text style={{ fontSize: 16, color: '#6B7280', marginTop: 12, marginBottom: 16 }}>{error}</Text>
-          <TouchableOpacity style={{ backgroundColor: '#2DBBA1', borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchData()}>
-            <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>重试</Text>
+          <Ionicons name="alert-circle-outline" size={48} color={colors.textDisabled} />
+          <Text style={{ fontSize: 16, color: colors.textTertiary, marginTop: 12, marginBottom: 16 }}>{error}</Text>
+          <TouchableOpacity style={{ backgroundColor: colors.primary, borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchData()}>
+            <Text style={{ color: colors.surface, fontSize: 16, fontWeight: '600' }}>重试</Text>
           </TouchableOpacity>
         </View>
       ) : knowledgeNodes.length === 0 ? (
         <View style={styles.loadingContainer}>
-          <Ionicons name="folder-open-outline" size={48} color="#9CA3AF" />
-          <Text style={{ fontSize: 16, color: '#6B7280', marginTop: 12 }}>暂无知识点数据</Text>
+          <Ionicons name="folder-open-outline" size={48} color={colors.textDisabled} />
+          <Text style={{ fontSize: 16, color: colors.textTertiary, marginTop: 12 }}>暂无知识点数据</Text>
         </View>
       ) : (
         <>
@@ -185,16 +186,16 @@ const KnowledgeGraphScreen: React.FC = () => {
             <View style={{
               flexDirection: 'row',
               alignItems: 'center',
-              backgroundColor: '#F3F4F6',
+              backgroundColor: colors.surfaceMuted,
               borderRadius: 8,
               paddingHorizontal: 12,
               paddingVertical: 8,
             }}>
-              <Ionicons name="search" size={18} color="#9CA3AF" style={{ marginRight: 8 }} />
+              <Ionicons name="search" size={18} color={colors.textDisabled} style={{ marginRight: 8 }} />
               <TextInput
-                style={{ flex: 1, fontSize: 16, color: '#111827' }}
+                style={{ flex: 1, fontSize: 16, color: colors.textPrimary }}
                 placeholder="搜索疾病名称、症状..."
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={colors.textDisabled}
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 onSubmitEditing={() => fetchData()}
@@ -202,7 +203,7 @@ const KnowledgeGraphScreen: React.FC = () => {
               />
               {searchQuery !== '' && (
                 <TouchableOpacity onPress={() => { setSearchQuery(''); }}>
-                  <Ionicons name="close-circle" size={18} color="#9CA3AF" />
+                  <Ionicons name="close-circle" size={18} color={colors.textDisabled} />
                 </TouchableOpacity>
               )}
             </View>
@@ -221,15 +222,15 @@ const KnowledgeGraphScreen: React.FC = () => {
                     flexDirection: 'row',
                     alignItems: 'center',
                     gap: 4,
-                    backgroundColor: activeCategory === tab.key ? '#2DBBA1' : '#F3F4F6',
+                    backgroundColor: activeCategory === tab.key ? colors.primary : colors.surfaceMuted,
                   }}
                   onPress={() => setActiveCategory(tab.key)}
                 >
-                  <Ionicons name={tab.icon as any} size={13} color={activeCategory === tab.key ? '#FFFFFF' : '#6B7280'} />
+                  <Ionicons name={tab.icon as any} size={13} color={activeCategory === tab.key ? colors.surface : colors.textTertiary} />
                   <Text style={{
                     fontSize: 13,
                     fontWeight: '500',
-                    color: activeCategory === tab.key ? '#FFFFFF' : '#6B7280',
+                    color: activeCategory === tab.key ? colors.surface : colors.textTertiary,
                   }}>
                     {tab.label}
                   </Text>
@@ -252,11 +253,11 @@ const KnowledgeGraphScreen: React.FC = () => {
                 <TouchableOpacity
                   style={{
                     width: GRID_ITEM_WIDTH,
-                    backgroundColor: '#FFFFFF',
+                    backgroundColor: colors.surface,
                     borderRadius: 12,
                     padding: 14,
                     borderWidth: 1,
-                    borderColor: '#F3F4F6',
+                    borderColor: colors.surfaceMuted,
                     shadowColor: '#000',
                     shadowOffset: { width: 0, height: 1 },
                     shadowOpacity: 0.05,
@@ -276,7 +277,7 @@ const KnowledgeGraphScreen: React.FC = () => {
                   <Text style={{
                     fontSize: 14,
                     fontWeight: '600',
-                    color: '#111827',
+                    color: colors.textPrimary,
                     marginBottom: 4,
                   }} numberOfLines={2}>
                     {node.diseaseName}
@@ -293,11 +294,11 @@ const KnowledgeGraphScreen: React.FC = () => {
                     </View>
                     {diff && (
                       <View style={{
-                        backgroundColor: '#F9FAFB',
+                        backgroundColor: colors.surfaceSoft,
                         paddingHorizontal: 6, paddingVertical: 2,
                         borderRadius: 6,
                         borderWidth: 1,
-                        borderColor: '#E5E7EB',
+                        borderColor: colors.border,
                       }}>
                         <Text style={{ fontSize: 10, color: diff.color, fontWeight: '500' }}>
                           {diff.text}
@@ -310,8 +311,8 @@ const KnowledgeGraphScreen: React.FC = () => {
             }}
             ListEmptyComponent={
               <View style={{ flex: 1, alignItems: 'center', paddingVertical: 64 }}>
-                <Ionicons name="search-outline" size={48} color="#9CA3AF" />
-                <Text style={{ fontSize: 16, color: '#6B7280', marginTop: 12 }}>未找到相关疾病</Text>
+                <Ionicons name="search-outline" size={48} color={colors.textDisabled} />
+                <Text style={{ fontSize: 16, color: colors.textTertiary, marginTop: 12 }}>未找到相关疾病</Text>
               </View>
             }
           />
@@ -321,13 +322,13 @@ const KnowledgeGraphScreen: React.FC = () => {
       {/* 疾病详情Modal */}
       <Modal visible={detailVisible} transparent animationType="slide" onRequestClose={() => setDetailVisible(false)}>
         <TouchableOpacity style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.5)' }} activeOpacity={1} onPress={() => setDetailVisible(false)}>
-          <View style={{ backgroundColor: '#FFFFFF', borderTopLeftRadius: 20, borderTopRightRadius: 20, maxHeight: '85%' }} onStartShouldSetResponder={() => true}>
-            <View style={{ width: 36, height: 4, backgroundColor: '#D1D5DB', borderRadius: 2, alignSelf: 'center', marginTop: 12, marginBottom: 8 }} />
+          <View style={{ backgroundColor: colors.surface, borderTopLeftRadius: 20, borderTopRightRadius: 20, maxHeight: '85%' }} onStartShouldSetResponder={() => true}>
+            <View style={{ width: 36, height: 4, backgroundColor: colors.borderStrong, borderRadius: 2, alignSelf: 'center', marginTop: 12, marginBottom: 8 }} />
 
             {detailLoading ? (
               <View style={{ padding: 40, alignItems: 'center' }}>
-                <ActivityIndicator size="large" color="#2DBBA1" />
-                <Text style={{ fontSize: 14, color: '#6B7280', marginTop: 12 }}>加载疾病详情...</Text>
+                <ActivityIndicator size="large" color={colors.primary} />
+                <Text style={{ fontSize: 14, color: colors.textTertiary, marginTop: 12 }}>加载疾病详情...</Text>
               </View>
             ) : detailData ? (() => {
               const catConfig = getCategoryConfig(detailData.category);
@@ -344,18 +345,18 @@ const KnowledgeGraphScreen: React.FC = () => {
                         <Ionicons name={catConfig.icon as any} size={24} color={catConfig.color} />
                       </View>
                       <View style={{ flex: 1 }}>
-                        <Text style={{ fontSize: 18, fontWeight: '700', color: '#111827' }}>{detailData.diseaseName}</Text>
+                        <Text style={{ fontSize: 18, fontWeight: '700', color: colors.textPrimary }}>{detailData.diseaseName}</Text>
                         <View style={{ flexDirection: 'row', gap: 6, marginTop: 4 }}>
                           <View style={{ backgroundColor: catConfig.bg, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8 }}>
                             <Text style={{ fontSize: 11, color: catConfig.color, fontWeight: '600' }}>{catConfig.label}</Text>
                           </View>
                           {detailData.chapterNumber && (
-                            <Text style={{ fontSize: 11, color: '#9CA3AF' }}>第{detailData.chapterNumber}章</Text>
+                            <Text style={{ fontSize: 11, color: colors.textDisabled }}>第{detailData.chapterNumber}章</Text>
                           )}
                         </View>
                       </View>
                     </View>
-                    <Text style={{ fontSize: 13, color: '#6B7280', marginTop: 8, lineHeight: 18 }}>{detailData.description}</Text>
+                    <Text style={{ fontSize: 13, color: colors.textTertiary, marginTop: 8, lineHeight: 18 }}>{detailData.description}</Text>
                   </View>
 
                   <ScrollView style={{ paddingHorizontal: 16, paddingBottom: 34 }} showsVerticalScrollIndicator={false}>
@@ -366,11 +367,11 @@ const KnowledgeGraphScreen: React.FC = () => {
                       return (
                         <View key={section.key} style={{ marginBottom: 14 }}>
                           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                            <Ionicons name={section.icon as any} size={16} color="#2DBBA1" />
-                            <Text style={{ fontSize: 15, fontWeight: '600', color: '#111827' }}>{section.title}</Text>
+                            <Ionicons name={section.icon as any} size={16} color={colors.primary} />
+                            <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>{section.title}</Text>
                           </View>
-                          <View style={{ backgroundColor: '#F9FAFB', borderRadius: 8, padding: 12 }}>
-                            <Text style={{ fontSize: 13, color: '#4B5563', lineHeight: 20 }}>{content}</Text>
+                          <View style={{ backgroundColor: colors.surfaceSoft, borderRadius: 8, padding: 12 }}>
+                            <Text style={{ fontSize: 13, color: colors.textSecondary, lineHeight: 20 }}>{content}</Text>
                           </View>
                         </View>
                       );
@@ -380,11 +381,11 @@ const KnowledgeGraphScreen: React.FC = () => {
                     {detailData.immunizationSchedule && (
                       <View style={{ marginBottom: 14 }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                          <Ionicons name="medkit" size={16} color="#22C55E" />
-                          <Text style={{ fontSize: 15, fontWeight: '600', color: '#111827' }}>免疫程序</Text>
+                          <Ionicons name="medkit" size={16} color={colors.success} />
+                          <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>免疫程序</Text>
                         </View>
-                        <View style={{ backgroundColor: '#DCFCE7', borderRadius: 8, padding: 12 }}>
-                          <Text style={{ fontSize: 13, color: '#166534', lineHeight: 20 }}>{detailData.immunizationSchedule}</Text>
+                        <View style={{ backgroundColor: colors.successLight, borderRadius: 8, padding: 12 }}>
+                          <Text style={{ fontSize: 13, color: colors.successText, lineHeight: 20 }}>{detailData.immunizationSchedule}</Text>
                         </View>
                       </View>
                     )}
@@ -393,11 +394,11 @@ const KnowledgeGraphScreen: React.FC = () => {
                     {detailData.differentialDiagnosis && (
                       <View style={{ marginBottom: 14 }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                          <Ionicons name="git-compare" size={16} color="#F59E0B" />
-                          <Text style={{ fontSize: 15, fontWeight: '600', color: '#111827' }}>鉴别诊断</Text>
+                          <Ionicons name="git-compare" size={16} color={colors.warning} />
+                          <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>鉴别诊断</Text>
                         </View>
-                        <View style={{ backgroundColor: '#FEF3C7', borderRadius: 8, padding: 12 }}>
-                          <Text style={{ fontSize: 13, color: '#92400E', lineHeight: 20 }}>{detailData.differentialDiagnosis}</Text>
+                        <View style={{ backgroundColor: colors.warningLight, borderRadius: 8, padding: 12 }}>
+                          <Text style={{ fontSize: 13, color: colors.warningText, lineHeight: 20 }}>{detailData.differentialDiagnosis}</Text>
                         </View>
                       </View>
                     )}
@@ -406,11 +407,11 @@ const KnowledgeGraphScreen: React.FC = () => {
                     {detailData.medicationNotes && (
                       <View style={{ marginBottom: 14 }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                          <Ionicons name="medkit" size={16} color="#EF4444" />
-                          <Text style={{ fontSize: 15, fontWeight: '600', color: '#111827' }}>用药要点</Text>
+                          <Ionicons name="medkit" size={16} color={colors.error} />
+                          <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>用药要点</Text>
                         </View>
-                        <View style={{ backgroundColor: '#FEE2E2', borderRadius: 8, padding: 12 }}>
-                          <Text style={{ fontSize: 13, color: '#991B1B', lineHeight: 20 }}>{detailData.medicationNotes}</Text>
+                        <View style={{ backgroundColor: colors.errorLight, borderRadius: 8, padding: 12 }}>
+                          <Text style={{ fontSize: 13, color: colors.errorText, lineHeight: 20 }}>{detailData.medicationNotes}</Text>
                         </View>
                       </View>
                     )}
@@ -418,16 +419,16 @@ const KnowledgeGraphScreen: React.FC = () => {
                     {/* 症状/病变标签 */}
                     {(detailData.symptomTags?.length > 0 || detailData.lesionTags?.length > 0) && (
                       <View style={{ marginBottom: 14 }}>
-                        <Text style={{ fontSize: 15, fontWeight: '600', color: '#111827', marginBottom: 6 }}>关键词</Text>
+                        <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary, marginBottom: 6 }}>关键词</Text>
                         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
                           {detailData.symptomTags.map(tag => (
-                            <View key={`s-${tag}`} style={{ backgroundColor: '#FEE2E2', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10 }}>
-                              <Text style={{ fontSize: 11, color: '#EF4444', fontWeight: '500' }}>{tag}</Text>
+                            <View key={`s-${tag}`} style={{ backgroundColor: colors.errorLight, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10 }}>
+                              <Text style={{ fontSize: 11, color: colors.error, fontWeight: '500' }}>{tag}</Text>
                             </View>
                           ))}
                           {detailData.lesionTags.map(tag => (
-                            <View key={`l-${tag}`} style={{ backgroundColor: '#DBEAFE', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10 }}>
-                              <Text style={{ fontSize: 11, color: '#3B82F6', fontWeight: '500' }}>{tag}</Text>
+                            <View key={`l-${tag}`} style={{ backgroundColor: colors.infoLight, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10 }}>
+                              <Text style={{ fontSize: 11, color: colors.info, fontWeight: '500' }}>{tag}</Text>
                             </View>
                           ))}
                         </View>
@@ -437,14 +438,14 @@ const KnowledgeGraphScreen: React.FC = () => {
                     {/* 关联疾病 */}
                     {detailData.relatedDiseases?.length > 0 && (
                       <View style={{ marginBottom: 14 }}>
-                        <Text style={{ fontSize: 15, fontWeight: '600', color: '#111827', marginBottom: 8 }}>关联疾病</Text>
+                        <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary, marginBottom: 8 }}>关联疾病</Text>
                         <View style={{ gap: 8 }}>
                           {detailData.relatedDiseases.map((rel, idx) => {
                             const relCat = getCategoryConfig(rel.category);
                             return (
                               <TouchableOpacity
                                 key={idx}
-                                style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#F3F4F6', borderRadius: 8, padding: 10 }}
+                                style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surfaceMuted, borderRadius: 8, padding: 10 }}
                                 onPress={() => {
                                   // 跳转查看关联疾病详情
                                   openDetail({ _id: rel.diseaseId, diseaseName: rel.diseaseName, category: rel.category, description: rel.description });
@@ -459,12 +460,12 @@ const KnowledgeGraphScreen: React.FC = () => {
                                   <Ionicons name={relCat.icon as any} size={16} color={relCat.color} />
                                 </View>
                                 <View style={{ flex: 1 }}>
-                                  <Text style={{ fontSize: 14, fontWeight: '500', color: '#111827' }}>{rel.diseaseName}</Text>
-                                  <Text style={{ fontSize: 11, color: '#6B7280' }}>
+                                  <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textPrimary }}>{rel.diseaseName}</Text>
+                                  <Text style={{ fontSize: 11, color: colors.textTertiary }}>
                                     {relCat.label} · 相似度 {rel.similarity}%
                                   </Text>
                                 </View>
-                                <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
+                                <Ionicons name="chevron-forward" size={16} color={colors.textDisabled} />
                               </TouchableOpacity>
                             );
                           })}
@@ -476,8 +477,8 @@ const KnowledgeGraphScreen: React.FC = () => {
               );
             })() : (
               <View style={{ padding: 40, alignItems: 'center' }}>
-                <Ionicons name="alert-circle-outline" size={36} color="#9CA3AF" />
-                <Text style={{ fontSize: 14, color: '#6B7280', marginTop: 8 }}>加载详情失败</Text>
+                <Ionicons name="alert-circle-outline" size={36} color={colors.textDisabled} />
+                <Text style={{ fontSize: 14, color: colors.textTertiary, marginTop: 8 }}>加载详情失败</Text>
               </View>
             )}
           </View>

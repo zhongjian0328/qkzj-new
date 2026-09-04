@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, Modal, TextInput, ActivityIndicator, Alert, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -182,8 +183,8 @@ const EnvironmentRecordScreen: React.FC = () => {
             )}
           </View>
           {item.notes && (
-            <View style={{ marginTop: 8, padding: 8, backgroundColor: '#F9FAFB', borderRadius: 8 }}>
-              <Text style={{ fontSize: 12, color: '#6B7280' }}>备注: {item.notes}</Text>
+            <View style={{ marginTop: 8, padding: 8, backgroundColor: colors.surfaceSoft, borderRadius: 8 }}>
+              <Text style={{ fontSize: 12, color: colors.textTertiary }}>备注: {item.notes}</Text>
             </View>
           )}
         </View>
@@ -193,13 +194,13 @@ const EnvironmentRecordScreen: React.FC = () => {
               <View
                 key={idx}
                 style={{
-                  backgroundColor: '#FEF3C7',
+                  backgroundColor: colors.warningLight,
                   paddingHorizontal: 10,
                   paddingVertical: 4,
                   borderRadius: 12,
                 }}
               >
-                <Text style={{ fontSize: 12, color: '#92400E', fontWeight: '500' }}>
+                <Text style={{ fontSize: 12, color: colors.warningText, fontWeight: '500' }}>
                   {ALERT_TYPE_MAP[alert.alertType] || alert.alertType}
                 </Text>
               </View>
@@ -218,20 +219,20 @@ const EnvironmentRecordScreen: React.FC = () => {
         onBack={() => navigation.goBack()}
         rightComponent={
           <TouchableOpacity onPress={() => { resetForm(); setModalVisible(true); }}>
-            <Text style={{ color: '#2DBBA1', fontSize: 16 }}>新增记录</Text>
+            <Text style={{ color: colors.primary, fontSize: 16 }}>新增记录</Text>
           </TouchableOpacity>
         }
       />
 
       {error && (
-        <View style={{ padding: 16, backgroundColor: '#FEF2F2', margin: 16, borderRadius: 8 }}>
-          <Text style={{ color: '#EF4444', fontSize: 14 }}>{error}</Text>
+        <View style={{ padding: 16, backgroundColor: colors.errorLight, margin: 16, borderRadius: 8 }}>
+          <Text style={{ color: colors.error, fontSize: 14 }}>{error}</Text>
         </View>
       )}
 
       {loading && records.length === 0 ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#2DBBA1" />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : (
         <FlatList
@@ -383,7 +384,7 @@ const EnvironmentRecordScreen: React.FC = () => {
                 disabled={loading}
               >
                 {loading ? (
-                  <ActivityIndicator color="#FFFFFF" />
+                  <ActivityIndicator color={colors.surface} />
                 ) : (
                   <Text style={styles.modalButtonText}>保存</Text>
                 )}

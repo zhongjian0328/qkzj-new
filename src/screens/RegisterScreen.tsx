@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -134,7 +135,7 @@ const RegisterScreen: React.FC = () => {
         {/* Logo和产品名称 */}
         <View style={[styles.loginLogoSection, { marginBottom: 24 }]}>
           <View style={styles.loginLogoContainer}>
-            <Ionicons name="medical-outline" size={48} color="#2DBBA1" />
+            <Ionicons name="medical-outline" size={48} color={colors.primary} />
           </View>
           <Text style={styles.loginAppTitle}>禽康智检</Text>
           <Text style={styles.loginAppSubtitle}>AI赋能禽类健康诊断</Text>

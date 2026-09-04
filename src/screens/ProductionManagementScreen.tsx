@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, RefreshControl, Dimensions } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -40,17 +41,17 @@ const ProductionManagementScreen: React.FC = () => {
   };
 
   const metrics = [
-    { label: '当前存栏', value: totalLivestock.toLocaleString(), unit: '只', icon: 'layers-outline', color: '#10B981', sub: `共${batchCount}个批次` },
-    { label: '今日死淘', value: '8', unit: '只', icon: 'trending-down-outline', color: '#EF4444', sub: '较昨日减少2只' },
-    { label: '疫苗倒计时', value: '2', unit: '天', icon: 'syringe-outline', color: '#3B82F6', sub: '新城疫疫苗' },
-    { label: '料肉比', value: '1.82', unit: ':1', icon: 'analytics-outline', color: '#8B5CF6', sub: '目标: 1.80' },
+    { label: '当前存栏', value: totalLivestock.toLocaleString(), unit: '只', icon: 'layers-outline', color: colors.success, sub: `共${batchCount}个批次` },
+    { label: '今日死淘', value: '8', unit: '只', icon: 'trending-down-outline', color: colors.error, sub: '较昨日减少2只' },
+    { label: '疫苗倒计时', value: '2', unit: '天', icon: 'syringe-outline', color: colors.info, sub: '新城疫疫苗' },
+    { label: '料肉比', value: '1.82', unit: ':1', icon: 'analytics-outline', color: colors.accent.purple, sub: '目标: 1.80' },
   ];
 
   const quickActions = [
-    { id: 'batch', title: '批次管理', desc: '管理养殖批次', icon: 'layers-outline', color: '#2DBBA1', nav: 'BatchManagement' },
-    { id: 'deathFeed', title: '死淘/耗料', desc: '记录死淘和耗料', icon: 'bar-chart-outline', color: '#3B82F6', nav: 'DeathFeedRecord' },
-    { id: 'employee', title: '员工权限', desc: '管理员工权限', icon: 'people-outline', color: '#8B5CF6', nav: 'EmployeeManagement' },
-    { id: 'environment', title: '环境监测', desc: '环境数据记录', icon: 'thermometer-outline', color: '#F59E0B', nav: 'EnvironmentRecord' },
+    { id: 'batch', title: '批次管理', desc: '管理养殖批次', icon: 'layers-outline', color: colors.primary, nav: 'BatchManagement' },
+    { id: 'deathFeed', title: '死淘/耗料', desc: '记录死淘和耗料', icon: 'bar-chart-outline', color: colors.info, nav: 'DeathFeedRecord' },
+    { id: 'employee', title: '员工权限', desc: '管理员工权限', icon: 'people-outline', color: colors.accent.purple, nav: 'EmployeeManagement' },
+    { id: 'environment', title: '环境监测', desc: '环境数据记录', icon: 'thermometer-outline', color: colors.warning, nav: 'EnvironmentRecord' },
   ];
 
   return (
@@ -59,7 +60,7 @@ const ProductionManagementScreen: React.FC = () => {
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={styles.scrollContent}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#2DBBA1']} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />}
       >
         {/* 生产数据总览 */}
         <Text style={styles.homeSectionHeaderTitle}>生产数据总览</Text>
@@ -80,24 +81,24 @@ const ProductionManagementScreen: React.FC = () => {
         </View>
 
         {/* 死淘率趋势图 */}
-        <View style={{ backgroundColor: '#FFF', borderRadius: 12, padding: 16, marginBottom: 24, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 3 }}>
+        <View style={{ backgroundColor: colors.surface, borderRadius: 12, padding: 16, marginBottom: 24, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 3 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: '#1F5E52' }}>死淘率趋势</Text>
+            <Text style={{ fontSize: 16, fontWeight: '600', color: colors.primaryDark }}>死淘率趋势</Text>
             <TouchableOpacity onPress={() => navigation.navigate('Statistics')}>
-              <Text style={{ fontSize: 13, color: '#2DBBA1' }}>查看详情</Text>
+              <Text style={{ fontSize: 13, color: colors.primary }}>查看详情</Text>
             </TouchableOpacity>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', height: 120 }}>
             {[35, 42, 38, 45, 52, 68, 48].map((h, i) => (
               <View key={i} style={{ flex: 1, alignItems: 'center', marginHorizontal: 2 }}>
-                <View style={{ width: '100%', backgroundColor: h > 60 ? '#EF4444' : '#2DBBA1', borderRadius: 4, height: h * 1.2 }} />
-                <Text style={{ fontSize: 10, color: '#999', marginTop: 4 }}>{['1/10', '1/11', '1/12', '1/13', '1/14', '1/15', '1/16'][i]}</Text>
+                <View style={{ width: '100%', backgroundColor: h > 60 ? colors.error : colors.primary, borderRadius: 4, height: h * 1.2 }} />
+                <Text style={{ fontSize: 10, color: colors.textTertiary, marginTop: 4 }}>{['1/10', '1/11', '1/12', '1/13', '1/14', '1/15', '1/16'][i]}</Text>
               </View>
             ))}
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 }}>
-            <Text style={{ fontSize: 12, color: '#666' }}>平均死淘率: 1.8%</Text>
-            <Text style={{ fontSize: 12, color: '#666' }}>目标: ≤2.0%</Text>
+            <Text style={{ fontSize: 12, color: colors.textSecondary }}>平均死淘率: 1.8%</Text>
+            <Text style={{ fontSize: 12, color: colors.textSecondary }}>目标: ≤2.0%</Text>
           </View>
         </View>
 
@@ -130,19 +131,19 @@ const ProductionManagementScreen: React.FC = () => {
             { title: '设备检查', desc: '通风系统维护', status: 'in_progress' },
             { title: '数据录入', desc: '各批次死淘耗料记录', status: 'pending' },
           ].map((task, i) => {
-            const statusColor = task.status === 'completed' ? '#10B981' : task.status === 'in_progress' ? '#F59E0B' : '#9CA3AF';
-            const statusBg = task.status === 'completed' ? '#D1FAE5' : task.status === 'in_progress' ? '#FEF3C7' : '#F3F4F6';
+            const statusColor = task.status === 'completed' ? colors.success : task.status === 'in_progress' ? colors.warning : colors.textDisabled;
+            const statusBg = task.status === 'completed' ? colors.successLight : task.status === 'in_progress' ? colors.warningLight : colors.surfaceMuted;
             const statusText = task.status === 'completed' ? '已完成' : task.status === 'in_progress' ? '进行中' : '待完成';
-            const statusTextColor = task.status === 'completed' ? '#065F46' : task.status === 'in_progress' ? '#92400E' : '#4B5563';
+            const statusTextColor = task.status === 'completed' ? colors.successText : task.status === 'in_progress' ? colors.warningText : colors.textSecondary;
             return (
               <View key={i} style={[styles.homeTaskCard, { marginBottom: 12 }]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-                  <View style={[styles.homeTaskCircle, { borderColor: task.status === 'completed' ? '#10B981' : '#D1D5DB' }]}>
-                    {task.status === 'completed' && <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: '#10B981' }} />}
+                  <View style={[styles.homeTaskCircle, { borderColor: task.status === 'completed' ? colors.success : colors.borderStrong }]}>
+                    {task.status === 'completed' && <View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: colors.success }} />}
                   </View>
                   <View style={{ marginLeft: 12, flex: 1 }}>
-                    <Text style={{ fontSize: 15, fontWeight: '500', color: '#1F5E52' }}>{task.title}</Text>
-                    <Text style={{ fontSize: 13, color: '#666', marginTop: 2 }}>{task.desc}</Text>
+                    <Text style={{ fontSize: 15, fontWeight: '500', color: colors.primaryDark }}>{task.title}</Text>
+                    <Text style={{ fontSize: 13, color: colors.textSecondary, marginTop: 2 }}>{task.desc}</Text>
                   </View>
                 </View>
                 <View style={{ backgroundColor: statusBg, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 }}>

@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -102,8 +103,8 @@ const DiagnosisHistoryScreen: React.FC = () => {
       <View style={styles.container}>
         <Header title="诊断历史" showBackButton onBack={() => navigation.goBack()} />
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" color="#2DBBA1" />
-          <Text style={{ marginTop: 12, color: '#6B7280' }}>加载中...</Text>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={{ marginTop: 12, color: colors.textTertiary }}>加载中...</Text>
         </View>
       </View>
     );
@@ -115,13 +116,13 @@ const DiagnosisHistoryScreen: React.FC = () => {
 
       <ScrollView
         contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={['#2DBBA1']} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={[colors.primary]} />}
       >
         {error && (
-          <View style={{ padding: 16, backgroundColor: '#FEF2F2', borderRadius: 8, marginBottom: 12 }}>
-            <Text style={{ color: '#DC2626', textAlign: 'center' }}>{error}</Text>
+          <View style={{ padding: 16, backgroundColor: colors.errorLight, borderRadius: 8, marginBottom: 12 }}>
+            <Text style={{ color: colors.error, textAlign: 'center' }}>{error}</Text>
             <TouchableOpacity onPress={handleRefresh} style={{ marginTop: 8 }}>
-              <Text style={{ color: '#2DBBA1', textAlign: 'center' }}>重试</Text>
+              <Text style={{ color: colors.primary, textAlign: 'center' }}>重试</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -191,13 +192,13 @@ const DiagnosisHistoryScreen: React.FC = () => {
                 style={{ padding: 16, alignItems: 'center' }}
                 disabled={loading}
               >
-                <Text style={{ color: '#2DBBA1' }}>{loading ? '加载中...' : '加载更多'}</Text>
+                <Text style={{ color: colors.primary }}>{loading ? '加载中...' : '加载更多'}</Text>
               </TouchableOpacity>
             )}
           </>
         ) : (
           <View style={styles.emptyHistoryContainer}>
-            <Ionicons name="clipboard-outline" size={48} color="#9CA3AF" />
+            <Ionicons name="clipboard-outline" size={48} color={colors.textDisabled} />
             <Text style={styles.emptyHistoryTitle}>暂无诊断历史</Text>
             <Text style={styles.emptyHistoryText}>开始您的第一次AI诊断，记录将保存在这里</Text>
             <TouchableOpacity

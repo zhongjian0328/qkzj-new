@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -7,28 +8,28 @@ import { serviceTicketApi } from '../services/api';
 import { StyleSheet } from 'react-native';
 
 const COLORS = {
-  primary: '#2DBBA1',
-  primaryDark: '#1F5E52',
-  bgLight: '#E6F7F3',
-  text: '#1F2937',
-  textSecondary: '#6B7280',
-  border: '#E5E7EB',
-  danger: '#EF4444',
-  warning: '#F59E0B',
+  primary: colors.primary,
+  primaryDark: colors.primaryDark,
+  bgLight: colors.primaryLight,
+  text: colors.textPrimary,
+  textSecondary: colors.textTertiary,
+  border: colors.border,
+  danger: colors.error,
+  warning: colors.warning,
 };
 
 const PRIORITY_CONFIG: Record<string, { color: string; label: string }> = {
   urgent: { color: COLORS.danger, label: '紧急' },
   high: { color: COLORS.warning, label: '高' },
-  medium: { color: '#3B82F6', label: '中' },
-  low: { color: '#9CA3AF', label: '低' },
+  medium: { color: colors.info, label: '中' },
+  low: { color: colors.textDisabled, label: '低' },
 };
 
 const STATUS_CONFIG: Record<string, { color: string; label: string }> = {
-  open: { color: '#3B82F6', label: '待处理' },
+  open: { color: colors.info, label: '待处理' },
   in_progress: { color: COLORS.warning, label: '进行中' },
-  completed: { color: '#22C55E', label: '已完成' },
-  cancelled: { color: '#9CA3AF', label: '已取消' },
+  completed: { color: colors.success, label: '已完成' },
+  cancelled: { color: colors.textDisabled, label: '已取消' },
 };
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -184,10 +185,10 @@ export default function TicketListScreen() {
         </View>
       ) : error ? (
         <View style={styles.emptyContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color="#9CA3AF" />
+          <Ionicons name="alert-circle-outline" size={48} color={colors.textDisabled} />
           <Text style={styles.emptyTitle}>{error}</Text>
           <TouchableOpacity style={{ marginTop: 12, backgroundColor: COLORS.primary, borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchTickets()}>
-            <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>重试</Text>
+            <Text style={{ color: colors.surface, fontSize: 16, fontWeight: '600' }}>重试</Text>
           </TouchableOpacity>
         </View>
       ) : (
@@ -199,7 +200,7 @@ export default function TicketListScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.primary]} />}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Ionicons name="clipboard-outline" size={48} color="#9CA3AF" />
+            <Ionicons name="clipboard-outline" size={48} color={colors.textDisabled} />
             <Text style={styles.emptyTitle}>{emptyText}</Text>
             <Text style={styles.emptyDesc}>
               {activeTab === 'my' ? '发起工单请求技术支持' : '承接工单后开始处理'}
@@ -213,17 +214,17 @@ export default function TicketListScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F9FAFB' },
+  container: { flex: 1, backgroundColor: colors.surfaceSoft },
   tabContainer: {
-    flexDirection: 'row', backgroundColor: '#F3F4F6',
+    flexDirection: 'row', backgroundColor: colors.surfaceMuted,
     padding: 4, marginHorizontal: 12, marginTop: 8, borderRadius: 8,
   },
   tab: { flex: 1, paddingVertical: 8, borderRadius: 6, alignItems: 'center' },
-  tabActive: { backgroundColor: '#FFFFFF', shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 1, elevation: 1 },
-  tabText: { fontSize: 14, fontWeight: '500', color: '#6B7280' },
+  tabActive: { backgroundColor: colors.surface, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 1, elevation: 1 },
+  tabText: { fontSize: 14, fontWeight: '500', color: colors.textTertiary },
   tabTextActive: { fontSize: 14, fontWeight: '600', color: COLORS.primary },
   filterContainer: { flexDirection: 'row', paddingHorizontal: 12, paddingVertical: 8, gap: 8 },
-  filterChip: { paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12, borderWidth: 1, borderColor: COLORS.border, backgroundColor: '#FFFFFF' },
+  filterChip: { paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12, borderWidth: 1, borderColor: COLORS.border, backgroundColor: colors.surface },
   filterChipActive: { backgroundColor: COLORS.bgLight, borderColor: COLORS.primary, borderWidth: 1 },
   filterChipText: { fontSize: 12, color: COLORS.textSecondary },
   filterChipTextActive: { fontSize: 12, color: COLORS.primaryDark, fontWeight: '600' },
@@ -235,7 +236,7 @@ const styles = StyleSheet.create({
 
 const cardStyles = StyleSheet.create({
   listContent: { padding: 12, gap: 12 },
-  card: { flexDirection: 'row', backgroundColor: '#FFFFFF', borderRadius: 12, overflow: 'hidden', borderWidth: 1, borderColor: COLORS.border },
+  card: { flexDirection: 'row', backgroundColor: colors.surface, borderRadius: 12, overflow: 'hidden', borderWidth: 1, borderColor: COLORS.border },
   priorityBar: { width: 4 },
   cardContent: { flex: 1, padding: 12 },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
@@ -249,5 +250,5 @@ const cardStyles = StyleSheet.create({
   priorityDot: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   priorityDotInner: { width: 8, height: 8, borderRadius: 4 },
   priorityText: { fontSize: 12, fontWeight: '500' },
-  time: { fontSize: 11, color: '#9CA3AF' },
+  time: { fontSize: 11, color: colors.textDisabled },
 });

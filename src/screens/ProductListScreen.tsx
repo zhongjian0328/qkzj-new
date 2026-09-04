@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, RefreshControl, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -46,11 +47,11 @@ const ProductListScreen: React.FC = () => {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'medicine': return '#3B82F6';
-      case 'vaccine': return '#10B981';
-      case 'disinfectant': return '#8B5CF6';
-      case 'equipment': return '#F59E0B';
-      default: return '#6B7280';
+      case 'medicine': return colors.info;
+      case 'vaccine': return colors.success;
+      case 'disinfectant': return colors.accent.purple;
+      case 'equipment': return colors.warning;
+      default: return colors.textTertiary;
     }
   };
 
@@ -68,17 +69,17 @@ const ProductListScreen: React.FC = () => {
         <View style={{
           flexDirection: 'row',
           alignItems: 'center',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: colors.surface,
           borderRadius: 12,
           paddingHorizontal: 12,
           borderWidth: 1,
-          borderColor: '#E5E7EB',
+          borderColor: colors.border,
         }}>
-          <Ionicons name="search" size={18} color="#9CA3AF" />
+          <Ionicons name="search" size={18} color={colors.textDisabled} />
           <TextInput
-            style={{ flex: 1, paddingVertical: 10, paddingHorizontal: 8, fontSize: 14, color: '#111827' }}
+            style={{ flex: 1, paddingVertical: 10, paddingHorizontal: 8, fontSize: 14, color: colors.textPrimary }}
             placeholder="搜索商品名称..."
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.textDisabled}
             value={searchTerm}
             onChangeText={setSearchTerm}
             onSubmitEditing={() => fetchProducts()}
@@ -86,7 +87,7 @@ const ProductListScreen: React.FC = () => {
           />
           {searchTerm ? (
             <TouchableOpacity onPress={() => { setSearchTerm(''); }}>
-              <Ionicons name="close-circle" size={18} color="#9CA3AF" />
+              <Ionicons name="close-circle" size={18} color={colors.textDisabled} />
             </TouchableOpacity>
           ) : null}
         </View>
@@ -100,9 +101,9 @@ const ProductListScreen: React.FC = () => {
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              backgroundColor: activeCategory === cat.value ? '#2DBBA1' : '#FFFFFF',
+              backgroundColor: activeCategory === cat.value ? colors.primary : colors.surface,
               borderWidth: 1,
-              borderColor: activeCategory === cat.value ? '#2DBBA1' : '#E5E7EB',
+              borderColor: activeCategory === cat.value ? colors.primary : colors.border,
               borderRadius: 20,
               paddingHorizontal: 14,
               paddingVertical: 8,
@@ -111,8 +112,8 @@ const ProductListScreen: React.FC = () => {
             }}
             onPress={() => setActiveCategory(cat.value)}
           >
-            <Ionicons name={cat.icon} size={14} color={activeCategory === cat.value ? '#FFFFFF' : '#6B7280'} />
-            <Text style={{ fontSize: 13, fontWeight: '500', color: activeCategory === cat.value ? '#FFFFFF' : '#6B7280' }}>
+            <Ionicons name={cat.icon} size={14} color={activeCategory === cat.value ? colors.surface : colors.textTertiary} />
+            <Text style={{ fontSize: 13, fontWeight: '500', color: activeCategory === cat.value ? colors.surface : colors.textTertiary }}>
               {cat.label}
             </Text>
           </TouchableOpacity>
@@ -121,28 +122,28 @@ const ProductListScreen: React.FC = () => {
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#2DBBA1" />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>正在加载商品...</Text>
         </View>
       ) : error ? (
         <View style={styles.loadingContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color="#9CA3AF" />
-          <Text style={{ fontSize: 16, color: '#6B7280', marginBottom: 16 }}>{error}</Text>
-          <TouchableOpacity style={{ backgroundColor: '#2DBBA1', borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchProducts()}>
-            <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>重试</Text>
+          <Ionicons name="alert-circle-outline" size={48} color={colors.textDisabled} />
+          <Text style={{ fontSize: 16, color: colors.textTertiary, marginBottom: 16 }}>{error}</Text>
+          <TouchableOpacity style={{ backgroundColor: colors.primary, borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchProducts()}>
+            <Text style={{ color: colors.surface, fontSize: 16, fontWeight: '600' }}>重试</Text>
           </TouchableOpacity>
         </View>
       ) : products.length === 0 ? (
         <View style={styles.loadingContainer}>
-          <Ionicons name="cart-outline" size={48} color="#9CA3AF" />
-          <Text style={{ fontSize: 16, color: '#6B7280' }}>暂无商品</Text>
+          <Ionicons name="cart-outline" size={48} color={colors.textDisabled} />
+          <Text style={{ fontSize: 16, color: colors.textTertiary }}>暂无商品</Text>
         </View>
       ) : (
         <ScrollView
           contentContainerStyle={{ padding: 16 }}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => fetchProducts(true)} colors={['#2DBBA1']} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => fetchProducts(true)} colors={[colors.primary]} />}
         >
-          <Text style={{ fontSize: 14, color: '#6B7280', marginBottom: 12 }}>
+          <Text style={{ fontSize: 14, color: colors.textTertiary, marginBottom: 12 }}>
             共 {products.length} 件商品
           </Text>
 
@@ -150,7 +151,7 @@ const ProductListScreen: React.FC = () => {
             <TouchableOpacity
               key={product._id || product.id}
               style={{
-                backgroundColor: '#FFFFFF',
+                backgroundColor: colors.surface,
                 borderRadius: 12,
                 padding: 16,
                 marginBottom: 12,
@@ -166,7 +167,7 @@ const ProductListScreen: React.FC = () => {
               })}
             >
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827', flex: 1 }}>
+                <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textPrimary, flex: 1 }}>
                   {product.name}
                 </Text>
                 <View style={{ backgroundColor: getCategoryColor(product.category) + '1A', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 }}>
@@ -177,19 +178,19 @@ const ProductListScreen: React.FC = () => {
               </View>
 
               {product.description && (
-                <Text style={{ fontSize: 14, color: '#4B5563', marginBottom: 8, lineHeight: 20 }} numberOfLines={2}>
+                <Text style={{ fontSize: 14, color: colors.textSecondary, marginBottom: 8, lineHeight: 20 }} numberOfLines={2}>
                   {product.description}
                 </Text>
               )}
 
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text style={{ fontSize: 18, fontWeight: '700', color: '#DC2626' }}>
+                <Text style={{ fontSize: 18, fontWeight: '700', color: colors.error }}>
                   ¥{product.price?.toFixed(2) || '咨询'}
                 </Text>
                 {product.stock > 0 ? (
-                  <Text style={{ fontSize: 12, color: '#10B981' }}>库存 {product.stock}</Text>
+                  <Text style={{ fontSize: 12, color: colors.success }}>库存 {product.stock}</Text>
                 ) : (
-                  <Text style={{ fontSize: 12, color: '#9CA3AF' }}>暂无库存</Text>
+                  <Text style={{ fontSize: 12, color: colors.textDisabled }}>暂无库存</Text>
                 )}
               </View>
             </TouchableOpacity>

@@ -1,5 +1,12 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, TouchableOpacityProps } from 'react-native';
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  TouchableOpacityProps,
+} from 'react-native';
+import { colors, radii, typography, spacing, shadows, component } from '../theme';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'text';
 export type ButtonSize = 'small' | 'medium' | 'large';
@@ -11,6 +18,7 @@ interface ButtonProps extends TouchableOpacityProps {
   size?: ButtonSize;
   icon?: React.ReactNode;
   loading?: boolean;
+  disabled?: boolean;
   fullWidth?: boolean;
 }
 
@@ -21,16 +29,20 @@ const Button: React.FC<ButtonProps> = ({
   size = 'medium',
   icon,
   loading = false,
+  disabled = false,
   fullWidth = false,
   style,
   onPress,
   ...props
 }) => {
+  const isDisabled = disabled || loading;
+
   const buttonStyles = [
     styles.button,
     styles[variant],
-    styles[size],
+    styles[`${size}Size`],
     fullWidth && styles.fullWidth,
+    isDisabled && styles.disabled,
     style,
   ];
 
@@ -38,17 +50,22 @@ const Button: React.FC<ButtonProps> = ({
     styles.buttonText,
     styles[`${variant}Text`],
     styles[`${size}Text`],
+    isDisabled && styles.disabledText,
   ];
 
   return (
     <TouchableOpacity
-      style={[buttonStyles as any, { overflow: 'hidden' }]}
+      style={buttonStyles}
       onPress={onPress}
-      disabled={loading}
+      disabled={isDisabled}
+      activeOpacity={0.85}
       {...props}
     >
       {loading ? (
-        <Text style={textStyles as any}>加载中...</Text>
+        <ActivityIndicator
+          size="small"
+          color={variant === 'outline' || variant === 'text' ? colors.primary : colors.textOnPrimary}
+        />
       ) : (
         <>
           {children ? (
@@ -56,7 +73,7 @@ const Button: React.FC<ButtonProps> = ({
           ) : (
             <>
               {icon && <>{icon}</>}
-              <Text style={textStyles as any}>{title}</Text>
+              {title ? <Text style={textStyles}>{title}</Text> : null}
             </>
           )}
         </>
@@ -70,76 +87,73 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 8,
+    borderRadius: radii.md,
+    gap: spacing.sm,
   },
   fullWidth: {
     width: '100%',
   },
-  // Variants
+  // 变体
   primary: {
-    backgroundColor: '#2DBBA1',
-    shadowColor: '#2DBBA1',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 3.84,
-    elevation: 5,
+    backgroundColor: colors.primary,
+    ...shadows.primary,
   },
   secondary: {
-    backgroundColor: '#1F5E52',
+    backgroundColor: colors.primaryDark,
   },
   outline: {
     backgroundColor: 'transparent',
-    borderWidth: 2,
-    borderColor: '#2DBBA1',
+    borderWidth: 1.5,
+    borderColor: colors.primary,
   },
   text: {
     backgroundColor: 'transparent',
+    paddingHorizontal: 0,
   },
-  // Sizes
-  small: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+  // 尺寸（高度取整保证触摸目标）
+  smallSize: {
+    height: component.buttonHeight.small,
+    paddingHorizontal: spacing.md,
   },
-  medium: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+  mediumSize: {
+    height: component.buttonHeight.medium,
+    paddingHorizontal: spacing.lg,
   },
-  large: {
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    minHeight: 48,
+  largeSize: {
+    height: component.buttonHeight.large,
+    paddingHorizontal: spacing.xl,
   },
-  // Text styles
+  disabled: {
+    opacity: 0.45,
+  },
+  // 文本
   buttonText: {
-    fontWeight: '600',
+    fontWeight: typography.weight.semibold,
     textAlign: 'center',
   },
   primaryText: {
-    color: '#FFFFFF',
+    color: colors.textOnPrimary,
   },
   secondaryText: {
-    color: '#FFFFFF',
+    color: colors.textOnDark,
   },
   outlineText: {
-    color: '#2DBBA1',
+    color: colors.primary,
   },
   textText: {
-    color: '#2DBBA1',
+    color: colors.primary,
   },
   smallText: {
-    fontSize: 14,
+    fontSize: typography.size.body,
   },
   mediumText: {
-    fontSize: 16,
+    fontSize: typography.size.bodyLarge,
   },
   largeText: {
-    fontSize: 18,
+    fontSize: typography.size.bodyLarge,
+  },
+  disabledText: {
+    color: colors.textDisabled,
   },
 });
 

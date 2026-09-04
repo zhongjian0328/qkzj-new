@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, RefreshControl, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -44,11 +45,11 @@ const OrderListScreen: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'PENDING': return '#F59E0B';
-      case 'PROCESSING': return '#3B82F6';
-      case 'COMPLETED': return '#10B981';
-      case 'CANCELLED': return '#6B7280';
-      default: return '#6B7280';
+      case 'PENDING': return colors.warning;
+      case 'PROCESSING': return colors.info;
+      case 'COMPLETED': return colors.success;
+      case 'CANCELLED': return colors.textTertiary;
+      default: return colors.textTertiary;
     }
   };
 
@@ -107,9 +108,9 @@ const OrderListScreen: React.FC = () => {
           <TouchableOpacity
             key={tab.value}
             style={{
-              backgroundColor: activeTab === tab.value ? '#2DBBA1' : '#FFFFFF',
+              backgroundColor: activeTab === tab.value ? colors.primary : colors.surface,
               borderWidth: 1,
-              borderColor: activeTab === tab.value ? '#2DBBA1' : '#E5E7EB',
+              borderColor: activeTab === tab.value ? colors.primary : colors.border,
               borderRadius: 20,
               paddingHorizontal: 16,
               paddingVertical: 8,
@@ -117,7 +118,7 @@ const OrderListScreen: React.FC = () => {
             }}
             onPress={() => setActiveTab(tab.value)}
           >
-            <Text style={{ fontSize: 13, fontWeight: '500', color: activeTab === tab.value ? '#FFFFFF' : '#6B7280' }}>
+            <Text style={{ fontSize: 13, fontWeight: '500', color: activeTab === tab.value ? colors.surface : colors.textTertiary }}>
               {tab.label}
             </Text>
           </TouchableOpacity>
@@ -126,32 +127,32 @@ const OrderListScreen: React.FC = () => {
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#2DBBA1" />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>正在加载订单...</Text>
         </View>
       ) : error ? (
         <View style={styles.loadingContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color="#9CA3AF" />
-          <Text style={{ fontSize: 16, color: '#6B7280', marginBottom: 16 }}>{error}</Text>
-          <TouchableOpacity style={{ backgroundColor: '#2DBBA1', borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchOrders()}>
-            <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>重试</Text>
+          <Ionicons name="alert-circle-outline" size={48} color={colors.textDisabled} />
+          <Text style={{ fontSize: 16, color: colors.textTertiary, marginBottom: 16 }}>{error}</Text>
+          <TouchableOpacity style={{ backgroundColor: colors.primary, borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchOrders()}>
+            <Text style={{ color: colors.surface, fontSize: 16, fontWeight: '600' }}>重试</Text>
           </TouchableOpacity>
         </View>
       ) : orders.length === 0 ? (
         <View style={styles.loadingContainer}>
-          <Ionicons name="receipt-outline" size={48} color="#9CA3AF" />
-          <Text style={{ fontSize: 16, color: '#6B7280' }}>暂无订单</Text>
+          <Ionicons name="receipt-outline" size={48} color={colors.textDisabled} />
+          <Text style={{ fontSize: 16, color: colors.textTertiary }}>暂无订单</Text>
         </View>
       ) : (
         <ScrollView
           contentContainerStyle={{ padding: 16 }}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => fetchOrders(true)} colors={['#2DBBA1']} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => fetchOrders(true)} colors={[colors.primary]} />}
         >
           {orders.map(order => (
             <View
               key={order._id || order.id}
               style={{
-                backgroundColor: '#FFFFFF',
+                backgroundColor: colors.surface,
                 borderRadius: 12,
                 padding: 16,
                 marginBottom: 12,
@@ -165,7 +166,7 @@ const OrderListScreen: React.FC = () => {
               }}
             >
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <Text style={{ fontSize: 14, fontWeight: '600', color: '#111827' }}>
+                <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
                   {getProductTypeLabel(order.productType)} - {order.productType === 'diagnosis_service' ? '诊疗服务' : '商品订单'}
                 </Text>
                 <View style={{ backgroundColor: getStatusColor(order.orderStatus) + '1A', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 }}>
@@ -176,16 +177,16 @@ const OrderListScreen: React.FC = () => {
               </View>
 
               {order.serviceDescription && (
-                <Text style={{ fontSize: 14, color: '#4B5563', marginBottom: 8, lineHeight: 20 }} numberOfLines={2}>
+                <Text style={{ fontSize: 14, color: colors.textSecondary, marginBottom: 8, lineHeight: 20 }} numberOfLines={2}>
                   {order.serviceDescription}
                 </Text>
               )}
 
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <Text style={{ fontSize: 16, fontWeight: '700', color: '#DC2626' }}>
+                <Text style={{ fontSize: 16, fontWeight: '700', color: colors.error }}>
                   ¥{order.totalPrice?.toFixed(2) || '0.00'}
                 </Text>
-                <Text style={{ fontSize: 12, color: '#9CA3AF' }}>
+                <Text style={{ fontSize: 12, color: colors.textDisabled }}>
                   {order.orderDate ? new Date(order.orderDate).toLocaleDateString('zh-CN') : ''}
                 </Text>
               </View>
@@ -194,18 +195,18 @@ const OrderListScreen: React.FC = () => {
               <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 8 }}>
                 {order.orderStatus === 'PENDING' && (
                   <TouchableOpacity
-                    style={{ backgroundColor: '#FEF2F2', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 8 }}
+                    style={{ backgroundColor: colors.errorLight, borderRadius: 8, paddingHorizontal: 14, paddingVertical: 8 }}
                     onPress={() => handleCancelOrder(order._id || order.id)}
                   >
-                    <Text style={{ fontSize: 13, fontWeight: '500', color: '#DC2626' }}>取消订单</Text>
+                    <Text style={{ fontSize: 13, fontWeight: '500', color: colors.error }}>取消订单</Text>
                   </TouchableOpacity>
                 )}
                 {order.orderStatus === 'PROCESSING' && (
                   <TouchableOpacity
-                    style={{ backgroundColor: '#2DBBA1', borderRadius: 8, paddingHorizontal: 14, paddingVertical: 8 }}
+                    style={{ backgroundColor: colors.primary, borderRadius: 8, paddingHorizontal: 14, paddingVertical: 8 }}
                     onPress={() => handleConfirmOrder(order._id || order.id)}
                   >
-                    <Text style={{ fontSize: 13, fontWeight: '500', color: '#FFFFFF' }}>确认收货</Text>
+                    <Text style={{ fontSize: 13, fontWeight: '500', color: colors.surface }}>确认收货</Text>
                   </TouchableOpacity>
                 )}
               </View>

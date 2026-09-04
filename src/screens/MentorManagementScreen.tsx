@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Alert, ActivityIndicator, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -115,28 +116,28 @@ const MentorManagementScreen: React.FC = () => {
       
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#2DBBA1" />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>正在加载导师列表...</Text>
         </View>
       ) : error ? (
         <View style={styles.loadingContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color="#9CA3AF" />
-          <Text style={{ fontSize: 16, color: '#6B7280', marginBottom: 16 }}>{error}</Text>
-          <TouchableOpacity style={{ backgroundColor: '#2DBBA1', borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchMentors()}>
-            <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>重试</Text>
+          <Ionicons name="alert-circle-outline" size={48} color={colors.textDisabled} />
+          <Text style={{ fontSize: 16, color: colors.textTertiary, marginBottom: 16 }}>{error}</Text>
+          <TouchableOpacity style={{ backgroundColor: colors.primary, borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchMentors()}>
+            <Text style={{ color: colors.surface, fontSize: 16, fontWeight: '600' }}>重试</Text>
           </TouchableOpacity>
         </View>
       ) : activeTab === 'mentors' && mentors.length === 0 ? (
         <View style={styles.loadingContainer}>
-          <Ionicons name="folder-open-outline" size={48} color="#9CA3AF" />
-          <Text style={{ fontSize: 16, color: '#6B7280' }}>暂无导师数据</Text>
+          <Ionicons name="folder-open-outline" size={48} color={colors.textDisabled} />
+          <Text style={{ fontSize: 16, color: colors.textTertiary }}>暂无导师数据</Text>
         </View>
       ) : (
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         {/* 标签切换 */}
         <View style={{
           flexDirection: 'row',
-          backgroundColor: '#F3F4F6',
+          backgroundColor: colors.surfaceMuted,
           borderRadius: 12,
           padding: 4,
           marginBottom: 16
@@ -151,7 +152,7 @@ const MentorManagementScreen: React.FC = () => {
                 borderRadius: 8
               },
               activeTab === 'mentors' && {
-                backgroundColor: '#FFFFFF',
+                backgroundColor: colors.surface,
                 shadowColor: '#000',
                 shadowOffset: { width: 0, height: 2 },
                 shadowOpacity: 0.06,
@@ -165,10 +166,10 @@ const MentorManagementScreen: React.FC = () => {
               {
                 fontSize: 16,
                 fontWeight: '500',
-                color: '#6B7280'
+                color: colors.textTertiary
               },
               activeTab === 'mentors' && {
-                color: '#2DBBA1',
+                color: colors.primary,
                 fontWeight: '600'
               }
             ]}>
@@ -186,7 +187,7 @@ const MentorManagementScreen: React.FC = () => {
                 borderRadius: 8
               },
               activeTab === 'programs' && {
-                backgroundColor: '#FFFFFF',
+                backgroundColor: colors.surface,
                 shadowColor: '#000',
                 shadowOffset: { width: 0, height: 2 },
                 shadowOpacity: 0.06,
@@ -200,10 +201,10 @@ const MentorManagementScreen: React.FC = () => {
               {
                 fontSize: 16,
                 fontWeight: '500',
-                color: '#6B7280'
+                color: colors.textTertiary
               },
               activeTab === 'programs' && {
-                color: '#2DBBA1',
+                color: colors.primary,
                 fontWeight: '600'
               }
             ]}>
@@ -215,7 +216,7 @@ const MentorManagementScreen: React.FC = () => {
         {/* 导师列表 */}
         {activeTab === 'mentors' && (
           <View>
-            <Text style={{ fontSize: 18, fontWeight: '600', color: '#111827', marginBottom: 12 }}>
+            <Text style={{ fontSize: 18, fontWeight: '600', color: colors.textPrimary, marginBottom: 12 }}>
               导师列表 ({mentors.length} 位)
             </Text>
             
@@ -224,7 +225,7 @@ const MentorManagementScreen: React.FC = () => {
                 key={mentor.id}
                 style={[
                   {
-                    backgroundColor: '#FFFFFF',
+                    backgroundColor: colors.surface,
                     borderRadius: 12,
                     padding: 16,
                     marginBottom: 12,
@@ -238,8 +239,8 @@ const MentorManagementScreen: React.FC = () => {
                   },
                   selectedMentor?.id === mentor.id && {
                     borderWidth: 2,
-                    borderColor: '#2DBBA1',
-                    backgroundColor: '#E6F7F3'
+                    borderColor: colors.primary,
+                    backgroundColor: colors.primaryLight
                   }
                 ]}
                 onPress={() => handleSelectMentor(mentor)}
@@ -248,7 +249,7 @@ const MentorManagementScreen: React.FC = () => {
                   width: 64,
                   height: 64,
                   borderRadius: 32,
-                  backgroundColor: '#E6F7F3',
+                  backgroundColor: colors.primaryLight,
                   justifyContent: 'center',
                   alignItems: 'center',
                   marginRight: 16,
@@ -268,10 +269,10 @@ const MentorManagementScreen: React.FC = () => {
                       {
                         fontSize: 18,
                         fontWeight: '600',
-                        color: '#111827'
+                        color: colors.textPrimary
                       },
                       selectedMentor?.id === mentor.id && {
-                        color: '#1F5E52'
+                        color: colors.primaryDark
                       }
                     ]}>
                       {mentor.name}
@@ -281,17 +282,17 @@ const MentorManagementScreen: React.FC = () => {
                       alignItems: 'center'
                     }}>
                       {[...Array(5)].map((_, index) => (
-                        <Text key={index} style={{ fontSize: 16, color: index < mentor.rating ? '#FBBF24' : '#D1D5DB' }}>
-                          <Ionicons name="star" size={14} color="#F59E0B" />
+                        <Text key={index} style={{ fontSize: 16, color: index < mentor.rating ? colors.warning : colors.borderStrong }}>
+                          <Ionicons name="star" size={14} color={colors.warning} />
                         </Text>
                       ))}
-                      <Text style={{ fontSize: 14, fontWeight: '500', color: '#6B7280', marginLeft: 8 }}>
+                      <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textTertiary, marginLeft: 8 }}>
                         {mentor.rating.toFixed(1)}
                       </Text>
                     </View>
                   </View>
                   
-                  <Text style={{ fontSize: 14, color: '#6B7280', marginBottom: 8 }}>
+                  <Text style={{ fontSize: 14, color: colors.textTertiary, marginBottom: 8 }}>
                     {mentor.title} | {mentor.department}
                   </Text>
                   
@@ -302,7 +303,7 @@ const MentorManagementScreen: React.FC = () => {
                   }}>
                     {mentor.expertise.map((skill: string, index: number) => (
                       <View key={index} style={{
-                        backgroundColor: '#E6F7F3',
+                        backgroundColor: colors.primaryLight,
                         paddingHorizontal: 12,
                         paddingVertical: 4,
                         borderRadius: 16,
@@ -311,7 +312,7 @@ const MentorManagementScreen: React.FC = () => {
                         alignItems: 'center',
                         justifyContent: 'center'
                       }}>
-                        <Text style={{ fontSize: 12, fontWeight: '500', color: '#1F5E52' }}>
+                        <Text style={{ fontSize: 12, fontWeight: '500', color: colors.primaryDark }}>
                           {skill}
                         </Text>
                       </View>
@@ -323,12 +324,12 @@ const MentorManagementScreen: React.FC = () => {
                     justifyContent: 'space-between',
                     alignItems: 'center'
                   }}>
-                    <Text style={{ fontSize: 14, color: '#6B7280' }}>
+                    <Text style={{ fontSize: 14, color: colors.textTertiary }}>
                       指导实习生：{mentor.internCount} 人
                     </Text>
                     <TouchableOpacity
                       style={{
-                        backgroundColor: '#2DBBA1',
+                        backgroundColor: colors.primary,
                         borderRadius: 8,
                         paddingHorizontal: 16,
                         paddingVertical: 8,
@@ -337,7 +338,7 @@ const MentorManagementScreen: React.FC = () => {
                       }}
                       onPress={() => handleViewMentorDetails(mentor)}
                     >
-                      <Text style={{ fontSize: 14, fontWeight: '500', color: '#FFFFFF' }}>
+                      <Text style={{ fontSize: 14, fontWeight: '500', color: colors.surface }}>
                         查看详情
                       </Text>
                     </TouchableOpacity>
@@ -351,34 +352,34 @@ const MentorManagementScreen: React.FC = () => {
         {/* 实习项目列表 */}
         {activeTab === 'programs' && (
           <View>
-            <Text style={{ fontSize: 18, fontWeight: '600', color: '#111827', marginBottom: 12 }}>
+            <Text style={{ fontSize: 18, fontWeight: '600', color: colors.textPrimary, marginBottom: 12 }}>
               实习项目 ({programs.length} 个)
             </Text>
 
             {programsLoading ? (
               <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#2DBBA1" />
+                <ActivityIndicator size="large" color={colors.primary} />
                 <Text style={styles.loadingText}>正在加载实习项目...</Text>
               </View>
             ) : programsError ? (
               <View style={styles.loadingContainer}>
-                <Ionicons name="alert-circle-outline" size={48} color="#9CA3AF" />
-                <Text style={{ fontSize: 16, color: '#6B7280', marginBottom: 16 }}>{programsError}</Text>
-                <TouchableOpacity style={{ backgroundColor: '#2DBBA1', borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchPrograms()}>
-                  <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>重试</Text>
+                <Ionicons name="alert-circle-outline" size={48} color={colors.textDisabled} />
+                <Text style={{ fontSize: 16, color: colors.textTertiary, marginBottom: 16 }}>{programsError}</Text>
+                <TouchableOpacity style={{ backgroundColor: colors.primary, borderRadius: 8, paddingHorizontal: 24, paddingVertical: 10 }} onPress={() => fetchPrograms()}>
+                  <Text style={{ color: colors.surface, fontSize: 16, fontWeight: '600' }}>重试</Text>
                 </TouchableOpacity>
               </View>
             ) : programs.length === 0 ? (
               <View style={styles.loadingContainer}>
-                <Ionicons name="folder-open-outline" size={48} color="#9CA3AF" />
-                <Text style={{ fontSize: 16, color: '#6B7280' }}>暂无实习项目数据</Text>
+                <Ionicons name="folder-open-outline" size={48} color={colors.textDisabled} />
+                <Text style={{ fontSize: 16, color: colors.textTertiary }}>暂无实习项目数据</Text>
               </View>
             ) : (
             programs.map(program => (
               <TouchableOpacity
                 key={program.id}
                 style={{
-                  backgroundColor: '#FFFFFF',
+                  backgroundColor: colors.surface,
                   borderRadius: 12,
                   padding: 16,
                   marginBottom: 12,
@@ -388,27 +389,27 @@ const MentorManagementScreen: React.FC = () => {
                   shadowRadius: 3.84,
                   elevation: 2,
                   borderLeftWidth: 4,
-                  borderLeftColor: program.pendingCount > 0 ? '#F59E0B' : '#10B981',
+                  borderLeftColor: program.pendingCount > 0 ? colors.warning : colors.success,
                 }}
                 onPress={() => handleViewProgramDetails(program)}
               >
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827', flex: 1 }}>
+                  <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textPrimary, flex: 1 }}>
                     {program.title}
                   </Text>
                   {program.pendingCount > 0 && (
-                    <View style={{ backgroundColor: '#FEF3C7', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 }}>
-                      <Text style={{ fontSize: 12, fontWeight: '600', color: '#92400E' }}>
+                    <View style={{ backgroundColor: colors.warningLight, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 }}>
+                      <Text style={{ fontSize: 12, fontWeight: '600', color: colors.warningText }}>
                         {program.pendingCount}篇待批注
                       </Text>
                     </View>
                   )}
                 </View>
 
-                <Text style={{ fontSize: 14, color: '#6B7280', marginBottom: 4 }}>
+                <Text style={{ fontSize: 14, color: colors.textTertiary, marginBottom: 4 }}>
                   导师：{program.mentorName} | 日志：{program.logCount} 篇
                 </Text>
-                <Text style={{ fontSize: 12, color: '#9CA3AF' }}>
+                <Text style={{ fontSize: 12, color: colors.textDisabled }}>
                   最近活动：{new Date(program.latestDate).toLocaleDateString('zh-CN')}
                 </Text>
               </TouchableOpacity>

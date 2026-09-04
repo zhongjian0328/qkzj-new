@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -24,96 +25,96 @@ const ExperienceRoleScreen: React.FC = () => {
       title: '养殖户（小散户）',
       description: '小规模养殖，个人或家庭经营',
       icon: 'leaf' as const,
-      backgroundColor: '#E6F7F3',
-      textColor: '#2DBBA1'
+      backgroundColor: colors.primaryLight,
+      textColor: colors.primary
     },
     {
       id: 'farmer-enterprise',
       title: '养殖户（企业）',
       description: '规模化养殖企业，专业管理团队',
       icon: 'business' as const,
-      backgroundColor: '#E6F7F3',
-      textColor: '#2DBBA1'
+      backgroundColor: colors.primaryLight,
+      textColor: colors.primary
     },
     {
       id: 'farmer-cooperative',
       title: '养殖户（合作社）',
       description: '养殖合作社，统购统销模式',
       icon: 'people' as const,
-      backgroundColor: '#E6F7F3',
-      textColor: '#2DBBA1'
+      backgroundColor: colors.primaryLight,
+      textColor: colors.primary
     },
     {
       id: 'institution-cdc',
       title: '疫控机构',
       description: '负责疫情监测、预警和防控',
       icon: 'shield-checkmark' as const,
-      backgroundColor: '#EBF5FF',
-      textColor: '#3B82F6'
+      backgroundColor: colors.infoLight,
+      textColor: colors.info
     },
     {
       id: 'institution-research',
       title: '科研院所',
       description: '从事禽类疾病研究和技术开发',
       icon: 'flask' as const,
-      backgroundColor: '#EBF5FF',
-      textColor: '#3B82F6'
+      backgroundColor: colors.infoLight,
+      textColor: colors.info
     },
     {
       id: 'institution-service',
       title: '服务商',
       description: '提供兽药、饲料、技术服务等',
       icon: 'briefcase' as const,
-      backgroundColor: '#EBF5FF',
-      textColor: '#3B82F6'
+      backgroundColor: colors.infoLight,
+      textColor: colors.info
     },
     {
       id: 'student-learning',
       title: '学生（学习）',
       description: '理论学习阶段，知识储备',
       icon: 'book' as const,
-      backgroundColor: '#F3E8FF',
-      textColor: '#8B5CF6'
+      backgroundColor: colors.accent.purpleLight,
+      textColor: colors.accent.purple
     },
     {
       id: 'student-internship',
       title: '学生（实习）',
       description: '顶岗实习，实践技能提升',
       icon: 'school' as const,
-      backgroundColor: '#F3E8FF',
-      textColor: '#8B5CF6'
+      backgroundColor: colors.accent.purpleLight,
+      textColor: colors.accent.purple
     },
     {
       id: 'student-advanced',
       title: '学生（顶岗）',
       description: '高级顶岗实习，独立操作',
       icon: 'ribbon' as const,
-      backgroundColor: '#F3E8FF',
-      textColor: '#8B5CF6'
+      backgroundColor: colors.accent.purpleLight,
+      textColor: colors.accent.purple
     },
     {
       id: 'teacher-mentor',
       title: '指导教师（导师）',
       description: '负责学生实习指导与批阅',
       icon: 'person' as const,
-      backgroundColor: '#FFF3E0',
-      textColor: '#F59E0B'
+      backgroundColor: colors.accent.orangeLight,
+      textColor: colors.warning
     },
     {
       id: 'teacher-clinical',
       title: '指导教师（临床）',
       description: '临床带教，病例诊疗指导',
       icon: 'medkit' as const,
-      backgroundColor: '#FFF3E0',
-      textColor: '#F59E0B'
+      backgroundColor: colors.accent.orangeLight,
+      textColor: colors.warning
     },
     {
       id: 'teacher-research',
       title: '指导教师（科研）',
       description: '科研指导，论文与项目指导',
       icon: 'beaker' as const,
-      backgroundColor: '#FFF3E0',
-      textColor: '#F59E0B'
+      backgroundColor: colors.accent.orangeLight,
+      textColor: colors.warning
     }
   ];
   
@@ -221,7 +222,7 @@ const ExperienceRoleScreen: React.FC = () => {
         <View style={styles.experienceInfoCard}>
           <View style={styles.experienceInfoContent}>
             <View style={styles.experienceInfoIcon}>
-              <Ionicons name="information-circle-outline" size={20} color="#3B82F6" />
+              <Ionicons name="information-circle-outline" size={20} color={colors.info} />
             </View>
             <View style={styles.experienceInfoText}>
               <Text style={styles.experienceInfoTitle}>体验说明</Text>

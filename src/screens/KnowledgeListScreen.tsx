@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useCallback } from 'react';
 import {
   View,
@@ -18,14 +19,14 @@ import { styles } from '../styles';
 
 // 设计系统颜色
 const COLORS = {
-  primary: '#2DBBA1',
-  primaryDark: '#1F5E52',
-  bgLight: '#E6F7F3',
-  text: '#1F2937',
-  textSecondary: '#6B7280',
-  border: '#E5E7EB',
-  white: '#FFFFFF',
-  bgGray: '#F3F4F6',
+  primary: colors.primary,
+  primaryDark: colors.primaryDark,
+  bgLight: colors.primaryLight,
+  text: colors.textPrimary,
+  textSecondary: colors.textTertiary,
+  border: colors.border,
+  white: colors.surface,
+  bgGray: colors.surfaceMuted,
 };
 
 const CATEGORIES = [
@@ -243,7 +244,7 @@ export default function KnowledgeListScreen() {
         onEndReachedThreshold={0.2}
         ListEmptyComponent={
           <View style={{ alignItems: 'center', paddingVertical: 64 }}>
-            <Ionicons name="book-outline" size={48} color="#9CA3AF" />
+            <Ionicons name="book-outline" size={48} color={colors.textDisabled} />
             <Text style={{ fontSize: 16, fontWeight: '600', color: COLORS.text, marginBottom: 8 }}>
               暂无文章
             </Text>

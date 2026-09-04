@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { colors, radii, spacing, typography } from '../theme';
 
 interface TabProps {
   label: string;
@@ -99,66 +100,66 @@ const styles = StyleSheet.create({
   },
   tabContainer: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: colors.border,
   },
   top: {
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: colors.border,
   },
   bottom: {
     borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
+    borderTopColor: colors.border,
   },
   left: {
     flexDirection: 'column',
     borderRightWidth: 1,
-    borderRightColor: '#E5E7EB',
+    borderRightColor: colors.border,
     width: 120,
   },
   right: {
     flexDirection: 'column',
     borderLeftWidth: 1,
-    borderLeftColor: '#E5E7EB',
+    borderLeftColor: colors.border,
     width: 120,
   },
   boxed: {
-    borderRadius: 8,
+    borderRadius: radii.sm,
     overflow: 'hidden',
   },
   pills: {
-    paddingHorizontal: 8,
-    paddingVertical: 8,
-    gap: 8,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.sm,
+    gap: spacing.sm,
   },
   tab: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: '#2DBBA1',
+    borderBottomColor: colors.primary,
   },
   disabledTab: {
     opacity: 0.5,
   },
   tabText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#6B7280',
+    fontSize: typography.size.body,
+    fontWeight: typography.weight.medium,
+    color: colors.textTertiary,
   },
   activeTabText: {
-    color: '#2DBBA1',
-    fontWeight: '600',
+    color: colors.primary,
+    fontWeight: typography.weight.semibold,
   },
   disabledTabText: {
-    color: '#9CA3AF',
+    color: colors.textDisabled,
   },
   icon: {
-    marginRight: 8,
+    marginRight: spacing.sm,
   },
   content: {
     flex: 1,

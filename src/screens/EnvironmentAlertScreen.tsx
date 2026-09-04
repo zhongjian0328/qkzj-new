@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -41,15 +42,15 @@ const getAlertColor = (alertType: string) => {
     case 'HIGH_TEMP':
     case 'HIGH_AMMONIA':
     case 'HIGH_CO2':
-      return { bg: '#FEF3C7', text: '#92400E', border: '#F59E0B' };
+      return { bg: colors.warningLight, text: colors.warningText, border: colors.warning };
     case 'HIGH_HUMIDITY':
     case 'HIGH_PM25':
     case 'HIGH_PM10':
-      return { bg: '#FEE2E2', text: '#991B1B', border: '#EF4444' };
+      return { bg: colors.errorLight, text: colors.errorText, border: colors.error };
     case 'LOW_TEMP':
-      return { bg: '#DBEAFE', text: '#1E40AF', border: '#3B82F6' };
+      return { bg: colors.infoLight, text: colors.infoText, border: colors.info };
     default:
-      return { bg: '#FEF3C7', text: '#92400E', border: '#F59E0B' };
+      return { bg: colors.warningLight, text: colors.warningText, border: colors.warning };
   }
 };
 
@@ -84,12 +85,12 @@ const EnvironmentAlertScreen: React.FC = () => {
   };
 
   const renderAlertItem = ({ item }: { item: EnvironmentAlert }) => {
-    const colors = getAlertColor(item.alertType);
+    const alertColors = getAlertColor(item.alertType);
 
     return (
       <View
         style={{
-          backgroundColor: '#FFFFFF',
+          backgroundColor: colors.surface,
           borderRadius: 12,
           padding: 16,
           marginBottom: 12,
@@ -103,24 +104,24 @@ const EnvironmentAlertScreen: React.FC = () => {
         }}
       >
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: '#1F2937' }}>{item.farmName}</Text>
-          <View style={{ backgroundColor: colors.bg, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 }}>
-            <Text style={{ fontSize: 12, color: colors.text, fontWeight: '500' }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textPrimary }}>{item.farmName}</Text>
+          <View style={{ backgroundColor: alertColors.bg, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 }}>
+            <Text style={{ fontSize: 12, color: alertColors.text, fontWeight: '500' }}>
               {ALERT_TYPE_MAP[item.alertType] || item.alertType}
             </Text>
           </View>
         </View>
 
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Text style={{ fontSize: 14, color: '#6B7280' }}>{item.recordDate}</Text>
+          <Text style={{ fontSize: 14, color: colors.textTertiary }}>{item.recordDate}</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
             <View style={{ alignItems: 'center' }}>
-              <Text style={{ fontSize: 12, color: '#9CA3AF' }}>检测值</Text>
-              <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text }}>{item.alertValue}</Text>
+              <Text style={{ fontSize: 12, color: colors.textDisabled }}>检测值</Text>
+              <Text style={{ fontSize: 16, fontWeight: '600', color: alertColors.text }}>{item.alertValue}</Text>
             </View>
             <View style={{ alignItems: 'center' }}>
-              <Text style={{ fontSize: 12, color: '#9CA3AF' }}>阈值</Text>
-              <Text style={{ fontSize: 16, fontWeight: '600', color: '#6B7280' }}>{item.threshold}</Text>
+              <Text style={{ fontSize: 12, color: colors.textDisabled }}>阈值</Text>
+              <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textTertiary }}>{item.threshold}</Text>
             </View>
           </View>
         </View>
@@ -149,12 +150,12 @@ const EnvironmentAlertScreen: React.FC = () => {
                   borderRadius: 20,
                   marginRight: 8,
                   borderWidth: 1,
-                  borderColor: '#E5E7EB',
-                  backgroundColor: '#F3F4F6',
+                  borderColor: colors.border,
+                  backgroundColor: colors.surfaceMuted,
                 },
                 selectedFilter === filter.key && {
-                  backgroundColor: '#1F5E52',
-                  borderColor: '#1F5E52',
+                  backgroundColor: colors.primaryDark,
+                  borderColor: colors.primaryDark,
                 },
               ]}
               onPress={() => setSelectedFilter(filter.key)}
@@ -162,7 +163,7 @@ const EnvironmentAlertScreen: React.FC = () => {
               <Text
                 style={{
                   fontSize: 14,
-                  color: '#6B7280',
+                  color: colors.textTertiary,
                   fontWeight: '500',
                 }}
               >
@@ -174,14 +175,14 @@ const EnvironmentAlertScreen: React.FC = () => {
       </View>
 
       {error && (
-        <View style={{ padding: 16, backgroundColor: '#FEF2F2', margin: 16, borderRadius: 8 }}>
-          <Text style={{ color: '#EF4444', fontSize: 14 }}>{error}</Text>
+        <View style={{ padding: 16, backgroundColor: colors.errorLight, margin: 16, borderRadius: 8 }}>
+          <Text style={{ color: colors.error, fontSize: 14 }}>{error}</Text>
         </View>
       )}
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#2DBBA1" />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : (
         <FlatList
@@ -193,7 +194,7 @@ const EnvironmentAlertScreen: React.FC = () => {
           ListEmptyComponent={
             <View style={styles.emptyState}>
               <Text style={styles.emptyStateText}>暂无环境预警</Text>
-              <Text style={{ fontSize: 14, color: '#9CA3AF' }}>当前筛选条件下没有预警信息</Text>
+              <Text style={{ fontSize: 14, color: colors.textDisabled }}>当前筛选条件下没有预警信息</Text>
             </View>
           }
         />

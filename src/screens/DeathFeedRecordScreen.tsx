@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, Modal, TextInput, ActivityIndicator, Alert, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -241,7 +242,7 @@ const DeathFeedRecordScreen: React.FC = () => {
             resetForm();
             setModalVisible(true);
           }} disabled={!selectedBatch}>
-            <Text style={{ color: !selectedBatch ? '#9CA3AF' : '#2DBBA1', fontSize: 16 }}>新增记录</Text>
+            <Text style={{ color: !selectedBatch ? colors.textDisabled : colors.primary, fontSize: 16 }}>新增记录</Text>
           </TouchableOpacity>
         }
       />
@@ -281,7 +282,7 @@ const DeathFeedRecordScreen: React.FC = () => {
       
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#2DBBA1" />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : selectedBatch ? (
         <FlatList
@@ -376,7 +377,7 @@ const DeathFeedRecordScreen: React.FC = () => {
                 disabled={loading}
               >
                 {loading ? (
-                  <ActivityIndicator color="#FFFFFF" />
+                  <ActivityIndicator color={colors.surface} />
                 ) : (
                   <Text style={styles.modalButtonText}>
                     {editingRecord ? '更新' : '保存'}

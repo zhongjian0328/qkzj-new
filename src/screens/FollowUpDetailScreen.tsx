@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TextInput, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -67,7 +68,7 @@ export default function FollowUpDetailScreen() {
     }
   };
 
-  if (loading) return <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}><ActivityIndicator size="large" color="#2DBBA1" /></View>;
+  if (loading) return <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}><ActivityIndicator size="large" color={colors.primary} /></View>;
   if (!followUp) return <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}><Text>回访不存在</Text></View>;
 
   const isCompleted = followUp.status === 'completed';
@@ -78,14 +79,14 @@ export default function FollowUpDetailScreen() {
       <ScrollView style={{ padding: 12, gap: 12 }}>
         {/* 回访信息 */}
         <View style={styles.card}>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827', marginBottom: 4 }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textPrimary, marginBottom: 4 }}>
             {TYPE_LABELS[followUp.followUpType]}
           </Text>
-          <Text style={{ fontSize: 13, color: '#6B7280' }}>
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>
             状态：{STATUS_LABELS[followUp.status]} | 计划日期：{new Date(followUp.scheduledDate).toLocaleDateString('zh-CN')}
           </Text>
           {followUp.planId && (
-            <Text style={{ fontSize: 13, color: '#4B5563', marginTop: 4 }}>
+            <Text style={{ fontSize: 13, color: colors.textSecondary, marginTop: 4 }}>
               关联预案：{followUp.planId.planName || followUp.planId.diseaseName}
             </Text>
           )}
@@ -94,7 +95,7 @@ export default function FollowUpDetailScreen() {
         {/* 回访问卷表单 */}
         {!isCompleted && QUESTIONS.map(q => (
           <View key={q.key} style={styles.card}>
-            <Text style={{ fontSize: 14, fontWeight: '600', color: '#111827', marginBottom: 8 }}>{q.label}</Text>
+            <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary, marginBottom: 8 }}>{q.label}</Text>
             <TextInput
               style={[styles.formInput, { minHeight: 60, textAlignVertical: 'top' }]}
               placeholder={q.placeholder}
@@ -108,7 +109,7 @@ export default function FollowUpDetailScreen() {
         {/* 回访备注 */}
         {!isCompleted && (
           <View style={styles.card}>
-            <Text style={{ fontSize: 14, fontWeight: '600', color: '#111827', marginBottom: 8 }}>备注</Text>
+            <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary, marginBottom: 8 }}>备注</Text>
             <TextInput
               style={[styles.formInput, { minHeight: 60, textAlignVertical: 'top' }]}
               placeholder="其他补充说明"
@@ -121,26 +122,26 @@ export default function FollowUpDetailScreen() {
 
         {/* AI 评估结果 */}
         {isCompleted && followUp.aiAssessment && (
-          <View style={[styles.card, { backgroundColor: '#F0FFF4', borderWidth: 1, borderColor: '#C6F6D5' }]}>
+          <View style={[styles.card, { backgroundColor: colors.successLight, borderWidth: 1, borderColor: colors.successLight }]}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 12 }}>
-              <Ionicons name="hardware-chip" size={18} color="#2DBBA1" />
-              <Text style={{ fontSize: 16, fontWeight: '600', color: '#22543D' }}>AI 回访评估</Text>
+              <Ionicons name="hardware-chip" size={18} color={colors.primary} />
+              <Text style={{ fontSize: 16, fontWeight: '600', color: colors.successText }}>AI 回访评估</Text>
             </View>
             <View style={{ gap: 8 }}>
               <View>
-                <Text style={{ fontSize: 13, fontWeight: '600', color: '#22543D' }}>效果评估</Text>
-                <Text style={{ fontSize: 14, color: '#276749' }}>{followUp.aiAssessment.effectiveness}</Text>
+                <Text style={{ fontSize: 13, fontWeight: '600', color: colors.successText }}>效果评估</Text>
+                <Text style={{ fontSize: 14, color: colors.successText }}>{followUp.aiAssessment.effectiveness}</Text>
               </View>
               <View>
-                <Text style={{ fontSize: 13, fontWeight: '600', color: '#22543D' }}>调整建议</Text>
-                <Text style={{ fontSize: 14, color: '#276749' }}>{followUp.aiAssessment.recommendation || '无需调整'}</Text>
+                <Text style={{ fontSize: 13, fontWeight: '600', color: colors.successText }}>调整建议</Text>
+                <Text style={{ fontSize: 14, color: colors.successText }}>{followUp.aiAssessment.recommendation || '无需调整'}</Text>
               </View>
               <View>
-                <Text style={{ fontSize: 13, fontWeight: '600', color: '#22543D' }}>是否需要调整</Text>
-                <Text style={{ fontSize: 14, color: '#276749' }}>{followUp.aiAssessment.needAdjustment ? '是，已自动创建下次回访' : '否，当前方案有效'}</Text>
+                <Text style={{ fontSize: 13, fontWeight: '600', color: colors.successText }}>是否需要调整</Text>
+                <Text style={{ fontSize: 14, color: colors.successText }}>{followUp.aiAssessment.needAdjustment ? '是，已自动创建下次回访' : '否，当前方案有效'}</Text>
               </View>
               {followUp.aiAssessment.nextFollowUpDate && (
-                <Text style={{ fontSize: 13, color: '#6B7280' }}>
+                <Text style={{ fontSize: 13, color: colors.textTertiary }}>
                   下次回访：{new Date(followUp.aiAssessment.nextFollowUpDate).toLocaleDateString('zh-CN')}
                 </Text>
               )}
@@ -151,7 +152,7 @@ export default function FollowUpDetailScreen() {
 
       {/* 提交按钮 */}
       {!isCompleted && (
-        <View style={{ padding: 16, backgroundColor: '#FFFFFF', borderTopWidth: 1, borderTopColor: '#E5E7EB' }}>
+        <View style={{ padding: 16, backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.border }}>
           <TouchableOpacity
             style={[styles.primaryButton, submitting && { opacity: 0.6 }]}
             onPress={handleSubmit}
@@ -159,12 +160,12 @@ export default function FollowUpDetailScreen() {
           >
             {submitting ? (
               <>
-                <ActivityIndicator size="small" color="#FFFFFF" />
+                <ActivityIndicator size="small" color={colors.surface} />
                 <Text style={[styles.primaryButtonText, { marginLeft: 8 }]}>AI评估中...</Text>
               </>
             ) : (
               <>
-                <Ionicons name="checkmark-circle" size={20} color="#FFFFFF" />
+                <Ionicons name="checkmark-circle" size={20} color={colors.surface} />
                 <Text style={[styles.primaryButtonText, { marginLeft: 8 }]}>提交回访</Text>
               </>
             )}

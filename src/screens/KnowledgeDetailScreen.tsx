@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
@@ -17,15 +18,15 @@ import { styles } from '../styles';
 
 // 设计系统颜色
 const COLORS = {
-  primary: '#2DBBA1',
-  primaryDark: '#1F5E52',
-  bgLight: '#E6F7F3',
-  text: '#1F2937',
-  textSecondary: '#6B7280',
-  border: '#E5E7EB',
-  white: '#FFFFFF',
-  bgGray: '#F3F4F6',
-  danger: '#EF4444',
+  primary: colors.primary,
+  primaryDark: colors.primaryDark,
+  bgLight: colors.primaryLight,
+  text: colors.textPrimary,
+  textSecondary: colors.textTertiary,
+  border: colors.border,
+  white: colors.surface,
+  bgGray: colors.surfaceMuted,
+  danger: colors.error,
 };
 
 const CATEGORY_LABELS: Record<string, string> = {

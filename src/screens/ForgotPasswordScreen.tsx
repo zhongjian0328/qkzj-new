@@ -1,3 +1,4 @@
+import { colors } from '../theme';
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -229,7 +230,7 @@ const ForgotPasswordScreen: React.FC = () => {
       <Text style={[styles.stepTitle, { textAlign: 'center', marginBottom: 8 }]}>
         找回密码
       </Text>
-      <Text style={{ textAlign: 'center', color: '#6B7280', fontSize: 14, marginBottom: 32 }}>
+      <Text style={{ textAlign: 'center', color: colors.textTertiary, fontSize: 14, marginBottom: 32 }}>
         请输入注册时使用的手机号
       </Text>
 
@@ -262,7 +263,7 @@ const ForgotPasswordScreen: React.FC = () => {
       <Text style={[styles.stepTitle, { textAlign: 'center', marginBottom: 8 }]}>
         验证身份
       </Text>
-      <Text style={{ textAlign: 'center', color: '#6B7280', fontSize: 14, marginBottom: 8 }}>
+      <Text style={{ textAlign: 'center', color: colors.textTertiary, fontSize: 14, marginBottom: 8 }}>
         已向 {phoneNumber.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')} 发送验证码
       </Text>
 
@@ -308,7 +309,7 @@ const ForgotPasswordScreen: React.FC = () => {
       <Text style={[styles.stepTitle, { textAlign: 'center', marginBottom: 8 }]}>
         重置密码
       </Text>
-      <Text style={{ textAlign: 'center', color: '#6B7280', fontSize: 14, marginBottom: 32 }}>
+      <Text style={{ textAlign: 'center', color: colors.textTertiary, fontSize: 14, marginBottom: 32 }}>
         请设置新密码
       </Text>
 
@@ -359,13 +360,13 @@ const ForgotPasswordScreen: React.FC = () => {
           style={{ padding: 8, marginBottom: 16, alignSelf: 'flex-start' }}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color="#1F5E52" />
+          <Ionicons name="arrow-back" size={24} color={colors.primaryDark} />
         </TouchableOpacity>
 
         {/* Logo */}
         <View style={[styles.loginLogoSection, { marginBottom: 24, flex: undefined, paddingVertical: 20 }]}>
           <View style={styles.loginLogoContainer}>
-            <Ionicons name="lock-closed-outline" size={48} color="#2DBBA1" />
+            <Ionicons name="lock-closed-outline" size={48} color={colors.primary} />
           </View>
           <Text style={styles.loginAppTitle}>禽康智检</Text>
         </View>

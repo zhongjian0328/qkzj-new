@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { View, TextInput, Text, StyleSheet, TextInputProps, TouchableOpacity } from 'react-native';
+import {
+  View,
+  TextInput,
+  Text,
+  StyleSheet,
+  TextInputProps,
+  TouchableOpacity,
+} from 'react-native';
+import { colors, radii, typography, spacing, component } from '../theme';
 
 export type InputVariant = 'primary' | 'outline';
 export type InputSize = 'small' | 'medium' | 'large';
@@ -23,7 +31,7 @@ interface InputProps extends TextInputProps {
 const Input: React.FC<InputProps> = ({
   label,
   placeholder,
-  variant = 'primary',
+  variant = 'outline',
   size = 'medium',
   type = 'text',
   error,
@@ -37,171 +45,139 @@ const Input: React.FC<InputProps> = ({
   ...props
 }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [focused, setFocused] = useState(false);
 
   const isPassword = type === 'password';
-  const showPasswordToggle = isPassword;
-
-  const containerStyles = [
-    styles.container,
-    error && styles.containerError,
-    containerStyle,
-  ];
 
   const inputContainerStyles = [
     styles.inputContainer,
     styles[variant],
-    styles[size],
+    styles[`${size}Size`],
+    focused && styles.focused,
     error && styles.inputError,
   ];
 
-  const inputStyles = [
-    styles.input,
-    styles[`${size}Input`],
-    inputStyle,
-  ];
-
-  const labelStyles = [
-    styles.label,
-    error && styles.labelError,
-    labelStyle,
-  ];
-
-  const togglePasswordVisibility = () => {
-    setIsPasswordVisible(!isPasswordVisible);
-  };
+  const labelStyles = [styles.label, error && styles.labelError, labelStyle];
 
   return (
-    <View style={containerStyles}>
+    <View style={[styles.container, containerStyle]}>
       {label && <Text style={labelStyles}>{label}</Text>}
       <View style={inputContainerStyles}>
         {leftIcon && <View style={styles.leftIcon}>{leftIcon}</View>}
         <TextInput
-          style={inputStyles}
+          style={[styles.input, styles[`${size}Input`], inputStyle]}
           placeholder={placeholder}
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={colors.textDisabled}
           secureTextEntry={isPassword ? !isPasswordVisible : secureTextEntry}
           keyboardType={
-            type === 'number' ? 'numeric' :
-            type === 'email' ? 'email-address' :
-            type === 'phone' ? 'phone-pad' :
-            'default'
+            type === 'number'
+              ? 'numeric'
+              : type === 'email'
+              ? 'email-address'
+              : type === 'phone'
+              ? 'phone-pad'
+              : 'default'
           }
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
           {...props}
         />
-        <View style={styles.rightIconContainer}>
-          {showPasswordToggle && (
-            <TouchableOpacity
-              onPress={togglePasswordVisibility}
-              style={styles.passwordToggle}
-            >
-              <Text style={styles.passwordToggleText}>
-                {isPasswordVisible ? '隐藏' : '显示'}
-              </Text>
-            </TouchableOpacity>
-          )}
-          {rightIcon && !showPasswordToggle && rightIcon}
-        </View>
+        {isPassword && (
+          <TouchableOpacity
+            onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+            style={styles.passwordToggle}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Text style={styles.passwordToggleText}>
+              {isPasswordVisible ? '隐藏' : '显示'}
+            </Text>
+          </TouchableOpacity>
+        )}
+        {rightIcon && !isPassword && <View style={styles.rightIcon}>{rightIcon}</View>}
       </View>
-      {error && <Text style={styles.errorText}>{error}</Text>}
-      {helperText && !error && <Text style={styles.helperText}>{helperText}</Text>}
+      {error ? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : helperText ? (
+        <Text style={styles.helperText}>{helperText}</Text>
+      ) : null}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
-  },
-  containerError: {
-    marginBottom: 8,
+    marginBottom: spacing.lg,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
   },
   input: {
     flex: 1,
-    color: '#111827',
-    fontSize: 16,
-    width: '100%',
+    color: colors.textPrimary,
+    fontSize: typography.size.bodyLarge,
+    paddingVertical: 0,
   },
-  // Variants
   primary: {
-    backgroundColor: '#F3F4F6',
-    borderWidth: 0,
+    backgroundColor: colors.surfaceMuted,
+    borderWidth: 1,
+    borderColor: colors.surfaceMuted,
   },
   outline: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: colors.border,
   },
-  // Sizes
-  small: {
-    height: 40,
-    borderRadius: 6,
-    paddingHorizontal: 12,
+  focused: {
+    borderColor: colors.primary,
   },
-  medium: {
-    height: 48,
-    borderRadius: 8,
-    paddingHorizontal: 16,
+  smallSize: {
+    height: component.inputHeight.small,
+    borderRadius: radii.xs,
+    paddingHorizontal: spacing.md,
   },
-  large: {
-    height: 56,
-    borderRadius: 10,
-    paddingHorizontal: 20,
+  mediumSize: {
+    height: component.inputHeight.medium,
+    borderRadius: radii.sm,
+    paddingHorizontal: spacing.lg,
   },
-  // Input sizes
-  smallInput: {
-    fontSize: 14,
+  largeSize: {
+    height: component.inputHeight.large,
+    borderRadius: radii.md,
+    paddingHorizontal: spacing.xl,
   },
-  mediumInput: {
-    fontSize: 16,
-  },
-  largeInput: {
-    fontSize: 18,
-  },
-  // Icons
-  leftIcon: {
-    marginRight: 12,
-  },
-  rightIconContainer: {
-    marginLeft: 12,
-  },
-  passwordToggle: {
-    padding: 4,
-  },
+  smallInput: { fontSize: typography.size.body },
+  mediumInput: { fontSize: typography.size.bodyLarge },
+  largeInput: { fontSize: typography.size.subtitle },
+  leftIcon: { marginRight: spacing.md },
+  rightIcon: { marginLeft: spacing.md },
+  passwordToggle: { padding: spacing.xs },
   passwordToggleText: {
-    fontSize: 14,
-    color: '#2DBBA1',
-    fontWeight: '500',
+    fontSize: typography.size.body,
+    color: colors.primary,
+    fontWeight: typography.weight.medium,
   },
-  // Label
   label: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#111827',
-    marginBottom: 8,
+    fontSize: typography.size.body,
+    fontWeight: typography.weight.medium,
+    color: colors.textPrimary,
+    marginBottom: spacing.sm,
   },
-  // Error states
   inputError: {
-    borderColor: '#EF4444',
-    backgroundColor: '#FEF2F2',
+    borderColor: colors.error,
+    backgroundColor: colors.errorLight,
   },
-  labelError: {
-    color: '#EF4444',
-  },
+  labelError: { color: colors.error },
   errorText: {
-    fontSize: 12,
-    color: '#EF4444',
-    marginTop: 4,
+    fontSize: typography.size.caption,
+    color: colors.error,
+    marginTop: spacing.xs,
   },
-  // Helper text
   helperText: {
-    fontSize: 12,
-    color: '#6B7280',
-    marginTop: 4,
+    fontSize: typography.size.caption,
+    color: colors.textTertiary,
+    marginTop: spacing.xs,
   },
 });
 
