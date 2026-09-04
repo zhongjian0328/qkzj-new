@@ -11,7 +11,7 @@
     "splash": {
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#2DBBA1",
+      "backgroundColor": "#0A7A52",
       "animation": {
         "fade": true
       }
@@ -23,7 +23,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#2DBBA1"
+        "backgroundColor": "#0A7A52"
       },
       "package": "com.qinkangzhijian.app",
       "versionCode": 1,

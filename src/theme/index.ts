@@ -4,60 +4,83 @@
  * 全项目唯一的设计事实来源。所有组件与屏幕应引用本文件导出的令牌，
  * 禁止在样式文件中直接使用字面 hex 色值。
  *
- * 品牌主色沿用已确认的 #2DBBA1（青色），深色强调 #1F5E52（深青绿）。
+ * 品牌主色为「生物安全绿」#0A7A52，智能高亮为「琥珀金」#E89A2B，
+ * 并单独建立「疫情风险色阶」risk 令牌（低 → 中 → 高 → 极高）。
  */
 
 // ── 色彩（Color）────────────────────────────────────────────
 export const colors = {
-  // 品牌
-  primary: '#2DBBA1',
-  primaryDark: '#1F5E52',
-  primaryLight: '#E6F7F3',
-  primaryLighter: '#F0FAF7',
-  primaryGradient: ['#3BCCA5', '#2DBBA1'] as const,
+  // 品牌（生物安全绿）
+  primary: '#0A7A52',
+  primaryDark: '#075C3E',
+  primaryLight: '#E3F4EC',
+  primaryLighter: '#F0F9F5',
+  primaryGradient: ['#0E8A5E', '#0A7A52'] as const,
 
-  // 文字
-  textPrimary: '#111827',
-  textSecondary: '#4B5563',
-  textTertiary: '#6B7280',
-  textDisabled: '#9CA3AF',
+  // 辅助（琥珀金 = AI 智能高亮）
+  gold: '#E89A2B',
+  goldDark: '#B47114',
+  goldLight: '#FBF0DC',
+  onGold: '#3A2500',
+
+  // 文字（暖调中性）
+  textPrimary: '#1F2A24',
+  textSecondary: '#4A5650',
+  textTertiary: '#7A857F',
+  textDisabled: '#B4BCB8',
   textOnPrimary: '#FFFFFF',
   textOnDark: '#FFFFFF',
 
   // 表面
-  background: '#F6F8F7',
+  background: '#F6F8F6',
   surface: '#FFFFFF',
-  surfaceMuted: '#F3F4F6',
-  surfaceSoft: '#F9FAFB',
+  surfaceMuted: '#F0F2F0',
+  surfaceSoft: '#FAFBF9',
 
   // 边框
-  border: '#E5E7EB',
-  borderLight: '#F3F4F6',
-  borderStrong: '#D1D5DB',
+  border: '#E3E7E4',
+  borderLight: '#F0F2F0',
+  borderStrong: '#C9CFCB',
 
   // 语义状态
-  success: '#10B981',
-  successLight: '#D1FAE5',
-  successText: '#047857',
-  warning: '#F59E0B',
-  warningLight: '#FEF3C7',
-  warningText: '#92400E',
-  error: '#EF4444',
-  errorLight: '#FEE2E2',
-  errorText: '#B91C1C',
-  info: '#3B82F6',
-  infoLight: '#DBEAFE',
-  infoText: '#1D4ED8',
+  success: '#1A9E6B',
+  successLight: '#E1F5EA',
+  successText: '#0A6B4B',
+  warning: '#E8910F',
+  warningLight: '#FDF1D9',
+  warningText: '#7A4A03',
+  error: '#E0343A',
+  errorLight: '#FDE8E8',
+  errorText: '#A31218',
+  info: '#2E6FE0',
+  infoLight: '#E6EFFC',
+  infoText: '#1B4FA8',
+
+  // 疫情风险色阶（低 → 中 → 高 → 极高）
+  risk: {
+    low: '#1A9E6B',
+    lowLight: '#E1F5EA',
+    lowText: '#0A6B4B',
+    medium: '#E8910F',
+    mediumLight: '#FDF1D9',
+    mediumText: '#7A4A03',
+    high: '#E8671B',
+    highLight: '#FDEAD9',
+    highText: '#8A3A08',
+    critical: '#E0343A',
+    criticalLight: '#FDE8E8',
+    criticalText: '#A31218',
+  } as const,
 
   // 图表
-  chart1: '#2DBBA1',
-  chart2: '#F59E0B',
-  chart3: '#3B82F6',
-  chart4: '#EF4444',
-  chart5: '#8B5CF6',
-  chartPalette: ['#2DBBA1', '#F59E0B', '#3B82F6', '#EF4444', '#8B5CF6', '#10B981'] as const,
+  chart1: '#0A7A52',
+  chart2: '#E8910F',
+  chart3: '#2E6FE0',
+  chart4: '#E0343A',
+  chart5: '#7C5CE0',
+  chartPalette: ['#0A7A52', '#E8910F', '#2E6FE0', '#E0343A', '#7C5CE0', '#0E9AA7'] as const,
 
-  // 语义强调色（知识图谱分类 / 风险等级等系统色，成对出现：主色 + 浅底色）
+  // 语义强调色（知识图谱分类等系统色，成对出现：主色 + 浅底色）
   accent: {
     purple: '#8B5CF6',
     purpleLight: '#F3E8FF',
@@ -65,10 +88,10 @@ export const colors = {
     indigoLight: '#EDE9FE',
     pink: '#EC4899',
     pinkLight: '#FCE7F3',
-    cyan: '#06B6D4',
-    cyanLight: '#CFFAFE',
-    orange: '#F97316',
-    orangeLight: '#FFF3E0',
+    cyan: '#0E9AA7',
+    cyanLight: '#DDF5F6',
+    orange: '#E8671B',
+    orangeLight: '#FDEAD9',
     lime: '#84CC16',
   } as const,
 
@@ -158,7 +181,7 @@ export const shadows = {
     elevation: 4,
   },
   primary: {
-    shadowColor: '#2DBBA1',
+    shadowColor: '#0A7A52',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 6,
