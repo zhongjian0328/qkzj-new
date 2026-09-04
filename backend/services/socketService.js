@@ -1,6 +1,43 @@
 const { Server } = require('socket.io');
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 let io = null;
+
+/**
+ * Socket.IO 连接认证中间件 — 验证 JWT 令牌
+ */
+function socketAuthMiddleware(socket, next) {
+  try {
+    // 开发环境允许 mock token
+    const token = socket.handshake.auth?.token || socket.handshake.query.token;
+
+    if (!token) {
+      return next(new Error('未提供认证令牌'));
+    }
+
+    if (token === 'mock-jwt-token' && process.env.NODE_ENV === 'development') {
+      const { ObjectId } = require('mongoose').Types;
+      const mockUserId = new ObjectId();
+      socket.userId = mockUserId.toString();
+      socket.userRole = 'FARMER';
+      return next();
+    }
+
+    // 验证 JWT
+    const decoded = jwt.verify(token, JWT_SECRET);
+    socket.userId = decoded.id.toString();
+    socket.userRole = decoded.roleType;
+    next();
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return next(new Error('认证令牌已过期'));
+    }
+    next(new Error('无效的认证令牌'));
+  }
+}
 
 /**
  * 初始化 Socket.IO 服务器
@@ -24,18 +61,23 @@ function initSocketIO(server, corsOptions = {}) {
     pingInterval: 25000,
   });
 
+  // 注册 JWT 认证中间件
+  io.use(socketAuthMiddleware);
+
   io.on('connection', (socket) => {
-    const userId = socket.handshake.query.userId || socket.handshake.auth?.userId;
+    const userId = socket.userId;
 
     if (userId) {
       socket.join(userId);
       console.log(`[Socket.IO] 用户 ${userId} 已连接 (socketId: ${socket.id})`);
     }
 
-    // 客户端主动加入房间
+    // 客户端主动加入房间（仅允许加入自己 userId 的房间，防止越权）
     socket.on('join', (room) => {
-      socket.join(room);
-      console.log(`[Socket.IO] 用户 ${userId} 加入房间: ${room}`);
+      if (room === userId || room === `role:${socket.userRole}`) {
+        socket.join(room);
+        console.log(`[Socket.IO] 用户 ${userId} 加入房间: ${room}`);
+      }
     });
 
     socket.on('disconnect', (reason) => {
@@ -47,7 +89,7 @@ function initSocketIO(server, corsOptions = {}) {
     });
   });
 
-  console.log('[Socket.IO] 服务已启动');
+  console.log('[Socket.IO] 服务已启动（JWT 认证已启用）');
   return io;
 }
 

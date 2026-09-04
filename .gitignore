@@ -78,3 +78,17 @@ enckey_121236834
 
 e2e-shots/
 e2e-verify.cjs
+
+# 临时脚本与测试产物
+e2e_*.js
+e2e_*.sh
+*.apk
+
+# 本地工具运行时（误创建目录）
+${APPDATA}/
+.zeelin/
+Python/
+backend/Python/
+
+# 疾病知识源材料（已整合进种子数据，仅作参考）
+疾病知识/

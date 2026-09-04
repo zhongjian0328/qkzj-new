@@ -1,8 +1,10 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 
-// JWT配置
+// JWT配置 — access / refresh 密钥分离
 const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || JWT_SECRET + '-refresh-fallback';
 const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || '7d';
 const REFRESH_TOKEN_EXPIRES_IN = process.env.REFRESH_TOKEN_EXPIRES_IN || '14d';
 
@@ -11,7 +13,7 @@ if (!JWT_SECRET) {
   throw new Error('JWT_SECRET environment variable is required');
 }
 
-// 生成访问令牌（access_token）- 7天过期
+// 生成访问令牌（access_token）— 使用 JWT_SECRET
 const generateAccessToken = (user) => {
   return jwt.sign(
     { id: user._id, phoneNumber: user.phoneNumber, roleType: user.roleType },
@@ -20,17 +22,38 @@ const generateAccessToken = (user) => {
   );
 };
 
-// 生成刷新令牌（refresh_token）- 14天过期，payload仅含userId
+// 生成刷新令牌（refresh_token）— 使用独立密钥 JWT_REFRESH_SECRET
 const generateRefreshToken = (userId) => {
   return jwt.sign(
     { id: userId },
-    JWT_SECRET,
+    JWT_REFRESH_SECRET,
     { expiresIn: REFRESH_TOKEN_EXPIRES_IN }
   );
 };
 
-// 模块级内存Map存储refresh token，key=userId，value=refreshToken
-const refreshTokens = new Map();
+// ── Refresh Token MongoDB 存储（替代内存Map，支持多实例部署） ──
+const RefreshTokenSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+  token: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now, expires: 14 * 24 * 3600 } // TTL索引：14天后自动删除
+});
+const RefreshTokenModel = mongoose.models.RefreshToken || mongoose.model('RefreshToken', RefreshTokenSchema);
+
+// 存储 refresh token（存入 MongoDB）
+const storeRefreshToken = async (userId, token) => {
+  await RefreshTokenModel.deleteMany({ userId }); // 单设备登录：清除旧 token
+  await RefreshTokenModel.create({ userId, token });
+};
+
+// 验证并获取 refresh token
+const findRefreshToken = async (userId, token) => {
+  return RefreshTokenModel.findOne({ userId, token });
+};
+
+// 删除 refresh token
+const deleteRefreshToken = async (userId) => {
+  await RefreshTokenModel.deleteMany({ userId });
+};
 
 // 用户注册
 exports.register = async (req, res, next) => {
@@ -55,7 +78,7 @@ exports.register = async (req, res, next) => {
     // 生成令牌
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user._id);
-    refreshTokens.set(user._id.toString(), refreshToken);
+    await storeRefreshToken(user._id.toString(), refreshToken);
 
     res.status(201).json({
       status: 'success',
@@ -88,7 +111,7 @@ exports.login = async (req, res, next) => {
     // 生成令牌
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user._id);
-    refreshTokens.set(user._id.toString(), refreshToken);
+    await storeRefreshToken(user._id.toString(), refreshToken);
 
     res.status(200).json({
       status: 'success',
@@ -104,11 +127,17 @@ exports.login = async (req, res, next) => {
   }
 };
 
-// 验证码存储（模块级内存Map，key=手机号，value={code, expiresAt, attempts}）
-// 单实例部署下可用；多实例部署时应迁移至Redis等共享存储
-const verificationCodes = new Map();
-const VERIFICATION_CODE_TTL_MS = 5 * 60 * 1000; // 验证码有效期5分钟
+// ── 验证码 MongoDB 存储（替代内存Map，支持多实例部署） ──
+const VERIFICATION_CODE_TTL_SECONDS = 5 * 60; // 验证码有效期5分钟
 const VERIFICATION_CODE_MAX_ATTEMPTS = 5; // 最大错误尝试次数
+
+const VerificationCodeSchema = new mongoose.Schema({
+  phoneNumber: { type: String, required: true, index: true },
+  code: { type: String, required: true },
+  attempts: { type: Number, default: 0 },
+  expiresAt: { type: Date, required: true, index: { expires: 0 } } // 过期自动删除
+});
+const VerificationCodeModel = mongoose.models.VerificationCode || mongoose.model('VerificationCode', VerificationCodeSchema);
 
 // 生成6位数字验证码（加密安全随机数）
 const generateVerificationCode = () => {
@@ -132,11 +161,13 @@ exports.getVerificationCode = async (req, res, next) => {
     // 模拟发送验证码（实际项目中应调用短信服务API）
     const verificationCode = generateVerificationCode();
 
-    // 存储验证码到内存Map，设置5分钟过期，错误次数清零
-    verificationCodes.set(phoneNumber, {
+    // 存储验证码到 MongoDB（先删除旧验证码）
+    await VerificationCodeModel.deleteOne({ phoneNumber });
+    await VerificationCodeModel.create({
+      phoneNumber,
       code: verificationCode,
-      expiresAt: Date.now() + VERIFICATION_CODE_TTL_MS,
-      attempts: 0
+      attempts: 0,
+      expiresAt: new Date(Date.now() + VERIFICATION_CODE_TTL_SECONDS * 1000)
     });
 
     // 开发环境打印到服务端日志便于联调
@@ -160,31 +191,32 @@ exports.verifyCode = async (req, res, next) => {
     const { phoneNumber, code } = req.body;
 
     // 检查是否存在该手机号的验证码
-    const record = verificationCodes.get(phoneNumber);
+    const record = await VerificationCodeModel.findOne({ phoneNumber });
     if (!record) {
       return res.status(400).json({ status: 'error', message: '验证码不存在或已失效，请重新获取' });
     }
 
     // 检查是否过期
-    if (Date.now() > record.expiresAt) {
-      verificationCodes.delete(phoneNumber);
+    if (Date.now() > record.expiresAt.getTime()) {
+      await VerificationCodeModel.deleteOne({ _id: record._id });
       return res.status(400).json({ status: 'error', message: '验证码已过期，请重新获取' });
     }
 
     // 检查错误尝试次数（上限5次，超过作废需重发）
     if (record.attempts >= VERIFICATION_CODE_MAX_ATTEMPTS) {
-      verificationCodes.delete(phoneNumber);
+      await VerificationCodeModel.deleteOne({ _id: record._id });
       return res.status(400).json({ status: 'error', message: '验证码错误次数过多，请重新获取' });
     }
 
     // 比对验证码
     if (record.code !== code) {
       record.attempts += 1;
+      await record.save();
       return res.status(400).json({ status: 'error', message: '验证码错误' });
     }
 
     // 验证通过即删除作废（一次性使用）
-    verificationCodes.delete(phoneNumber);
+    await VerificationCodeModel.deleteOne({ _id: record._id });
 
     res.status(200).json({
       status: 'success',
@@ -204,24 +236,25 @@ exports.loginWithCode = async (req, res, next) => {
       return res.status(400).json({ status: 'error', message: '缺少必要参数' });
     }
 
-    // 验证码校验
-    const record = verificationCodes.get(phoneNumber);
+    // 验证码校验（MongoDB）
+    const record = await VerificationCodeModel.findOne({ phoneNumber });
     if (!record) {
       return res.status(400).json({ status: 'error', message: '验证码不存在或已失效，请重新获取' });
     }
-    if (Date.now() > record.expiresAt) {
-      verificationCodes.delete(phoneNumber);
+    if (Date.now() > record.expiresAt.getTime()) {
+      await VerificationCodeModel.deleteOne({ _id: record._id });
       return res.status(400).json({ status: 'error', message: '验证码已过期，请重新获取' });
     }
     if (record.attempts >= VERIFICATION_CODE_MAX_ATTEMPTS) {
-      verificationCodes.delete(phoneNumber);
+      await VerificationCodeModel.deleteOne({ _id: record._id });
       return res.status(400).json({ status: 'error', message: '验证码错误次数过多，请重新获取' });
     }
     if (record.code !== code) {
       record.attempts += 1;
+      await record.save();
       return res.status(400).json({ status: 'error', message: '验证码错误' });
     }
-    verificationCodes.delete(phoneNumber);
+    await VerificationCodeModel.deleteOne({ _id: record._id });
 
     // 查找用户
     const user = await User.findOne({ phoneNumber });
@@ -233,7 +266,7 @@ exports.loginWithCode = async (req, res, next) => {
 
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user._id);
-    refreshTokens.set(user._id.toString(), refreshToken);
+    await storeRefreshToken(user._id.toString(), refreshToken);
 
     res.status(200).json({
       status: 'success',
@@ -297,7 +330,7 @@ exports.experienceLogin = async (req, res, next) => {
 
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user._id);
-    refreshTokens.set(user._id.toString(), refreshToken);
+    await storeRefreshToken(user._id.toString(), refreshToken);
 
     res.status(200).json({
       status: 'success',
@@ -517,10 +550,10 @@ exports.refreshToken = async (req, res, next) => {
       return res.status(400).json({ status: 'error', message: '未提供刷新令牌' });
     }
 
-    // 验证 refresh_token 格式和有效期
+    // 验证 refresh_token 格式和有效期（使用独立密钥）
     let decoded;
     try {
-      decoded = jwt.verify(refreshToken, JWT_SECRET);
+      decoded = jwt.verify(refreshToken, JWT_REFRESH_SECRET);
     } catch (err) {
       if (err.name === 'TokenExpiredError') {
         return res.status(401).json({ status: 'error', message: '刷新令牌已过期，请重新登录' });
@@ -530,14 +563,14 @@ exports.refreshToken = async (req, res, next) => {
 
     const userId = decoded.id.toString();
 
-    // 查 Map 是否匹配该 userId
-    const storedToken = refreshTokens.get(userId);
-    if (!storedToken || storedToken !== refreshToken) {
+    // 查 MongoDB 是否匹配该 userId + token
+    const storedRecord = await findRefreshToken(userId, refreshToken);
+    if (!storedRecord) {
       return res.status(401).json({ status: 'error', message: '刷新令牌不匹配，请重新登录' });
     }
 
-    // 旧 token 从 Map 删除，轮换签发新 token
-    refreshTokens.delete(userId);
+    // 旧 token 删除（轮换）
+    await deleteRefreshToken(userId);
 
     // 查用户以获取完整信息
     const user = await User.findById(userId);
@@ -547,7 +580,7 @@ exports.refreshToken = async (req, res, next) => {
 
     const newAccessToken = generateAccessToken(user);
     const newRefreshToken = generateRefreshToken(user._id);
-    refreshTokens.set(userId, newRefreshToken);
+    await storeRefreshToken(userId, newRefreshToken);
 
     res.status(200).json({
       status: 'success',
@@ -579,35 +612,36 @@ exports.forgotPassword = async (req, res, next) => {
     }
 
     // 验证码验证逻辑复用 verificationCodes Map
-    const record = verificationCodes.get(phoneNumber);
+    const record = await VerificationCodeModel.findOne({ phoneNumber });
     if (!record) {
       return res.status(400).json({ status: 'error', message: '验证码不存在或已失效，请重新获取' });
     }
 
-    if (Date.now() > record.expiresAt) {
-      verificationCodes.delete(phoneNumber);
+    if (Date.now() > record.expiresAt.getTime()) {
+      await VerificationCodeModel.deleteOne({ _id: record._id });
       return res.status(400).json({ status: 'error', message: '验证码已过期，请重新获取' });
     }
 
     if (record.attempts >= VERIFICATION_CODE_MAX_ATTEMPTS) {
-      verificationCodes.delete(phoneNumber);
+      await VerificationCodeModel.deleteOne({ _id: record._id });
       return res.status(400).json({ status: 'error', message: '验证码错误次数过多，请重新获取' });
     }
 
     if (record.code !== code) {
       record.attempts += 1;
+      await record.save();
       return res.status(400).json({ status: 'error', message: '验证码错误' });
     }
 
     // 验证通过，删除验证码
-    verificationCodes.delete(phoneNumber);
+    await VerificationCodeModel.deleteOne({ _id: record._id });
 
     // 更新密码
     user.password = newPassword;
     await user.save();
 
-    // 强制重新登录：清除该手机号对应的 refresh token
-    refreshTokens.delete(user._id.toString());
+    // 强制重新登录：清除该用户的所有 refresh token
+    await deleteRefreshToken(user._id.toString());
 
     res.status(200).json({
       status: 'success',
